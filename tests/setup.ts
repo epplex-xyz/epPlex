@@ -1,5 +1,14 @@
 import {loadOrGenerateKeypair, savePublicKeyToFile} from "./utils/helpers";
-import {Connection, Keypair, LAMPORTS_PER_SOL, Transaction, SystemProgram, sendAndConfirmTransaction, PublicKey,TransactionInstruction, AccountMeta} from "@solana/web3.js";
+import {
+    Connection,
+    Transaction,
+    SystemProgram,
+    sendAndConfirmTransaction,
+    PublicKey,
+    TransactionInstruction,
+    AccountMeta
+} from "@solana/web3.js";
+
 import {
     ExtensionType,
     createInitializeMintInstruction,
@@ -16,17 +25,30 @@ import {
     createInitializeMintCloseAuthorityInstruction,
     createCloseAccountInstruction
 } from "@solana/spl-token";
+import * as borsh from "@coral-xyz/borsh";
+import {metadataInstruction} from "./createInitializeTokenMetadataInstruction";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
 
 // Old mint https://solscan.io/token/3s792R18rLLvrGmFYk373jVSML7xh6SvsW5ZiXTxTk3Y?cluster=devnet, only has authority field
 
+const layout = borsh.struct([
+    borsh.publicKey("updateAuthority"),
+    borsh.publicKey("mint"),
+    borsh.array(borsh.u8(), 11, "name"),
+    borsh.array(borsh.u8(), 4, "symbol"),
+    borsh.array(borsh.u8(), 20, "uri"),
+]);
+
+
+const TOKEN_METADATA_SIZE = layout.span + 500;
+
+
 async function setup() {
 
     // Collection auth and treeCreator
     const payer = loadOrGenerateKeypair("payer");
-
     const mintAuthority = loadOrGenerateKeypair("mintAuth");
     const mintKeypair = loadOrGenerateKeypair("mint");
     const mint = mintKeypair.publicKey;
@@ -38,7 +60,10 @@ async function setup() {
 
 
     const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
+    // const mintLen = getMintLen(extensions) + TOKEN_METADATA_SIZE;
     const mintLen = getMintLen(extensions);
+    // console.log("length", getMintLen(extensions));
+    // console.log("length", mintLen);
     const decimals = 0;
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
 
@@ -53,9 +78,15 @@ async function setup() {
         }),
         createInitializeMintCloseAuthorityInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
-        createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID)
+        createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
+        SystemProgram.transfer({
+            fromPubkey: payer.publicKey,
+            toPubkey: mint,
+            lamports: BigInt(1000000),
+        }),
+        metadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey),
     );
-    const txId = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair], undefined);
+    const txId = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair, mintAuthority], {skipPreflight: true});
     console.log("tx", txId);
 
     savePublicKeyToFile("mintPubkey", mint);
@@ -122,23 +153,23 @@ async function burn() {
         TOKEN_2022_PROGRAM_ID
     );
 
-    // createBurnInstruction(account, mint, ownerPublicKey, amount, multiSigners, programId)
-    // const keys: AccountMeta[] = [
-    //     { pubkey: account.address, isSigner: false, isWritable: true },
-    //     { pubkey: mint, isSigner: false, isWritable: true },
-    //     { pubkey: permanentDelegate.publicKey, isSigner: true, isWritable: true }
-    // ];
 
-    // const data = Buffer.alloc(burnInstructionData.span);
-    // burnInstructionData.encode(
-    //     {
-    //         instruction: TokenInstruction.Burn,
-    //         amount: BigInt(1), 
-    //     },
-    //     data
-    // );
+    const keys: AccountMeta[] = [
+        { pubkey: account.address, isSigner: false, isWritable: true },
+        { pubkey: mint, isSigner: false, isWritable: true },
+        { pubkey: permanentDelegate.publicKey, isSigner: true, isWritable: true }
+    ];
 
-    // const ix = new TransactionInstruction({ keys, programId: TOKEN_2022_PROGRAM_ID, data });
+    const data = Buffer.alloc(burnInstructionData.span);
+    burnInstructionData.encode(
+        {
+            instruction: TokenInstruction.Burn,
+            amount: BigInt(1),
+        },
+        data
+    );
+
+    const ix = new TransactionInstruction({ keys, programId: TOKEN_2022_PROGRAM_ID, data });
 
     const transaction = new Transaction().add(
         createBurnInstruction(account.address, mint, permanentDelegate.publicKey, 1, [], TOKEN_2022_PROGRAM_ID),
@@ -151,11 +182,39 @@ async function burn() {
     } catch (e) {
         console.log("err", e);
     }
+}
+
+async function test() {
+    const payer = loadOrGenerateKeypair("payer");
+    console.log("payer", payer.publicKey.toString());
+    const mintKeypair = loadOrGenerateKeypair("mint");
+    const mint = mintKeypair.publicKey;
+    console.log("mint", mint.toString());
+    const mintAuthority = loadOrGenerateKeypair("mintAuth");
+    const permanentDelegate = loadOrGenerateKeypair("permDelegate");
 
 
+    const transaction = new Transaction().add(
+        metadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey)
+    );
+
+    try {
+        const tx = await sendAndConfirmTransaction(connection, transaction, [payer, mintAuthority], {skipPreflight: true});
+        console.log("tx", tx);
+    } catch (e) {
+        console.log("err", e);
+    }
 
 }
 
-// setup();
+async function accountInfo() {
+    const res = await connection.getAccountInfo(new PublicKey("bbs4CMz9JL3JBW7wH7wq4q3sbBRV3PVAK5U7iKgFKFN"));
+    console.log("Res",res);
+
+}
+// accountInfo();
+setup();
 // mint();
-burn();
+// test();
+// burn();
+// console.log("size", TOKEN_METADATA_SIZE);
