@@ -133,7 +133,7 @@ async function burn() {
     // burnInstructionData.encode(
     //     {
     //         instruction: TokenInstruction.Burn,
-    //         amount: BigInt(1),
+    //         amount: BigInt(1), 
     //     },
     //     data
     // );
