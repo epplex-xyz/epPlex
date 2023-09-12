@@ -24,8 +24,9 @@ yarn-debug.log*
 # Ignore all local files
 *.local
 
-.vscode/*
+*.local_keys
 
+.vscode/*
 
 # env
 .env*

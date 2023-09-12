@@ -13,11 +13,14 @@ import {
     createBurnInstruction,
     burnInstructionData,
     TokenInstruction,
-    createInitializeMintCloseAuthorityInstruction
+    createInitializeMintCloseAuthorityInstruction,
+    createCloseAccountInstruction
 } from "@solana/spl-token";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
+
+// Old mint https://solscan.io/token/3s792R18rLLvrGmFYk373jVSML7xh6SvsW5ZiXTxTk3Y?cluster=devnet, only has authority field
 
 async function setup() {
 
@@ -30,15 +33,16 @@ async function setup() {
     const permanentDelegate = loadOrGenerateKeypair("permDelegate");
     // const permanentDelegate = new PublicKey("2N6aJDX1TNs6RKkPsuufbAe4JjRAZPs1iLPcEUL4DX4z");
 
+    // const airdropSignature = await connection.requestAirdrop(payer.publicKey, 2 * LAMPORTS_PER_SOL);
+    // await connection.confirmTransaction({ signature: airdropSignature, ...(await connection.getLatestBlockhash()) });
 
-    const extensions = [ExtensionType.PermanentDelegate];
+
+    const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
     const mintLen = getMintLen(extensions);
     const decimals = 0;
-
-    const airdropSignature = await connection.requestAirdrop(payer.publicKey, 2 * LAMPORTS_PER_SOL);
-    await connection.confirmTransaction({ signature: airdropSignature, ...(await connection.getLatestBlockhash()) });
-
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
+
+
     const mintTransaction = new Transaction().add(
         SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
@@ -47,7 +51,7 @@ async function setup() {
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
         }),
-        // createInitializeMintCloseAuthorityInstruction(mint,permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
+        createInitializeMintCloseAuthorityInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID)
     );
@@ -137,11 +141,12 @@ async function burn() {
     // const ix = new TransactionInstruction({ keys, programId: TOKEN_2022_PROGRAM_ID, data });
 
     const transaction = new Transaction().add(
-        createBurnInstruction(account.address, mint, permanentDelegate.publicKey, 1, [], TOKEN_2022_PROGRAM_ID)
+        createBurnInstruction(account.address, mint, permanentDelegate.publicKey, 1, [], TOKEN_2022_PROGRAM_ID),
+        createCloseAccountInstruction(mint, payer.publicKey, permanentDelegate.publicKey, [], TOKEN_2022_PROGRAM_ID)
     );
 
     try {
-        const tx = await sendAndConfirmTransaction(connection, transaction, [permanentDelegate], {skipPreflight: true});
+        const tx = await sendAndConfirmTransaction(connection, transaction, [permanentDelegate]);
         console.log("tx", tx);
     } catch (e) {
         console.log("err", e);
@@ -151,4 +156,6 @@ async function burn() {
 
 }
 
+// setup();
+// mint();
 burn();
