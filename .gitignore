@@ -1,0 +1,33 @@
+# dependencies
+node_modules
+
+# testing
+/coverage
+
+# production
+build/
+.next/
+
+# misc
+.DS_Store
+tailwind.css
+
+# log
+npm-debug.log*
+yarn-debug.log*
+../yarn-error.log
+
+# editor
+.idea/
+.editorconfig
+
+# Ignore all local files
+*.local
+
+.vscode/*
+
+
+# env
+.env*
+*.env
+!.env.example

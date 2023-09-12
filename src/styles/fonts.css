@@ -1,0 +1,6 @@
+
+@font-face {
+    font-family: "SatoshiMedium";
+    src: local("SatoshiMedium"),
+    url("../../public/fonts/satoshi/Satoshi-Medium.ttf") format("truetype");
+}

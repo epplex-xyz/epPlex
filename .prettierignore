@@ -1,0 +1,12 @@
+
+.next
+
+build
+dist
+docs
+idl
+generated
+
+
+*.svg
+

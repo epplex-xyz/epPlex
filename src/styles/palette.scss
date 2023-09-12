@@ -1,0 +1,25 @@
+$primaryRed: #F0544F;
+$secondaryRed: #F36A59;
+$lightRed: #F8996D;
+
+$baseYellow: #FFDDA8;
+$accentYellow: #FFB834;
+$contrastBlack: #160C18;
+$backgroundGrey: #A49398;
+
+
+$contrastBlue: #6A8EA8;
+$periwinkle: #7D89B6;
+
+:export {
+  primaryRed: $primaryRed;
+  secondaryRed: $secondaryRed;
+  lightRed: $lightRed;
+
+  baseYellow: $baseYellow;
+  accentYellow: $accentYellow;
+  contrastBlack: $contrastBlack;
+  backgroundGrey: $backgroundGrey;
+
+  contrastBlue: $contrastBlue;
+}

@@ -1,0 +1,22 @@
+// Taken from nextjs example
+{
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended"
+  ],
+  "globals": {
+    "React": "readonly",
+    "JSX": "readonly",
+    "string": "readonly"
+  },
+
+  "plugins": ["@typescript-eslint", "react"],
+
+ "rules": {
+   "semi": ["error", "always"],
+   "indent": ["error", 4, { "SwitchCase": 1 }],
+   "no-unused-vars": 0,
+   "no-inner-declarations": [0, "always"],
+   "no-async-promise-executor": 0
+ }
+}
