@@ -27,6 +27,7 @@ import {
 } from "@solana/spl-token";
 import * as borsh from "@coral-xyz/borsh";
 import {metadataInstruction} from "./createInitializeTokenMetadataInstruction";
+import {createInitializeMetadataPointerInstruction} from "./createInitializeMetadataPointerInstruction";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
@@ -61,7 +62,7 @@ async function setup() {
 
     const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
     // const mintLen = getMintLen(extensions) + TOKEN_METADATA_SIZE;
-    const mintLen = getMintLen(extensions);
+    const mintLen = getMintLen(extensions) + (64 + 2 + 2);
     // console.log("length", getMintLen(extensions));
     // console.log("length", mintLen);
     const decimals = 0;
@@ -76,9 +77,19 @@ async function setup() {
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
         }),
+
+
         createInitializeMintCloseAuthorityInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
+        // TODO
+        // metadatapointer should happen after Account creation, before mint initialization
+        // Error because account sizing is wrong. Proper space has been allocated to the above two, but not the metadatapointer
+        // If I put this as the first ix, it succeeds
+        createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
+
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
+
+        // These two are tied together
         SystemProgram.transfer({
             fromPubkey: payer.publicKey,
             toPubkey: mint,
