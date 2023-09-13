@@ -350,7 +350,6 @@ async function accountInfo() {
 
 }
 accountInfo();
-
 // setup();
 // mint();
 
