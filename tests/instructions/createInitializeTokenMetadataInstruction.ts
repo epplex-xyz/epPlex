@@ -1,9 +1,7 @@
 
 import { TransactionInstruction, PublicKey, AccountMeta } from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-import {
-    TOKEN_2022_PROGRAM_ID,
-} from "@solana/spl-token";
+import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 
 /**
  * TODO: add
@@ -55,25 +53,3 @@ export function metadataInstruction(
 
     return ix;
 }
-
-
-// https://explorer.solana.com/tx/4issGVsr88SfW2K191VXZiKe5Jdjxm4dVDyqism6SqTaZayfhUfGD6RQv8SnabZTta9QqiRVgYxQ5BeCPnXKx2UA?cluster=devnet
-
-// first 8 bytes is the instruction name, then comes 0b 00 00 00
-// , which is 11 and denotes the length of the next part MyTokenName
-// 05 00 00 00, denotes TOKEN
-// and so on
-
-// d2 e1 1e a2 58 b8 4d 8d 0b 00 00 00 4d 79 54 6f 
-// 6b 65 6e 4e 61 6d 65 05 00 00 00 54 4f 4b 45 4e 
-// 0f 00 00 00 68 74 74 70 3a 2f 2f 6d 79 2e 74 6f 
-// 6b 65 6e 
-
-// MyTokenName
-// 4d 79 54 6f 6b 65 6e 4e 61 6d 65
-
-// TOKEN
-// 54 4f 4b 45 4e
-
-// http://my.token
-// 68 74 74 70 3a 2f 2f 6d 79 2e 74 6f 6b 65 6e

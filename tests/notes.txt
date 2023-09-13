@@ -21,8 +21,6 @@
     const ix = new TransactionInstruction({ keys, programId: TOKEN_2022_PROGRAM_ID, data });
 
 
-
-
 // MetadataPointer extension should happen after Account creation, before mint initialization
 // Error because account sizing is wrong. Proper space has been allocated to the above two, but not the metadatapointer
 // If I put this as the first ix, it succeeds
@@ -33,7 +31,41 @@
 createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
 
 
-// it is possible to read the full account data based on `solana account <pubkey>`
+//
+// DECODING INSTRUCTION DATA
+//
+// https://explorer.solana.com/tx/4issGVsr88SfW2K191VXZiKe5Jdjxm4dVDyqism6SqTaZayfhUfGD6RQv8SnabZTta9QqiRVgYxQ5BeCPnXKx2UA?cluster=devnet
+
+// Tools:
+https://cryptii.com/pipes/integer-encoder
+https://onlinestringtools.com/convert-string-to-bytes
+https://emn178.github.io/online-tools/sha256.html
+
+
+// first 8 bytes is the instruction name, then comes 0b 00 00 00
+// , which is 11 and denotes the length of the next part MyTokenName
+// 05 00 00 00, denotes TOKEN
+// and so on
+
+// d2 e1 1e a2 58 b8 4d 8d 0b 00 00 00 4d 79 54 6f 
+// 6b 65 6e 4e 61 6d 65 05 00 00 00 54 4f 4b 45 4e 
+// 0f 00 00 00 68 74 74 70 3a 2f 2f 6d 79 2e 74 6f 
+// 6b 65 6e 
+
+// MyTokenName
+// 4d 79 54 6f 6b 65 6e 4e 61 6d 65
+
+// TOKEN
+// 54 4f 4b 45 4e
+
+// http://my.token
+// 68 74 74 70 3a 2f 2f 6d 79 2e 74 6f 6b 65 6e
+
+
+//
+// DECODING ACCOUNT DATA
+//
+// It is possible to read the full account data based on `solana account <pubkey>`
 // Decoding account data of 8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr
 
 // 0000:   01 00 00 00  b1 e1 9d 19  cb e9 58 bc  ef 85 7d 77   ..........X...}w

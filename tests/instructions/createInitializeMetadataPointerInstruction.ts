@@ -1,12 +1,11 @@
 import { TransactionInstruction, PublicKey, AccountMeta } from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-import { s16, struct, u8  } from '@solana/buffer-layout';
-import { publicKey } from '@solana/buffer-layout-utils';
-
 
 // Invalid instruction at first
 // https://explorer.solana.com/tx/4smGbr2G25BYKtccAzrH38hbM1heT9xjSEDKWbEFqYtsWqU9Be6BnUzFRZVL11frJWgxqwTWvBgWWUqhhmzBqsFS?cluster=devnet#ix-5
 
+// Found from program-2022/src/instruction.rs
+// Actually being processed in program-2022/src/processor.rs
 enum Instruction {
     MetadataPointer = 39
 }
@@ -25,11 +24,11 @@ export interface MetadataPointerInstructionData {
 }
 
 /** TODO: docs */
-export const initialzeMetadataPointerInstructionData = struct<MetadataPointerInstructionData>([
-    u8('instruction'),
-    u8('metadataPointerInstruction'),
-    publicKey('authority'),
-    publicKey('metadataAddress'),
+export const initialzeMetadataPointerInstructionData = borsh.struct<MetadataPointerInstructionData>([
+    borsh.u8('instruction'),
+    borsh.u8('metadataPointerInstruction'),
+    borsh.publicKey('authority'),
+    borsh.publicKey('metadataAddress'),
 ]);
 
 

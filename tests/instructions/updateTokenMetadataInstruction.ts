@@ -1,11 +1,5 @@
-import { TransactionInstruction, PublicKey, AccountMeta } from "@solana/web3.js";
+import { TransactionInstruction, PublicKey } from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-import { s16, struct, u8  } from '@solana/buffer-layout';
-import { publicKey } from '@solana/buffer-layout-utils';
-
-
-// Invalid instruction at first
-// https://explorer.solana.com/tx/4smGbr2G25BYKtccAzrH38hbM1heT9xjSEDKWbEFqYtsWqU9Be6BnUzFRZVL11frJWgxqwTWvBgWWUqhhmzBqsFS?cluster=devnet#ix-5
 
 enum Instruction {
     MetadataPointer = 39
@@ -19,17 +13,17 @@ enum MetadataInstruction {
 // This requires another instruction since it is nested within the token program within a folder
 export interface UpdateTokenMetadataData {
     instruction: Instruction.MetadataPointer;
-    metadataPointerInstruction: MetadataInstruction.Initialize
+    metadataPointerInstruction: MetadataInstruction.Update
     authority: PublicKey;
     metadataAddress: PublicKey;
 }
 
 /** TODO: docs */
-export const updateTokenMetadataInstructionData = struct<UpdateTokenMetadataData>([
-    u8('instruction'),
-    u8('metadataPointerInstruction'),
-    publicKey('authority'),
-    publicKey('metadataAddress'),
+export const updateTokenMetadataInstructionData = borsh.struct<UpdateTokenMetadataData>([
+    borsh.u8('instruction'),
+    borsh.u8('metadataPointerInstruction'),
+    borsh.publicKey('authority'),
+    borsh.publicKey('metadataAddress'),
 ]);
 
 
@@ -55,7 +49,7 @@ export function updateTokenMetadataInstruction (
     updateTokenMetadataInstructionData.encode(
         {
             instruction: Instruction.MetadataPointer,
-            metadataPointerInstruction: MetadataInstruction.Initialize,
+            metadataPointerInstruction: MetadataInstruction.Update,
             authority: authority || new PublicKey(0),
             metadataAddress: metadataAddress || new PublicKey(0),
         },
