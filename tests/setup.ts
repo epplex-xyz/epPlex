@@ -60,12 +60,13 @@ async function setup() {
         SystemProgram.transfer({
             fromPubkey: payer.publicKey,
             toPubkey: mint,
-            lamports: BigInt(100000),
+            lamports: BigInt(10000000),
         }),
         // Custom instruction
         createMetadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey),
+        updateMetadataInstruction(mint, permanentDelegate.publicKey)
     );
-    const txId = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair, mintAuthority], {skipPreflight: true});
+    const txId = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair, mintAuthority, permanentDelegate], {skipPreflight: true});
     console.log("tx", txId);
 
     savePublicKeyToFile("mintPubkey", mint);
@@ -154,7 +155,7 @@ async function test() {
 }
 
 async function accountInfo() {
-    const info = await connection.getAccountInfo(new PublicKey("8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr"));
+    const info = await connection.getAccountInfo(new PublicKey("6DoTJakcvoKwXougVGmwGkPWuB2pGLGXGNhwxTx46Rq"));
     const decoded = Token22Layout.decode(info.data);
     // no need for decoding
     // const decoded = AccountLayout.decode(info.data.slice(8));
@@ -163,12 +164,12 @@ async function accountInfo() {
 
 async function main() {
     try {
-        // accountInfo();
-        // setup();
+        await accountInfo();
+        // await setup();
         // mint();
 
         // burn();
-        await test();
+        // await test();
     } catch (e) {
         console.log("err", e);
     }

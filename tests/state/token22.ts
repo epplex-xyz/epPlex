@@ -31,7 +31,11 @@ interface Token22 {
     // TokenMetadata
     name: string,
     symbol: string,
-    uri: string
+    uri: string,
+    // How to corrobate these two
+    dunno7: FixedLengthArray<any, 4>
+    destroyTimestampField: string,
+    destroyTimestampValue: string
 }
 
 // /** Buffer layout for de/serializing a mint */
@@ -58,6 +62,9 @@ export const Token22Layout = borsh.struct<Token22>([
     borsh.str("name"),
     borsh.str("symbol"),
     borsh.str("uri"),
+    borsh.array(borsh.u8(), 4, "dunno7"),
+    borsh.str("destroyTimestampField"),
+    borsh.str("destroyTimestampValue"),
 ]);
 
 
