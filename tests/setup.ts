@@ -25,7 +25,9 @@ import {
     createInitializeMintCloseAuthorityInstruction,
     createCloseAccountInstruction,
     MintLayout,
-    AccountLayout
+    AccountLayout,
+    PERMANENT_DELEGATE_SIZE,
+    MINT_CLOSE_AUTHORITY_SIZE
 } from "@solana/spl-token";
 import * as borsh from "@coral-xyz/borsh";
 import {metadataInstruction} from "./createInitializeTokenMetadataInstruction";
@@ -85,11 +87,14 @@ async function setup() {
             programId: TOKEN_2022_PROGRAM_ID,
         }),
 
-        // How do I decode the metadata for my own viewing?
 
+
+        // instruction 25
         createInitializeMintCloseAuthorityInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
+        // instruction 35
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
-        // TODO
+
+        // instruction 39
         // metadatapointer should happen after Account creation, before mint initialization
         // Error because account sizing is wrong. Proper space has been allocated to the above two, but not the metadatapointer
         // If I put this as the first ix, it succeeds
@@ -99,9 +104,10 @@ async function setup() {
         // in addition to 2 + 2 for the default computational aspects SIZE+LENGTH
         createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
 
+
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
 
-        // These two are tied together
+        // Need to transfer to mint before can init metadata
         SystemProgram.transfer({
             fromPubkey: payer.publicKey,
             toPubkey: mint,
@@ -247,6 +253,18 @@ function serialize(data) {
 //     u32('freezeAuthorityOption'),
 //     publicKey('freezeAuthority'),
 // ]);
+// mintCloseAuth is 32 byes + 4 console.log("closeauth", MINT_CLOSE_AUTHORITY_SIZE);
+// perm delegate is 32 byts + 4 console.log("perma", PERMANENT_DELEGATE_SIZE);
+
+// tokenmetadata is 64 + 4
+
+// const layout = borsh.struct([
+//     borsh.vec(borsh.u8(), "name"),
+//     borsh.vec(borsh.u8(), "symbol"),
+//     borsh.vec(borsh.u8(), "uri"),
+// ]);
+
+
 
 // decoded {
 //     mintAuthorityOption: 1,
@@ -287,37 +305,53 @@ async function accountInfo() {
 
 // 0000:   01 00 00 00  b1 e1 9d 19  cb e9 58 bc  ef 85 7d 77   ..........X...}w
 // 0010:   07 0b 9e 00  fc 43 77 2c  e0 37 6c 1c  a1 d3 44 94   .....Cw,.7l...D.
-// 0020:   d3 c0 81 ec  00 00 00 00  00 00 00 00  00 01 00 00   ................
-// 0030:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 0040:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 0050:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0020:   d3 c0 81 ec  00 00 00 00  00 00 00 00  00 01, 00 00   ................ // supply, decimals, isinitialized
+// 0030:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................ //freeeauth option
+// 0040:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................  // freezeauth, 82 bytes
+// 0050:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
 // 0060:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 0070:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0070:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
 // 0080:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 0090:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 00a0:   00 00 00 00  00 01 03 00  20 00 80 81  06 07 a3 00   ........ .......
+// 0090:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 00a0:   00 00 00 00  00, 01 03 00  20 00, 80 81  06 07 a3 00   ........ ....... // reached 165 bytes, some auth
 // 00b0:   32 0e ff d6  5c 94 59 6a  80 0c 09 2f  6f 17 b9 3a   2...\.Yj.../o..:
-// 00c0:   55 6c 21 24  af cb 0c 31  36 66 0c 00  20 00 80 81   Ul!$...16f.. ...
+// 00c0:   55 6c 21 24  af cb 0c 31  36 66, 0c 00  20 00, 80 81   Ul!$...16f.. ... // some auth
 // 00d0:   06 07 a3 00  32 0e ff d6  5c 94 59 6a  80 0c 09 2f   ....2...\.Yj.../
-// 00e0:   6f 17 b9 3a  55 6c 21 24  af cb 0c 31  36 66 12 00   o..:Ul!$...16f..
+// 00e0:   6f 17 b9 3a  55 6c 21 24  af cb 0c 31  36 66, 12 00   o..:Ul!$...16f..
 // 00f0:   40 00 80 81  06 07 a3 00  32 0e ff d6  5c 94 59 6a   @.......2...\.Yj
 // 0100:   80 0c 09 2f  6f 17 b9 3a  55 6c 21 24  af cb 0c 31   .../o..:Ul!$...1
-// 0110:   36 66 6d 2d  6c 3e b5 fd  9d fb 3e c5  cb d1 19 91   6fm-l>....>.....
+// 0110:   36 66, 6d 2d  6c 3e b5 fd  9d fb 3e c5  cb d1 19 91   6fm-l>....>..... // mint address
 // 0120:   e2 0b 8f 8c  4c 32 57 2a  ee 56 e5 e2  5e b0 2e 78   ....L2W*.V..^..x
-// 0130:   8f 39 13 00  6f 00 80 81  06 07 a3 00  32 0e ff d6   .9..o.......2...
+// 0130:   8f 39, 13 00  6f 00, 80 81  06 07 a3 00  32 0e ff d6   .9..o.......2... // auth, below is the MetadataPointer stuff
 // 0140:   5c 94 59 6a  80 0c 09 2f  6f 17 b9 3a  55 6c 21 24   \.Yj.../o..:Ul!$
-// 0150:   af cb 0c 31  36 66 6d 2d  6c 3e b5 fd  9d fb 3e c5   ...16fm-l>....>.
+// 0150:   af cb 0c 31  36 66, 6d 2d  6c 3e b5 fd  9d fb 3e c5   ...16fm-l>....>. // metadata address
 // 0160:   cb d1 19 91  e2 0b 8f 8c  4c 32 57 2a  ee 56 e5 e2   ........L2W*.V..
-// 0170:   5e b0 2e 78  8f 39 0b 00  00 00 4d 79  54 6f 6b 65   ^..x.9....MyToke
-// 0180:   6e 4e 61 6d  65 05 00 00  00 54 4f 4b  45 4e 0f 00   nName....TOKEN..
-// 0190:   00 00 68 74  74 70 3a 2f  2f 6d 79 2e  74 6f 6b 65   ..http://my.toke
-// 01a0:   6e 00 00 00  00
+// 0170:   5e b0 2e 78  8f 39, 0b 00  00 00 4d 79  54 6f 6b 65   ^..x.9....MyToke
+// 0180:   6e 4e 61 6d  65, 05 00 00  00 54 4f 4b  45 4e, 0f 00   nName....TOKEN..
+// 0190:   00 00, 68 74  74 70 3a 2f  2f 6d 79 2e  74 6f 6b 65   ..http://my.toke
+// 01a0:   6e 00 00 00  00                                      n...
 
 // 26 rows X 16 columns + 5 = 421
 
 // convert bytes to decimal representation
 // b1e19d19cbe958bcef857d77070b9e00fc43772ce0376c1ca1d34494d3c081ec
-const a = new Uint8Array([ 177, 225, 157, 25, 203, 233, 88, 188, 239, 133, 125, 119, 7, 11, 158, 0, 252, 67, 119, 44, 224, 55, 108, 28, 161, 211, 68, 148, 211, 192, 129, 236
-]);
-const pub = new PublicKey(a);
-console.log(pub.toString());
+// const a = new Uint8Array([ 177, 225, 157, 25, 203, 233, 88, 188, 239, 133, 125, 119, 7, 11, 158, 0, 252, 67, 119, 44, 224, 55, 108, 28, 161, 211, 68, 148, 211, 192, 129, 236
+// ]);
+// const pub = new PublicKey(a);
+// console.log(pub.toString());
+
+//6d2d6c3eb5fd9dfb3ec5cbd11991e20b8f8c4c32572aee56e5e25eb02e788f39
+// const string = "109 45 108 62 181 253 157 251 62 197 203 209 25 145 226 11 143 140 76 50 87 42 238 86 229 226 94 176 46 120 143 57";
+// const arr = [109, 45, 108, 62, 181, 253, 157, 251, 62, 197, 203, 209, 25, 145, 226, 11, 143, 140, 76, 50, 87, 42, 238, 86, 229, 226, 94, 176, 46, 120, 143, 57];
+// const pub = new PublicKey(new Uint8Array(arr));
+// console.log(pub.toString());
+// this is 8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr mint addr
+
+
+
+// 80810607a300320effd65c94596a800c092f6f17b93a556c2124afcb0c313666
+// 128 129 6 7 163 0 50 14 255 214 92 148 89 106 128 12 9 47 111 23 185 58 85 108 33 36 175 203 12 49 54 102
+// const ar = [128, 129, 6, 7, 163, 0, 50, 14, 255, 214, 92, 148, 89, 106, 128, 12, 9, 47, 111, 23, 185, 58, 85, 108, 33, 36, 175, 203, 12, 49, 54, 102];
+// const pub = new PublicKey(new Uint8Array(ar));
+// console.log(pub.toString());
+// this is close auth 9edJ5MicBNhi6AfuMH84jD7E525cHCdxpdpmo4suJabf
