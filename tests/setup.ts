@@ -237,6 +237,26 @@ function serialize(data) {
             : value // return everything else unchanged
     ));
 }
+
+// export const MintLayout = struct<RawMint>([
+//     u32('mintAuthorityOption'),
+//     publicKey('mintAuthority'),
+//     u64('supply'),
+//     u8('decimals'),
+//     bool('isInitialized'),
+//     u32('freezeAuthorityOption'),
+//     publicKey('freezeAuthority'),
+// ]);
+
+// decoded {
+//     mintAuthorityOption: 1,
+//     mintAuthority: 'CyNhPdPhFiRtarKKt29ETmPr8DSigNvgFmQWBdvcqynB',
+//     supply: '0',
+//     decimals: 0,
+//     isInitialized: true,
+//     freezeAuthorityOption: 0,
+//     freezeAuthority: '11111111111111111111111111111111'
+//   }
 async function accountInfo() {
     // const layout = borsh.struct([
     //     borsh.publicKey("mintAuthority"),
@@ -253,13 +273,15 @@ async function accountInfo() {
     console.log("decoded", serialize(decoded));
 
 }
-accountInfo();
+// accountInfo();
 
 // setup();
 // mint();
 // test();
 // burn();
 // console.log("size", TOKEN_METADATA_SIZE);
+
+
 
 
 
@@ -292,3 +314,10 @@ accountInfo();
 // 01a0:   6e 00 00 00  00
 
 // 26 rows X 16 columns + 5 = 421
+
+// convert bytes to decimal representation
+// b1e19d19cbe958bcef857d77070b9e00fc43772ce0376c1ca1d34494d3c081ec
+const a = new Uint8Array([ 177, 225, 157, 25, 203, 233, 88, 188, 239, 133, 125, 119, 7, 11, 158, 0, 252, 67, 119, 44, 224, 55, 108, 28, 161, 211, 68, 148, 211, 192, 129, 236
+]);
+const pub = new PublicKey(a);
+console.log(pub.toString());
