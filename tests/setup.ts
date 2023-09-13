@@ -275,6 +275,64 @@ function serialize(data) {
 //     freezeAuthorityOption: 0,
 //     freezeAuthority: '11111111111111111111111111111111'
 //   }
+
+type FixedLengthArray<T, L extends number> = L extends L
+  ? number[] extends ((
+      ...args: [...Array<L>]
+    ) => void)
+    ? T[]
+    : [...Array<L>]
+  : never;
+
+interface Token22 {
+    mintAuthorityOption: 1 | 0;
+    mintAuthority: PublicKey;
+    supply: bigint;
+    decimals: number;
+    isInitialized: boolean;
+    freezeAuthorityOption: 1 | 0;
+    freezeAuthority: PublicKey;
+    padding: FixedLengthArray<any, 83>,
+    dunno1: FixedLengthArray<any, 5>,
+    closeAuthority: PublicKey,
+    dunno2: FixedLengthArray<any, 4>,
+    permanentDelegate: PublicKey,
+    dunno3: FixedLengthArray<any, 4>,
+    dunno4: PublicKey,
+    dunno5: PublicKey,
+    dunno6: FixedLengthArray<any, 4>,
+    metadataPointerAuthority: PublicKey,
+    metadataAddress: PublicKey
+    name: string,
+    symbol: string,
+    uri: string
+}
+
+// /** Buffer layout for de/serializing a mint */
+export const Token22Layout = borsh.struct<Token22>([
+    borsh.u32('mintAuthorityOption'),
+    borsh.publicKey('mintAuthority'),
+    borsh.u64('supply'),
+    borsh.u8('decimals'),
+    borsh.bool('isInitialized'),
+    borsh.u32('freezeAuthorityOption'),
+    borsh.publicKey('freezeAuthority'),
+    borsh.array(borsh.u8(), 83, "padding"),
+    borsh.array(borsh.u8(), 5, "dunno1"),
+    borsh.publicKey("closeAuthority"),
+    borsh.array(borsh.u8(), 4, "dunno2"),
+    borsh.publicKey("permanentDelegate"),
+    borsh.array(borsh.u8(), 4, "dunno3"),
+    borsh.publicKey("dunno4"),
+    borsh.publicKey("dunno5"), // mint address
+    borsh.array(borsh.u8(), 4, "dunno6"),
+    borsh.publicKey("metadataPointerAuthority"),
+    borsh.publicKey("metadataAddress"),
+    borsh.str("name"),
+    borsh.str("symbol"),
+    borsh.str("uri"),
+]);
+
 async function accountInfo() {
     // const layout = borsh.struct([
     //     borsh.publicKey("mintAuthority"),
@@ -286,17 +344,17 @@ async function accountInfo() {
 
     const info = await connection.getAccountInfo(new PublicKey("8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr"));
 
-    const decoded = MintLayout.decode(info.data);
+    const decoded = Token22Layout.decode(info.data);
     // const decoded = AccountLayout.decode(info.data.slice(8));
     console.log("decoded", serialize(decoded));
 
 }
-// accountInfo();
+accountInfo();
 
 // setup();
 // mint();
 
-burn();
+// burn();
 // test();
 // console.log("size", TOKEN_METADATA_SIZE);
 
@@ -310,7 +368,7 @@ burn();
 // 0030:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................ //freeeauth option
 // 0040:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................  // freezeauth, 82 bytes
 // 0050:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
-// 0060:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0060:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................ // another 8 bytes
 // 0070:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
 // 0080:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
 // 0090:   00 00, 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
@@ -319,7 +377,7 @@ burn();
 // 00c0:   55 6c 21 24  af cb 0c 31  36 66, 0c 00  20 00, 80 81   Ul!$...16f.. ... // some auth
 // 00d0:   06 07 a3 00  32 0e ff d6  5c 94 59 6a  80 0c 09 2f   ....2...\.Yj.../
 // 00e0:   6f 17 b9 3a  55 6c 21 24  af cb 0c 31  36 66, 12 00   o..:Ul!$...16f..
-// 00f0:   40 00 80 81  06 07 a3 00  32 0e ff d6  5c 94 59 6a   @.......2...\.Yj
+// 00f0:   40 00, 80 81  06 07 a3 00  32 0e ff d6  5c 94 59 6a   @.......2...\.Yj
 // 0100:   80 0c 09 2f  6f 17 b9 3a  55 6c 21 24  af cb 0c 31   .../o..:Ul!$...1
 // 0110:   36 66, 6d 2d  6c 3e b5 fd  9d fb 3e c5  cb d1 19 91   6fm-l>....>..... // mint address
 // 0120:   e2 0b 8f 8c  4c 32 57 2a  ee 56 e5 e2  5e b0 2e 78   ....L2W*.V..^..x
@@ -356,3 +414,10 @@ burn();
 // const pub = new PublicKey(new Uint8Array(ar));
 // console.log(pub.toString());
 // this is close auth 9edJ5MicBNhi6AfuMH84jD7E525cHCdxpdpmo4suJabf
+
+
+// 32 bytes of 0 yields to pubkey of 111111
+// const ar = Array(32).fill(0);
+// const pub = new PublicKey(new Uint8Array(ar));
+// console.log(pub.toString());
+
