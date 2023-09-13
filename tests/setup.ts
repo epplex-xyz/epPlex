@@ -23,7 +23,9 @@ import {
     burnInstructionData,
     TokenInstruction,
     createInitializeMintCloseAuthorityInstruction,
-    createCloseAccountInstruction
+    createCloseAccountInstruction,
+    MintLayout,
+    AccountLayout
 } from "@solana/spl-token";
 import * as borsh from "@coral-xyz/borsh";
 import {metadataInstruction} from "./createInitializeTokenMetadataInstruction";
@@ -33,6 +35,11 @@ const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
 
 // Old mint https://solscan.io/token/3s792R18rLLvrGmFYk373jVSML7xh6SvsW5ZiXTxTk3Y?cluster=devnet, only has authority field
+
+// Old mint with permanentDelegate/closing auth Vzpbwg4jYWAoLfXesLW4Ni5itcyS6h5PB1K2m3S5CaC
+
+
+// it is possible to read the full account data based on `solana account <pubkey>`
 
 const layout = borsh.struct([
     borsh.publicKey("updateAuthority"),
@@ -78,6 +85,7 @@ async function setup() {
             programId: TOKEN_2022_PROGRAM_ID,
         }),
 
+        // How do I decode the metadata for my own viewing?
 
         createInitializeMintCloseAuthorityInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
@@ -85,6 +93,10 @@ async function setup() {
         // metadatapointer should happen after Account creation, before mint initialization
         // Error because account sizing is wrong. Proper space has been allocated to the above two, but not the metadatapointer
         // If I put this as the first ix, it succeeds
+
+        // So there is a difference between the span/sizing of an instruction and the config/account/state size.
+        // so basically had to account for how it does the computations on sizing. All I needed was two pubkey sizing (32*2=64)
+        // in addition to 2 + 2 for the default computational aspects SIZE+LENGTH
         createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
 
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
@@ -217,15 +229,66 @@ async function test() {
     }
 
 }
-
+// https://github.com/GoogleChromeLabs/jsbi/issues/30
+function serialize(data) {
+    return JSON.parse(JSON.stringify(data, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value // return everything else unchanged
+    ));
+}
 async function accountInfo() {
-    const res = await connection.getAccountInfo(new PublicKey("bbs4CMz9JL3JBW7wH7wq4q3sbBRV3PVAK5U7iKgFKFN"));
-    console.log("Res",res);
+    // const layout = borsh.struct([
+    //     borsh.publicKey("mintAuthority"),
+    //     borsh.u64("supply"),
+    //     borsh.u8("decimals"),
+    //     borsh.bool("isInitialized"),
+    //     borsh.publicKey("freezeAuthority"),
+    // ]);
+
+    const info = await connection.getAccountInfo(new PublicKey("8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr"));
+
+    const decoded = MintLayout.decode(info.data);
+    // const decoded = AccountLayout.decode(info.data.slice(8));
+    console.log("decoded", serialize(decoded));
 
 }
-// accountInfo();
-setup();
+accountInfo();
+
+// setup();
 // mint();
 // test();
 // burn();
 // console.log("size", TOKEN_METADATA_SIZE);
+
+
+
+// 0000:   01 00 00 00  b1 e1 9d 19  cb e9 58 bc  ef 85 7d 77   ..........X...}w
+// 0010:   07 0b 9e 00  fc 43 77 2c  e0 37 6c 1c  a1 d3 44 94   .....Cw,.7l...D.
+// 0020:   d3 c0 81 ec  00 00 00 00  00 00 00 00  00 01 00 00   ................
+// 0030:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0040:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0050:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0060:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0070:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0080:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 0090:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+// 00a0:   00 00 00 00  00 01 03 00  20 00 80 81  06 07 a3 00   ........ .......
+// 00b0:   32 0e ff d6  5c 94 59 6a  80 0c 09 2f  6f 17 b9 3a   2...\.Yj.../o..:
+// 00c0:   55 6c 21 24  af cb 0c 31  36 66 0c 00  20 00 80 81   Ul!$...16f.. ...
+// 00d0:   06 07 a3 00  32 0e ff d6  5c 94 59 6a  80 0c 09 2f   ....2...\.Yj.../
+// 00e0:   6f 17 b9 3a  55 6c 21 24  af cb 0c 31  36 66 12 00   o..:Ul!$...16f..
+// 00f0:   40 00 80 81  06 07 a3 00  32 0e ff d6  5c 94 59 6a   @.......2...\.Yj
+// 0100:   80 0c 09 2f  6f 17 b9 3a  55 6c 21 24  af cb 0c 31   .../o..:Ul!$...1
+// 0110:   36 66 6d 2d  6c 3e b5 fd  9d fb 3e c5  cb d1 19 91   6fm-l>....>.....
+// 0120:   e2 0b 8f 8c  4c 32 57 2a  ee 56 e5 e2  5e b0 2e 78   ....L2W*.V..^..x
+// 0130:   8f 39 13 00  6f 00 80 81  06 07 a3 00  32 0e ff d6   .9..o.......2...
+// 0140:   5c 94 59 6a  80 0c 09 2f  6f 17 b9 3a  55 6c 21 24   \.Yj.../o..:Ul!$
+// 0150:   af cb 0c 31  36 66 6d 2d  6c 3e b5 fd  9d fb 3e c5   ...16fm-l>....>.
+// 0160:   cb d1 19 91  e2 0b 8f 8c  4c 32 57 2a  ee 56 e5 e2   ........L2W*.V..
+// 0170:   5e b0 2e 78  8f 39 0b 00  00 00 4d 79  54 6f 6b 65   ^..x.9....MyToke
+// 0180:   6e 4e 61 6d  65 05 00 00  00 54 4f 4b  45 4e 0f 00   nName....TOKEN..
+// 0190:   00 00 68 74  74 70 3a 2f  2f 6d 79 2e  74 6f 6b 65   ..http://my.toke
+// 01a0:   6e 00 00 00  00
+
+// 26 rows X 16 columns + 5 = 421
