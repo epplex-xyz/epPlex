@@ -277,3 +277,12 @@ export function printConsoleSeparator(message?: string) {
     console.log("===============================================\n");
     if (message) console.log(message);
 }
+
+// https://github.com/GoogleChromeLabs/jsbi/issues/30
+export function stringify2(data) {
+    return JSON.parse(JSON.stringify(data, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value // return everything else unchanged
+    ));
+}
