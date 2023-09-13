@@ -22,6 +22,17 @@
 
 
 
+
+// MetadataPointer extension should happen after Account creation, before mint initialization
+// Error because account sizing is wrong. Proper space has been allocated to the above two, but not the metadatapointer
+// If I put this as the first ix, it succeeds
+
+// So there is a difference between the span/sizing of an instruction and the config/account/state size.
+// so basically had to account for how it does the computations on sizing. All I needed was two pubkey sizing (32*2=64)
+// in addition to 2 + 2 for the default computational aspects SIZE+LENGTH
+createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
+
+
 // it is possible to read the full account data based on `solana account <pubkey>`
 // Decoding account data of 8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr
 
