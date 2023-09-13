@@ -57,50 +57,9 @@ export function createMetadataInstruction(
     return ix;
 }
 
-// Define a TypeScript enum to mirror the Rust enum
-// enum Field {
-//     Name,
-//     Symbol,
-//     Uri,
-//     Key,
-//   }
 
-// function serializeField(field: Field, key?: string): Uint8Array {
-//     switch (field) {
-//         case Field.Name:
-//             return serialize(0); // 0 represents the Name variant
-//         case Field.Symbol:
-//             return serialize(1); // 1 represents the Symbol variant
-//         case Field.Uri:
-//             return serialize(2); // 2 represents the Uri variant
-//         case Field.Key:
-//             if (key) {
-//                 const keyBytes = new TextEncoder().encode(key);
-//                 const keyLength = new Uint8Array([keyBytes.length]);
-//                 return new Uint8Array([...serialize(3), ...keyLength, ...keyBytes]);
-//             } else {
-//                 throw new Error('Field.Key requires a key string.');
-//             }
-//         default:
-//             throw new Error('Invalid Field enum value');
-//     }
-// }
-
-export function layout(property?: string) {
-    const ret = borsh.rustEnum([
-        borsh.struct([], "Name"),
-        borsh.struct([], "Symbol"),
-        borsh.struct([], "Uri"),
-        borsh.struct([borsh.vec(borsh.u8())], "Key"),
-    ]);
-    if (property !== undefined) {
-        return ret.replicate(property);
-    }
-    return ret;
-}
-
-
-
+// doh, the reason i couldnt do anything from the terminal was because, I set the update auth from the example
+// and not my own
 // solana-program-library/token/cli/src/main CommandName::UpdateMetadata
 /**
  * TODO: add
@@ -114,49 +73,12 @@ export function updateMetadataInstruction(
     metadata: PublicKey,
     updateAuthority: PublicKey,
 ) {
-    // const e = borsh.rustEnum([
-    //     borsh.struct([], "Name"),
-    //     borsh.struct([], "Symbol"),
-    //     borsh.struct([], "Uri"),
-    //     borsh.struct([borsh.vec(borsh.u8(), "destroyTimestamp")], "Key"),
-    // ]);
-    // e.replicate("field");
 
-    // // borsh.rustEnum([
-    // //     borsh.struct([], "Name"),
-    // //     borsh.struct([], "Symbol"),
-    // //     borsh.struct([], "Uri"),
-    // //     // borsh.struct([borsh.str("key")], "Key"),
-    // //     borsh.struct([borsh.vec(borsh.u8(), "key")], "Key"),
-    // // ], "field"),
-    // const layout1 = borsh.struct([
-    //     // borsh.rustEnum([borsh.u8(), borsh.vec(borsh.u8())], "field"),
-    //     // borsh.rustEnum([
-    //     //     borsh.struct([], "Name"),
-    //     //     borsh.struct([], "Symbol"),
-    //     //     borsh.struct([], "Uri"),
-    //     //     borsh.struct([borsh.vec(borsh.u8())], "Key"),
-    //     // ], "field"),
-    //     // e,
-    //     borsh.rustEnum([
-    //         borsh.struct([], "Name"),
-    //         borsh.struct([], "Symbol"),
-    //         borsh.struct([], "Uri"),
-    //         // borsh.struct([borsh.str("key")], "Key"),
-    //         borsh.struct([borsh.vec(borsh.u8(), "key")], "Key"),
-    //     ], "field"),
-    //     borsh.vec(borsh.u8(), "value"),
-    // ]);
-
-
-
-    console.log("here3");
     const layout = borsh.struct([
         borsh.u8("enum"),
         borsh.vec(borsh.u8(), "field"),
         borsh.vec(borsh.u8(), "value"),
     ]);
-
 
     // Figured out this part based on
     // solana-program-library/token-metadata/interface/serc/instruction update_field
@@ -173,7 +95,6 @@ export function updateMetadataInstruction(
     const identifier = Buffer.from([221, 233, 49, 45, 181, 202, 220, 200]);
     const buffer = Buffer.alloc(1000);
 
-    console.log("here2");
     const len = layout.encode(
         {
             // field: [new Uint8Array([3]), Buffer.from("destroyTimestamp")],
@@ -183,14 +104,9 @@ export function updateMetadataInstruction(
         },
         buffer
     );
-    console.log("here");
 
     const data = Buffer.concat([identifier, buffer]).slice(0, 8 + len);
     const ix = new TransactionInstruction({ keys, programId: TOKEN_2022_PROGRAM_ID, data });
 
     return ix;
 }
-
-
-// doh, the reason i couldnt do anything from the terminal was because, I set the update auth from the example
-// and not my own
