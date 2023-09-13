@@ -295,8 +295,9 @@ async function accountInfo() {
 
 // setup();
 // mint();
+
+burn();
 // test();
-// burn();
 // console.log("size", TOKEN_METADATA_SIZE);
 
 
