@@ -31,7 +31,7 @@ import {
 } from "@solana/spl-token";
 import * as borsh from "@coral-xyz/borsh";
 import {metadataInstruction} from "./createInitializeTokenMetadataInstruction";
-import {createInitializeMetadataPointerInstruction} from "./createInitializeMetadataPointerInstruction";
+import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
@@ -334,14 +334,6 @@ export const Token22Layout = borsh.struct<Token22>([
 ]);
 
 async function accountInfo() {
-    // const layout = borsh.struct([
-    //     borsh.publicKey("mintAuthority"),
-    //     borsh.u64("supply"),
-    //     borsh.u8("decimals"),
-    //     borsh.bool("isInitialized"),
-    //     borsh.publicKey("freezeAuthority"),
-    // ]);
-
     const info = await connection.getAccountInfo(new PublicKey("8MBcTD24nCZeN3f73RNFCGW5HcD4C3y62VwjvLz8xpjr"));
 
     const decoded = Token22Layout.decode(info.data);
