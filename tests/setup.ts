@@ -18,7 +18,7 @@ import {
     createInitializeMintCloseAuthorityInstruction,
     createCloseAccountInstruction,
 } from "@solana/spl-token";
-import {metadataInstruction} from "./instructions/createInitializeTokenMetadataInstruction";
+import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
 import { Token22Layout } from "./state/token22";
 
@@ -63,7 +63,7 @@ async function setup() {
             lamports: BigInt(100000),
         }),
         // Custom instruction
-        metadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey),
+        createMetadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey),
     );
     const txId = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair, mintAuthority], {skipPreflight: true});
     console.log("tx", txId);
@@ -145,10 +145,11 @@ async function test() {
     const permanentDelegate = loadOrGenerateKeypair("permDelegate");
 
     const transaction = new Transaction().add(
-        metadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey)
+        // createMetadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey)
+        updateMetadataInstruction(mint, permanentDelegate.publicKey)
     );
 
-    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, mintAuthority], {skipPreflight: true});
+    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, permanentDelegate], {skipPreflight: true});
     console.log("tx", tx);
 }
 
@@ -160,13 +161,17 @@ async function accountInfo() {
     console.log("decoded", stringify2(decoded));
 }
 
-try {
-    // accountInfo();
-    // setup();
-    // mint();
+async function main() {
+    try {
+        // accountInfo();
+        // setup();
+        // mint();
 
-    // burn();
-    // test();
-} catch (e) {
-    console.log("err", e);
+        // burn();
+        await test();
+    } catch (e) {
+        console.log("err", e);
+    }
 }
+
+main();
