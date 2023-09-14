@@ -12,6 +12,7 @@ pub use state::*;
 pub use types::*;
 
 use anchor_lang::prelude::*;
+// use spl_token_2022::ID as SPL_TOKEN_2022_ID;
 
 #[program]
 pub mod ephemerality {
