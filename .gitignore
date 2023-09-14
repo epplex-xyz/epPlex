@@ -28,6 +28,8 @@ yarn-debug.log*
 
 .vscode/*
 
+target/*
+
 # env
 .env*
 *.env

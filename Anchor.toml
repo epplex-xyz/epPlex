@@ -1,0 +1,20 @@
+[features]
+seeds = false
+
+[programs.localnet]
+ephemerality = "DpY7AtgGKYa2NnXTmm14P1rQV1jQPpXvwrajfH2ei3Wp"
+
+[programs.devnet]
+ephemerality = "DpY7AtgGKYa2NnXTmm14P1rQV1jQPpXvwrajfH2ei3Wp"
+
+[programs.mainnet]
+ephemerality = "DpY7AtgGKYa2NnXTmm14P1rQV1jQPpXvwrajfH2ei3Wp"
+
+[provider]
+cluster = "https://api.devnet.solana.com"
+wallet = "/Users/Mac/.config/solana/test.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/basic2.spec.ts"
+bd = "anchor build && anchor deploy && anchor run copy-to-app"
+depl = "anchor deploy && anchor run copy-to-app"
