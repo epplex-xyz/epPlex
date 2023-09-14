@@ -57,6 +57,7 @@ async function setup() {
         createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
         // Need to transfer to mint before can init metadata
+        // TODO: not the best hardcode
         SystemProgram.transfer({
             fromPubkey: payer.publicKey,
             toPubkey: mint,
@@ -167,7 +168,6 @@ async function main() {
         await accountInfo();
         // await setup();
         // mint();
-
         // burn();
         // await test();
     } catch (e) {

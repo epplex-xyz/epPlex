@@ -60,7 +60,13 @@ export function createMetadataInstruction(
 
 // doh, the reason i couldnt do anything from the terminal was because, I set the update auth from the example
 // and not my own
+
+// Through the cli for 2o3akjaraCahue6vPvczgzHWfdD2FD6yn2H8eAa2MLAJ
+// https://explorer.solana.com/tx/2Q833oDLnY121c9ZVnfifMxMhoduckbLZjtddxrhr5kcJVXtkag4CbkofJHoaMFzDeY8Sts38pLBhfgPv3srxXgC?cluster=devnet
+
 // solana-program-library/token/cli/src/main CommandName::UpdateMetadata
+
+
 /**
  * TODO: add
  *

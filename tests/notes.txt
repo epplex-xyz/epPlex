@@ -37,9 +37,9 @@ createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mi
 // https://explorer.solana.com/tx/4issGVsr88SfW2K191VXZiKe5Jdjxm4dVDyqism6SqTaZayfhUfGD6RQv8SnabZTta9QqiRVgYxQ5BeCPnXKx2UA?cluster=devnet
 
 // Tools:
-https://cryptii.com/pipes/integer-encoder
-https://onlinestringtools.com/convert-string-to-bytes
-https://emn178.github.io/online-tools/sha256.html
+https://cryptii.com/pipes/integer-encoder //Checking for first 8 bytes in instruction discriminator
+https://onlinestringtools.com/convert-string-to-bytes //Checking what is the byte representation of a string
+https://emn178.github.io/online-tools/sha256.html // Convert bytes to decimal representation for input in client Uint8Array
 
 
 // first 8 bytes is the instruction name, then comes 0b 00 00 00
