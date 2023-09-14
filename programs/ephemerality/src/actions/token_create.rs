@@ -42,12 +42,8 @@ impl TokenCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>, _params: &TokenCreateParams) -> Result<()> {
 
-        // let accounts: Vec<AccountMeta> = vec![
-        //     AccountMeta::new(ctx.accounts.mint.key(), false),
-        // ];
-        Self::add_permanent_delegate(ctx)?;
-
-        // spl_token_2022::instruction::initialize_mint_close_authority()
+        Self::add_closing_authority(ctx)?;
+        // Self::add_permanent_delegate(ctx)?;
 
         Ok(())
     }
@@ -61,6 +57,25 @@ impl TokenCreate<'_> {
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.key(),
             &ctx.accounts.program_delegate.key(),
+        )?;
+
+        solana_program::program::invoke(
+            &ix,
+            &account_infos[..],
+        )?;
+
+        Ok(())
+    }
+
+    fn add_closing_authority(ctx: Context<Self>) -> Result<()> {
+        let account_infos: Vec<AccountInfo> = vec![
+            ctx.accounts.mint.to_account_info(),
+        ];
+
+        let ix = spl_token_2022::instruction::initialize_mint_close_authority(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.key(),
+            Some(&ctx.accounts.program_delegate.key()),
         )?;
 
         solana_program::program::invoke(
