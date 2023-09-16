@@ -27,6 +27,11 @@ export type Ephemerality = {
           "isSigner": true
         },
         {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -135,6 +140,11 @@ export const IDL: Ephemerality = {
           "name": "payer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",

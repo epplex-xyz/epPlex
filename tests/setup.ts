@@ -4,7 +4,7 @@ import {
     Transaction,
     SystemProgram,
     sendAndConfirmTransaction,
-    PublicKey, Keypair,
+    PublicKey, Keypair, SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
 import {
     ExtensionType,
@@ -80,9 +80,9 @@ async function setup() {
 
 async function mint() {
     const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("mint");
+    const mintKeypair = loadOrGenerateKeypair("newMint");
     const mint = mintKeypair.publicKey;
-    const mintAuthority = loadOrGenerateKeypair("mintAuth");
+    // const mintAuthority = loadOrGenerateKeypair("mintAuth");
 
     // Get the token account of the toWallet address, and if it does not exist, create it
     const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
@@ -101,7 +101,7 @@ async function mint() {
         payer,
         mint,
         fromTokenAccount.address,
-        mintAuthority,
+        payer,
         1,
         [],
         undefined,
@@ -136,7 +136,7 @@ async function burn() {
         createCloseAccountInstruction(mint, payer.publicKey, permanentDelegate.publicKey, [], TOKEN_2022_PROGRAM_ID)
     );
 
-    const tx = await sendAndConfirmTransaction(connection, transaction, [permanentDelegate]);
+    const tx = await sendAndConfirmTransaction(connection, transaction, [permanentDelegate], CONFIRM_OPTIONS);
     console.log("tx", tx);
 
 }
@@ -175,11 +175,12 @@ async function test() {
             payer: payer.publicKey,
             systemProgram: SystemProgram.programId,
             token22Program: TOKEN_2022_PROGRAM_ID,
+            rent: SYSVAR_RENT_PUBKEY,
         })
         .instruction();
 
-    const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
-    const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
+    const extensions = [ExtensionType.MintCloseAuthority];
+    const mintLen = getMintLen(extensions);
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
 
     const transaction = new Transaction().add(...[
@@ -191,7 +192,7 @@ async function test() {
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
         }),
-        initDelegateIx,
+        // initDelegateIx,
         tokenCreateIx
     ]);
 
@@ -205,8 +206,8 @@ async function main() {
         // await test();
         // await accountInfo();
         // await setup();
-        // mint();
-        burn();
+        // await mint();
+        await burn();
         // await test();
     } catch (e) {
         console.log("err", e);
