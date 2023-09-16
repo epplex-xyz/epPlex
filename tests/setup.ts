@@ -138,23 +138,6 @@ async function burn() {
     console.log("tx", tx);
 
 }
-
-async function test() {
-    const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("mint");
-    const mint = mintKeypair.publicKey;
-    const mintAuthority = loadOrGenerateKeypair("mintAuth");
-    const permanentDelegate = loadOrGenerateKeypair("permDelegate");
-
-    const transaction = new Transaction().add(
-        // createMetadataInstruction(mint, permanentDelegate.publicKey, mint, mintAuthority.publicKey)
-        updateMetadataInstruction(mint, permanentDelegate.publicKey)
-    );
-
-    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, permanentDelegate], {skipPreflight: true});
-    console.log("tx", tx);
-}
-
 async function accountInfo() {
     const info = await connection.getAccountInfo(new PublicKey("6DoTJakcvoKwXougVGmwGkPWuB2pGLGXGNhwxTx46Rq"));
     const decoded = Token22Layout.decode(info.data);
