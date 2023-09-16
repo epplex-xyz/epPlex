@@ -8,7 +8,7 @@ export type Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -45,6 +45,37 @@ export type Ephemerality = {
           }
         }
       ]
+    },
+    {
+      "name": "programDelegateCreate",
+      "accounts": [
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "ProgramDelegateCreateParams"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -55,19 +86,18 @@ export type Ephemerality = {
       ],
       "type": {
         "kind": "struct",
-        "fields": [
-          {
-            "name": "bump",
-            "docs": [
-              "The bump, used for PDA validation."
-            ],
-            "type": "u8"
-          }
-        ]
+        "fields": []
       }
     }
   ],
   "types": [
+    {
+      "name": "ProgramDelegateCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
     {
       "name": "TokenCreateParams",
       "type": {
@@ -88,7 +118,7 @@ export const IDL: Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -125,6 +155,37 @@ export const IDL: Ephemerality = {
           }
         }
       ]
+    },
+    {
+      "name": "programDelegateCreate",
+      "accounts": [
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "ProgramDelegateCreateParams"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -135,19 +196,18 @@ export const IDL: Ephemerality = {
       ],
       "type": {
         "kind": "struct",
-        "fields": [
-          {
-            "name": "bump",
-            "docs": [
-              "The bump, used for PDA validation."
-            ],
-            "type": "u8"
-          }
-        ]
+        "fields": []
       }
     }
   ],
   "types": [
+    {
+      "name": "ProgramDelegateCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
     {
       "name": "TokenCreateParams",
       "type": {

@@ -4,7 +4,7 @@ import {
     Transaction,
     SystemProgram,
     sendAndConfirmTransaction,
-    PublicKey,
+    PublicKey, Keypair,
 } from "@solana/web3.js";
 import {
     ExtensionType,
@@ -21,6 +21,8 @@ import {
 import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
 import { Token22Layout } from "./state/token22";
+import { Program } from "./program";
+import { CONFIRM_OPTIONS } from "../client/constants";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
@@ -112,7 +114,7 @@ async function mint() {
 
 async function burn() {
     const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("mint");
+    const mintKeypair = loadOrGenerateKeypair("newMint");
     const mint = mintKeypair.publicKey;
     const permanentDelegate = loadOrGenerateKeypair("permDelegate");
 
@@ -146,12 +148,65 @@ async function accountInfo() {
     console.log("decoded", stringify2(decoded));
 }
 
+// const SIGNER = Keypair.fromSecretKey(new Uint8Array(JSON.parse(process.env.SIGNER_KEYPAIR)));
+
+async function test() {
+    const payer = loadOrGenerateKeypair("payer");
+    const program = new Program(payer, connection);
+    const programDelegate = program.getProgramDelegate();
+
+    const initDelegateIx = await program.program.methods
+        .programDelegateCreate({})
+        .accounts({
+            programDelegate,
+            payer: payer.publicKey,
+            systemProgram: SystemProgram.programId,
+        })
+        .instruction();
+
+    const newMint = loadOrGenerateKeypair("newMint");
+    console.log("newMint", newMint.publicKey.toString());
+
+    const tokenCreateIx = await program.program.methods
+        .tokenCreate({})
+        .accounts({
+            mint: newMint.publicKey,
+            programDelegate: programDelegate,
+            payer: payer.publicKey,
+            systemProgram: SystemProgram.programId,
+            token22Program: TOKEN_2022_PROGRAM_ID,
+        })
+        .instruction();
+
+    const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
+    const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
+    const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
+
+    const transaction = new Transaction().add(...[
+        // How to move this instruction inside the program?
+        SystemProgram.createAccount({
+            fromPubkey: payer.publicKey,
+            newAccountPubkey: newMint.publicKey,
+            space: mintLen,
+            lamports: mintLamports,
+            programId: TOKEN_2022_PROGRAM_ID,
+        }),
+        initDelegateIx,
+        tokenCreateIx
+    ]);
+
+    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, newMint], CONFIRM_OPTIONS);
+    console.log("tx", tx);
+
+}
+
 async function main() {
     try {
-        await accountInfo();
+        // await test();
+        // await accountInfo();
         // await setup();
         // mint();
-        // burn();
+        burn();
         // await test();
     } catch (e) {
         console.log("err", e);

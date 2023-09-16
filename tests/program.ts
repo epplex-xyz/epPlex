@@ -1,4 +1,4 @@
-import { Connection, Keypair } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "../client/types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
 import { CONFIRM_OPTIONS } from "../client/constants";
@@ -9,7 +9,6 @@ export class Program {
     program: EphemeralityProgram;
 
     constructor(
-        program: EphemeralityProgram,
         signer: Keypair,
         connection: Connection,
     ) {
@@ -17,6 +16,14 @@ export class Program {
         this.program = createProgram(provider);
         this.signer = signer;
         this.connection = connection;
+    }
+
+    getProgramDelegate(): PublicKey {
+        const [programDelegate] = PublicKey.findProgramAddressSync(
+            [Buffer.from("PROGRAM_DELEGATE")],
+            this.program.programId
+        );
+        return programDelegate;
     }
 
 }
