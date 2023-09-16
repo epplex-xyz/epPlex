@@ -10,9 +10,8 @@ pub struct Token {
 impl Token {
     pub const LEN: usize = DISCRIMINATOR_LENGTH;
 
-    pub fn new(bump: u8) -> Self {
-        Self {
-        }
+    pub fn new(_bump: u8) -> Self {
+        Self {}
     }
 
 }

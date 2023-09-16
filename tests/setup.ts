@@ -44,6 +44,7 @@ async function setup() {
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
 
     const mintTransaction = new Transaction().add(
+        // Creates empty account with space that is ready to be allocated
         SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
             newAccountPubkey: mint,
@@ -57,6 +58,7 @@ async function setup() {
         createInitializePermanentDelegateInstruction(mint, permanentDelegate.publicKey, TOKEN_2022_PROGRAM_ID),
         // instruction 39
         createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
+        // instruction 0, actually populates the allocated account from the first instruction
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
         // Need to transfer to mint before can init metadata
         // TODO: not the best hardcode
@@ -80,7 +82,7 @@ async function setup() {
 
 async function mint() {
     const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("newMint");
+    const mintKeypair = loadOrGenerateKeypair("mint");
     const mint = mintKeypair.publicKey;
     // const mintAuthority = loadOrGenerateKeypair("mintAuth");
 
@@ -114,7 +116,7 @@ async function mint() {
 
 async function burn() {
     const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("newMint");
+    const mintKeypair = loadOrGenerateKeypair("mint");
     const mint = mintKeypair.publicKey;
     const permanentDelegate = loadOrGenerateKeypair("permDelegate");
 
@@ -164,13 +166,13 @@ async function test() {
         })
         .instruction();
 
-    const newMint = loadOrGenerateKeypair("newMint");
-    console.log("newMint", newMint.publicKey.toString());
+    const mint = loadOrGenerateKeypair("mint");
+    console.log("mint", mint.publicKey.toString());
 
     const tokenCreateIx = await program.program.methods
         .tokenCreate({})
         .accounts({
-            mint: newMint.publicKey,
+            mint: mint.publicKey,
             programDelegate: programDelegate,
             payer: payer.publicKey,
             systemProgram: SystemProgram.programId,
@@ -179,15 +181,14 @@ async function test() {
         })
         .instruction();
 
-    const extensions = [ExtensionType.MintCloseAuthority];
+    const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
     const mintLen = getMintLen(extensions);
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
 
     const transaction = new Transaction().add(...[
-        // How to move this instruction inside the program?
         SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
-            newAccountPubkey: newMint.publicKey,
+            newAccountPubkey: mint.publicKey,
             space: mintLen,
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
@@ -196,18 +197,18 @@ async function test() {
         tokenCreateIx
     ]);
 
-    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, newMint], CONFIRM_OPTIONS);
+    const tx = await sendAndConfirmTransaction(connection, transaction, [payer, mint], CONFIRM_OPTIONS);
     console.log("tx", tx);
 
 }
 
 async function main() {
     try {
-        // await test();
+        await test();
         // await accountInfo();
         // await setup();
         // await mint();
-        await burn();
+        // await burn();
         // await test();
     } catch (e) {
         console.log("err", e);

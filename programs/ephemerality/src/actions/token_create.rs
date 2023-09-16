@@ -1,3 +1,4 @@
+
 use crate::*;
 use anchor_spl::token_2022::{
     Token2022,
@@ -68,7 +69,13 @@ impl TokenCreate<'_> {
             ctx.accounts.mint.key(),
             ctx.accounts.program_delegate.key(),
         )?;
-        // Self::add_permanent_delegate(ctx)?;
+
+        Self::add_permanent_delegate(
+            &ctx.accounts.mint,
+            ctx.accounts.token22_program.key(),
+            ctx.accounts.mint.key(),
+            ctx.accounts.program_delegate.key()
+        )?;
 
 
         // Initialize mint
@@ -94,29 +101,14 @@ impl TokenCreate<'_> {
         Ok(())
     }
 
-    fn add_permanent_delegate(mintAccount: AccountInfo, program: Pubkey, mint: Pubkey, program_delegate: Pubkey) -> Result<()> {
+    fn add_closing_authority(
+        mint_account: &AccountInfo,
+        program: Pubkey,
+        mint: Pubkey,
+        program_delegate: Pubkey
+    ) -> Result<()> {
         let account_infos: Vec<AccountInfo> = vec![
-            mintAccount.to_account_info()
-        ];
-
-        // System::
-        let ix = spl_token_2022::instruction::initialize_permanent_delegate(
-            &program,
-            &mint,
-            &program_delegate,
-        )?;
-
-        solana_program::program::invoke(
-            &ix,
-            &account_infos[..],
-        )?;
-
-        Ok(())
-    }
-
-    fn add_closing_authority(mintAccount: &AccountInfo, program: Pubkey, mint: Pubkey, program_delegate: Pubkey) -> Result<()> {
-        let account_infos: Vec<AccountInfo> = vec![
-            mintAccount.to_account_info(),
+            mint_account.to_account_info(),
         ];
 
         let ix = spl_token_2022::instruction::initialize_mint_close_authority(
@@ -132,4 +124,29 @@ impl TokenCreate<'_> {
 
         Ok(())
     }
+
+    fn add_permanent_delegate(
+        mint_account: &AccountInfo,
+        program: Pubkey,
+        mint: Pubkey,
+        program_delegate: Pubkey
+    ) -> Result<()> {
+        let account_infos: Vec<AccountInfo> = vec![
+            mint_account.to_account_info()
+        ];
+
+        let ix = spl_token_2022::instruction::initialize_permanent_delegate(
+            &program,
+            &mint,
+            &program_delegate,
+        )?;
+
+        solana_program::program::invoke(
+            &ix,
+            &account_infos[..],
+        )?;
+
+        Ok(())
+    }
+
 }
