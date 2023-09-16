@@ -1,5 +1,5 @@
 {
-    "include": ["src", "pages", "service"],
+    "include": ["src", "pages", "client"],
     "exclude": ["node_modules", "public"],
     "compilerOptions": {
         "skipLibCheck": true,
