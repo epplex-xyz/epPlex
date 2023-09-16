@@ -134,7 +134,10 @@ async function burn() {
 
 
     const transaction = new Transaction().add(
+        // Burns the token amount from the Token account
+        // Obviously can't burn the token account since it owned by the owner
         createBurnInstruction(account.address, mint, permanentDelegate.publicKey, 1, [], TOKEN_2022_PROGRAM_ID),
+        // Actually closes the mint account
         createCloseAccountInstruction(mint, payer.publicKey, permanentDelegate.publicKey, [], TOKEN_2022_PROGRAM_ID)
     );
 
@@ -199,12 +202,44 @@ async function test() {
 
     const tx = await sendAndConfirmTransaction(connection, transaction, [payer, mint], CONFIRM_OPTIONS);
     console.log("tx", tx);
+}
 
+async function test2() {
+    const payer = loadOrGenerateKeypair("payer");
+    const program = new Program(payer, connection);
+    const mintKeypair = loadOrGenerateKeypair("mint");
+    const mint = mintKeypair.publicKey;
+    const programDelegate = program.getProgramDelegate();
+
+    // Get the token account of the toWallet address, and if it does not exist, create it
+    const account = await getOrCreateAssociatedTokenAccount(
+        connection,
+        payer,
+        mint,
+        payer.publicKey,
+        undefined,
+        undefined,
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    const tokenBurnTx = await program.program.methods
+        .tokenBurn({})
+        .accounts({
+            mint: mint,
+            programDelegate: programDelegate,
+            tokenAccount: account.address,
+            token22Program: TOKEN_2022_PROGRAM_ID,
+        })
+        .transaction();
+
+    const tx = await sendAndConfirmTransaction(connection, tokenBurnTx, [payer], CONFIRM_OPTIONS);
+    console.log("tx", tx);
 }
 
 async function main() {
     try {
-        await test();
+        await test2();
         // await accountInfo();
         // await setup();
         // await mint();

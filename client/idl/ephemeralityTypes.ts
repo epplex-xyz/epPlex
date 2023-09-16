@@ -52,6 +52,48 @@ export type Ephemerality = {
       ]
     },
     {
+      "name": "tokenBurn",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBurnParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -98,6 +140,13 @@ export type Ephemerality = {
   "types": [
     {
       "name": "ProgramDelegateCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenBurnParams",
       "type": {
         "kind": "struct",
         "fields": []
@@ -167,6 +216,48 @@ export const IDL: Ephemerality = {
       ]
     },
     {
+      "name": "tokenBurn",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBurnParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -213,6 +304,13 @@ export const IDL: Ephemerality = {
   "types": [
     {
       "name": "ProgramDelegateCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenBurnParams",
       "type": {
         "kind": "struct",
         "fields": []

@@ -1,9 +1,4 @@
-
 use crate::*;
-use anchor_spl::token_2022::{
-    Token2022,
-    spl_token_2022,
-};
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct TokenAccount(spl_token_2022::state::Account);
@@ -62,31 +57,37 @@ impl TokenCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: &TokenCreateParams) -> Result<()> {
-
+        // Add closing authority
         Self::add_closing_authority(
             &ctx.accounts.mint,
             ctx.accounts.token22_program.key(),
-            ctx.accounts.mint.key(),
             ctx.accounts.program_delegate.key(),
         )?;
 
+        // Add permanent delegate
         Self::add_permanent_delegate(
             &ctx.accounts.mint,
             ctx.accounts.token22_program.key(),
-            ctx.accounts.mint.key(),
             ctx.accounts.program_delegate.key()
         )?;
 
-
         // Initialize mint
+        // Self::initialize_mint(
+        //     &ctx.accounts.mint,
+        //     &ctx.accounts.rent,
+        //     &ctx.accounts.token22_program.key(),
+        //     &ctx.accounts.payer.key(),
+        //     &ctx.accounts.payer.key(),
+        // )?;
         let ix = spl_token_2022::instruction::initialize_mint(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.key(),
             &ctx.accounts.payer.key(), // this could be different I guess
-            Some(&ctx.accounts.payer.key()),
+            Some(&ctx.accounts.payer.key()), // free auth just set to payer as well
             0, // NFTs have 0 decimals
         )?;
 
+        // TODO: why are these cloned in the token22 source code
         let account_infos: Vec<AccountInfo> = vec![
             ctx.accounts.mint.to_account_info(),
             ctx.accounts.rent.to_account_info()
@@ -104,18 +105,17 @@ impl TokenCreate<'_> {
     fn add_closing_authority(
         mint_account: &AccountInfo,
         program: Pubkey,
-        mint: Pubkey,
         program_delegate: Pubkey
     ) -> Result<()> {
+        let ix = spl_token_2022::instruction::initialize_mint_close_authority(
+            &program,
+            &mint_account.key(),
+            Some(&program_delegate),
+        )?;
+
         let account_infos: Vec<AccountInfo> = vec![
             mint_account.to_account_info(),
         ];
-
-        let ix = spl_token_2022::instruction::initialize_mint_close_authority(
-            &program,
-            &mint,
-            Some(&program_delegate),
-        )?;
 
         solana_program::program::invoke(
             &ix,
@@ -128,18 +128,17 @@ impl TokenCreate<'_> {
     fn add_permanent_delegate(
         mint_account: &AccountInfo,
         program: Pubkey,
-        mint: Pubkey,
         program_delegate: Pubkey
     ) -> Result<()> {
+        let ix = spl_token_2022::instruction::initialize_permanent_delegate(
+            &program,
+            &mint_account.key(),
+            &program_delegate,
+        )?;
+
         let account_infos: Vec<AccountInfo> = vec![
             mint_account.to_account_info()
         ];
-
-        let ix = spl_token_2022::instruction::initialize_permanent_delegate(
-            &program,
-            &mint,
-            &program_delegate,
-        )?;
 
         solana_program::program::invoke(
             &ix,
@@ -148,5 +147,33 @@ impl TokenCreate<'_> {
 
         Ok(())
     }
+
+    // fn initialize_mint(
+    //     mint_account: &AccountInfo,
+    //     rent_account: &Sysvar<'_, Rent>,
+    //     program: &Pubkey,
+    //     mint_auth: &Pubkey,
+    //     freeze_auth: &Pubkey,
+    // ) -> Result<()> {
+    //     let ix = spl_token_2022::instruction::initialize_mint(
+    //         &program,
+    //         &mint_account.key(),
+    //         &mint_auth, // this could be different I guess
+    //         Some(&freeze_auth), // free auth just set to payer as well
+    //         0, // NFTs have 0 decimals
+    //     )?;
+    //
+    //     let account_infos: Vec<AccountInfo> = vec![
+    //         mint_account.to_account_info(),
+    //         rent_account.to_account_info()
+    //     ];
+    //
+    //     solana_program::program::invoke(
+    //         &ix,
+    //         &account_infos[..],
+    //     )?;
+    //
+    //     Ok(())
+    // }
 
 }
