@@ -25,4 +25,12 @@ pub mod ephemerality {
     pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
         TokenCreate::actuate(ctx, &params)
     }
+
+    /*
+     * @dev callable by operator
+     */
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
+        ProgramDelegateCreate::actuate(ctx, &params)
+    }
 }

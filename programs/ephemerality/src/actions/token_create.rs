@@ -19,7 +19,7 @@ pub struct TokenCreate<'info> {
     // pub mint: Account<'info, Token>,
 
     #[account(
-        seeds = [b"GLOBAL"],
+        seeds = [SEED_PROGRAM_DELEGATE],
         bump,
     )]
     /// CHECK
