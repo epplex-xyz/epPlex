@@ -93,10 +93,7 @@ export type Ephemerality = {
         {
           "name": "programDelegate",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -124,10 +121,7 @@ export type Ephemerality = {
         {
           "name": "programDelegate",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -159,16 +153,6 @@ export type Ephemerality = {
             "type": "u8"
           }
         ]
-      }
-    },
-    {
-      "name": "token",
-      "docs": [
-        "The primary lotto account"
-      ],
-      "type": {
-        "kind": "struct",
-        "fields": []
       }
     }
   ],
@@ -299,10 +283,7 @@ export const IDL: Ephemerality = {
         {
           "name": "programDelegate",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -330,10 +311,7 @@ export const IDL: Ephemerality = {
         {
           "name": "programDelegate",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -365,16 +343,6 @@ export const IDL: Ephemerality = {
             "type": "u8"
           }
         ]
-      }
-    },
-    {
-      "name": "token",
-      "docs": [
-        "The primary lotto account"
-      ],
-      "type": {
-        "kind": "struct",
-        "fields": []
       }
     }
   ],

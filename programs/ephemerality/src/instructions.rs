@@ -93,8 +93,6 @@ pub fn initialize_mint<'info>(
 }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?
-
-
 pub fn add_metadata_pointer(
     token_program_id: Pubkey,
     mint_account: &AccountInfo,
@@ -108,6 +106,7 @@ pub fn add_metadata_pointer(
         Some(metadata_address)
     )?;
 
+    // TODO: frontend instruction passed in 4 accountinfos and I think 1 is enough
     let account_infos: Vec<AccountInfo> = vec![
         mint_account.to_account_info(),
     ];

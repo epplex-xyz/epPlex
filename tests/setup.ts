@@ -186,7 +186,7 @@ async function test() {
         .instruction();
 
     const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
-    const mintLen = getMintLen(extensions);
+    const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
     const mintLamports = await connection.getMinimumBalanceForRentExemption(mintLen);
 
     const transaction = new Transaction().add(...[
@@ -197,7 +197,7 @@ async function test() {
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
         }),
-        // initDelegateIx,
+        initDelegateIx,
         tokenCreateIx
     ]);
 
@@ -256,7 +256,7 @@ async function test3() {
 }
 async function main() {
     try {
-        await test3();
+        await test();
         // await accountInfo();
         // await setup();
         // await mint();
