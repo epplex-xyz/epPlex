@@ -1,3 +1,4 @@
+
 use crate::*;
 
 pub fn burn_token<'info>(
@@ -80,6 +81,35 @@ pub fn initialize_mint<'info>(
     let account_infos: Vec<AccountInfo> = vec![
         mint_account.to_account_info(),
         rent_account.to_account_info()
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+
+}
+
+// actually does anchor spl_token have the src/extension/metadatapointer?
+
+
+pub fn add_metadata_pointer(
+    token_program_id: Pubkey,
+    mint_account: &AccountInfo,
+    authority: Pubkey,
+    metadata_address: Pubkey,
+) -> Result<()> {
+    let ix = spl_token_2022::extension::metadata_pointer::instruction::initialize(
+        &token_program_id,
+        &mint_account.key(),
+        Some(authority),
+        Some(metadata_address)
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info(),
     ];
 
     solana_program::program::invoke(

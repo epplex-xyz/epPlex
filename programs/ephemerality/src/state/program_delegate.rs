@@ -1,6 +1,5 @@
 use crate::*;
 
-/// The primary lotto account
 #[account]
 #[derive(Default, Debug)]
 pub struct ProgramDelegate {

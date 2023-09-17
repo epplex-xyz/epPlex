@@ -7,9 +7,8 @@ pub struct ProgramDelegateClose<'info> {
         mut,
         close = payer,
         seeds = [SEED_PROGRAM_DELEGATE],
-        bump,
+        bump = program_delegate.bump,
     )]
-    /// CHECK
     pub program_delegate: Account<'info, ProgramDelegate>,
 
     #[account(mut)]
@@ -23,7 +22,7 @@ impl ProgramDelegateClose<'_> {
     pub fn validate(
         &self,
         _ctx: &Context<Self>,
-        _params: &ProgramDelegateCreateParams,
+        _params: &ProgramDelegateCloseParams,
     ) -> Result<()> {
         Ok(())
     }

@@ -60,6 +60,7 @@ async function setup() {
         createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mint, TOKEN_2022_PROGRAM_ID),
         // instruction 0, actually populates the allocated account from the first instruction
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
+
         // Need to transfer to mint before can init metadata
         // TODO: not the best hardcode
         SystemProgram.transfer({
@@ -237,9 +238,25 @@ async function test2() {
     console.log("tx", tx);
 }
 
+async function test3() {
+    const payer = loadOrGenerateKeypair("payer");
+    const program = new Program(payer, connection);
+    const programDelegate = program.getProgramDelegate();
+
+    const tokenBurnTx = await program.program.methods
+        .programDelegateClose({})
+        .accounts({
+            programDelegate: programDelegate,
+            payer: payer.publicKey,
+        })
+        .transaction();
+
+    const tx = await sendAndConfirmTransaction(connection, tokenBurnTx, [payer], CONFIRM_OPTIONS);
+    console.log("tx", tx);
+}
 async function main() {
     try {
-        await test2();
+        await test3();
         // await accountInfo();
         // await setup();
         // await mint();

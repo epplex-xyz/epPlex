@@ -1,28 +1,5 @@
 use crate::*;
 
-// #[derive(Clone, Debug, Default, PartialEq)]
-// pub struct TokenAccount(spl_token_2022::state::Account);
-//
-// impl anchor_lang::AccountDeserialize for TokenAccount {
-//     fn try_deserialize_unchecked(buf: &mut &[u8]) -> anchor_lang::Result<Self> {
-//         spl_token_2022::extension::StateWithExtensions::<spl_token_2022::state::Account>::unpack(
-//             buf,
-//         )
-//             .map(|t| TokenAccount(t.base))
-//             .map_err(Into::into)
-//     }
-// }
-//
-// impl anchor_lang::AccountSerialize for TokenAccount {}
-//
-//
-// impl anchor_lang::Owner for TokenAccount {
-//     fn owner() -> Pubkey {
-//         spl_token_2022::ID
-//     }
-// }
-
-
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenCreate<'info> {
@@ -68,6 +45,13 @@ impl TokenCreate<'_> {
             &ctx.accounts.mint,
             ctx.accounts.token22_program.key(),
             ctx.accounts.program_delegate.key()
+        )?;
+
+        add_metadata_pointer(
+            ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint,
+            ctx.accounts.program_delegate.key(),
+            ctx.accounts.mint.key(),
         )?;
 
         // Initialize mint

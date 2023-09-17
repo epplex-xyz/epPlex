@@ -14,7 +14,6 @@ pub struct ProgramDelegateCreate<'info> {
         payer = payer,
         space = 8,
     )]
-    /// CHECK
     pub program_delegate: Account<'info, ProgramDelegate>,
 
     #[account(mut)]

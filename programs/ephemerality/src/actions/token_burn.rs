@@ -1,5 +1,14 @@
 use crate::*;
 
+// #[derive(Clone)]
+// pub struct Token2022;
+//
+// impl anchor_lang::Id for Token2022 {
+//     fn id() -> Pubkey {
+//         spl_token_2022::ID
+//     }
+// }
+
 #[derive(Accounts)]
 #[instruction(params: TokenBurnParams)]
 pub struct TokenBurn<'info> {
