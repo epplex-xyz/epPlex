@@ -13,10 +13,9 @@ pub struct TokenBurn<'info> {
     #[account(
         mut,
         seeds = [SEED_PROGRAM_DELEGATE],
-        bump,
+        bump = program_delegate.bump,
     )]
-    /// CHECK
-    pub program_delegate: AccountInfo<'info>,
+    pub program_delegate: Account<'info, ProgramDelegate>,
 
     // TODO check that this is in fact a token account for th emint
     #[account(
@@ -51,7 +50,7 @@ impl TokenBurn<'_> {
         close_mint(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint,
-            &ctx.accounts.program_delegate,
+            &ctx.accounts.program_delegate.to_account_info(),
             &ctx.accounts.program_delegate,
         )?;
 

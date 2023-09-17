@@ -2,6 +2,8 @@ use crate::*;
 
 pub const SEED_PROGRAM_DELEGATE: &[u8] = b"PROGRAM_DELEGATE";
 
+// TODO: has to be gated by an admin
+
 #[derive(Accounts)]
 #[instruction(params: ProgramDelegateCreateParams)]
 pub struct ProgramDelegateCreate<'info> {
@@ -13,7 +15,7 @@ pub struct ProgramDelegateCreate<'info> {
         space = 8,
     )]
     /// CHECK
-    pub program_delegate: AccountInfo<'info>,
+    pub program_delegate: Account<'info, ProgramDelegate>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -33,8 +35,13 @@ impl ProgramDelegateCreate<'_> {
         Ok(())
     }
 
-    pub fn actuate(_ctx: Context<Self>, _params: &ProgramDelegateCreateParams) -> Result<()> {
-        // TODO:  Probably should have added the bump
+    pub fn actuate(ctx: Context<Self>, _params: &ProgramDelegateCreateParams) -> Result<()> {
+        // Init lotto account
+        let program_delegate = &mut ctx.accounts.program_delegate;
+        **program_delegate = ProgramDelegate::new(
+            *ctx.bumps.get("lotto").unwrap(),
+        );
+
         Ok(())
     }
 }

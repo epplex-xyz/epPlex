@@ -37,11 +37,13 @@ pub mod ephemerality {
         TokenBurn::actuate(ctx, &params)
     }
 
-    /*
-     * @dev callable by operator
-     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
+        ProgramDelegateCreate::actuate(ctx, &params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn program_delegate_close(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
         ProgramDelegateCreate::actuate(ctx, &params)
     }
 }

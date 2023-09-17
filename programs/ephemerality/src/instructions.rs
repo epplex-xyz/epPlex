@@ -4,7 +4,7 @@ pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
     token_account: &AccountInfo<'info>,
     program: Pubkey,
-    authority: &AccountInfo<'info>
+    authority: &Account<'info, ProgramDelegate>
 ) -> Result<()> {
     let ix = spl_token_2022::instruction::burn(
         &program,
@@ -21,12 +21,7 @@ pub fn burn_token<'info>(
         authority.to_account_info(),
     ];
 
-    let res = Pubkey::find_program_address(
-        &[SEED_PROGRAM_DELEGATE],
-        &ID
-    );
-
-    let seeds = &[SEED_PROGRAM_DELEGATE, &[res.1]];
+    let seeds = &[SEED_PROGRAM_DELEGATE, &[authority.bump]];
     solana_program::program::invoke_signed(
         &ix,
         &account_infos[..],
@@ -40,7 +35,7 @@ pub fn close_mint<'info>(
     program: Pubkey,
     token_account: &AccountInfo<'info>,
     destination_account: &AccountInfo<'info>,
-    owner: &AccountInfo<'info>
+    owner: &Account<'info, ProgramDelegate>
 ) -> Result<()> {
     let ix = spl_token_2022::instruction::close_account(
         &program,
@@ -56,12 +51,7 @@ pub fn close_mint<'info>(
         owner.to_account_info(),
     ];
 
-    let res = Pubkey::find_program_address(
-        &[SEED_PROGRAM_DELEGATE],
-        &ID
-    );
-
-    let seeds = &[SEED_PROGRAM_DELEGATE, &[res.1]];
+    let seeds = &[SEED_PROGRAM_DELEGATE, &[owner.bump]];
     solana_program::program::invoke_signed(
         &ix,
         &account_infos[..],
