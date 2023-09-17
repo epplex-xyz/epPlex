@@ -182,8 +182,20 @@ export type Ephemerality = {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "name": "destroyTimestampOffset",
+            "type": "i64"
+          }
+        ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidCalculation",
+      "msg": "Invalid calculation"
     }
   ]
 };
@@ -372,8 +384,20 @@ export const IDL: Ephemerality = {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "name": "destroyTimestampOffset",
+            "type": "i64"
+          }
+        ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidCalculation",
+      "msg": "Invalid calculation"
     }
   ]
 };

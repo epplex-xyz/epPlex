@@ -21,6 +21,7 @@ use anchor_lang::prelude::*;
 //     spl_token_2022,
 // };
 use spl_token_2022;
+use spl_token_metadata_interface;
 
 #[derive(Clone)]
 pub struct Token2022;

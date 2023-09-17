@@ -4,7 +4,7 @@ import {
     Transaction,
     SystemProgram,
     sendAndConfirmTransaction,
-    PublicKey, Keypair, SYSVAR_RENT_PUBKEY,
+    PublicKey, SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
 import {
     ExtensionType,
@@ -23,6 +23,7 @@ import {createInitializeMetadataPointerInstruction} from "./instructions/createI
 import { Token22Layout } from "./state/token22";
 import { Program } from "./program";
 import { CONFIRM_OPTIONS } from "../client/constants";
+import {BN} from "@coral-xyz/anchor";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
@@ -174,7 +175,7 @@ async function test() {
     console.log("mint", mint.publicKey.toString());
 
     const tokenCreateIx = await program.program.methods
-        .tokenCreate({})
+        .tokenCreate({destroyTimestampOffset: new BN(60) })
         .accounts({
             mint: mint.publicKey,
             programDelegate: programDelegate,
@@ -197,8 +198,9 @@ async function test() {
             lamports: mintLamports,
             programId: TOKEN_2022_PROGRAM_ID,
         }),
-        initDelegateIx,
-        tokenCreateIx
+        // initDelegateIx,
+        tokenCreateIx,
+
     ]);
 
     const tx = await sendAndConfirmTransaction(connection, transaction, [payer, mint], CONFIRM_OPTIONS);

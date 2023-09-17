@@ -1,5 +1,11 @@
 use crate::*;
 
+#[error_code]
+pub enum StandardError {
+    #[msg("Invalid calculation")]
+    InvalidCalculation,
+
+}
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenCreate<'info> {
@@ -25,14 +31,16 @@ pub struct TokenCreate<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenCreateParams {}
+pub struct TokenCreateParams {
+    destroyTimestampOffset: i64
+}
 
 impl TokenCreate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, _params: &TokenCreateParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: &TokenCreateParams) -> Result<()> {
         // Add closing authority
         Self::add_closing_authority(
             &ctx.accounts.mint,
@@ -61,6 +69,39 @@ impl TokenCreate<'_> {
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.payer.key(),
             &ctx.accounts.payer.key(),
+        )?;
+
+        transfer_sol(
+            &ctx.accounts.system_program,
+            &ctx.accounts.payer,
+            &ctx.accounts.mint,
+            1000000000
+        )?;
+
+        add_token_metadata(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint,
+            &ctx.accounts.payer,
+            &ctx.accounts.mint,
+            &ctx.accounts.payer,
+            "MyTokenName".to_string(),
+            "TOKEN".to_string(),
+            "http://my.token".to_string(),
+        )?;
+
+        let field = "destroyTimestamp";
+        let now = Clock::get().unwrap().unix_timestamp;
+        let destroyTimestamp = now
+            .checked_add(params.destroyTimestampOffset)
+            .ok_or(StandardError::InvalidCalculation)
+            .unwrap();
+
+        update_token_metadata(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint,
+            &ctx.accounts.payer, // who is allowed to make changes here? Changes have to go through program?
+            spl_token_metadata_interface::state::Field::Key(field.to_string()),
+            destroyTimestamp.to_string(),
         )?;
 
         Ok(())

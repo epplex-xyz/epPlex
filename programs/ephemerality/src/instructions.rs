@@ -1,5 +1,5 @@
-
 use crate::*;
+use solana_program::system_instruction;
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
@@ -118,3 +118,95 @@ pub fn add_metadata_pointer(
 
     Ok(())
 }
+
+// actually does anchor spl_token have the src/extension/metadatapointer?
+pub fn add_token_metadata<'info>(
+    program_id: &Pubkey,
+    metadata: &AccountInfo<'info>,
+    update_authority: &AccountInfo<'info>,
+    mint: &AccountInfo<'info>,
+    mint_authority: &AccountInfo<'info>,
+    name: String,
+    symbol: String,
+    uri: String,
+) -> Result<()> {
+    let ix = spl_token_metadata_interface::instruction::initialize(
+        &program_id,
+        &metadata.key(),
+        &update_authority.key(),
+        &mint.key(),
+        &mint_authority.key(),
+        name,
+        symbol,
+        uri
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        metadata.to_account_info(),
+        update_authority.to_account_info(),
+        mint.to_account_info(),
+        mint_authority.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn update_token_metadata<'info>(
+    program_id: &Pubkey,
+    metadata: &AccountInfo<'info>,
+    update_authority: &AccountInfo<'info>,
+    field: spl_token_metadata_interface::state::Field,
+    value: String,
+) -> Result<()> {
+    let ix = spl_token_metadata_interface::instruction::update_field(
+        &program_id,
+        &metadata.key(),
+        &update_authority.key(),
+        field,
+        value
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        metadata.to_account_info(),
+        update_authority.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn transfer_sol<'info>(
+    program_id: &AccountInfo<'info>,
+    from: &AccountInfo<'info>,
+    to: &AccountInfo<'info>,
+    amount: u64
+) -> Result<()> {
+    let ix = system_instruction::transfer(
+        &from.key(),
+        &to.key(),
+        amount,
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        from.to_account_info(),
+        to.to_account_info(),
+        program_id.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
