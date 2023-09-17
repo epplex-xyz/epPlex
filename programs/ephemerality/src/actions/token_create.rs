@@ -71,32 +71,13 @@ impl TokenCreate<'_> {
         )?;
 
         // Initialize mint
-        // Self::initialize_mint(
-        //     &ctx.accounts.mint,
-        //     &ctx.accounts.rent,
-        //     &ctx.accounts.token22_program.key(),
-        //     &ctx.accounts.payer.key(),
-        //     &ctx.accounts.payer.key(),
-        // )?;
-        let ix = spl_token_2022::instruction::initialize_mint(
+        initialize_mint(
+            &ctx.accounts.mint,
+            &ctx.accounts.rent,
             &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.key(),
-            &ctx.accounts.payer.key(), // this could be different I guess
-            Some(&ctx.accounts.payer.key()), // free auth just set to payer as well
-            0, // NFTs have 0 decimals
+            &ctx.accounts.payer.key(),
+            &ctx.accounts.payer.key(),
         )?;
-
-        // TODO: why are these cloned in the token22 source code
-        let account_infos: Vec<AccountInfo> = vec![
-            ctx.accounts.mint.to_account_info(),
-            ctx.accounts.rent.to_account_info()
-        ];
-
-        solana_program::program::invoke(
-            &ix,
-            &account_infos[..],
-        )?;
-
 
         Ok(())
     }

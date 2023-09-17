@@ -60,3 +60,32 @@ pub fn close_mint<'info>(
 
     Ok(())
 }
+
+pub fn initialize_mint<'info>(
+    mint_account: &AccountInfo<'info>,
+    rent_account: &Sysvar<'info, Rent>,
+    program: &Pubkey,
+    mint_auth: &Pubkey,
+    freeze_auth: &Pubkey,
+) -> Result<()> {
+    let ix = spl_token_2022::instruction::initialize_mint(
+        &program,
+        &mint_account.key(),
+        &mint_auth, // this could be different I guess
+        Some(&freeze_auth), // free auth just set to payer as well
+        0, // NFTs have 0 decimals
+    )?;
+
+    // TODO: why are these cloned in the token22 source code
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info(),
+        rent_account.to_account_info()
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
