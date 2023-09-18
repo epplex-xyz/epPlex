@@ -184,6 +184,7 @@ pub fn update_token_metadata<'info>(
     Ok(())
 }
 
+// Probably system program already has this callable, I just copied from there
 pub fn transfer_sol<'info>(
     program_id: &AccountInfo<'info>,
     from: &AccountInfo<'info>,
@@ -210,3 +211,68 @@ pub fn transfer_sol<'info>(
     Ok(())
 }
 
+
+// Fails here
+// https://explorer.solana.com/tx/33rZroF4LnJ8Buu3fnpeE7gHRWjBcJwecmrByMuC7CKxxJzpT9oqFge99T4zqwnSDkUAttUeN4E4ADa6F8wVnYQu?cluster=devnet
+
+// /// CHECK: account checked in CPI
+// #[account(mut)]
+// metadata: UncheckedAccount<'info>,
+//
+// /// CHECK: account checked in CPI
+// #[account(address = mpl_token_metadata::id())]
+// token_metadata_program: UncheckedAccount<'info>,
+
+// pub fn create_mpl_token_metadata<'info>(
+//     program_id: &AccountInfo<'info>,
+//     from: &AccountInfo<'info>,
+//     to: &AccountInfo<'info>,
+//     amount: u64
+// ) -> Result<()> {
+//     let metadata_infos: Vec<AccountInfo> = vec![
+//         ctx.accounts.metadata.to_account_info(),
+//         ctx.accounts.mint.to_account_info(),
+//         ctx.accounts.payer.to_account_info(),
+//         ctx.accounts.payer.to_account_info(),
+//         ctx.accounts.payer.to_account_info(),
+//         ctx.accounts.token_metadata_program.to_account_info(),
+//     ];
+//
+//     let creators = vec![
+//         mpl_token_metadata::state::Creator {
+//             address: ctx.accounts.payer.key(),
+//             verified: false,
+//             share: 100,
+//         },
+//     ];
+//
+//     // This cannot work since Metaplex only checks for owner of Standard Token program, not Token22
+//     // mpl_token_metadata/src/utils/metadata/Process_create_metadata_accounts_logic
+//     // MetadataInstruction::CreateMetadataAccountV3
+//     // mpl_token_metadata/src/processor/mod/process_legacy_instruction/process_create_metadata_accounts_v3
+//     let ix = create_metadata_accounts_v3(
+//         ctx.accounts.token_metadata_program.key(),
+//         ctx.accounts.metadata.key(),
+//         ctx.accounts.mint.key(),
+//         ctx.accounts.payer.key(),
+//         ctx.accounts.payer.key(),
+//         ctx.accounts.payer.key(),
+//         "MyTokenName".to_string(),
+//         "TOKEN".to_string(),
+//         "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo".to_string(),
+//         Some(creators),
+//         500,
+//         false,
+//         true,
+//         None,
+//         None,
+//         None,
+//     );
+//
+//     solana_program::program::invoke(
+//         &ix,
+//         metadata_infos.as_slice(),
+//     )?;
+//
+//     Ok(())
+// }
