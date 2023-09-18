@@ -234,7 +234,6 @@ async function test2() {
         TOKEN_2022_PROGRAM_ID
     );
 
-    console.log("here")
     const tokenBurnTx = await program.program.methods
         .tokenBurn({})
         .accounts({
@@ -279,30 +278,3 @@ async function main() {
 }
 
 main();
-
-// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
-// #[account(1, name="mint", desc="Mint of token asset")]
-// #[account(2, signer, name="mint_authority", desc="Mint authority")]
-// #[account(3, signer, writable, name="payer", desc="payer")]
-// #[account(4, name="update_authority", desc="update authority info")]
-// #[account(5, name="system_program", desc="System program")]
-// #[account(6, optional, name="rent", desc="Rent info")]
-// CreateMetadataAccountV3(CreateMetadataAccountArgsV3),
-
-// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
-// #[account(1, name="mint", desc="Mint of token asset")]
-// #[account(2, signer, name="mint_authority", desc="Mint authority")]
-// #[account(3, signer, writable, name="payer", desc="payer")]
-// #[account(4, name="update_authority", desc="update authority info")]
-// #[account(5, name="system_program", desc="System program")]
-// #[account(6, name="rent", desc="Rent info")]
-// CreateMetadataAccount,
-
-// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
-// #[account(1, name="mint", desc="Mint of token asset")]
-// #[account(2, signer, name="mint_authority", desc="Mint authority")]
-// #[account(3, signer, writable, name="payer", desc="payer")]
-// #[account(4, name="update_authority", desc="update authority info")]
-// #[account(5, name="system_program", desc="System program")]
-// #[account(6, optional, name="rent", desc="Rent info")]
-// CreateMetadataAccountV2,
