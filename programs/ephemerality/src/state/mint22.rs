@@ -1,10 +1,10 @@
 use crate::*;
 
-
+pub const METADATA_OFFSET: usize = 374;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug)]
 pub struct Metadata {
-    pub name: String, // 375
+    pub name: String, // 374
     pub symbol: String,
     pub uri: String,
 
@@ -46,34 +46,15 @@ pub struct Mint22 {
     pub metadata_pointer_authority: Pubkey, // 342
     pub metadata_address: Pubkey, // 374
 
-    pub name: Vec<u8>, // 375
-    pub symbol: Vec<u8>,
-    pub uri: Vec<u8>,
+    pub name: String, // 374
+    pub symbol: String,
+    pub uri: String,
 
     pub dunno7: [u8; 4],
-    pub destroy_timestamp_field: Vec<u8>,
+    pub destroy_timestamp_field: String,
     pub destroy_timestamp_value: String,
 }
 
-
-
-// impl anchor_lang::AccountDeserialize for Mint22 {
-//     fn try_deserialize_unchecked(buf: &mut &[u8]) -> anchor_lang::Result<Self> {
-//         Mint22::unpack(buf)
-//             .map(Mint22)
-//             .map_err(Into::into)
-//     }
-// }
-//
-// impl anchor_lang::AccountSerialize for Mint22 {}
-//
-// impl anchor_lang::Owner for Mint22 {
-//     fn owner() -> Pubkey {
-//         spl_token_2022::ID
-//     }
-// }
-
-//
 impl Default for Mint22 {
     fn default() -> Self {
         Mint22 {
@@ -83,7 +64,7 @@ impl Default for Mint22 {
             is_initialized: Default::default(),
             freeze_authority: Default::default(),
             // initialize other fields with their default values
-            padding: [0; 83], // Initialize the array with zeros or another appropriate default value
+            padding: [0; 83],
             dunno1: Default::default(),
             close_authority: Default::default(),
             dunno2: Default::default(),
