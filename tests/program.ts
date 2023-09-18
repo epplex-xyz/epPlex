@@ -26,4 +26,14 @@ export class Program {
         return programDelegate;
     }
 
+
+    // getMetadata(mint: PublicKey): PublicKey {
+    //     const TOKEN_METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+    //     const [programDelegate] = PublicKey.findProgramAddressSync(
+    //         [Buffer.from("metadata"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+    //         TOKEN_METADATA_PROGRAM_ID
+    //     );
+    //     return programDelegate;
+    // }
+
 }

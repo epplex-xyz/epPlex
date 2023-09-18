@@ -5,7 +5,7 @@ pub mod security;
 pub mod state;
 pub mod types;
 pub mod instructions;
-// pub mod token2022;
+pub mod errors;
 
 pub use actions::*;
 pub use constants::*;
@@ -13,13 +13,9 @@ pub use id::ID;
 pub use state::*;
 pub use types::*;
 pub use instructions::*;
-// pub use token2022::*;
+pub use errors::*;
 
 use anchor_lang::prelude::*;
-// use anchor_spl::token_2022::{
-//     Token2022,
-//     spl_token_2022,
-// };
 use spl_token_2022;
 use spl_token_metadata_interface;
 
@@ -44,7 +40,7 @@ pub mod ephemerality {
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
-        TokenCreate::actuate(ctx, &params)
+        TokenCreate::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]

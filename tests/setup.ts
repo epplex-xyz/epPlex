@@ -162,6 +162,7 @@ async function test() {
     const program = new Program(payer, connection);
     const programDelegate = program.getProgramDelegate();
 
+
     const initDelegateIx = await program.program.methods
         .programDelegateCreate({})
         .accounts({
@@ -175,14 +176,21 @@ async function test() {
     console.log("mint", mint.publicKey.toString());
 
     const tokenCreateIx = await program.program.methods
-        .tokenCreate({destroyTimestampOffset: new BN(60) })
+        .tokenCreate({
+            destroyTimestampOffset: new BN(60),
+            name: "Ephemeral burger",
+            symbol: "EP",
+            uri: "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
+        })
         .accounts({
             mint: mint.publicKey,
             programDelegate: programDelegate,
+            // metadata: metadata,
             payer: payer.publicKey,
             systemProgram: SystemProgram.programId,
             token22Program: TOKEN_2022_PROGRAM_ID,
             rent: SYSVAR_RENT_PUBKEY,
+            // tokenMetadataProgram: new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"),
         })
         .instruction();
 
@@ -226,6 +234,7 @@ async function test2() {
         TOKEN_2022_PROGRAM_ID
     );
 
+    console.log("here")
     const tokenBurnTx = await program.program.methods
         .tokenBurn({})
         .accounts({
@@ -258,7 +267,7 @@ async function test3() {
 }
 async function main() {
     try {
-        await test();
+        await test2();
         // await accountInfo();
         // await setup();
         // await mint();
@@ -270,3 +279,30 @@ async function main() {
 }
 
 main();
+
+// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
+// #[account(1, name="mint", desc="Mint of token asset")]
+// #[account(2, signer, name="mint_authority", desc="Mint authority")]
+// #[account(3, signer, writable, name="payer", desc="payer")]
+// #[account(4, name="update_authority", desc="update authority info")]
+// #[account(5, name="system_program", desc="System program")]
+// #[account(6, optional, name="rent", desc="Rent info")]
+// CreateMetadataAccountV3(CreateMetadataAccountArgsV3),
+
+// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
+// #[account(1, name="mint", desc="Mint of token asset")]
+// #[account(2, signer, name="mint_authority", desc="Mint authority")]
+// #[account(3, signer, writable, name="payer", desc="payer")]
+// #[account(4, name="update_authority", desc="update authority info")]
+// #[account(5, name="system_program", desc="System program")]
+// #[account(6, name="rent", desc="Rent info")]
+// CreateMetadataAccount,
+
+// #[account(0, writable, name="metadata", desc="Metadata key (pda of ['metadata', program id, mint id])")]
+// #[account(1, name="mint", desc="Mint of token asset")]
+// #[account(2, signer, name="mint_authority", desc="Mint authority")]
+// #[account(3, signer, writable, name="payer", desc="payer")]
+// #[account(4, name="update_authority", desc="update authority info")]
+// #[account(5, name="system_program", desc="System program")]
+// #[account(6, optional, name="rent", desc="Rent info")]
+// CreateMetadataAccountV2,
