@@ -124,7 +124,6 @@ async function main() {
     try {
         // await setup();
         // await mint();
-        // await burn();
         await test();
     } catch (e) {
         console.log("err", e);

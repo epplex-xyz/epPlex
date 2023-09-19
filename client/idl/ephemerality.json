@@ -356,15 +356,15 @@
           },
           {
             "name": "name",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "symbol",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "uri",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "dunno7",
@@ -377,7 +377,7 @@
           },
           {
             "name": "destroyTimestampField",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "destroyTimestampValue",

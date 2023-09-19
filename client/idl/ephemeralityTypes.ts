@@ -356,15 +356,15 @@ export type Ephemerality = {
           },
           {
             "name": "name",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "symbol",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "uri",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "dunno7",
@@ -377,7 +377,7 @@ export type Ephemerality = {
           },
           {
             "name": "destroyTimestampField",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "destroyTimestampValue",
@@ -759,15 +759,15 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "name",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "symbol",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "uri",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "dunno7",
@@ -780,7 +780,7 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "destroyTimestampField",
-            "type": "bytes"
+            "type": "string"
           },
           {
             "name": "destroyTimestampValue",
