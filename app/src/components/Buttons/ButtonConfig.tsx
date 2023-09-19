@@ -14,12 +14,13 @@ export const ButtonConfig: Record<string, ButtonLinkProps> = {
     },
     docs: {
         variant: "outlined",
-        href: "/docs",
+        href: "https://twitter.com/epplex_xyz",
         children: <Text.H6>
             Stay Updated
         </Text.H6>,
         sx: {
             paddingX: '32px',
-        }
+        },
+        linkType: "external"
     },
 };

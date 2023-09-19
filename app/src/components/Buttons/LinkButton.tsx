@@ -2,20 +2,24 @@
 import Button, { ButtonProps } from "@mui/material/Button";
 import Link from "next/link";
 import React from "react";
-import { Text } from "@components/Text/TextComponent";
+
+type LinkType = "internal" | "external";
 
 export interface ButtonLinkProps extends ButtonProps<'a'> {
     Icon?: () => React.ReactNode
     blank?: boolean
+    linkType?: LinkType
 }
 
-export const ButtonLink: React.FC<ButtonLinkProps> = ({ Icon, href, blank = false, children, ...props }) => {
+export const ButtonLink: React.FC<ButtonLinkProps> = ({ Icon, href, blank = false, children, linkType = "internal", ...props }) => {
     if (!href) return null;
 
     return (
         <Button
             {...props}
-            LinkComponent={Link}
+            LinkComponent={
+                linkType === "internal" ? Link : undefined
+            }
             target={blank ? '_blank' : undefined}
             href={href || '#'}
         >
