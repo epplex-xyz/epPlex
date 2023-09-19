@@ -6,7 +6,7 @@ import palette from "../styles/palette.module.scss";
  */
 export const paletteLight = {
     primary: {
-        main: "#2C61F9",
+        main: palette.primaryWhite,
         light: palette.lightRed,
     },
     secondary: {
@@ -27,9 +27,8 @@ export const paletteLight = {
     },
     divider: grey[200],
     text: {
-        primary: palette.contrastBlack,
-        secondary: palette.contrastBlack,
-        // secondary: amber[800],
+        primary: palette.primaryWhite,
+        secondary: palette.primaryWhite,
     },
 };
 

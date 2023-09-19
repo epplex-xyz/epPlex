@@ -12,7 +12,7 @@ const Base = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: "white"
+    backgroundColor: "#160C18"
 }));
 
 const Body = styled(Box)(({ theme }) => ({
@@ -30,7 +30,7 @@ interface ScreenProps {
     admins?: string[];
 }
 
-export const Screen = ({ children, headerPosition = "static" }: ScreenProps) => {
+export const Screen = ({ children, headerPosition = "fixed" }: ScreenProps) => {
     return (
         <Base>
             <Header headerPosition={headerPosition} />

@@ -1,11 +1,11 @@
 import React from "react";
 import Screen from "../src/components/layout/Screen";
-import { Main } from "../src/content/Home/Main";
 
-export default function Index() {
+export default function Demo() {
     return (
         <Screen>
-            <Main/>
+
+            s
         </Screen>
     );
 }

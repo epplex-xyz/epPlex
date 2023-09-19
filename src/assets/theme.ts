@@ -3,7 +3,7 @@ import palette from "../styles/palette.module.scss";
 import style from "../styles/style.module.scss";
 import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
-import {BasteleurBold} from "./fonts";
+import { BasteleurBold, SatoshiBold } from "./fonts";
 
 declare module '@mui/material/styles' {
     interface Theme {
@@ -30,14 +30,6 @@ declare module '@mui/material/styles' {
     interface PaletteOptions {
         tertiary: PaletteOptions['primary'];
     }
-
-    // palette.primary.darker
-    // interface PaletteColor {
-    //     darker?: string;
-    // }
-    // interface SimplePaletteColorOptions {
-    //     darker?: string;
-    // }
 }
 
 
@@ -87,22 +79,20 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
         MuiButton: {
             defaultProps: {
                 disableRipple: true,
-                // color: "secondary",
             },
             variants: [
                 {
-                    props: { variant: 'text' },
+                    props: { variant: 'contained' },
                     style: {
                         '&:hover': {
-                            // backgroundColor: paletteLight.secondary.main,
-                            backgroundColor: "rgba(0, 0, 0, 0.04)"
+                            backgroundColor: `${palette.primaryWhite}80`
                         },
                     },
                 },
                 {
-                    props: { variant: 'contained' },
+                    props: { variant: 'outlined' },
                     style: {
-                        // backgroundColor: palette.contrastBlack,
+                        color: palette.primaryWhite,
                         '&:hover': {
                             backgroundColor: `${palette.contrastBlack}80`
                         },
@@ -114,7 +104,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
                     borderRadius: style.borderRadiusMd,
                     minWidth: 5,
                     textTransform: "none",
-                    fontFamily: BasteleurBold.style.fontFamily,
+                    fontFamily: SatoshiBold.style.fontFamily,
                     color: paletteLight.secondary.main,
                 },
             },

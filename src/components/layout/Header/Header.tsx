@@ -34,23 +34,6 @@ function HeaderLeft({TriggerButton}: {TriggerButton: () => React.ReactNode}) {
         </Box>
     );
 }
-function HeaderCenter() {
-    return (
-        <Box
-            component="div"
-            display="flex"
-            justifyContent={"center"}
-            flexGrow={1}
-        >
-            <Box component="div"
-                display={{ xs: "none", sm: "none", md: "flex", lg: "flex" }}
-            >
-                <HeaderButtons />
-            </Box>
-        </Box>
-    );
-}
-
 
 function HeaderRight() {
     return (
@@ -76,8 +59,6 @@ export function Header({ headerPosition }) {
                 sx={{
                     boxShadow: "unset",
                     zIndex: 10,
-                    borderBottom: "1px solid #E4EBFF",
-                    backdropFilter: "blur(10px)"
                 }}
                 position={headerPosition}
             >
@@ -91,8 +72,6 @@ export function Header({ headerPosition }) {
                         }}
                     >
                         <HeaderLeft TriggerButton={TriggerButton}/>
-
-                        <HeaderCenter/>
 
                         <HeaderRight/>
                     </Toolbar>
