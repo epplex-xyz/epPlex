@@ -9,13 +9,9 @@ import {
     ExtensionType,
     createInitializeMintInstruction,
     createInitializePermanentDelegateInstruction,
-    mintTo,
     getMintLen,
     TOKEN_2022_PROGRAM_ID,
-    getOrCreateAssociatedTokenAccount,
-    createBurnInstruction,
     createInitializeMintCloseAuthorityInstruction,
-    createCloseAccountInstruction,
 } from "@solana/spl-token";
 import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
@@ -58,7 +54,7 @@ async function setup() {
         // instruction 0, actually populates the allocated account from the first instruction
         createInitializeMintInstruction(mint, decimals, mintAuthority.publicKey, null, TOKEN_2022_PROGRAM_ID),
 
-        // Need to transfer to mint before can init metadata
+        // Need to transfer to mint address before metadata can be initialised
         // TODO: not the best hardcode
         SystemProgram.transfer({
             fromPubkey: payer.publicKey,
@@ -76,39 +72,6 @@ async function setup() {
     savePublicKeyToFile("mintAuth", mintAuthority.publicKey);
     savePublicKeyToFile("permDelegate", permanentDelegate.publicKey);
     savePublicKeyToFile("payer", payer.publicKey);
-}
-
-async function mint() {
-    const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("mint");
-    const mint = mintKeypair.publicKey;
-    // const mintAuthority = loadOrGenerateKeypair("mintAuth");
-
-    // Get the token account of the toWallet address, and if it does not exist, create it
-    const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-        connection,
-        payer,
-        mint,
-        payer.publicKey, // owner
-        undefined,
-        undefined,
-        undefined,
-        TOKEN_2022_PROGRAM_ID
-    );
-
-    const signature = await mintTo(
-        connection,
-        payer,
-        mint,
-        fromTokenAccount.address,
-        payer,
-        1,
-        [],
-        undefined,
-        TOKEN_2022_PROGRAM_ID
-    );
-
-    console.log("tx", signature);
 }
 
 async function test() {

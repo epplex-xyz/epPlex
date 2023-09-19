@@ -128,4 +128,8 @@ https://emn178.github.io/online-tools/sha256.html // Convert bytes to decimal re
 // console.log(pub.toString());
 
 
+First successful setup Tx
+https://explorer.solana.com/tx/36fDdnBwLrVrsCArAhNkbjTdXszyyNqbCzTtT1HBZi5zMpatX6wVZF24b7c4LqzZK9owZZ7FrRA7zpc5Y14KXsuB?cluster=devnet#ix-3
+
+
 

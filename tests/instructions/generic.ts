@@ -2,10 +2,10 @@ import { loadOrGenerateKeypair, stringify2 } from "../utils/helpers";
 import {
     createBurnInstruction,
     createCloseAccountInstruction,
-    getOrCreateAssociatedTokenAccount,
+    getOrCreateAssociatedTokenAccount, mintTo,
     TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Connection, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
 import { CONFIRM_OPTIONS } from "../../client/constants";
 import { Token22Layout } from "../state/token22";
 
@@ -46,5 +46,32 @@ async function accountInfo(connection: Connection) {
     // no need for decoding
     // const decoded = AccountLayout.decode(info.data.slice(8));
     console.log("decoded", stringify2(decoded));
+}
+
+async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
+    const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        payer,
+        mint,
+        payer.publicKey, // owner
+        undefined,
+        undefined,
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    const signature = await mintTo(
+        connection,
+        payer,
+        mint,
+        fromTokenAccount.address,
+        payer,
+        1,
+        [],
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    console.log("tx", signature);
 }
 
