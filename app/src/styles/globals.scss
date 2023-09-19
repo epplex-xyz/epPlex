@@ -1,0 +1,52 @@
+@import "fonts.css";
+@import "palette";
+@import "style";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    scroll-behavior: smooth !important;
+    --mouse-y: 0;
+    --mouse-x: 0;
+
+    --test-color: #{$primaryRed};
+    --hoverRotate: 10deg;
+    --floatCircle: 10px;
+}
+
+html {}
+
+a {
+  color: unset;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    /* Multiple, when not all are supported */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    /*-webkit-font-smoothing: antialiased;*/
+    /*-moz-osx-font-smoothing: grayscale;*/
+}
+
+/* Everything in input field is centered*/
+input{
+    text-align:center;
+}
+
+/* Hide the up and down arrows for input number type */
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

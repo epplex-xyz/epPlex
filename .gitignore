@@ -33,4 +33,4 @@ target/*
 # env
 .env*
 *.env
-!.env.example
+!app/.env.example
