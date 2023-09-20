@@ -6,8 +6,8 @@ import palette from "../styles/palette.module.scss";
  */
 export const paletteLight = {
     primary: {
-        main: palette.primaryWhite,
-        light: palette.lightRed,
+        main: palette.constrastBlack,
+        light: palette.constrastBlack,
     },
     secondary: {
         main: palette.contrastBlack,
@@ -38,7 +38,7 @@ export const paletteLight = {
 export const paletteDark = {
     primary: {
         main: grey[900],
-        light: grey[800],
+        light: palette.constrastBlack
     },
     secondary: {
         main: paletteLight.secondary.main,

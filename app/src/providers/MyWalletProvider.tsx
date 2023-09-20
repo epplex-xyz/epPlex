@@ -4,15 +4,11 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import {
     PhantomWalletAdapter,
     SolflareWalletAdapter,
-    BackpackWalletAdapter,
-    SlopeWalletAdapter,
-    GlowWalletAdapter,
     TorusWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import toast from "react-hot-toast";
 import { CustomWalletDialogProvider } from "../components/Dialogs/MyWalletDialog/MyWalletDialogProvider";
-// import useMyConnection from "./useMyConnection";
-// import MyXnftContextProvider from "./MyXnftProvider";
+
 import { COMMITMENT } from "../../client/constants";
 
 const MyWalletProvider = ({ children }) => {
@@ -34,11 +30,7 @@ const MyWalletProvider = ({ children }) => {
         () => [
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
-            new BackpackWalletAdapter(),
-            new GlowWalletAdapter(),
-            new SlopeWalletAdapter(),
-            new TorusWalletAdapter(),
-        ],
+            new TorusWalletAdapter(),        ],
         [endpoint]
     );
 
