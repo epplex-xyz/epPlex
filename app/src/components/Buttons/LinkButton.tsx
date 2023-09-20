@@ -21,7 +21,7 @@ export const ButtonLink: React.FC<ButtonLinkProps> = ({ Icon, href, blank = fals
                 linkType === "internal" ? Link : undefined
             }
             target={blank ? '_blank' : undefined}
-            href={href || '#'}
+            href={href}
         >
             {children}
 

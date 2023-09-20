@@ -1,13 +1,15 @@
 import { ButtonLinkProps } from "src/components/Buttons/LinkButton";
 import { Text } from "src/components/Text/TextComponent";
 
-export const ButtonConfig: Record<string, ButtonLinkProps> = {
+type ButtonConfigKeys = "demo" | "docs";
+
+export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
     demo: {
         variant: "contained",
         href: "/demo",
-        children: <Text.H6 color={"text.secondary"}>
+        children: <Text.H5 color={"text.secondary"}>
             Try Demo
-        </Text.H6>,
+        </Text.H5>,
         sx: {
             paddingX: '32px',
         }
@@ -15,12 +17,13 @@ export const ButtonConfig: Record<string, ButtonLinkProps> = {
     docs: {
         variant: "outlined",
         href: "https://twitter.com/epplex_xyz",
-        children: <Text.H6>
+        children: <Text.H5>
             Stay Updated
-        </Text.H6>,
+        </Text.H5>,
         sx: {
             paddingX: '32px',
         },
-        linkType: "external"
+        linkType: "external",
+        blank: true
     },
 };

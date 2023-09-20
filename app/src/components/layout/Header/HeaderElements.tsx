@@ -34,6 +34,7 @@ export function HeaderLogo(){
     return (
         <Link href="/" style={{display: "flex", alignItems: "center"}}>
             <Text.H5
+                fontVariant={"secondary"}
                 textBackground={TextBackground.none}
                 paddingLeft={"8px"}
                 display={{ xs: "none", md: "none", lg: "flex", xl: "flex" }}

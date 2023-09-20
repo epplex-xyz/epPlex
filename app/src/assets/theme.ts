@@ -3,7 +3,7 @@ import palette from "../styles/palette.module.scss";
 import style from "../styles/style.module.scss";
 import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
-import {  SatoshiBold } from "./fonts";
+import { SatoshiBold } from "./fonts";
 
 declare module '@mui/material/styles' {
     interface Theme {
@@ -85,16 +85,16 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
                     props: { variant: 'contained' },
                     style: {
                         '&:hover': {
-                            backgroundColor: `${palette.primaryWhite}80`
+                            backgroundColor: `text.primary` + "80"
                         },
                     },
                 },
                 {
                     props: { variant: 'outlined' },
                     style: {
-                        color: palette.primaryWhite,
+                        color: "text.primary",
                         '&:hover': {
-                            backgroundColor: `${palette.contrastBlack}80`
+                            backgroundColor: `text.secondary` + "80"
                         },
                     },
                 }
@@ -129,7 +129,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
             },
             styleOverrides: {
                 root: {
-                    color: palette.black,
+                    color: "text.secondary",
                     '&:hover': {}, // no hover color
                 },
             },

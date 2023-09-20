@@ -7,7 +7,7 @@ import { ButtonConfig } from "src/components/Buttons/ButtonConfig";
 function LandingText(){
     return (
         <div className={"flex flex-col text-center items-center gap-y-4"}>
-            <Text.H1>
+            <Text.H1 fontVariant={"secondary"}>
                 epPlex
             </Text.H1>
             <Text.H3>

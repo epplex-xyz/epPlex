@@ -43,7 +43,7 @@ function HeaderRight() {
             justifyContent={"flex-end"}
             flex={"1 0 0"}
         >
-            <ButtonLink {...ButtonConfig.app}/>
+            <ButtonLink {...ButtonConfig.demo}/>
         </Box>
     );
 }

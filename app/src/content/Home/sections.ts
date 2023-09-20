@@ -3,14 +3,10 @@ interface SectionConfigType {
     id: string;
 }
 
-export const SectionConfig: Record<string, SectionConfigType> = {
+type SectionConfigKey = "landingPage";
+
+export const SectionConfig: Record<SectionConfigKey, SectionConfigType> = {
     landingPage: {
         id: "landingPageId"
-    },
-    carousel: {
-        id: "carouselId"
-    },
-    investors: {
-        id: "investorsId"
     },
 };

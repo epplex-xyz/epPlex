@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import { useTheme } from "@mui/material/styles";
-import { BasteleurBold, SatoshiBold, SatoshiMedium } from "../../assets/fonts";
+import { SatoshiBold, AlegreyaBold} from "../../assets/fonts";
 
-const mainFont = BasteleurBold.style.fontFamily;
-const secondaryFont = SatoshiMedium.style.fontFamily;
-const secondaryBoldFont = SatoshiBold.style.fontFamily;
+const mainFont = SatoshiBold.style.fontFamily;
+const secondaryFont = AlegreyaBold.style.fontFamily;
 
 export type FontVariant = {
-    normal: string;
+    primary: string;
+    secondary?: string;
     bold?: string;
-    second?: string;
+
 };
 
 export type FontVariantKey = keyof FontVariant;
@@ -34,57 +34,24 @@ export type TypographyVariants = {
 
 export type TypographyVariantsKey = keyof TypographyVariants;
 
-export const typography: TypographyVariants = {
-    h1: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    h2: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    h3: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    h4: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    h5: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    h6: {
-        font: {
-            normal: secondaryBoldFont,
-        },
-    },
-    subtitle1: {
-        font: {
-            normal: secondaryFont,
-            bold: secondaryBoldFont,
-            second: mainFont,
-        },
-    },
-    body1: {
-        font: {
-            normal: secondaryFont,
-            bold: secondaryBoldFont,
+const defaultFont: TypographyVariant = {
+    font: {
+        primary: mainFont,
+        secondary: secondaryFont,
+    }
+};
 
-        },
-    },
-    body2: {
-        font: {
-            normal: secondaryFont,
-            bold: secondaryBoldFont,
-        },
-    },
+
+export const typography: TypographyVariants = {
+    h1: defaultFont,
+    h2: defaultFont,
+    h3: defaultFont,
+    h4: defaultFont,
+    h5: defaultFont,
+    h6: defaultFont,
+    subtitle1: defaultFont,
+    body1: defaultFont,
+    body2: defaultFont,
 };
 
 export enum TextBackground {
@@ -148,11 +115,11 @@ export const useFontFamily = (props: UseFontFamilyProps) => {
         switch (props.fontVariant) {
             case "bold":
                 return typography[props.typographyVariant].font?.bold;
-            case "second":
-                return typography[props.typographyVariant].font?.second;
-            case "normal":
+            case "secondary":
+                return typography[props.typographyVariant].font?.secondary;
+            case "primary":
             default:
-                return typography[props.typographyVariant].font?.normal;
+                return typography[props.typographyVariant].font?.primary;
         }
     }, [props.fontVariant, props.typographyVariant]);
     return fontFamily;

@@ -9,6 +9,7 @@ import Head from "next/head";
 import {DefaultSeo } from "next-seo";
 import SEO from "../next-seo-config";
 import * as font from "../src/assets/fonts";
+import { AlegreyaBold } from "../src/assets/fonts";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -33,7 +34,11 @@ function App(props: MyAppProps) {
             <Analytics />
 
             {/* Ensures proper initial font loading */}
-            <div className={`${font.BasteleurBold.className} ${font.SatoshiBold.className} ${font.SatoshiMedium.className}`}>
+            <div className={`
+                ${font.AlegreyaBold.className}
+                ${font.SatoshiBold.className}
+                ${font.SatoshiMedium.className}
+            `}>
                 {process.env.NODE_ENV === "production" ?
                     <Component {...pageProps}/>
                     :

@@ -1,14 +1,15 @@
 import localFont from "next/font/local";
 
-export const BasteleurBold = localFont({
+
+export const AlegreyaBold = localFont({
     preload: true,
     display: "swap",
     src: [
         {
-            path: '../../public/fonts/basteleur/Basteleur-Bold.woff2',
+            path: '../../public/fonts/alegreya/AlegreyaSansSC-BoldItalic.ttf',
         },
     ],
-    fallback: ['BasteleurBold', 'Helvetica Neue'],
+    fallback: ['Helvetica Neue', 'sans-serif'],
 });
 
 
@@ -17,10 +18,10 @@ export const SatoshiMedium = localFont({
     display: "swap",
     src: [
         {
-            path: '../../public/fonts/satoshi/Satoshi-Medium.ttf',
+            path: '../../public/fonts/satoshi/Satoshi-Medium.woff2',
         },
     ],
-    fallback: ['SatoshiMedium', 'Helvetica Neue', 'sans-serif'],
+    fallback: ['Helvetica Neue', 'sans-serif'],
 });
 
 export const SatoshiBold = localFont({
@@ -28,8 +29,8 @@ export const SatoshiBold = localFont({
     display: "swap",
     src: [
         {
-            path: '../../public/fonts/satoshi/Satoshi-Bold.woff',
+            path: '../../public/fonts/satoshi/Satoshi-Bold.woff2',
         },
     ],
-    fallback: ['SatoshiBold', 'Helvetica Neue', 'sans-serif'],
+    fallback: ['Helvetica Neue', 'sans-serif'],
 });

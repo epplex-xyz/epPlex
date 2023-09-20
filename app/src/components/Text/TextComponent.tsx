@@ -20,7 +20,7 @@ interface TextProps extends TypographyProps {
 }
 export function Text({
     variant,
-    fontVariant = "normal",
+    fontVariant = "primary",
     color,
     textBackground = TextBackground.red,
     textShadow = true,
@@ -35,6 +35,7 @@ export function Text({
             color: color ?? style.color,
         };
     }, [color]);
+
     return (
         <Typography
             variant={variant}
