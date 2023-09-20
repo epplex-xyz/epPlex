@@ -5,39 +5,39 @@ import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
 import { SatoshiBold } from "./fonts";
 
-declare module '@mui/material/styles' {
-    interface Theme {
-        customVariables: {
-            mainBackgroundColor: string;
-        };
-    }
-    // fix the type error when calling `createTheme()` with a custom theme option
-    interface ThemeOptions {
-        customVariables: {
-            mainBackgroundColor: string;
-        };
-    }
-
-    interface Palette {
-        textShadow: Palette['primary'];
-    }
-    interface PaletteOptions {
-        textShadow: PaletteOptions['primary'];
-    }
-    interface Palette {
-        tertiary: Palette['primary'];
-    }
-    interface PaletteOptions {
-        tertiary: PaletteOptions['primary'];
-    }
-}
+// declare module '@mui/material/styles' {
+//     // interface Theme {
+//     //     customVariables: {
+//     //         mainBackgroundColor: string;
+//     //     };
+//     // }
+//     // fix the type error when calling `createTheme()` with a custom theme option
+//     interface ThemeOptions {
+//         customVariables: {
+//             mainBackgroundColor: string;
+//         };
+//     }
+//
+//     interface Palette {
+//         textShadow: Palette['primary'];
+//     }
+//     interface PaletteOptions {
+//         textShadow: PaletteOptions['primary'];
+//     }
+//     interface Palette {
+//         tertiary: Palette['primary'];
+//     }
+//     interface PaletteOptions {
+//         tertiary: PaletteOptions['primary'];
+//     }
+// }
 
 
 const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
-    customVariables: {
-        mainBackgroundColor:
-                (colorMode === 'light' ? "url(images/bgGradient.png)" : "url(images/darkBackground.svg)")
-    },
+    // customVariables: {
+    //     mainBackgroundColor:
+    //             (colorMode === 'light' ? "url(images/bgGradient.png)" : "url(images/darkBackground.svg)")
+    // },
     breakpoints: {
         values: {
             xs: 0,
@@ -47,10 +47,10 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
             xl: 1536,
         },
     },
-    palette: {
-        mode: colorMode,
-        ...(colorMode === 'light' ? paletteLight : paletteDark),
-    },
+    // palette: {
+    //     mode: colorMode,
+    //     ...(colorMode === 'light' ? paletteLight : paletteDark),
+    // },
     typography: {
     // If less than or equal to 600 then do this
         h1: {
@@ -85,7 +85,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
                     props: { variant: 'contained' },
                     style: {
                         '&:hover': {
-                            backgroundColor: `text.primary` + "80"
+                            backgroundColor: `black` + "80"
                         },
                     },
                 },
@@ -94,7 +94,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
                     style: {
                         color: "text.primary",
                         '&:hover': {
-                            backgroundColor: `text.secondary` + "80"
+                            backgroundColor: `black` + "80"
                         },
                     },
                 }
@@ -104,7 +104,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
                     borderRadius: style.borderRadiusMd,
                     minWidth: 5,
                     textTransform: "none",
-                    fontFamily: SatoshiBold.style.fontFamily,
+                    // fontFamily: SatoshiBold.style.fontFamily,
                     color: "text.primary",
                 },
             },
