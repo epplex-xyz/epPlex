@@ -23,7 +23,7 @@ export const paletteLight = {
     background: {
         // Toggles the bg color of dropdown menu
         default: "#FFFFFF",
-        paper: palette.baseYellow,
+        paper: palette.primaryWhite,
     },
     divider: grey[200],
     text: {

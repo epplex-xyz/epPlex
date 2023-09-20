@@ -8,6 +8,8 @@ import {useMobileOverlay } from "./MobileOverlay";
 import {HeaderBurgerMenu, HeaderLogo, HeaderButtons,} from "./HeaderElements";
 import { ButtonLink } from "src/components/Buttons/LinkButton";
 import { ButtonConfig } from "src/components/Buttons/ButtonConfig";
+import { useRouter } from "next/router";
+import { MyMountedWalletButton, MyWalletConnectButton } from "@components/Buttons/MyWalletConnectButton";
 
 function HeaderLeft({TriggerButton}: {TriggerButton: () => React.ReactNode}) {
     return (
@@ -35,7 +37,7 @@ function HeaderLeft({TriggerButton}: {TriggerButton: () => React.ReactNode}) {
     );
 }
 
-function HeaderRight() {
+function HeaderRight({Component}: {Component: React.ReactNode}) {
     return (
         <Box
             component="div"
@@ -43,7 +45,7 @@ function HeaderRight() {
             justifyContent={"flex-end"}
             flex={"1 0 0"}
         >
-            <ButtonLink {...ButtonConfig.demo}/>
+            {Component}
         </Box>
     );
 }
@@ -51,6 +53,16 @@ function HeaderRight() {
 
 export function Header({ headerPosition }) {
     const {OverlayComponent, TriggerButton} = useMobileOverlay();
+
+    const router = useRouter();
+
+    let RightComponent: React.ReactNode;
+
+    if (router.asPath === "/demo") {
+        RightComponent = <MyMountedWalletButton/>;
+    } else {
+        RightComponent = <ButtonLink {...ButtonConfig.demo}/>;
+    }
 
     return (
         <>
@@ -73,7 +85,7 @@ export function Header({ headerPosition }) {
                     >
                         <HeaderLeft TriggerButton={TriggerButton}/>
 
-                        <HeaderRight/>
+                        <HeaderRight Component={RightComponent}/>
                     </Toolbar>
                 </Container>
             </AppBar>

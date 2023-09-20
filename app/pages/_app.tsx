@@ -10,6 +10,7 @@ import {DefaultSeo } from "next-seo";
 import SEO from "../next-seo-config";
 import * as font from "../src/assets/fonts";
 import { AlegreyaBold } from "../src/assets/fonts";
+import MyWalletProvider from "../src/providers/MyWalletProvider";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -24,29 +25,31 @@ function App(props: MyAppProps) {
 
     return (
         <CustomThemeProvider cache={emotionCache}>
-            {/* SEO */}
-            <Head>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            </Head>
-            <DefaultSeo {...SEO} />
+            <MyWalletProvider>
+                {/* SEO */}
+                <Head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                </Head>
+                <DefaultSeo {...SEO} />
 
-            {/* Vercel */}
-            <Analytics />
+                {/* Vercel */}
+                <Analytics />
 
-            {/* Ensures proper initial font loading */}
-            <div className={`
-                ${font.AlegreyaBold.className}
-                ${font.SatoshiBold.className}
-                ${font.SatoshiMedium.className}
-            `}>
-                {process.env.NODE_ENV === "production" ?
-                    <Component {...pageProps}/>
-                    :
-                    <React.StrictMode>
+                {/* Ensures proper initial font loading */}
+                <div className={`
+                    ${font.AlegreyaBold.className}
+                    ${font.SatoshiBold.className}
+                    ${font.SatoshiMedium.className}
+                `}>
+                    {process.env.NODE_ENV === "production" ?
                         <Component {...pageProps}/>
-                    </React.StrictMode>
-                }
-            </div>
+                        :
+                        <React.StrictMode>
+                            <Component {...pageProps}/>
+                        </React.StrictMode>
+                    }
+                </div>
+            </MyWalletProvider>
         </CustomThemeProvider>
     );
 }
