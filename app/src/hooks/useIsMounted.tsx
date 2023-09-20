@@ -3,7 +3,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useWallet} from "@solana/wallet-adapter-react";
 
 
-export function useIsMounted2() {
+export function useIsMounted() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

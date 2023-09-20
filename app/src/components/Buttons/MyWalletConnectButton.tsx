@@ -11,7 +11,7 @@ import {BackpackWalletAdapter} from "@solana/wallet-adapter-wallets";
 import {WalletReadyState} from "@solana/wallet-adapter-base";
 import {PublicKey} from "@solana/web3.js";
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
-import { useIsMounted2 } from "../../hooks/useIsMounted";
+import { useIsMounted } from "../../hooks/useIsMounted";
 
 const StyledMenu = styled(Menu)(({ theme }: { theme: Theme }) => ({
     '& .MuiList-root': {
@@ -203,7 +203,7 @@ export const MyWalletConnectButton: FC<ButtonProps> = ({
 };
 
 export const MyMountedWalletButton: FC<ButtonProps> = ({children, ...props}) => {
-    const isMounted = useIsMounted2();
+    const isMounted = useIsMounted();
 
     return (<>
         {isMounted &&
