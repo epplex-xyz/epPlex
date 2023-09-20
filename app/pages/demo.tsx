@@ -5,7 +5,7 @@ export default function Demo() {
     return (
         <Screen>
 
-            s
+
         </Screen>
     );
 }

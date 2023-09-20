@@ -43,7 +43,7 @@ export function MobileOverlay({ setOpenMenu }: MobileOverlayProps) {
             </Link>
 
             {/* Socials */}
-            <HeaderButtons/>
+            {/*<HeaderButtons/>*/}
         </Box>
     );
 }
