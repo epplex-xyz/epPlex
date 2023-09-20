@@ -1,27 +1,20 @@
 import React from "react";
 import Screen from "../src/components/layout/Screen";
 import { MyWalletConnectButton } from "@components/Buttons/MyWalletConnectButton";
-import { Snow } from "@components/Animation/Snow";
-import { LandingPage } from "../src/content/Home/LandingPage";
-import { SectionConfig } from "../src/content/Home/sections";
 import { Section } from "@components/Container/Section";
-import { WalletConnectedWrapper, WalletConnectedWrapper2 } from "@components/Container/WalletConnectedWrapper";
-import Button from "@mui/material/Button";
-import { useMountedWallet } from "../src/hooks/useIsMounted";
+import { WalletConnectedWrapper } from "@components/Container/WalletConnectedWrapper";
+import { DemoPage } from "../src/content/Demo/DemoPage";
 
 export default function Demo() {
-    const {mounted, connected} = useMountedWallet();
+    const notConnectWrapper = <MyWalletConnectButton>
+        Connect wallet to create epNFTs
+    </MyWalletConnectButton>;
+
     return (
         <Screen>
             <Section>
-                <WalletConnectedWrapper
-                    wrapper={
-                        <MyWalletConnectButton>
-                            Connect wallet to create epNFTs
-                        </MyWalletConnectButton>
-                    }
-                >
-                    asd
+                <WalletConnectedWrapper wrapper={notConnectWrapper}>
+                    <DemoPage/>
                 </WalletConnectedWrapper>
             </Section>
         </Screen>
