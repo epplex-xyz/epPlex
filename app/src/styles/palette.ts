@@ -10,7 +10,7 @@ export const paletteLight = {
         main: palette.contrastBlack,
     },
     secondary: {
-        main: palette.contrastBlack,
+        main: palette.primaryWhite,
     },
     textShadow: {
         main: palette.accentYellow,

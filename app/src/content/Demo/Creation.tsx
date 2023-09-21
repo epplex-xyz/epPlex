@@ -1,21 +1,33 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import { TextDivider } from "@components/Divider/TextDivider";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker as Time } from '@mui/x-date-pickers/TimePicker';
-import dayjs from "dayjs";
-
-
-import { TimePicker } from 'antd';
-import { TextField } from "@mui/material";
 import { MyDatePicker } from "@components/Input/DatePicker";
 import { MyTimePicker } from "@components/Input/TimePicker";
+import { ImageUpload } from "@components/Input/ImageUpload";
+import { Timer } from "@components/Text/Timer";
+import { Text } from "@components/Text/TextComponent";
+import { StandardInput, StyledSearchInput, StyledTextField } from "@components/Input/TextField";
 
+
+function combineDateAndTime(date: Date, time: Date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const seconds = time.getSeconds();
+
+    return new Date(year, month, day, hours, minutes, seconds);
+}
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
-    const {timeComponent, time} = MyTimePicker({width: "150px"});;
+    const {timeComponent, time} = MyTimePicker({width: "150px"});
+    const {inputComponent, input} = StandardInput();
+
+    const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
+    const unixTime = Math.floor(combinedDate.getTime() / 1000);
 
     return (
         <Box
@@ -34,15 +46,30 @@ export function Creation() {
 
                 {timeComponent}
             </div>
-
-
-            <div className={"flex flex-row"}>
-
+            <div className="flex justify-center">
+                <Text.H6>
+                    Self-destruct in &nbsp;<Timer endTimestamp={unixTime}/>
+                </Text.H6>
             </div>
 
             <TextDivider>Image</TextDivider>
 
+            <ImageUpload/>
             <TextDivider>Details</TextDivider>
+
+            <div className="justify-between flex">
+                <Text.H6>
+                    Name
+                </Text.H6>
+                {inputComponent}
+            </div>
+            <div className="justify-between flex">
+                <Text.H6>
+                    Symbol
+                </Text.H6>
+                {inputComponent}
+            </div>
+
         </Box>
     );
 }
