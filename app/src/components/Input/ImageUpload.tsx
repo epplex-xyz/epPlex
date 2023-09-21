@@ -43,6 +43,7 @@ export function ImageUpload() {
             alignItems={"center"}
             justifyContent={"center"}
             minHeight={"300px"}
+            textAlign={"center"}
         >
             <Dropzone onDrop={(acceptedFiles) => setSelectedFile(acceptedFiles[0])}>
                 {({ getRootProps, getInputProps }) => (

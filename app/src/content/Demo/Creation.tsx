@@ -38,8 +38,9 @@ export function Creation() {
             height="100%"
             display={"flex"}
             flexDirection="column"
+            // justifyContent={"center"}
             rowGap={"24px"}
-            width={"400px"}
+            width={{ sm: "300px", md: "400px" }}
 
         >
             <TextDivider>Ephemerality</TextDivider>

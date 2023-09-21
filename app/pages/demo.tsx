@@ -11,7 +11,7 @@ export default function Demo() {
     </MyWalletConnectButton>;
 
     return (
-        <Screen>
+        <Screen headerPosition={"static"}>
             <Section>
                 <WalletConnectedWrapper wrapper={notConnectWrapper}>
                     <DemoPage/>

@@ -6,13 +6,12 @@ export function MyEpNFTs() {
         <Box
             component="div"
             position="relative"
-            // minWidth={{ md: "300px", lg: "300px" }}
             height="100%"
             flexDirection="column"
-            // paddingTop={"48px"}
             rowGap={"16px"}
+            display={"flex"}
+            // justifyContent={"center"}
             color={"text.primary"}
-            // style={{background: "#FFFFFF26"}}
         >
             My Ep erfer
         </Box>
