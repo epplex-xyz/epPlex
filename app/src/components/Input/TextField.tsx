@@ -1,50 +1,24 @@
 import {styled} from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
-export const StyledTextField = styled(TextField)(({theme }) => ({
-    '& .MuiTextField-root': {
-        display: 'contents',
-    },
-    '& .MuiInputBase-input': {
-        padding: '0px',
-        maxWidth: '30px',
-        height: "30px",
-        fontSize: "1.2rem",
-        color: theme.palette.secondary.main,
-        fontWeight: "900",
-        [theme.breakpoints.down('sm')]: {
-            maxWidth: '25px',
-            height: "25px",
-            fontSize: "1rem"
-        },
-    },
-    '& .MuiOutlinedInput-root': {
-        backgroundColor: theme.palette.secondary.main,
-        borderWidth: '1px'
-    },
-    // could also do at the textfield
-    // sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
-    "& .MuiOutlinedInput-notchedOutline": {
-        border: "none"
-    }
-}));
+import style from "../../styles/style.module.scss";
 
-export const StyledSearchInput = styled(TextField)(({theme }) => ({
-    // width: "80%",
-    // paddingLeft: "64px",
+
+const Input = styled(TextField)(({theme }) => ({
     '& .MuiTextField-root': {
         display: 'contents',
     },
     '& .MuiInputBase-input': {
         padding: '0px',
-        maxWidth: "200px",
-        color: theme.palette.primary.main,
+        // maxWidth: "200px",
+        color: theme.palette.secondary.main,
         textAlign: "center",
     },
     '& .MuiOutlinedInput-root': {
-        backgroundColor: theme.palette.secondary.main,
+        // backgroundColor: theme.palette.secondary.main,
         color: theme.palette.secondary.main,
-        borderWidth: '0px'
+        borderWidth: '0px',
+        boxShadow: `inset 0 0 0 1px ${theme.palette.text.primary}`
     },
     // could also do at the textfield
     // sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
@@ -53,18 +27,22 @@ export const StyledSearchInput = styled(TextField)(({theme }) => ({
     }
 }));
 
-export function StandardInput() {
+export function StandardInput({placeHolder, textAlign = "center"}) {
     const [input, setInput] = useState("");
 
     const handleSearchChange = (e) => {
         setInput(e.target.value);// }
     };
 
-    const inputComponent = <StyledSearchInput
+    const inputComponent = <Input
         autoComplete="off"
         value={input}
+        placeholder={placeHolder}
         onChange={handleSearchChange}
-        sx={{ borderRadius: "12px", padding: "4px 8px"}}
+        sx={{
+            borderRadius: style.borderRadiusMd,
+            textAlign: textAlign
+        }}
     />;
 
     return {inputComponent, input};

@@ -46,22 +46,24 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(
             MuiButton: {
                 defaultProps: {
                     disableRipple: true,
+
                 },
                 variants: [
                     {
                         props: { variant: 'contained' },
                         style: {
+                            backgroundColor: paletteLight.secondary.main,
                             '&:hover': {
-                                backgroundColor: `text.primary` + "80"
+                                backgroundColor: `${paletteLight.secondary.main}` + "80"
                             },
                         },
                     },
                     {
                         props: { variant: 'outlined' },
                         style: {
-                            color: "text.primary",
+                            borderColor: paletteLight.secondary.main,
                             '&:hover': {
-                                backgroundColor: `text.primary` + "80"
+                                backgroundColor: `${paletteLight.primary.main}` + "80"
                             },
                         },
                     }
@@ -71,7 +73,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(
                         borderRadius: style.borderRadiusMd,
                         minWidth: 5,
                         textTransform: "none",
-                        color: "text.primary",
+                        // color: "primary.main",
                     },
                 },
             },

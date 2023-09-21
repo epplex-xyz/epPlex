@@ -36,11 +36,13 @@ export function ImageUpload() {
             component={"div"}
             sx={{
                 borderRadius: "12px",
-                boxShadow: (theme) => `inset 0 0 0 2px ${theme.palette.text.primary}`,
+                boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
             }}
             display={"flex"}
             flexDirection={"column"}
             alignItems={"center"}
+            justifyContent={"center"}
+            minHeight={"300px"}
         >
             <Dropzone onDrop={(acceptedFiles) => setSelectedFile(acceptedFiles[0])}>
                 {({ getRootProps, getInputProps }) => (
@@ -62,7 +64,6 @@ export function ImageUpload() {
             {selectedFile && (
                 <div>
                     <img src={URL.createObjectURL(selectedFile)} alt="Selected" />
-                    {/*<Button variant="contained" onClick={() => handleFileUpload(selectedFile)}>Upload</Button>*/}
                 </div>
             )}
         </Box>

@@ -6,28 +6,30 @@ import { MyTimePicker } from "@components/Input/TimePicker";
 import { ImageUpload } from "@components/Input/ImageUpload";
 import { Timer } from "@components/Text/Timer";
 import { Text } from "@components/Text/TextComponent";
-import { StandardInput, StyledSearchInput, StyledTextField } from "@components/Input/TextField";
+import { StandardInput } from "@components/Input/TextField";
+import { combineDateAndTime } from "../../utils/general";
+import Button from "@mui/material/Button";
+import { TraitInputField } from "./TraitInput";
 
-
-function combineDateAndTime(date: Date, time: Date) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const day = date.getDate();
-
-    const hours = time.getHours();
-    const minutes = time.getMinutes();
-    const seconds = time.getSeconds();
-
-    return new Date(year, month, day, hours, minutes, seconds);
-}
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
     const {timeComponent, time} = MyTimePicker({width: "150px"});
-    const {inputComponent, input} = StandardInput();
+    const {inputComponent, input} = StandardInput({placeHolder: "Name"});
 
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
+
+
+    const handleCreate = () => {
+        //destroyTimestamp
+        //Image
+        //name
+        // symbol
+        // traits - do validation
+
+        // adding side padding
+    }
 
     return (
         <Box
@@ -36,8 +38,9 @@ export function Creation() {
             height="100%"
             display={"flex"}
             flexDirection="column"
-            rowGap={"16px"}
+            rowGap={"24px"}
             width={"400px"}
+
         >
             <TextDivider>Ephemerality</TextDivider>
 
@@ -55,21 +58,33 @@ export function Creation() {
             <TextDivider>Image</TextDivider>
 
             <ImageUpload/>
+
             <TextDivider>Details</TextDivider>
 
-            <div className="justify-between flex">
+            <div className="justify-between flex items-center px-2">
                 <Text.H6>
                     Name
                 </Text.H6>
                 {inputComponent}
             </div>
-            <div className="justify-between flex">
+            <div className="justify-between flex items-center px-2">
                 <Text.H6>
                     Symbol
                 </Text.H6>
                 {inputComponent}
             </div>
+            <TraitInputField/>
 
+            <Button
+                variant={"contained"}
+                sx={{
+                    marginTop: "16px"
+                }}
+            >
+                <Text.H6 color={"primary.main"}>
+                    Create epNFT
+                </Text.H6>
+            </Button>
         </Box>
     );
 }
