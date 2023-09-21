@@ -1,6 +1,5 @@
-@import "fonts.css";
-@import "palette";
-@import "style";
+@use 'palette.module.scss';
+@use "style.module.scss";
 
 @tailwind base;
 @tailwind components;
@@ -16,7 +15,6 @@
     --mouse-y: 0;
     --mouse-x: 0;
 
-    --test-color: #{$primaryRed};
     --hoverRotate: 10deg;
     --floatCircle: 10px;
 }

@@ -3,7 +3,6 @@ import palette from "../styles/palette.module.scss";
 import style from "../styles/style.module.scss";
 import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
-import { SatoshiBold } from "./fonts";
 
 // declare module '@mui/material/styles' {
 //     // interface Theme {
@@ -33,117 +32,117 @@ import { SatoshiBold } from "./fonts";
 // }
 
 
-const theme = (colorMode: PaletteMode) => responsiveFontSizes(createTheme({
-    // customVariables: {
-    //     mainBackgroundColor:
-    //             (colorMode === 'light' ? "url(images/bgGradient.png)" : "url(images/darkBackground.svg)")
-    // },
-    breakpoints: {
-        values: {
-            xs: 0,
-            sm: 600,
-            md: 900,
-            lg: 1200,
-            xl: 1536,
-        },
-    },
-    // palette: {
-    //     mode: colorMode,
-    //     ...(colorMode === 'light' ? paletteLight : paletteDark),
-    // },
-    typography: {
-    // If less than or equal to 600 then do this
-        h1: {
-            '@media (max-width:600px)': {
-                fontSize: '3rem',
+const theme = (colorMode: PaletteMode) => responsiveFontSizes(
+    createTheme({
+        // customVariables: {
+        //     mainBackgroundColor:
+        //             (colorMode === 'light' ? "url(images/bgGradient.png)" : "url(images/darkBackground.svg)")
+        // },
+        breakpoints: {
+            values: {
+                xs: 0,
+                sm: 600,
+                md: 900,
+                lg: 1200,
+                xl: 1536,
             },
         },
-        allVariants: {
-            fontFamily: [
-                'SatoshiMedium',
-                'Bubblegum Sans',
-                'Roboto',
-                '-apple-system',
-                'BlinkMacSystemFont',
-                '"Segoe UI"',
-                '"Helvetica Neue"',
-                'Arial',
-                'sans-serif',
-                '"Apple Color Emoji"',
-                '"Segoe UI Emoji"',
-                '"Segoe UI Symbol"',
-            ].join(',')
+        palette: {
+            mode: colorMode,
+            ...(colorMode === 'light' ? paletteLight : paletteDark),
         },
-    },
-    components: {
-        MuiButton: {
-            defaultProps: {
-                disableRipple: true,
+        typography: {
+        // If less than or equal to 600 then do this
+            h1: {
+                '@media (max-width:600px)': {
+                    fontSize: '3rem',
+                },
             },
-            variants: [
-                {
-                    props: { variant: 'contained' },
-                    style: {
-                        '&:hover': {
-                            backgroundColor: `black` + "80"
+            allVariants: {
+                fontFamily: [
+                    'SatoshiMedium',
+                    'Bubblegum Sans',
+                    'Roboto',
+                    '-apple-system',
+                    'BlinkMacSystemFont',
+                    '"Segoe UI"',
+                    '"Helvetica Neue"',
+                    'Arial',
+                    'sans-serif',
+                    '"Apple Color Emoji"',
+                    '"Segoe UI Emoji"',
+                    '"Segoe UI Symbol"',
+                ].join(',')
+            },
+        },
+        components: {
+            MuiButton: {
+                defaultProps: {
+                    disableRipple: true,
+                },
+                variants: [
+                    {
+                        props: { variant: 'contained' },
+                        style: {
+                            '&:hover': {
+                                backgroundColor: `text.primary` + "80"
+                            },
                         },
                     },
-                },
-                {
-                    props: { variant: 'outlined' },
-                    style: {
+                    {
+                        props: { variant: 'outlined' },
+                        style: {
+                            color: "text.primary",
+                            '&:hover': {
+                                backgroundColor: `text.primary` + "80"
+                            },
+                        },
+                    }
+                ],
+                styleOverrides: {
+                    root: {
+                        borderRadius: style.borderRadiusMd,
+                        minWidth: 5,
+                        textTransform: "none",
                         color: "text.primary",
-                        '&:hover': {
-                            backgroundColor: `black` + "80"
-                        },
                     },
-                }
-            ],
-            styleOverrides: {
-                root: {
-                    borderRadius: style.borderRadiusMd,
-                    minWidth: 5,
-                    textTransform: "none",
-                    // fontFamily: SatoshiBold.style.fontFamily,
-                    color: "text.primary",
                 },
             },
-        },
-        // Fix disappearing of scrollbar, in the navbar menu
-        // https://stackoverflow.com/questions/69065717/material-ui-menu-component-locks-body-scrollbar/71671897#71671897
-        MuiMenu: {
-            defaultProps: {
-                disableScrollLock: true,
-            },
-        },
-        // FIx disappearing of scrollbar, when selecting wallet
-        MuiDialog: {
-            defaultProps: {
-                disableScrollLock: true,
-            },
-        },
-        MuiLink: {
-            defaultProps: {
-                underline: 'none',
-                variant: 'button'
-            },
-            styleOverrides: {
-                root: {
-                    color: "text.secondary",
-                    '&:hover': {}, // no hover color
+            // Fix disappearing of scrollbar, in the navbar menu
+            // https://stackoverflow.com/questions/69065717/material-ui-menu-component-locks-body-scrollbar/71671897#71671897
+            MuiMenu: {
+                defaultProps: {
+                    disableScrollLock: true,
                 },
             },
-        },
-        MuiCard: {
-            styleOverrides: {
-                root: {
-                    borderRadius: style.borderRadiusMd
-                }
+            // FIx disappearing of scrollbar, when selecting wallet
+            MuiDialog: {
+                defaultProps: {
+                    disableScrollLock: true,
+                },
             },
-        },
+            MuiLink: {
+                defaultProps: {
+                    underline: 'none',
+                    variant: 'button'
+                },
+                styleOverrides: {
+                    root: {
+                        color: "text.secondary",
+                        '&:hover': {}, // no hover color
+                    },
+                },
+            },
+            MuiCard: {
+                styleOverrides: {
+                    root: {
+                        borderRadius: style.borderRadiusMd
+                    }
+                },
+            },
 
-    },
-}));
+        },
+    }), { factor: 1.2 });
 
 export default theme;
 
