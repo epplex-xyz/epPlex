@@ -1,7 +1,6 @@
 // Taken from here https://stackoverflow.com/questions/76767152/i-am-using-react-mui-mui-x-date-pickers-please-tell-me-how-to-change-color-of
 import React from "react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { styled, Theme } from "@mui/material";
 
 export function MyDatePicker() {
     return (
@@ -9,7 +8,10 @@ export function MyDatePicker() {
             label=""
             format="YYYY-MM-DD"
             sx={{
-                color: "text.secondary"
+                color: "red",
+                "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                    color: "red"
+                },
             }}
             slotProps={{
                 day: {
@@ -23,7 +25,7 @@ export function MyDatePicker() {
                         //     color: "text.secondary",
                         //     // borderColor: "red"
                         // },
-                        color: "text.secondary",
+                        // color: "text.seoncdary",
                         // "&.MuiPickersDay-root.Mui-selected": {
                         //     color: "#fff",
                         //     backgroundColor: "red",
@@ -34,43 +36,172 @@ export function MyDatePicker() {
                         //     //     borderColor: "red"
                         //     // }
                         // },
-                        ":hover": {
-                            color: "text.primary",
-                            backgroundColor: "text.secondary",
+                        // ":hover": {
+                        //     color: "text.primary",
+                        //     backgroundColor: "text.secondary",
+                        // },
+                        // "& .MuiPickersYear-yearButton": {
+                        //     color: "black"
+                        // }
+                        "&.MuiDayCalendar-weekDayLabel": {
+                            color: "red"
                         },
-                        "& .MuiPickersYear-yearButton": {
-                            color: "black"
+                        "&.MuiDayCalendar-root": {
+                            color: "red"
+                        },
+                        "&. MuiTypography-root": {
+                            color: "red"
+                        },
+                        ['&[data-mui-day="true"] .Mui-selected']: {
+                            color: "red"
                         }
-                        // sx: {
-                        //     color: "text.secondary"
-                        // }
-                        // sx: {
-                        //     color: "text.secondary"
-                        // }
                     }
                 },
-                // year: {
-                //     sx: {
-                //         color: "text.secondary"
-                //     }
-                // },
+                popper: {
+                    sx: {
+                        "& .MuiPickersYear-yearButton": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root": {
+                            color: "black"
+                        }
+                    }
+                },
                 calendarHeader: {
                     sx: {
-                        color: "text.secondary",
                         "& .MuiPickersYear-yearButton": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root.Mui-selected": {
+                            color: "black"
+                        },
+                    }
+                },
+                desktopPaper: {
+                    sx: {
+                        "& .MuiPickersYear-yearButton": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root.Mui-selected": {
                             color: "black"
                         }
                     }
                 },
-                // toolbar: {
-                //     // color: "text.secondary",
-                //     // sx: {
-                //         // color: "text.secondary",
-                //         // "& .MuiPickersYear-yearButton": {
-                //         //     color: "black"
-                //         // }
-                //     // }
-                // }
+                layout: {
+                    sx: {
+                        "& .MuiPickersYear-yearButton": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root.Mui-selected": {
+                            color: "black"
+                        }
+                    }
+                },
+
+                actionBar: {
+                    sx: {
+                        "& .MuiPickersYear-yearButton": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "black"
+                        },
+                        "&. MuiTypography-root": {
+                            color: "black"
+                        }
+                    }
+                },
+                textField: {
+                    InputProps: {
+                        sx: {
+                            "& .MuiPickersYear-yearButton": {
+                                color: "red"
+                            },
+                            "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                                color: "red"
+                            },
+                            "&. MuiDayCalendar-weekDayLabel": {
+                                color: "red"
+                            },
+                            "&. MuiTypography-root.Mui-selected": {
+                                color: "red"
+                            },
+                            "&. MuiInputBase-root": {
+                                color: "white"
+                            },
+                            "&. MuiTextField-root": {
+                                color: "white !important"
+                            },
+                            "&. MuiInputBase-root-MuiOutlinedInput-root": {
+                                color: "white !important"
+                            },
+                            "&. MuiOutlinedInput-root": {
+                                color: "white !important"
+                            },
+
+                            "&. MuiInputBase-input-MuiOutlinedInput-input": {
+                                color: "white !important"
+                            }
+                        }
+                    },
+                    sx: {
+                        "& .MuiPickersYear-yearButton": {
+                            color: "red"
+                        },
+                        "&. MuiTypography-root-MuiDayCalendar-weekDayLabel": {
+                            color: "red"
+                        },
+                        "&. MuiDayCalendar-weekDayLabel": {
+                            color: "red"
+                        },
+                        "&. MuiTypography-root.Mui-selected": {
+                            color: "red"
+                        },
+                        "&. MuiInputBase-root": {
+                            color: "white"
+                        },
+                        "&. MuiTextField-root": {
+                            color: "white !important"
+                        },
+                        "&. MuiInputBase-root-MuiOutlinedInput-root": {
+                            color: "white !important"
+                        },
+                        "&. MuiOutlinedInput-root": {
+                            color: "white !important"
+                        },
+
+                        "&. MuiInputBase-input-MuiOutlinedInput-input": {
+                            color: "white !important"
+                        }
+                    }
+                },
             }}
         />
 
