@@ -9,7 +9,7 @@ export function TextDivider({children}) {
             </Text.H6>
             <Box
                 component={"div"}
-                height={"1px"}
+                height={"3px"}
                 bgcolor={"background.paper"}
                 width={"100%"}
             />
