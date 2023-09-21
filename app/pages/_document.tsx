@@ -1,9 +1,9 @@
 // Inspired by https://github.dev/mui/material-ui/tree/master/examples/nextjs-with-typescript
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
-import createEmotionCache from "../src/assets/createEmotionCache";
+import createEmotionCache from "@styles/createEmotionCache";
 import createEmotionServer from "@emotion/server/create-instance";
-import theme from "../src/assets/theme";
+import theme from "@styles/theme";
 
 // _document.tsx is only rendered on the server
 class MyDocument extends Document {

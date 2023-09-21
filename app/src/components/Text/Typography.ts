@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTheme } from "@mui/material/styles";
-import { SatoshiBold, AlegreyaBold} from "../../assets/fonts";
+import { SatoshiBold, AlegreyaBold} from "@styles/fonts";
 
 const mainFont = SatoshiBold.style.fontFamily;
 const secondaryFont = AlegreyaBold.style.fontFamily;

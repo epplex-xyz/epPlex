@@ -6,7 +6,7 @@ import React from "react";
 import { WalletIcon } from "@solana/wallet-adapter-material-ui";
 import Box from "@mui/material/Box";
 import { WalletReadyState } from "@solana/wallet-adapter-base";
-import { SatoshiBold } from "../../../assets/fonts";
+import { SatoshiBold } from "@styles/fonts";
 import { Text } from "@components/Text/TextComponent";
 
 interface WalletListItemProps extends Omit<ListItemProps, "onClick" | "button"> {

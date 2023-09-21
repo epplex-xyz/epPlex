@@ -2,14 +2,13 @@ import '../src/styles/globals.scss';
 import React from "react";
 import type { AppProps } from 'next/app';
 import {CustomThemeProvider} from "../src/providers/CustomThemeProvider";
-import createEmotionCache from "../src/assets/createEmotionCache";
+import createEmotionCache from "@styles/createEmotionCache";
 import { EmotionCache} from '@emotion/react';
 import { Analytics } from '@vercel/analytics/react';
 import Head from "next/head";
 import {DefaultSeo } from "next-seo";
 import SEO from "../next-seo-config";
-import * as font from "../src/assets/fonts";
-import { AlegreyaBold } from "../src/assets/fonts";
+import * as font from "@styles/fonts";
 import MyWalletProvider from "../src/providers/MyWalletProvider";
 
 // Client-side cache, shared for the whole session of the user in the browser.

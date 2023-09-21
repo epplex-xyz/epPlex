@@ -1,43 +1,11 @@
 import {createTheme, responsiveFontSizes} from "@mui/material/styles";
-import palette from "../styles/palette.module.scss";
 import style from "../styles/style.module.scss";
 import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
 
-// declare module '@mui/material/styles' {
-//     // interface Theme {
-//     //     customVariables: {
-//     //         mainBackgroundColor: string;
-//     //     };
-//     // }
-//     // fix the type error when calling `createTheme()` with a custom theme option
-//     interface ThemeOptions {
-//         customVariables: {
-//             mainBackgroundColor: string;
-//         };
-//     }
-//
-//     interface Palette {
-//         textShadow: Palette['primary'];
-//     }
-//     interface PaletteOptions {
-//         textShadow: PaletteOptions['primary'];
-//     }
-//     interface Palette {
-//         tertiary: Palette['primary'];
-//     }
-//     interface PaletteOptions {
-//         tertiary: PaletteOptions['primary'];
-//     }
-// }
-
 
 const theme = (colorMode: PaletteMode) => responsiveFontSizes(
     createTheme({
-        // customVariables: {
-        //     mainBackgroundColor:
-        //             (colorMode === 'light' ? "url(images/bgGradient.png)" : "url(images/darkBackground.svg)")
-        // },
         breakpoints: {
             values: {
                 xs: 0,

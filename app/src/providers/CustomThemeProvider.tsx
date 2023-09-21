@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ThemeProvider} from '@mui/material/styles';
 import {PaletteMode} from "@mui/material";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import theme from "../assets/theme";
+import theme from "@styles/theme";
 import {CacheProvider} from '@emotion/react';
 import CssBaseline from "@mui/material/CssBaseline";
 
