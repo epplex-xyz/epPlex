@@ -1,30 +1,32 @@
 // Taken from here https://stackoverflow.com/questions/76767152/i-am-using-react-mui-mui-x-date-pickers-please-tell-me-how-to-change-color-of
 import React from "react";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TextField } from "@mui/material";
+import {TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
-export function MyDatePicker({width}) {
-    const [date, setDate] = React.useState<Dayjs | null>(
-        dayjs(new Date()),
+export function MyTimePicker({width}) {
+    const [time, setTime] = React.useState<Dayjs | null>(
+        dayjs(("00:00:00"), "HH:mm:ss"),
     );
-
     const handleChange = (newValue: Dayjs | null) => {
-        setDate(newValue);
+        setTime(newValue);
     };
 
-    const dateComponent = <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-            value={date}
+    const timeComponent = <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <TimePicker
+            value={time}
             InputProps={{
                 sx: {
                     "& .MuiIconButton-root": {
                         color: "text.primary"
                     },
                     "&. MuiInputLabel-root": {
-                        color: "text.primary"
+                        color: "text.primary",
+                        "&.Mui-selected": {
+                            color: "text.primary",
+                        },
                     }
                 }
             }}
@@ -62,11 +64,10 @@ export function MyDatePicker({width}) {
                     }}
                 />
             }
-            label="Date"
+            label="Time"
             PaperProps={{
                 sx: {
-                    color: "text.secondary",
-                    "& .MuiPickersDay-root": {
+                    "& .MuiClockNumber-root": {
                         color: "text.secondary",
                         "&.Mui-selected": {
                             color: "text.primary",
@@ -77,5 +78,5 @@ export function MyDatePicker({width}) {
         />
     </LocalizationProvider>;
 
-    return ({dateComponent, date });
+    return ({timeComponent, time});
 }

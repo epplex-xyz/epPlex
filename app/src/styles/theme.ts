@@ -3,7 +3,6 @@ import style from "../styles/style.module.scss";
 import {paletteDark, paletteLight} from "./palette";
 import {PaletteMode} from "@mui/material";
 
-
 const theme = (colorMode: PaletteMode) => responsiveFontSizes(
     createTheme({
         breakpoints: {

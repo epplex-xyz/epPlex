@@ -12,9 +12,6 @@ export const paletteLight = {
     secondary: {
         main: palette.contrastBlack,
     },
-    tertiary: {
-        main: palette.contrastBlue,
-    },
     textShadow: {
         main: palette.accentYellow,
         light: palette.secondaryRed,
@@ -22,7 +19,7 @@ export const paletteLight = {
     },
     background: {
         // Toggles the bg color of dropdown menu
-        default: "#FFFFFF",
+        default: palette.contrastBlack,
         paper: palette.primaryWhite,
     },
     text: {
@@ -37,13 +34,9 @@ export const paletteLight = {
 export const paletteDark = {
     primary: {
         main: grey[900],
-        // light: palette.constrastBlack
     },
     secondary: {
         main: paletteLight.secondary.main,
-    },
-    tertiary: {
-        main: palette.contrastBlue,
     },
     textShadow: {
         main: paletteLight.textShadow.main,
