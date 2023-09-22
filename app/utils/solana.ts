@@ -1,8 +1,8 @@
 import { Connection, Keypair, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
 import { AccountLayout, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { Token22Layout, Token22 } from "../../client/token22";
+import { Token22Layout, Token22 } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
-import { COMMITMENT, CONFIRM_OPTIONS } from "../../client/constants";
+import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
 
 
 async function getAccountInfo(connection: Connection, mint: PublicKey): Promise<Token22> {

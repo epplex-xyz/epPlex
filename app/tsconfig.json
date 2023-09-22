@@ -2,7 +2,8 @@
     "include": [
       "src",
       "pages",
-      "client"
+      "client",
+      "utils"
     ],
     "exclude": [
       "node_modules",
