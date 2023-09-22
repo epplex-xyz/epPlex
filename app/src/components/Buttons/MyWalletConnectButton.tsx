@@ -7,8 +7,6 @@ import Link from "next/link";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useWalletDialog} from "../Dialogs/MyWalletDialog/MyWalletDialogProvider";
 import {WalletDialogButton} from "../Dialogs/MyWalletDialog/WalletDialogButton";
-import {BackpackWalletAdapter} from "@solana/wallet-adapter-wallets";
-import {WalletReadyState} from "@solana/wallet-adapter-base";
 import {PublicKey} from "@solana/web3.js";
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import { useIsMounted } from "../../hooks/useIsMounted";

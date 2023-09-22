@@ -15,7 +15,8 @@ import {
 } from "@solana/spl-token";
 import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
-import { Program } from "./program";
+import { Program } from "../app/client/program"
+import {mint} from "./instructions/generic";
 
 const rpc = "https://api.devnet.solana.com";
 const connection = new Connection(rpc, "confirmed");
@@ -79,14 +80,15 @@ async function test() {
     const mintKeypair = loadOrGenerateKeypair("mint");
     const program = new Program(payer, connection);
 
+
     // await program.createToken(mintKeypair, payer);
-    await program.burnToken(mintKeypair.publicKey, payer);
+    await mint(connection, mintKeypair.publicKey, payer);
+    // await program.burnToken(mintKeypair.publicKey, payer);
 }
 
 async function main() {
     try {
         // await setup();
-        // await mint();
         await test();
     } catch (e) {
         console.log("err", e);

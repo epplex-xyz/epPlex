@@ -4,10 +4,11 @@ import { StandardInput } from "@components/Input/TextField";
 export function TraitInputField() {
     const [inputValue, setInputValue] = useState(''); // State for input value
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
-    const {inputComponent, input} =StandardInput(
+    const {inputComponent, input} = StandardInput(
         {
-            placeHolder: '[{"trait_type": "background", "value": "blue"}]',
-            width: "100%"
+            placeholder: '[{"trait_type": "background", "value": "blue"}]',
+            width: "100%",
+            height: "200px"
         }
     );
     // Handle input change

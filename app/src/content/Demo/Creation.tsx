@@ -15,7 +15,8 @@ import { TraitInputField } from "./TraitInput";
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
     const {timeComponent, time} = MyTimePicker({width: "150px"});
-    const {inputComponent, input} = StandardInput({placeHolder: "Name"});
+    const nameInput = StandardInput({placeholder: "Name"});
+    const symbolInput = StandardInput({placeholder: "Symbol"});
 
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
@@ -67,13 +68,13 @@ export function Creation() {
                     <Text.H6>
                         Name
                     </Text.H6>
-                    {inputComponent}
+                    {nameInput.inputComponent}
                 </div>
                 <div className="flex justify-between w-full">
                     <Text.H6>
                         Symbol
                     </Text.H6>
-                    {inputComponent}
+                    {symbolInput.inputComponent}
                 </div>
                 <div className={"w-full"}>
                     <Text.H6>

@@ -1,5 +1,5 @@
 import {styled} from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import React, { useState } from "react";
 import style from "../../styles/style.module.scss";
 
@@ -10,7 +10,6 @@ const Input = styled(TextField)(({theme }) => ({
     },
     '& .MuiInputBase-input': {
         padding: '0px',
-        // maxWidth: "200px",
         color: theme.palette.secondary.main,
         textAlign: "center",
     },
@@ -20,14 +19,12 @@ const Input = styled(TextField)(({theme }) => ({
         borderWidth: '0px',
         boxShadow: `inset 0 0 0 1px ${theme.palette.text.primary}`
     },
-    // could also do at the textfield
-    // sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
     "& .MuiOutlinedInput-notchedOutline": {
         border: "none"
     }
 }));
 
-export function StandardInput({placeHolder, textAlign = "center", ...props}) {
+export function StandardInput({placeholder, height = "undefined", ...props}): {inputComponent: React.ReactNode, input: string} {
     const [input, setInput] = useState("");
 
     const handleSearchChange = (e) => {
@@ -37,12 +34,15 @@ export function StandardInput({placeHolder, textAlign = "center", ...props}) {
     const inputComponent = <Input
         autoComplete="off"
         value={input}
-        placeholder={placeHolder}
+        placeholder={placeholder}
         onChange={handleSearchChange}
         sx={{
             borderRadius: style.borderRadiusMd,
-            textAlign: textAlign,
-            ...props
+            textAlign: "center",
+            '& .MuiInputBase-input': {
+                height: height,
+            },
+            ...props,
         }}
     />;
 

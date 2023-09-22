@@ -73,7 +73,7 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(
                         borderRadius: style.borderRadiusMd,
                         minWidth: 5,
                         textTransform: "none",
-                        // color: "primary.main",
+                        color: paletteLight.primary.main,
                     },
                 },
             },
