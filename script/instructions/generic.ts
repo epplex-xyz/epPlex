@@ -1,4 +1,4 @@
-import { loadOrGenerateKeypair, stringify2 } from "../utils/helpers";
+import { loadOrGenerateKeypair } from "../utils/helpers";
 import {
     createBurnInstruction,
     createCloseAccountInstruction,
@@ -7,7 +7,6 @@ import {
 } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
 import { CONFIRM_OPTIONS } from "../../app/client/constants";
-import { Token22Layout } from "../state/token22";
 
 async function burn(connection: Connection) {
     const payer = loadOrGenerateKeypair("payer");
@@ -40,15 +39,8 @@ async function burn(connection: Connection) {
     console.log("tx", tx);
 
 }
-async function accountInfo(connection: Connection) {
-    const info = await connection.getAccountInfo(new PublicKey("6DoTJakcvoKwXougVGmwGkPWuB2pGLGXGNhwxTx46Rq"));
-    const decoded = Token22Layout.decode(info.data);
-    // no need for decoding
-    // const decoded = AccountLayout.decode(info.data.slice(8));
-    console.log("decoded", stringify2(decoded));
-}
 
-async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
+export async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
     const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
         connection,
         payer,
