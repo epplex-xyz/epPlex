@@ -5,11 +5,15 @@ import { Text } from "@components/Text/TextComponent";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import {AnchorProvider} from "@coral-xyz/anchor";
-import { getTokenBalances } from "../../utils/solana";
+import { getToken22 } from "../../utils/solana";
+import { Token22 } from "../../../client/token22";
+import CircularProgress from '@mui/material/CircularProgress';
+import { EpNFTContainer } from "./EpNFTContainer";
+// JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 
 export function MyEpNFTs() {
-    // 6DoTJakcvoKwXougVGmwGkPWuB2pGLGXGNhwxTx46Rq
     const [isFetching, setIsFetching] = useState<boolean>(true);
+    const [tokens, setTokens] = useState<Token22[]>([]);
     const {program} = useProgramApis();
 
     const fetchNFTs = useCallback(async (program) => {
@@ -18,7 +22,8 @@ export function MyEpNFTs() {
         try {
             const wallet = (program.provider as AnchorProvider).wallet;
             if (wallet?.publicKey !== undefined) {
-                const profileTickets = await getTokenBalances(program.provider.connection, wallet.publicKey);
+                const tokens = await getToken22(program.provider.connection, wallet.publicKey);
+                setTokens(tokens);
             }
         } catch (e) {
             console.log("Failed getting NFTs", e);
@@ -36,7 +41,6 @@ export function MyEpNFTs() {
             component="div"
             position="relative"
             height={"100%"}
-            // flexDirection="column"
             rowGap={"16px"}
             display={"flex"}
             alignSelf={"start"}
@@ -47,10 +51,25 @@ export function MyEpNFTs() {
             </div>
 
             <div className="flex justify-center self-center items-center w-full">
-                <ChevronLeftIcon sx={{color: "secondary.main"}}/>
-                <Text.H6>
-                     Create an ephemeral NFT
-                </Text.H6>
+                {isFetching ? <CircularProgress sx={{color: "secondary.main"}} /> :
+                    <>
+                        { tokens.length === 0 ?
+                            <>
+                                <ChevronLeftIcon sx={{color: "secondary.main"}}/>
+                                <Text.H6>
+                                     Create an ephemeral NFT
+                                </Text.H6>
+                            </>
+                            : <>
+                                {tokens.map((t, i) =>
+                                    <React.Fragment key={i}>
+                                        <EpNFTContainer item={t}/>
+                                    </React.Fragment>
+                                )}
+                            </>
+                        }
+                    </>
+                }
             </div>
         </Box>
     );

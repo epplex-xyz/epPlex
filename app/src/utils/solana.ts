@@ -8,7 +8,7 @@ async function getAccountInfo(connection: Connection, mint: PublicKey): Promise<
     return Token22Layout.decode(info!.data);
 }
 
-export async function getTokenBalances(
+export async function getToken22(
     connection: Connection,
     publicKey: PublicKey
 ) {

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import Box from "@mui/material/Box";
 import { Text } from "@components/Text/TextComponent";
+import style from "../../styles/style.module.scss";
 
 export function ImageUpload() {
     const [selectedFile, setSelectedFile] = useState<any>(null);
@@ -35,7 +36,7 @@ export function ImageUpload() {
         <Box
             component={"div"}
             sx={{
-                borderRadius: "12px",
+                borderRadius: style.borderRadiusMd,
                 boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
             }}
             display={"flex"}

@@ -15,12 +15,12 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: "nftstorage.link",
+                hostname: "arweave.net",
                 port: "*",
                 pathname: "/**/*",
             },
         ],
-        domains: []
+        domains: ["arweave.net"]
     },
     publicRuntimeConfig: {
         NODE_ENV: process.env.NODE_ENV,
