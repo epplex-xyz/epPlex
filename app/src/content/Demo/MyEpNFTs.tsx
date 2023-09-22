@@ -8,7 +8,7 @@ import {AnchorProvider} from "@coral-xyz/anchor";
 import { getToken22 } from "../../utils/solana";
 import { Token22 } from "../../../client/token22";
 import CircularProgress from '@mui/material/CircularProgress';
-import { EpNFTContainer } from "./EpNFTContainer";
+import { EpNFTs } from "./EpNFTs";
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 
 export function MyEpNFTs() {
@@ -60,13 +60,7 @@ export function MyEpNFTs() {
                                      Create an ephemeral NFT
                                 </Text.H6>
                             </>
-                            : <>
-                                {tokens.map((t, i) =>
-                                    <React.Fragment key={i}>
-                                        <EpNFTContainer item={t}/>
-                                    </React.Fragment>
-                                )}
-                            </>
+                            : <EpNFTs items={tokens}/>
                         }
                     </>
                 }

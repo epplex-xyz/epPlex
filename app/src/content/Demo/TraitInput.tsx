@@ -52,15 +52,3 @@ export function TraitInputField() {
         </>
     );
 }
-
-
-{/*<div>*/}
-{/*    <h3>List of Trait Objects:</h3>*/}
-{/*    <ul>*/}
-{/*        {traitList.map((trait, index) => (*/}
-{/*            <li key={index}>*/}
-{/*                Trait Type: {trait.trait_type}, Value: {trait.value}*/}
-{/*            </li>*/}
-{/*        ))}*/}
-{/*    </ul>*/}
-{/*</div>*/}
