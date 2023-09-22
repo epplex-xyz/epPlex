@@ -6,9 +6,9 @@ import {
     SystemProgram, SYSVAR_RENT_PUBKEY, Transaction,
     TransactionInstruction,
 } from "@solana/web3.js";
-import { createProgram, EphemeralityProgram } from "../app/client/types/programTypes";
+import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { CONFIRM_OPTIONS } from "../app/client/constants";
+import { CONFIRM_OPTIONS } from "./constants";
 import { ExtensionType, getMintLen, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import {BN} from "@coral-xyz/anchor";
 
@@ -27,16 +27,23 @@ export class Program {
         this.connection = connection;
     }
 
-    async createToken(mint: Keypair, payer: Keypair, destroyTimestampOffset: number = 60 * 5) {
+    async createToken(
+        mint: Keypair,
+        payer: Keypair,
+        destroyTimestampOffset: number = 60 * 5,
+        name: string = "Ephemeral burger",
+        symbol: string = "EP",
+        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
+    ) {
         const METADATAPOINTER_SIZE = 64 + 2 + 2;
         const programDelegate = this.getProgramDelegate();
 
         const tokenCreateIx = await this.program.methods
             .tokenCreate({
                 destroyTimestampOffset: new BN(destroyTimestampOffset),
-                name: "Ephemeral burger",
-                symbol: "EP",
-                uri: "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
+                name: name,
+                symbol: symbol,
+                uri: uri,
             })
             .accounts({
                 mint: mint.publicKey,

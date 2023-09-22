@@ -9,7 +9,7 @@ type FixedLengthArray<T, L extends number> = L extends L
     : [...Array<L>]
   : never;
 
-interface Token22 {
+export interface Token22 {
     mintAuthorityOption: 1 | 0;
     mintAuthority: PublicKey;
     supply: bigint;
@@ -67,6 +67,34 @@ export const Token22Layout = borsh.struct<Token22>([
     borsh.str("destroyTimestampValue"),
 ]);
 
+export const Token22LayoutWithMint = borsh.struct<Token22>([
+    borsh.publicKey('mint'), //32
+    borsh.u32('mintAuthorityOption'), //36
+    borsh.publicKey('mintAuthority'), //
+    borsh.u64('supply'),
+    borsh.u8('decimals'),
+    borsh.bool('isInitialized'),
+    borsh.u32('freezeAuthorityOption'),
+    borsh.publicKey('freezeAuthority'),
+    borsh.array(borsh.u8(), 83, "padding"),
+    borsh.array(borsh.u8(), 5, "dunno1"),
+    borsh.publicKey("closeAuthority"),
+    borsh.array(borsh.u8(), 4, "dunno2"),
+    borsh.publicKey("permanentDelegate"),
+    borsh.array(borsh.u8(), 4, "dunno3"),
+    borsh.publicKey("dunno4"),
+    borsh.publicKey("dunno5"), // mint address
+    borsh.array(borsh.u8(), 4, "dunno6"),
+    borsh.publicKey("metadataPointerAuthority"),
+    borsh.publicKey("metadataAddress"),
+    // TokenMetadata
+    borsh.str("name"),
+    borsh.str("symbol"),
+    borsh.str("uri"),
+    borsh.array(borsh.u8(), 4, "dunno7"),
+    borsh.str("destroyTimestampField"),
+    borsh.str("destroyTimestampValue"),
+]);
 
 // export const MintLayout = struct<RawMint>([
 //     u32('mintAuthorityOption'),
