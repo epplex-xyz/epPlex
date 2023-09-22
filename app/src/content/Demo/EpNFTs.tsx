@@ -1,5 +1,5 @@
 import React from "react";
-import { Token22 } from "../../../client/token22";
+import { Token22 } from "../../../client/types/token22";
 import { EpNFTContainer } from "./EpNFTContainer";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";

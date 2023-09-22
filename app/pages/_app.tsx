@@ -11,6 +11,7 @@ import SEO from "../next-seo-config";
 import * as font from "@styles/fonts";
 import MyWalletProvider from "../src/providers/MyWalletProvider";
 import ProgramApisProvider from "../src/providers/ProgramApisProvider";
+import { MyToaster } from "@components/Container/Toaster";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -21,6 +22,7 @@ interface MyAppProps extends AppProps {
 
 // _app runs on both client and server
 function App(props: MyAppProps) {
+
     const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
     return (
@@ -35,6 +37,8 @@ function App(props: MyAppProps) {
 
                     {/* Vercel */}
                     <Analytics />
+
+                    <MyToaster/>
 
                     {/* Ensures proper initial font loading */}
                     <div className={`

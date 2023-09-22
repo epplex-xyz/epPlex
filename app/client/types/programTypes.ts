@@ -1,7 +1,6 @@
-import { IdlAccounts, Program, ProgramAccount, AnchorProvider } from "@coral-xyz/anchor";
-import idl from '../idl/ephemerality.json';
-import { Ephemerality } from "../idl/ephemeralityTypes";
-import { IDL } from "../idl/ephemeralityTypes";
+import { AnchorProvider, Program } from "@coral-xyz/anchor";
+import idl from "../idl/ephemerality.json";
+import { Ephemerality, IDL } from "../idl/ephemeralityTypes";
 import { PublicKey } from "@solana/web3.js";
 
 

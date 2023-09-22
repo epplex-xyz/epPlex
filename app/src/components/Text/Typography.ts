@@ -61,49 +61,49 @@ export enum TextBackground {
     none,
 }
 
-export const useContextualTextShadowColor = (background?: TextBackground): TypographyVariant["textShadow"] => {
-    const theme = useTheme();
-    switch (background) {
-        case TextBackground.blue:
-            return theme.palette.textShadow!.dark;
-        case TextBackground.yellow:
-            return theme.palette.textShadow!.main;
-        case TextBackground.red:
-            return theme.palette.textShadow!.light;
-        case TextBackground.none:
-            return "transparent";
-        default:
-            return undefined;
-    }
-};
+// export const useContextualTextShadowColor = (background?: TextBackground): TypographyVariant["textShadow"] => {
+//     const theme = useTheme();
+//     switch (background) {
+//         case TextBackground.blue:
+//             return theme.palette.textShadow!.dark;
+//         case TextBackground.yellow:
+//             return theme.palette.textShadow!.main;
+//         case TextBackground.red:
+//             return theme.palette.textShadow!.light;
+//         case TextBackground.none:
+//             return "transparent";
+//         default:
+//             return undefined;
+//     }
+// };
+//
+// type UseTextShadowColorProps = {
+//     variant: TypographyVariantsKey;
+//     background?: TextBackground;
+// };
 
-type UseTextShadowColorProps = {
-    variant: TypographyVariantsKey;
-    background?: TextBackground;
-};
-
-export const useTextShadowColor = (props: UseTextShadowColorProps): TypographyVariant["textShadow"] => {
-    const textShadowColor = useContextualTextShadowColor(props.background);
-    switch (props.variant) {
-        case "h1":
-            return `6px 6px 0px ${textShadowColor}`;
-        case "h2":
-            return `4px 4px 0px ${textShadowColor}`;
-        case "h3":
-            return `5px 5px 0px ${textShadowColor}`;
-        case "h4":
-            return `4px 4px 0px ${textShadowColor}`;
-        case "h5":
-            return `3px 3px 0px ${textShadowColor}`;
-        case "h6":
-            return `2px 2px 0px ${textShadowColor}`;
-        case "subtitle1":
-        case "body1":
-        case "body2":
-        default:
-            return undefined;
-    }
-};
+// export const useTextShadowColor = (props: UseTextShadowColorProps): TypographyVariant["textShadow"] => {
+//     const textShadowColor = useContextualTextShadowColor(props.background);
+//     switch (props.variant) {
+//         case "h1":
+//             return `6px 6px 0px ${textShadowColor}`;
+//         case "h2":
+//             return `4px 4px 0px ${textShadowColor}`;
+//         case "h3":
+//             return `5px 5px 0px ${textShadowColor}`;
+//         case "h4":
+//             return `4px 4px 0px ${textShadowColor}`;
+//         case "h5":
+//             return `3px 3px 0px ${textShadowColor}`;
+//         case "h6":
+//             return `2px 2px 0px ${textShadowColor}`;
+//         case "subtitle1":
+//         case "body1":
+//         case "body2":
+//         default:
+//             return undefined;
+//     }
+// };
 
 type UseFontFamilyProps = {
     typographyVariant: TypographyVariantsKey;

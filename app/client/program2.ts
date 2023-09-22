@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { sendAndConfirmRawTransaction}  from "../src/utils/solana";
+import { sendAndConfirmRawTransaction}  from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import { ExtensionType, getMintLen, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import {BN} from "@coral-xyz/anchor";

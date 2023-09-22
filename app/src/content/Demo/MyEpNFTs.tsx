@@ -4,8 +4,8 @@ import { TextDivider } from "@components/Divider/TextDivider";
 import { Text } from "@components/Text/TextComponent";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
-import { getToken22 } from "../../utils/solana";
-import { Token22 } from "../../../client/token22";
+import { getToken22 } from "../../../utils/solana";
+import { Token22 } from "../../../client/types/token22";
 import CircularProgress from '@mui/material/CircularProgress';
 import { EpNFTs } from "./EpNFTs";
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy

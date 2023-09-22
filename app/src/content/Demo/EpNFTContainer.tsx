@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Text } from "@components/Text/TextComponent";
-import { Token22 } from "../../../client/token22";
+import { Token22 } from "../../../client/types/token22";
 import style from "../../styles/style.module.scss";
 import Image from "next/image";
 import { Timer } from "@components/Text/Timer";
@@ -37,6 +37,7 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
+
 
     const fetchImage = useCallback(async () => {
         try {
@@ -98,12 +99,14 @@ export function EpNFTContainer({item}: {item: Token22}) {
                 <Timer endTimestamp={Number(item.destroyTimestampValue)}/>
             </ContainedContainer>
 
-            <Image
-                src={image}
-                alt={"logo"}
-                height={300}
-                width={300}
-            />
+            { image &&
+                <Image
+                    src={image}
+                    alt={"logo"}
+                    height={300}
+                    width={300}
+                />
+            }
 
             {/*<div className="flex flex-col items-center px-2 gap-y-2">*/}
             <div className="flex justify-between w-full">
