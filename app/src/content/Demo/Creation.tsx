@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
 import { TextDivider } from "@components/Divider/TextDivider";
 import { MyDatePicker } from "@components/Input/DatePicker";
@@ -10,6 +10,8 @@ import { StandardInput } from "@components/Input/TextField";
 import { combineDateAndTime } from "../../utils/general";
 import Button from "@mui/material/Button";
 import { TraitInputField } from "./TraitInput";
+import { useProgramApis } from "../../providers/ProgramApisProvider";
+import { Keypair } from "@solana/web3.js";
 
 
 export function Creation() {
@@ -18,19 +20,33 @@ export function Creation() {
     const nameInput = StandardInput({placeholder: "Name"});
     const symbolInput = StandardInput({placeholder: "Symbol"});
 
+    const {program} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
 
 
-    const handleCreate = () => {
-        //destroyTimestamp
-        //Image
-        //name
-        // symbol
+    const handleCreate = useCallback(async () => {
+        const current = Math.floor((new Date()).getTime() / 1000);
+        const offset = unixTime - current;
+
+        console.log("offset", offset);
+        if (offset < 0) {
+            throw new Error("Invalid time");
+        }
+
+
+        // Uplaod image
         // traits - do validation
 
-        // adding side padding
-    }
+        const mint = Keypair.generate();
+        await program.createToken(
+            mint,
+            offset,
+            nameInput.input,
+            symbolInput.input,
+        );
+
+    }, [unixTime]);
 
     return (
         <Box
@@ -90,6 +106,7 @@ export function Creation() {
                 sx={{
                     marginTop: "16px"
                 }}
+                onClick={handleCreate}
             >
                 <Text.H6 color={"primary.main"}>
                     Create epNFT

@@ -4,7 +4,6 @@ import { TextDivider } from "@components/Divider/TextDivider";
 import { Text } from "@components/Text/TextComponent";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
-import {AnchorProvider} from "@coral-xyz/anchor";
 import { getToken22 } from "../../utils/solana";
 import { Token22 } from "../../../client/token22";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -20,9 +19,8 @@ export function MyEpNFTs() {
         setIsFetching(true);
 
         try {
-            const wallet = (program.provider as AnchorProvider).wallet;
-            if (wallet?.publicKey !== undefined) {
-                const tokens = await getToken22(program.provider.connection, wallet.publicKey);
+            if (program.wallet !== undefined) {
+                const tokens = await getToken22(program.connection, program.wallet.publicKey);
                 setTokens(tokens);
             }
         } catch (e) {
