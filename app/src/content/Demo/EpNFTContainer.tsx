@@ -72,8 +72,6 @@ export function EpNFTContainer({item}: {item: Token22}) {
         }
     }, []);
 
-    console.log("traitList", traitList);
-
     useEffect(() => {
         fetchImage().then();
     },[]);

@@ -45,6 +45,7 @@ export function ImageUpload() {
             justifyContent={"center"}
             minHeight={"300px"}
             textAlign={"center"}
+            marginX={"8px"}
         >
             <Dropzone onDrop={(acceptedFiles) => setSelectedFile(acceptedFiles[0])}>
                 {({ getRootProps, getInputProps }) => (
