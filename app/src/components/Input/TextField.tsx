@@ -27,7 +27,7 @@ const Input = styled(TextField)(({theme }) => ({
     }
 }));
 
-export function StandardInput({placeHolder, textAlign = "center"}) {
+export function StandardInput({placeHolder, textAlign = "center", ...props}) {
     const [input, setInput] = useState("");
 
     const handleSearchChange = (e) => {
@@ -41,7 +41,8 @@ export function StandardInput({placeHolder, textAlign = "center"}) {
         onChange={handleSearchChange}
         sx={{
             borderRadius: style.borderRadiusMd,
-            textAlign: textAlign
+            textAlign: textAlign,
+            ...props
         }}
     />;
 

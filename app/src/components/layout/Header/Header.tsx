@@ -4,12 +4,12 @@ import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
-import {useMobileOverlay } from "./MobileOverlay";
-import {HeaderBurgerMenu, HeaderLogo, HeaderButtons,} from "./HeaderElements";
+import { useMobileOverlay } from "./MobileOverlay";
+import { HeaderLogo } from "./HeaderElements";
 import { ButtonLink } from "src/components/Buttons/LinkButton";
 import { ButtonConfig } from "src/components/Buttons/ButtonConfig";
 import { useRouter } from "next/router";
-import { MyMountedWalletButton, MyWalletConnectButton } from "@components/Buttons/MyWalletConnectButton";
+import { MyMountedWalletButton } from "@components/Buttons/MyWalletConnectButton";
 
 function HeaderLeft({TriggerButton}: {TriggerButton: () => React.ReactNode}) {
     return (

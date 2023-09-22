@@ -62,19 +62,28 @@ export function Creation() {
 
             <TextDivider>Details</TextDivider>
 
-            <div className="justify-between flex items-center px-2">
-                <Text.H6>
-                    Name
-                </Text.H6>
-                {inputComponent}
+            <div className="flex flex-col items-center px-2 gap-y-2">
+                <div className="flex justify-between w-full">
+                    <Text.H6>
+                        Name
+                    </Text.H6>
+                    {inputComponent}
+                </div>
+                <div className="flex justify-between w-full">
+                    <Text.H6>
+                        Symbol
+                    </Text.H6>
+                    {inputComponent}
+                </div>
+                <div className={"w-full"}>
+                    <Text.H6>
+                        Traits
+                    </Text.H6>
+
+                    <TraitInputField/>
+                </div>
             </div>
-            <div className="justify-between flex items-center px-2">
-                <Text.H6>
-                    Symbol
-                </Text.H6>
-                {inputComponent}
-            </div>
-            <TraitInputField/>
+
 
             <Button
                 variant={"contained"}

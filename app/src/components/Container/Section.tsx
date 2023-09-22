@@ -8,7 +8,7 @@ export function Section({ children, ref, overflow="hidden", ...props }: BoxProps
             {...props}
             ref={ref}
             component="div"
-            overflow={overflow}
+            // overflow={overflow}
             width={"100%"}
             height={{sm: "100%", md: style.viewportHeight}}
             position={"relative"}
