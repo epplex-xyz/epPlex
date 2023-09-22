@@ -7,18 +7,19 @@ import { ImageUpload } from "@components/Input/ImageUpload";
 import { Timer } from "@components/Text/Timer";
 import { Text } from "@components/Text/TextComponent";
 import { StandardInput } from "@components/Input/TextField";
-import { combineDateAndTime } from "../../utils/general";
+import { combineDateAndTime } from "../../../utils/general";
 import Button from "@mui/material/Button";
 import { TraitInputField } from "./TraitInput";
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { Keypair } from "@solana/web3.js";
-
+import toast from "react-hot-toast";
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
     const {timeComponent, time} = MyTimePicker({width: "150px"});
     const nameInput = StandardInput({placeholder: "Name"});
     const symbolInput = StandardInput({placeholder: "Symbol"});
+    const imageUpload = ImageUpload();
 
     const {program} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
@@ -26,27 +27,48 @@ export function Creation() {
 
 
     const handleCreate = useCallback(async () => {
-        const current = Math.floor((new Date()).getTime() / 1000);
-        const offset = unixTime - current;
+        try {
+            const current = Math.floor((new Date()).getTime() / 1000);
+            const offset = unixTime - current;
 
-        console.log("offset", offset);
-        if (offset < 0) {
-            throw new Error("Invalid time");
+            if (offset < 0) {
+                throw new Error("Invalid time");
+            }
+
+            // Image upload
+            const fileData = await imageUpload.selectedFile.arrayBuffer();
+            const res = await fetch("/api/upload", {
+                method: 'POST', // Use the POST method
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: imageUpload.selectedFile.name,
+                    fileBuffer: Buffer.from(fileData),
+                }),
+            }).then((res) => res.json());
+
+            if (res.ok) {
+                throw new Error("Failed to upload image");
+            }
+
+            const imageUrl = res.message;
+
+
+            // JSON upload
+            // traits - do validation
+
+            const mint = Keypair.generate();
+            await program.createToken(
+                mint,
+                offset,
+                nameInput.input,
+                symbolInput.input,
+            );
+        } catch (e: any) {
+            console.log("Failed creating epNFT", e);
+            toast.error(e.message);
         }
 
-
-        // Uplaod image
-        // traits - do validation
-
-        const mint = Keypair.generate();
-        await program.createToken(
-            mint,
-            offset,
-            nameInput.input,
-            symbolInput.input,
-        );
-
-    }, [unixTime]);
+    }, [unixTime, nameInput.input, symbolInput.input, imageUpload.selectedFile]);
 
     return (
         <Box
@@ -74,7 +96,7 @@ export function Creation() {
 
             <TextDivider>Image</TextDivider>
 
-            <ImageUpload/>
+            {imageUpload.component}
 
             <TextDivider>Details</TextDivider>
 

@@ -7,7 +7,6 @@ import {
     TypographyVariantsKey,
     typography,
     useFontFamily,
-    useTextShadowColor,
 } from "./Typography";
 
 interface TextProps extends TypographyProps {
