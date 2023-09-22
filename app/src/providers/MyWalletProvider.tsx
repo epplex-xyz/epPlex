@@ -17,12 +17,9 @@ const MyWalletProvider = ({ children }) => {
     const endpoint = useMemo(() => {
         // Probably this is unnecessary since it is already set within the default
         // if (currentEndpoint === undefined) {
-        console.log("process.env.NEXT_PUBLIC_SOLANA_RPC_HOST", process.env.NEXT_PUBLIC_SOLANA_RPC_HOST);
         return process.env.NEXT_PUBLIC_SOLANA_RPC_HOST as string;
-        // }
 
-        // return currentEndpoint.url;
-    }, []);
+    }, [process.env.NEXT_PUBLIC_SOLANA_RPC_HOST]);
 
     // Not even necessary to use this
     // https://twitter.com/burger606/status/1649453569651736587?s=20
