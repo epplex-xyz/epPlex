@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useMemo } from "react";
-import { AnchorProvider } from "@coral-xyz/anchor";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import { CONFIRM_OPTIONS } from "../../client/constants";
-import { createProgram, EphemeralityProgram } from "../../client/types/programTypes";
+import { Program2 } from "../../client/program2";
 
-export const useProgramApis = () => {
+export const useProgramApis = (): ProgramInterface => {
     const context = useContext(ProgramApisContext);
     if (context === undefined) {
         throw new Error("useProgramApis must be used within a ProgramApisProvider");
@@ -13,11 +11,11 @@ export const useProgramApis = () => {
 };
 
 interface ProgramInterface {
-    program: EphemeralityProgram;
+    program: Program2;
 
 }
 const ProgramApisContext = createContext<ProgramInterface>({
-    program: {} as EphemeralityProgram,
+    program: {} as Program2,
 });
 
 const ProgramApisProvider = ({ children }) => {
@@ -25,8 +23,7 @@ const ProgramApisProvider = ({ children }) => {
     const anchorWallet = useAnchorWallet();
 
     const { program } = useMemo(() => {
-        const provider = new AnchorProvider(connection, anchorWallet!, CONFIRM_OPTIONS);
-        const program = createProgram(provider);
+        const program = new Program2(anchorWallet!, connection);
 
         return { program };
     }, [connection, anchorWallet]);

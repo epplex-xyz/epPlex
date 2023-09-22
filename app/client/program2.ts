@@ -4,32 +4,34 @@ import {
     PublicKey,
     sendAndConfirmTransaction,
     SystemProgram, SYSVAR_RENT_PUBKEY, Transaction,
-    TransactionInstruction,
 } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
+import { sendAndConfirmRawTransaction}  from "../src/utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import { ExtensionType, getMintLen, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import {BN} from "@coral-xyz/anchor";
+import { AnchorWallet} from "@solana/wallet-adapter-react";
 
-export class Program {
-    signer: Keypair;
+export class Program2 {
     connection: Connection;
     program: EphemeralityProgram;
 
+    wallet: Wallet;
+
+
     constructor(
-        signer: Keypair,
+        wallet: AnchorWallet,
         connection: Connection,
     ) {
-        const provider = new AnchorProvider(connection, new Wallet(signer), CONFIRM_OPTIONS);
+        const provider = new AnchorProvider(connection, wallet, CONFIRM_OPTIONS);
         this.program = createProgram(provider);
-        this.signer = signer;
         this.connection = connection;
+        this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
     async createToken(
         mint: Keypair,
-        payer: Keypair,
         destroyTimestampOffset: number = 60 * 5,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
@@ -37,6 +39,7 @@ export class Program {
     ) {
         const METADATAPOINTER_SIZE = 64 + 2 + 2;
         const programDelegate = this.getProgramDelegate();
+        const payer = this.wallet.publicKey;
 
         const tokenCreateIx = await this.program.methods
             .tokenCreate({
@@ -48,12 +51,10 @@ export class Program {
             .accounts({
                 mint: mint.publicKey,
                 programDelegate: programDelegate,
-                // metadata: metadata,
-                payer: payer.publicKey,
+                payer: payer,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 rent: SYSVAR_RENT_PUBKEY,
-                // tokenMetadataProgram: new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"),
             })
             .instruction();
 
@@ -63,7 +64,7 @@ export class Program {
 
         const transaction = new Transaction().add(...[
             SystemProgram.createAccount({
-                fromPubkey: payer.publicKey,
+                fromPubkey: payer,
                 newAccountPubkey: mint.publicKey,
                 space: mintLen,
                 lamports: mintLamports,
@@ -74,7 +75,7 @@ export class Program {
 
         let tx;
         try {
-            tx = await sendAndConfirmTransaction(this.connection, transaction, [payer, mint], CONFIRM_OPTIONS);
+            tx = await sendAndConfirmRawTransaction(this.connection, transaction, payer, this.wallet, [mint]);;
             console.log("tx", tx);
         } catch (e) {
             console.log("Failed to send tx", e);
@@ -112,33 +113,6 @@ export class Program {
         console.log("tx", tx);
     }
 
-    async closeProgramDelegate() {
-        const programDelegate = this.getProgramDelegate();
-
-        const tokenBurnTx = await this.program.methods
-            .programDelegateClose({})
-            .accounts({
-                programDelegate: programDelegate,
-                payer: this.signer.publicKey,
-            })
-            .transaction();
-
-        const tx = await sendAndConfirmTransaction(this.connection, tokenBurnTx, [this.signer], CONFIRM_OPTIONS);
-        console.log("tx", tx);
-    }
-
-    async initProgramDelegate(): Promise<TransactionInstruction> {
-        const programDelegate = this.getProgramDelegate();
-        const initDelegateIx = await this.program.methods
-            .programDelegateCreate({})
-            .accounts({
-                programDelegate,
-                payer: this.signer.publicKey,
-                systemProgram: SystemProgram.programId,
-            })
-            .instruction();
-        return initDelegateIx;
-    }
 
     getProgramDelegate(): PublicKey {
         const [programDelegate] = PublicKey.findProgramAddressSync(
@@ -147,16 +121,5 @@ export class Program {
         );
         return programDelegate;
     }
-
-
-    // getMetadata(mint: PublicKey): PublicKey {
-    //     const TOKEN_METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-    //     const [programDelegate] = PublicKey.findProgramAddressSync(
-    //         [Buffer.from("metadata"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-    //         TOKEN_METADATA_PROGRAM_ID
-    //     );
-    //     return programDelegate;
-    // }
-
 
 }
