@@ -7,24 +7,29 @@ import { ImageUpload } from "@components/Input/ImageUpload";
 import { Timer } from "@components/Text/Timer";
 import { Text } from "@components/Text/TextComponent";
 import { StandardInput } from "@components/Input/TextField";
-import { combineDateAndTime } from "../../../utils/general";
+import { addExtension, combineDateAndTime, validateTraits } from "../../../utils/general";
 import Button from "@mui/material/Button";
-import { TraitInputField } from "./TraitInput";
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { Keypair } from "@solana/web3.js";
 import toast from "react-hot-toast";
+import { makeJson } from "../../../utils/metadata";
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
     const {timeComponent, time} = MyTimePicker({width: "150px"});
     const nameInput = StandardInput({placeholder: "Name"});
     const symbolInput = StandardInput({placeholder: "Symbol"});
+    const traitInput = StandardInput(
+        {
+            placeholder: '[{"trait_type": "background", "value": "blue"}]',
+            width: "100%",
+            height: "200px"
+        }
+    );
     const imageUpload = ImageUpload();
-
     const {program} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
-
 
     const handleCreate = useCallback(async () => {
         try {
@@ -37,24 +42,46 @@ export function Creation() {
 
             // Image upload
             const fileData = await imageUpload.selectedFile.arrayBuffer();
-            const res = await fetch("/api/upload", {
+            const fileName = imageUpload.selectedFile.name;
+            const imageRes = await fetch("/api/upload", {
                 method: 'POST', // Use the POST method
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name: imageUpload.selectedFile.name,
+                    name: fileName,
                     fileBuffer: Buffer.from(fileData),
                 }),
             }).then((res) => res.json());
 
-            if (res.ok) {
+            if (imageRes.ok) {
+                throw new Error("Failed to upload image");
+            }
+            const imageUrl = imageRes.message;
+
+
+            const traitObjects = JSON.parse(traitInput.input);
+            if (validateTraits(traitObjects)) {
+                throw new Error("Invalid traits");
+            }
+
+            console.log("traits", traitObjects);
+            const metadata = makeJson(imageUrl, nameInput.input, symbolInput.input, program.wallet.publicKey, traitObjects);
+            const metadataName = addExtension(fileName, "json");
+
+            const metadataRes = await fetch("/api/upload", {
+                method: 'POST', // Use the POST method
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: metadataName,
+                    fileBuffer: Buffer.from(JSON.stringify(metadata)),
+                }),
+            }).then((res) => res.json());
+
+            if (metadataRes.ok) {
                 throw new Error("Failed to upload image");
             }
 
-            const imageUrl = res.message;
-
-
-            // JSON upload
-            // traits - do validation
+            const metadataUri = metadataRes.message;
+            console.log("metadata", metadataUri);
 
             const mint = Keypair.generate();
             await program.createToken(
@@ -62,13 +89,21 @@ export function Creation() {
                 offset,
                 nameInput.input,
                 symbolInput.input,
+                metadataUri,
             );
+
         } catch (e: any) {
             console.log("Failed creating epNFT", e);
             toast.error(e.message);
         }
 
-    }, [unixTime, nameInput.input, symbolInput.input, imageUpload.selectedFile]);
+    }, [
+        unixTime,
+        nameInput.input,
+        symbolInput.input,
+        traitInput.input,
+        imageUpload.selectedFile
+    ]);
 
     return (
         <Box
@@ -118,7 +153,7 @@ export function Creation() {
                         Traits
                     </Text.H6>
 
-                    <TraitInputField/>
+                    {traitInput.inputComponent}
                 </div>
             </div>
 

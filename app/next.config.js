@@ -20,7 +20,7 @@ const nextConfig = {
                 pathname: "/**/*",
             },
         ],
-        domains: ["arweave.net"]
+        domains: ["arweave.net", "shdw-drive.genesysgo.net"]
     },
     publicRuntimeConfig: {
         NODE_ENV: process.env.NODE_ENV,
