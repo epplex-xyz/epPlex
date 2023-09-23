@@ -1,5 +1,14 @@
 import { Connection, Keypair, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
-import { AccountLayout, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+    AccountLayout,
+    createMintToInstruction,
+    getOrCreateAssociatedTokenAccount,
+    mintTo,
+    TOKEN_2022_PROGRAM_ID,
+    getAssociatedTokenAddressSync,
+    createAssociatedTokenAccountInstruction,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { Token22Layout, Token22 } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
@@ -78,4 +87,61 @@ export async function sendAndConfirmRawTransaction(
     }
 
     return txId;
+}
+
+export async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
+    const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        payer,
+        mint,
+        payer.publicKey, // owner
+        undefined,
+        undefined,
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    const signature = await mintTo(
+        connection,
+        payer,
+        mint,
+        fromTokenAccount.address,
+        payer,
+        1,
+        [],
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    console.log("tx", signature);
+}
+
+export function mintToIx(mint: PublicKey, payer: PublicKey) {
+    const associatedToken = getAssociatedTokenAddressSync(
+        mint,
+        payer,
+        false,
+        TOKEN_2022_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+    );
+
+    const createAccountIx = createAssociatedTokenAccountInstruction(
+        payer,
+        associatedToken,
+        payer,
+        mint,
+        TOKEN_2022_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+    );
+
+    const mintToIx = createMintToInstruction(
+        mint,
+        associatedToken,
+        payer,
+        1,
+        [],
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    return [createAccountIx, mintToIx];
 }

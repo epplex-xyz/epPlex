@@ -7,9 +7,15 @@ import {
 } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { sendAndConfirmRawTransaction}  from "../utils/solana";
+import { mintToIx, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
-import { ExtensionType, getMintLen, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+    ExtensionType,
+    getMintLen,
+    getOrCreateAssociatedTokenAccount,
+    mintTo,
+    TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
 import {BN} from "@coral-xyz/anchor";
 import { AnchorWallet} from "@solana/wallet-adapter-react";
 
@@ -71,6 +77,7 @@ export class Program2 {
                 programId: TOKEN_2022_PROGRAM_ID,
             }),
             tokenCreateIx,
+            ...mintToIx(mint.publicKey, payer)
         ]);
 
         let tx;
