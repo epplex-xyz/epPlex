@@ -1,13 +1,17 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
-import useMediaQuery from "@mui/material/useMediaQuery";
+// import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "react-responsive";
 
 export function LogoAnimation() {
-    const isMobile = useMediaQuery(useTheme().breakpoints.down('sm'));
-    const mobileFactor = isMobile ? 0.8 : 1;
+    // const isMobile = useMediaQuery(useTheme().breakpoints.down('sm'));
+    const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
+    const mobileFactor =  isMobile ? 0.8 : 1;
+    const [offset, setOffset] = useState({p1: 0, p2: 0});
+    console.log("offset", offset, isMobile);
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -18,17 +22,28 @@ export function LogoAnimation() {
                 delayChildren: 1.2
             }
         }
+
     };
 
-    const item = (offset) => {
+    useEffect(() => {
+        setOffset(prev => {
+            return {
+                p1: isMobile ? 200 : 0,
+                p2: isMobile ? 160 : -40,
+            };
+        });
+    },[isMobile]);
+
+
+    const item = useCallback((offset) => {
         return {
             hidden: {
                 opacity: 0,
-                x: -200 + offset,
+                x: -100 + offset,
             },
             show: {
                 opacity: 1,
-                x: 0 + offset,
+                x: 100 + offset,
                 // animate: {
                 //     x: [0, 200],
                 // },
@@ -38,7 +53,7 @@ export function LogoAnimation() {
                 }
             }
         };
-    };
+    },[]);
 
     // const itemY = (offset) => {
     //     return {
@@ -82,12 +97,12 @@ export function LogoAnimation() {
         return {
             hidden: {
                 opacity: 0,
-                x: 160 + offset,
+                x: 260 + offset,
                 y: -370 ,
             },
             show: {
                 opacity: 1,
-                x: 60 + offset,
+                x: 160 + offset,
                 y: -170,
                 transition: {
                     duration: 1,
@@ -97,7 +112,7 @@ export function LogoAnimation() {
         };
     };
 
-    const itemY2 = (offset) => {
+    const itemY2 = useCallback((offset) => {
         return {
             hidden: {
                 opacity: 0,
@@ -114,7 +129,7 @@ export function LogoAnimation() {
                 }
             }
         };
-    };
+    },[]);
 
 
     const AR = 125/48;
@@ -144,10 +159,6 @@ export function LogoAnimation() {
         width={sizeP2 * ARp2}
     />;
 
-    const offset1 = isMobile ? 80 : 0;
-    const offset2 = isMobile ? 40 : -40;
-
-    console.log("offser", offset1, offset2);
     return (
         <Box
             component={"div"}
@@ -166,6 +177,7 @@ export function LogoAnimation() {
             {/*<div className="absolute ">*/}
             {/*    <div className={"flex flex-row"}>*/}
             <motion.div
+                key={offset.p1}
                 variants={container}
                 initial="hidden"
                 animate="show"
@@ -188,10 +200,10 @@ export function LogoAnimation() {
                 animate="show"
                 className="flex flex-row"
             >
-                <motion.div variants={itemY2(offset1)}>
+                <motion.div variants={itemY2(offset.p1)}>
                     {p1Logo}
                 </motion.div>
-                <motion.div variants={itemY2(offset2)}>
+                <motion.div variants={itemY2(offset.p2)}>
                     {p2Logo}
                 </motion.div>
             </motion.div>
