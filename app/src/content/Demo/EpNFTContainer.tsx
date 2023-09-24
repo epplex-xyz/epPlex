@@ -8,7 +8,6 @@ import { Timer } from "@components/Text/Timer";
 import { ContainedContainer } from "@components/Container/ContainedContainer";
 
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
-
 function TraitContainer({trait, value}: {trait: string, value: string}) {
     return (
         <Box
@@ -18,7 +17,6 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
             flexDirection={"column"}
             alignSelf={"center"}
             color={"primary.main"}
-            // bgcolor={"secondary.main"}
             sx={{
                 borderRadius: style.borderRadiusMd,
                 boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
@@ -32,12 +30,11 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
                 {value}
             </Text.Body2>
         </Box>
-    )
+    );
 }
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
-
 
     const fetchImage = useCallback(async () => {
         try {
@@ -88,8 +85,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
             alignItems={"center"}
             display={"flex"}
             height={"800px"}
-            alignSelf={"start"}
-            width={{ sm: "300px", md: "400px" }}
+            width={"300px"}
             sx={{
                 borderRadius: style.borderRadiusMd,
                 boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
@@ -103,25 +99,24 @@ export function EpNFTContainer({item}: {item: Token22}) {
                 <Image
                     src={image}
                     alt={"logo"}
-                    height={300}
-                    width={300}
+                    height={200}
+                    width={200}
                 />
             }
 
-            {/*<div className="flex flex-col items-center px-2 gap-y-2">*/}
-            <div className="flex justify-between w-full">
-                <Text.H6>
+            <div className="flex justify-between w-full items-center">
+                <Text.Body1>
                     Name
-                </Text.H6>
+                </Text.Body1>
                 <ContainedContainer>
                     {item.name}
                 </ContainedContainer>
             </div>
 
-            <div className="flex justify-between w-full">
-                <Text.H6>
+            <div className="flex justify-between w-full items-center">
+                <Text.Body1>
                     Symbol
-                </Text.H6>
+                </Text.Body1>
                 <ContainedContainer>
                     {item.symbol}
                 </ContainedContainer>
@@ -132,10 +127,6 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     <React.Fragment key={index}>
                         <TraitContainer trait={trait.trait_type} value={trait.value}/>
                     </React.Fragment>
-                    //
-                    // <li key={index}>
-                    //     Trait Type: {trait.trait_type}, Value: {trait.value}
-                    // </li>
                 ))}
             </div>
         </Box>

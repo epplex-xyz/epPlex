@@ -9,8 +9,6 @@ export function ContainedContainer({children}) {
             rowGap={"16px"}
             display={"flex"}
             alignSelf={"center"}
-            // color={"primary.main"}
-            // bgcolor={"secondary.main"}
             sx={{
                 borderRadius: style.borderRadiusMd,
                 boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,

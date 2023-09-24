@@ -7,7 +7,8 @@ import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { getToken22 } from "../../../utils/solana";
 import { Token22 } from "../../../client/types/token22";
 import CircularProgress from '@mui/material/CircularProgress';
-import { EpNFTs } from "./EpNFTs";
+import { Carousel } from "./Carousel";
+import { EpNFTContainer } from "./EpNFTContainer";
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 
 export function MyEpNFTs() {
@@ -48,7 +49,7 @@ export function MyEpNFTs() {
                 <TextDivider>My epNFTs</TextDivider>
             </div>
 
-            <div className="flex justify-center self-center items-center w-full">
+            <div className="flex justify-center self-center items-center w-full flex-col">
                 {isFetching ? <CircularProgress sx={{color: "secondary.main"}} /> :
                     <>
                         { tokens.length === 0 ?
@@ -58,7 +59,10 @@ export function MyEpNFTs() {
                                      Create an ephemeral NFT
                                 </Text.H6>
                             </>
-                            : <EpNFTs items={tokens}/>
+                            : <Carousel
+                                items={tokens}
+                                ItemComponent={EpNFTContainer}
+                            />
                         }
                     </>
                 }
