@@ -30,8 +30,6 @@ export function LandingPage({...props}: BoxProps){
                     <ButtonLink {...ButtonConfig.docs}/>
                 </div>
 
-
-
                 <LogoAnimation/>
             </div>
         </Section>
