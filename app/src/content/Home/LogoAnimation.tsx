@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React from "react";
+import Box from "@mui/material/Box";
 
 export function LogoAnimation() {
     const container = {
@@ -35,6 +36,44 @@ export function LogoAnimation() {
         };
     };
 
+    // const itemY = (offset) => {
+    //     return {
+    //         hidden: {
+    //             opacity: 0,
+    //             x: 160 + offset,
+    //             y: -370 ,
+    //         },
+    //         show: {
+    //             opacity: 1,
+    //             x: 60 + offset,
+    //             y: -170,
+    //             transition: {
+    //                 duration: 1,
+    //                 ease: [0.02, 0.6, 0.01, 0.91]
+    //             }
+    //         }
+    //     };
+    // };
+    //
+    // const itemY2 = (offset) => {
+    //     return {
+    //         hidden: {
+    //             opacity: 0,
+    //             x: 160 + offset,
+    //             y: -544,
+    //         },
+    //         show: {
+    //             opacity: 1,
+    //             x: 60 + offset,
+    //             y: -344,
+    //             transition: {
+    //                 duration: 1,
+    //                 ease: [0.02, 0.6, 0.01, 0.91]
+    //             }
+    //         }
+    //     };
+    // };
+
     const itemY = (offset) => {
         return {
             hidden: {
@@ -58,13 +97,13 @@ export function LogoAnimation() {
         return {
             hidden: {
                 opacity: 0,
-                x: 160 + offset,
-                y: -544,
+                x: 30 + offset,
+                y: -200
             },
             show: {
                 opacity: 1,
-                x: 60 + offset,
-                y: -344,
+                x: -70 + offset,
+                y: 0,
                 transition: {
                     duration: 1,
                     ease: [0.02, 0.6, 0.01, 0.91]
@@ -72,6 +111,8 @@ export function LogoAnimation() {
             }
         };
     };
+
+
     const AR = 125/48;
     const size = 50;
 
@@ -99,23 +140,23 @@ export function LogoAnimation() {
     />;
 
     return (
-        <div
-            style={{
-                left: -50,
-                marginTop: "100px",
+        <Box
+            component={"div"}
+            sx={{
+                left: 75,
+                marginTop: {sm: "50px", md: "100px"},
                 width: "100%",
                 position: "relative",
                 display: "flex",
-                // position: "absolute",
-                alignItems: "center",
-                flexDirection: "column",
+                flexDirection: "row",
+                justifyContent: "center",
             }}
         >
+            {/* E part */}
             <motion.div
                 variants={container}
                 initial="hidden"
                 animate="show"
-                style={{position: "absolute"}}
             >
                 <motion.div variants={item(0)}>
                     {eLogo}
@@ -126,13 +167,33 @@ export function LogoAnimation() {
                 <motion.div variants={item(-65)}>
                     {eLogo}
                 </motion.div>
-                <motion.div variants={itemY(0)}>
+            </motion.div>
+
+            {/* P part */}
+            {/*<div*/}
+            {/*    style={{*/}
+            {/*        width: "100%",*/}
+            {/*        // position: "relative",*/}
+            {/*        display: "flex",*/}
+            {/*        flexDirection: "row",*/}
+            {/*        // alignItems: "center",*/}
+            {/*    }}*/}
+            {/*>*/}
+            <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="flex flex-row"
+            >
+                <motion.div variants={itemY2(0)}>
                     {p1Logo}
                 </motion.div>
-                <motion.div variants={itemY2(93)}>
+                <motion.div variants={itemY2(-40)}>
                     {p2Logo}
                 </motion.div>
             </motion.div>
-        </div>
+            {/*</div>*/}
+        </Box>
     );
 }
+
