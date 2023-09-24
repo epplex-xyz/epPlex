@@ -17,8 +17,11 @@ export function Carousel<T>({items, ItemComponent}: CarouselProps<T>) {
     const canScrollNext = activeSlide < items.length - 1;
     const offsetX = useMotionValue(0);
     const sizeFactor = 0.8;
+
+    // a bit hardcoded, but fuk it
     const containerSize = 400;
     const itemSize = 300;
+
     const animatedX = useSpring(offsetX, {
         damping: 20,
         stiffness: 150,

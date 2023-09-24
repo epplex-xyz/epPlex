@@ -3,6 +3,7 @@ import { BoxProps } from "@mui/material/Box";
 import { Text } from "src/components/Text/TextComponent";
 import { ButtonLink } from "src/components/Buttons/LinkButton";
 import { ButtonConfig } from "src/components/Buttons/ButtonConfig";
+import { LogoAnimation } from "./LogoAnimation";
 
 function LandingText(){
     return (
@@ -28,6 +29,10 @@ export function LandingPage({...props}: BoxProps){
                     <ButtonLink {...ButtonConfig.demo}/>
                     <ButtonLink {...ButtonConfig.docs}/>
                 </div>
+
+
+
+                <LogoAnimation/>
             </div>
         </Section>
     );
