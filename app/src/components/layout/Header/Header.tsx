@@ -64,6 +64,7 @@ export function Header({ headerPosition }) {
         RightComponent = <ButtonLink {...ButtonConfig.demo}/>;
     }
 
+
     return (
         <>
             <AppBar

@@ -12,12 +12,12 @@ function LandingText(){
                 epPlex
             </Text.H1>
             <Text.H3>
-                Empowering ephemeral NFTs on Solana
+                {/*Empowering ephemeral NFTs on Solana*/}
+                [REDACTED REDACTED REDACTED]
             </Text.H3>
         </div>
     );
 }
-
 
 export function LandingPage({...props}: BoxProps){
     return (
