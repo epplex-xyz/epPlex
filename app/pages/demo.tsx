@@ -4,6 +4,8 @@ import { MyWalletConnectButton } from "@components/Buttons/MyWalletConnectButton
 import { Section } from "@components/Container/Section";
 import { WalletConnectedWrapper } from "@components/Container/WalletConnectedWrapper";
 import { DemoPage } from "../src/content/Demo/DemoPage";
+import MyWalletProvider from "../src/providers/MyWalletProvider";
+import ProgramApisProvider from "../src/providers/ProgramApisProvider";
 
 export default function Demo() {
     const notConnectWrapper = <MyWalletConnectButton>
@@ -11,12 +13,16 @@ export default function Demo() {
     </MyWalletConnectButton>;
 
     return (
-        <Screen headerPosition={"static"}>
-            <Section>
-                <WalletConnectedWrapper wrapper={notConnectWrapper}>
-                    <DemoPage/>
-                </WalletConnectedWrapper>
-            </Section>
-        </Screen>
+        <MyWalletProvider>
+            <ProgramApisProvider>
+                <Screen headerPosition={"static"}>
+                    <Section>
+                        <WalletConnectedWrapper wrapper={notConnectWrapper}>
+                            <DemoPage/>
+                        </WalletConnectedWrapper>
+                    </Section>
+                </Screen>
+            </ProgramApisProvider>
+        </MyWalletProvider>
     );
 }

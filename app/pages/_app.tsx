@@ -9,8 +9,6 @@ import Head from "next/head";
 import {DefaultSeo } from "next-seo";
 import SEO from "../next-seo-config";
 import * as font from "@styles/fonts";
-import MyWalletProvider from "../src/providers/MyWalletProvider";
-import ProgramApisProvider from "../src/providers/ProgramApisProvider";
 import { MyToaster } from "@components/Container/Toaster";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -27,35 +25,32 @@ function App(props: MyAppProps) {
 
     return (
         <CustomThemeProvider cache={emotionCache}>
-            <MyWalletProvider>
-                <ProgramApisProvider>
-                    {/* SEO */}
-                    <Head>
-                        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                    </Head>
-                    <DefaultSeo {...SEO} />
 
-                    {/* Vercel */}
-                    <Analytics />
+            {/* SEO */}
+            <Head>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            </Head>
+            <DefaultSeo {...SEO} />
 
-                    <MyToaster/>
+            {/* Vercel */}
+            <Analytics />
 
-                    {/* Ensures proper initial font loading */}
-                    <div className={`
+            <MyToaster/>
+
+            {/* Ensures proper initial font loading */}
+            <div className={`
                         ${font.AlegreyaBold.className}
                         ${font.SatoshiBold.className}
                         ${font.SatoshiMedium.className}
                     `}>
-                        {process.env.NODE_ENV === "production" ?
-                            <Component {...pageProps}/>
-                            :
-                            <React.StrictMode>
-                                <Component {...pageProps}/>
-                            </React.StrictMode>
-                        }
-                    </div>
-                </ProgramApisProvider>
-            </MyWalletProvider>
+                {process.env.NODE_ENV === "production" ?
+                    <Component {...pageProps}/>
+                    :
+                    <React.StrictMode>
+                        <Component {...pageProps}/>
+                    </React.StrictMode>
+                }
+            </div>
         </CustomThemeProvider>
     );
 }
