@@ -1,11 +1,11 @@
 import React from "react";
 import Screen from "../src/components/layout/Screen";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import style from "src/styles/style.module.scss";
 import { Text } from "../src/components/Text/TextComponent";
 
 export default function PageNotFound() {
-    const router = useRouter();
+    const path = usePathname();
 
     return (
         <Screen>
@@ -13,7 +13,7 @@ export default function PageNotFound() {
                 <Text.H6
                     sx={{ textAlign: "center", marginX: "16px" }}
                 >
-                    Oops! Not yet implemented: <i>{router.asPath}</i>
+                    Oops! Not yet implemented: <i>{path}</i>
                 </Text.H6>
             </div>
         </Screen>
