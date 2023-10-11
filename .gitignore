@@ -34,3 +34,4 @@ target/*
 .env*
 *.env
 !app/.env.example
+!app/.env.production
