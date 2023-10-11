@@ -7,7 +7,6 @@ export function TraitInputField() {
     const {inputComponent, input} = StandardInput(
         {
             placeholder: '[{"trait_type": "background", "value": "blue"}]',
-            width: "100%",
             height: "200px"
         }
     );

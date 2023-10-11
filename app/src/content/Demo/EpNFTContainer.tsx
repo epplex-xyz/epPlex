@@ -38,7 +38,6 @@ export function EpNFTContainer({item}: {item: Token22}) {
 
     const fetchImage = useCallback(async () => {
         try {
-            console.log("item.uri", item.uri);
             const response = await fetch(item.uri).then((response) => response.json());
 
             // Image

@@ -142,7 +142,7 @@ export function Creation() {
 
 
             <TextDivider>Details</TextDivider>
-            <div className="flex flex-col items-center px-2 gap-y-3">
+            <div className="flex flex-col items-center px-2 gap-y-3 mx-4">
                 {/* Name */}
                 <div className="flex justify-between w-full items-center">
                     <Text.Body1>
@@ -169,6 +169,7 @@ export function Creation() {
             </div>
 
 
+            {/* Button */}
             <div className={"flex w-full justify-center"}>
                 <Button
                     variant={"contained"}
