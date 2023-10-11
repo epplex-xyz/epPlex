@@ -1,14 +1,14 @@
 const defaultSEOConfig = {
-    title: "Silk Street",
-    description: "Silky Smooth Shopping",
+    title: "epPlex",
+    description: "epPlex | Home for ephemeral NFTs (epNFTs)",
     cannonical: "https://silk-street-frontend.vercel.app/",
     openGraph: {
         type: "website",
         url: "https://silk-street-frontend.vercel.app/",
         // This is the first line of discord link
-        site_name: "Silk Street",
+        site_name: "epPlex",
         // Second line, blue text
-        title: "Silk Street | Silky Smooth Shopping",
+        title: "epPlex | Home for ephemeral NFTs (epNFTs)",
         description: "Silky Smooth Shopping",
         images: [
             {
