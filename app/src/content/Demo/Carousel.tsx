@@ -73,9 +73,19 @@ export function Carousel<T>({items, ItemComponent}: CarouselProps<T>) {
             <div
                 className="relative overflow-hidden"
                 style={{
-                    maxWidth: containerSize
+                    maxWidth: containerSize,
+                    paddingBottom: "40px"
                 }}
             >
+                <div className="flex justify-center gap-x-8 pb-4">
+                    <BWIconButton onClick={onPrev} disabled={!canScrollPrev}>
+                        <ChevronLeftIcon/>
+                    </BWIconButton>
+                    <BWIconButton onClick={onNext} disabled={!canScrollNext}>
+                        <ChevronRightIcon/>
+                    </BWIconButton>
+                </div>
+
                 <motion.div
                     className="flex flew-row relative"
                     style={{
@@ -100,17 +110,23 @@ export function Carousel<T>({items, ItemComponent}: CarouselProps<T>) {
                     ))}
                 </motion.div>
 
+                {/*<div className={"absolute bot-0 left-0"}>*/}
+                {/*    <BWIconButton onClick={onPrev} disabled={!canScrollPrev}>*/}
+                {/*        <ChevronLeftIcon/>*/}
+                {/*    </BWIconButton>*/}
+                {/*</div>*/}
+                {/*<div className={"absolute bot-0 right-0"}>*/}
+                {/*    <BWIconButton onClick={onNext} disabled={!canScrollNext}>*/}
+                {/*        <ChevronRightIcon/>*/}
+                {/*    </BWIconButton>*/}
+                {/*</div>*/}
+                {/* Buttons */}
+                {/*<div className="flex justify-center gap-x-4 py-4">*/}
 
+
+                {/*</div>*/}
             </div>
-            {/* Buttons */}
-            <div className="flex justify-center gap-x-4 py-4">
-                <BWIconButton onClick={onPrev} disabled={!canScrollPrev}>
-                    <ChevronLeftIcon/>
-                </BWIconButton>
-                <BWIconButton onClick={onNext} disabled={!canScrollNext}>
-                    <ChevronRightIcon/>
-                </BWIconButton>
-            </div>
+
         </>
     );
 }

@@ -22,11 +22,12 @@ export function Creation() {
     const traitInput = StandardInput(
         {
             placeholder: '[{"trait_type": "background", "value": "blue"}]',
-            width: "100%",
-            height: "200px"
+            height: "100px",
+            multiline: true
         }
     );
-    const imageUpload = ImageUpload();
+
+    const imageUpload = ImageUpload(null);
     const {program} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
@@ -38,6 +39,10 @@ export function Creation() {
 
             if (offset < 0) {
                 throw new Error("Invalid time");
+            }
+
+            if (imageUpload.selectedFile === null) {
+                throw new Error("No image uploaded");
             }
 
             // Image upload
@@ -112,63 +117,66 @@ export function Creation() {
             height="100%"
             display={"flex"}
             flexDirection="column"
-            rowGap={"24px"}
+            rowGap={"16px"}
             width={{ sm: "300px", md: "400px" }}
-
         >
             <TextDivider>Ephemerality</TextDivider>
-
             <div className="flex flex-row justify-evenly">
                 {dateComponent}
 
                 {timeComponent}
             </div>
             <div className="flex justify-center">
-                <Text.H6>
+                <Text.Body1>
                     Self-destruct in &nbsp;<Timer endTimestamp={unixTime}/>
-                </Text.H6>
+                </Text.Body1>
             </div>
 
             <TextDivider>Image</TextDivider>
+            <div className="flex w-full justify-center">
+                {imageUpload.component}
+            </div>
 
-            {imageUpload.component}
 
             <TextDivider>Details</TextDivider>
-
-            <div className="flex flex-col items-center px-2 gap-y-2">
-                <div className="flex justify-between w-full">
-                    <Text.H6>
+            <div className="flex flex-col items-center px-2 gap-y-3">
+                {/* Name */}
+                <div className="flex justify-between w-full items-center">
+                    <Text.Body1>
                         Name
-                    </Text.H6>
+                    </Text.Body1>
                     {nameInput.inputComponent}
                 </div>
-                <div className="flex justify-between w-full">
-                    <Text.H6>
+
+                {/* Symbol */}
+                <div className="flex justify-between w-full items-center">
+                    <Text.Body1>
                         Symbol
-                    </Text.H6>
+                    </Text.Body1>
                     {symbolInput.inputComponent}
                 </div>
-                <div className={"w-full"}>
-                    <Text.H6>
-                        Traits
-                    </Text.H6>
 
+                {/* Traits */}
+                <div className={"flex w-full flex-col gap-y-2"}>
+                    <Text.Body1>
+                        Traits
+                    </Text.Body1>
                     {traitInput.inputComponent}
                 </div>
             </div>
 
 
-            <Button
-                variant={"contained"}
-                sx={{
-                    marginTop: "16px"
-                }}
-                onClick={handleCreate}
-            >
-                <Text.H6 color={"primary.main"}>
+            <div className={"flex w-full justify-center"}>
+                <Button
+                    variant={"contained"}
+                    sx={{
+                        marginTop: "16px"
+                    }}
+                    onClick={handleCreate}
+                >
                     Create epNFT
-                </Text.H6>
-            </Button>
+                </Button>
+            </div>
         </Box>
     );
 }

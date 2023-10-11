@@ -31,6 +31,7 @@ const StyledMenu = styled(Menu)(({ theme }: { theme: Theme }) => ({
 
 const WalletActionMenuItem = styled(MenuItem)(({ theme }: { theme: Theme }) => ({
     padding: theme.spacing(1, 2),
+    color: theme.palette.text.secondary,
     boxShadow: 'inset 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.1)',
     '&:hover': {
         boxShadow: 'inset 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.1)' + ', 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.05)',
@@ -147,18 +148,6 @@ export const MyWalletConnectButton: FC<ButtonProps> = ({
                     </Button>
                 </WalletMenuItem>
                 <Collapse in={!!anchor}>
-                    <Link href="/receipts">
-                        <WalletActionMenuItem
-                            onClick={() => {
-                                setAnchor(undefined);
-                            }}
-                        >
-                            <ListItemIcon>
-                                <LunchDiningIcon />
-                            </ListItemIcon>
-                            My burgers
-                        </WalletActionMenuItem>
-                    </Link>
                     {/*<SingleDivider/>*/}
                     <WalletActionMenuItem
                         onClick={async () => {
