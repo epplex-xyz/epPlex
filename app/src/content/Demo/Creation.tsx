@@ -45,6 +45,19 @@ export function Creation() {
                 throw new Error("No image uploaded");
             }
 
+            if (symbolInput.input === "") {
+                throw new Error("Symbol not specified");
+            }
+
+            if (nameInput.input === "") {
+                throw new Error("Name not specified");
+            }
+
+            const traitObjects = JSON.parse(traitInput.input);
+            if (validateTraits(traitObjects)) {
+                throw new Error("Invalid traits");
+            }
+
             // Image upload
             const fileData = await imageUpload.selectedFile.arrayBuffer();
             const fileName = imageUpload.selectedFile.name;
@@ -60,18 +73,12 @@ export function Creation() {
             if (imageRes.ok) {
                 throw new Error("Failed to upload image");
             }
+
             const imageUrl = imageRes.message;
-
-
-            const traitObjects = JSON.parse(traitInput.input);
-            if (validateTraits(traitObjects)) {
-                throw new Error("Invalid traits");
-            }
-
-            console.log("traits", traitObjects);
             const metadata = makeJson(imageUrl, nameInput.input, symbolInput.input, program.wallet.publicKey, traitObjects);
             const metadataName = addExtension(fileName, "json");
 
+            // Upload metadata
             const metadataRes = await fetch("/api/upload", {
                 method: 'POST', // Use the POST method
                 headers: { 'Content-Type': 'application/json' },
@@ -82,11 +89,8 @@ export function Creation() {
             }).then((res) => res.json());
 
             if (metadataRes.ok) {
-                throw new Error("Failed to upload image");
+                throw new Error("Failed to upload metadata");
             }
-
-            const metadataUri = metadataRes.message;
-            console.log("metadata", metadataUri);
 
             const mint = Keypair.generate();
             await program.createToken(
@@ -94,14 +98,13 @@ export function Creation() {
                 offset,
                 nameInput.input,
                 symbolInput.input,
-                metadataUri,
+                metadataRes.message, //metadata uri
             );
-
+            toast.success("Successfully created epNFT");
         } catch (e: any) {
             console.log("Failed creating epNFT", e);
             toast.error(e.message);
         }
-
     }, [
         unixTime,
         nameInput.input,

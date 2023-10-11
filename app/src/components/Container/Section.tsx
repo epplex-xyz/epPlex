@@ -10,11 +10,12 @@ export function Section({ children, ref, overflow="hidden", ...props }: BoxProps
             component="div"
             // overflow={overflow}
             width={"100%"}
-            height={{sm: "100%", md: style.viewportHeight}}
+            minHeight={{sm: "100%", md: style.viewportHeight}}
             position={"relative"}
             display={"flex"}
             justifyContent={"center"}
             alignItems={"center"}
+            marginBottom={"50px"}
         >
             {children}
         </Box>

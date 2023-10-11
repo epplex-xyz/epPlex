@@ -19,7 +19,7 @@ export function Carousel<T>({items, ItemComponent}: CarouselProps<T>) {
     const sizeFactor = 0.8;
 
     // a bit hardcoded, but fuk it
-    const containerSize = 400;
+    const containerSize = 380;
     const itemSize = 300;
 
     const animatedX = useSpring(offsetX, {
