@@ -1,6 +1,7 @@
 import {Close as CloseIcon, ExpandLess as CollapseIcon, ExpandMore as ExpandIcon} from '@mui/icons-material';
 import type {DialogProps, Theme} from '@mui/material';
-import {Button, Collapse, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, styled,} from '@mui/material';
+import {Button, Collapse, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem} from '@mui/material';
+import {styled} from "@mui/material/styles";
 import type {WalletName} from '@solana/wallet-adapter-base';
 import {WalletReadyState} from '@solana/wallet-adapter-base';
 import {useWallet, Wallet} from '@solana/wallet-adapter-react';
@@ -9,8 +10,6 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {useWalletDialog} from "./MyWalletDialogProvider";
 import {WalletListItem} from "./WalletListItem";
 import Box from "@mui/material/Box";
-import NormalLogo from "../../../../public/logos/normallogo.svg";
-import { Text } from "src/components/Text/TextComponent";
 import Image from "next/image";
 
 const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
@@ -124,7 +123,6 @@ export const WalletDialog: FC<WalletDialogProps> = ({
             {/* Logo */}
             <Box
                 component="div"
-                bgcolor={"primary.main"}
                 justifyContent={"center"}
                 display={"flex"}
                 paddingY={"20px"}
@@ -147,13 +145,6 @@ export const WalletDialog: FC<WalletDialogProps> = ({
                     <CloseIcon />
                 </IconButton>
             </Box>
-
-            {/* Title */}
-            {/*<DialogTitle color={"text.secondary"}>*/}
-            {/*    <div style={{margin: "auto"}}>*/}
-            {/*        {title}*/}
-            {/*    </div>*/}
-            {/*</DialogTitle>*/}
 
             <DialogContent>
                 <List>
