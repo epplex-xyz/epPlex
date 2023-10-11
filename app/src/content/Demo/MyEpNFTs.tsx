@@ -42,12 +42,15 @@ export function MyEpNFTs() {
             height={"100%"}
             rowGap={"16px"}
             display={"flex"}
+            flexDirection={"column"}
             alignSelf={"start"}
             width={{ sm: "300px", md: "400px" }}
         >
-            <div className="absolute top-0 w-full">
+            {/*<div className="absolute top-0 w-full">*/}
+            <div className={"w-full"}>
                 <TextDivider>My epNFTs</TextDivider>
             </div>
+            {/*</div>*/}
 
             <div className="flex justify-center self-center items-center w-full flex-col">
                 {isFetching ? <CircularProgress sx={{color: "secondary.main"}} /> :

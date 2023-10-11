@@ -23,10 +23,10 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
             }}
             padding={"8px 16px"}
         >
-            <Text.Body2 className="whitespace-nowrap">
+            <Text.Body2 fontSize={"10px"} className="whitespace-nowrap">
                 {trait}:
             </Text.Body2>
-            <Text.Body2 className="whitespace-nowrap">
+            <Text.Body2 fontSize={"10px"} className="whitespace-nowrap">
                 {value}
             </Text.Body2>
         </Box>
@@ -79,12 +79,12 @@ export function EpNFTContainer({item}: {item: Token22}) {
             component="div"
             position="relative"
             flexDirection={"column"}
-            rowGap={"24px"}
+            rowGap={"16px"}
             paddingY={"24px"}
             paddingX={"24px"}
             alignItems={"center"}
             display={"flex"}
-            height={"800px"}
+            maxHeight={"800px"}
             width={"300px"}
             sx={{
                 borderRadius: style.borderRadiusMd,
