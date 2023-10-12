@@ -7,9 +7,9 @@ export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
     demo: {
         variant: "contained",
         href: "/demo",
-        children: <Text.H6 color={"text.secondary"}>
+        children: <Text.Body1 color={"text.secondary"}>
             Try Demo
-        </Text.H6>,
+        </Text.Body1>,
         sx: {
             paddingX: '32px',
         }
@@ -17,9 +17,9 @@ export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
     docs: {
         variant: "outlined",
         href: "https://twitter.com/epplex_xyz",
-        children: <Text.H6>
+        children: <Text.Body1>
             Stay Updated
-        </Text.H6>,
+        </Text.Body1>,
         sx: {
             paddingX: '32px',
         },
