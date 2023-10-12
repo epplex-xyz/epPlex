@@ -1,4 +1,12 @@
-import { Connection, Keypair, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
+import {
+    Commitment,
+    Connection,
+    Keypair,
+    PublicKey,
+    Transaction,
+    TransactionInstruction,
+    TransactionSignature,
+} from "@solana/web3.js";
 import {
     AccountLayout,
     createMintToInstruction,
@@ -7,14 +15,50 @@ import {
     TOKEN_2022_PROGRAM_ID,
     getAssociatedTokenAddressSync,
     createAssociatedTokenAccountInstruction,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID, getAccount, TokenAccountNotFoundError, TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
 import { Token22Layout, Token22 } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
 
+export async function tryCreateATAIx2(
+    connection: Connection,
+    payer: PublicKey,
+    owner: PublicKey,
+    mint: PublicKey,
+    allowOwnerOffCurve = false,
+    commitment: Commitment = COMMITMENT,
+    programId = TOKEN_2022_PROGRAM_ID,
+    associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
+): Promise<[TransactionInstruction, PublicKey] | PublicKey | undefined> {
+    const ata = getAssociatedTokenAddressSync(mint, owner, allowOwnerOffCurve, programId, associatedTokenProgramId);
 
-async function getAccountInfo(connection: Connection, mint: PublicKey): Promise<Token22> {
+    try {
+        await getAccount(connection, ata, commitment, programId);
+        console.log(`Token account already exists: ${ata.toString()} for token ${mint.toString()}`);
+        return ata;
+    } catch (error: unknown) {
+        // TokenAccountNotFoundError can be possible if the associated address has already received some lamports,
+        // becoming a system account. Assuming program derived addressing is safe, this is the only case for the
+        // TokenInvalidAccountOwnerError in this code path.
+        if (error instanceof TokenAccountNotFoundError || error instanceof TokenInvalidAccountOwnerError) {
+            const ix = createAssociatedTokenAccountInstruction(
+                payer,
+                ata,
+                owner,
+                mint,
+                programId,
+                associatedTokenProgramId
+            );
+            return [ix, ata];
+        } else {
+            throw error;
+        }
+    }
+}
+
+
+async function getToken22AccountInfo(connection: Connection, mint: PublicKey): Promise<Token22> {
     const info = await connection.getAccountInfo(mint);
     return Token22Layout.decode(info!.data);
 }
@@ -29,7 +73,7 @@ export async function getToken22(
     for (const [_, e] of allTokenAccounts.value.entries()) {
         const data = AccountLayout.decode(e.account.data);
         try {
-            const mintInfo = await getAccountInfo(connection, data.mint);
+            const mintInfo = await getToken22AccountInfo(connection, data.mint);
             if (mintInfo.destroyTimestampField !== undefined) {
                 epNFTs.push(mintInfo);
             }
