@@ -44,3 +44,7 @@ export function addExtension(originalString, newExtension) {
 
     return parts.join('.');
 }
+
+export function spliceAddress(address: string) {
+    return address.slice(0, 4) + '..' + address.slice(-4);
+}

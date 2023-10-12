@@ -6,6 +6,8 @@ import style from "../../styles/style.module.scss";
 import Image from "next/image";
 import { Timer } from "@components/Text/Timer";
 import { ContainedContainer } from "@components/Container/ContainedContainer";
+import { spliceAddress } from "../../../utils/general";
+import { CopyTooltip } from "@components/Tooltip/MyTooltip";
 
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 function TraitContainer({trait, value}: {trait: string, value: string}) {
@@ -32,6 +34,19 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
         </Box>
     );
 }
+
+function AddressCopy({ address }: { address: string}) {
+    return (
+        <div className="flex gap-x-1 items-center">
+            <Text.Body2>
+                {spliceAddress(address)}
+            </Text.Body2>
+
+            <CopyTooltip copyText={address} />
+        </div>
+    );
+}
+
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
@@ -102,6 +117,8 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     width={200}
                 />
             }
+            {/* Just using emtadataAddress for now*/}
+            <AddressCopy address={item.metadataAddress.toString()}/>
 
             <div className="flex justify-between w-full items-center">
                 <Text.Body1>
