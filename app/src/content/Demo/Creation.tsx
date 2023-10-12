@@ -13,6 +13,24 @@ import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { Keypair } from "@solana/web3.js";
 import toast from "react-hot-toast";
 import { makeJson } from "../../../utils/metadata";
+// const trats = [
+//     {
+//         "trait_type": "WEBSITE",
+//         "value": "www.helius.xyz"
+//     },
+//     {
+//         "trait_type": "PLAN",
+//         "value": "PRO"
+//     },
+//     {
+//         "trait_type": "BEARD",
+//         "value": "YES"
+//     }
+// ];
+
+// name: HELIUS PRO
+// symbol: SPEED
+// [ { "trait_type": "WEBSITE", "value": "www.helius.xyz" }, { "trait_type": "PLAN", "value": "PRO" }, { "trait_type": "BEARD", "value": "YES" }]
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
@@ -93,7 +111,7 @@ export function Creation() {
             }
 
             const mint = Keypair.generate();
-            await program.createToken(
+            const res = await program.createToken(
                 mint,
                 offset,
                 nameInput.input,
@@ -101,8 +119,14 @@ export function Creation() {
                 metadataRes.message, //metadata uri
             );
 
-            setHasCreated((prev) => !prev);
-            toast.success("Successfully created epNFT");
+            
+            // TODO add a loader
+            if (res === "") {
+                throw new Error("Failed to create epNFT");
+            } else {
+                setHasCreated((prev) => !prev);
+                toast.success("Successfully created epNFT");
+            }
         } catch (e: any) {
             console.log("Failed creating epNFT", e);
             toast.error(e.message);
