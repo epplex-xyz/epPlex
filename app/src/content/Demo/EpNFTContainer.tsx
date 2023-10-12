@@ -8,6 +8,9 @@ import { Timer } from "@components/Text/Timer";
 import { ContainedContainer } from "@components/Container/ContainedContainer";
 import { spliceAddress } from "../../../utils/general";
 import { CopyTooltip } from "@components/Tooltip/MyTooltip";
+import Button from "@mui/material/Button";
+import BombIcon from "../../../public/icons/bomb.svg";
+import { useProgramApis } from "../../providers/ProgramApisProvider";
 
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 function TraitContainer({trait, value}: {trait: string, value: string}) {
@@ -50,6 +53,8 @@ function AddressCopy({ address }: { address: string}) {
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
+    // probably dont need to use this in this contaienr
+    const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
 
     const fetchImage = useCallback(async () => {
         try {
@@ -88,6 +93,24 @@ export function EpNFTContainer({item}: {item: Token22}) {
         fetchImage().then();
     },[]);
 
+
+    const destroyNFT = useCallback(async (e) => {
+        e.stopPropagation();
+        try {
+            const res = await program.burnToken(item.metadataAddress);
+            if (res === "") {
+                throw new Error("Failed to destroy");
+            }
+
+            setHasCreated((prev) => !prev);
+        } catch (e) {
+            console.log("Failed to destroy", e);
+        } finally {
+            e.stopPropagation();
+        }
+    }, [setHasCreated]);
+
+
     return (
         <Box
             component="div"
@@ -118,7 +141,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
                 />
             }
             {/* Just using emtadataAddress for now*/}
-            <AddressCopy address={item.metadataAddress.toString()}/>
+            {/*<AddressCopy address={item.metadataAddress.toString()}/>*/}
 
             <div className="flex justify-between w-full items-center">
                 <Text.Body1>
@@ -144,6 +167,18 @@ export function EpNFTContainer({item}: {item: Token22}) {
                         <TraitContainer trait={trait.trait_type} value={trait.value}/>
                     </React.Fragment>
                 ))}
+            </div>
+            <div className={"flex w-full justify-center"}>
+                <Button
+                    variant={"contained"}
+                    sx={{
+                        marginTop: "16px",
+                        columnGap: "8px"
+                    }}
+                    onClick={destroyNFT}
+                >
+                    Destroy <BombIcon/>
+                </Button>
             </div>
         </Box>
     );
