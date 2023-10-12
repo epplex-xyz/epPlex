@@ -42,3 +42,30 @@ async function burn(connection: Connection) {
 
 
 
+async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
+    const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        payer,
+        mint,
+        payer.publicKey, // owner
+        undefined,
+        undefined,
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    const signature = await mintTo(
+        connection,
+        payer,
+        mint,
+        fromTokenAccount.address,
+        payer,
+        1,
+        [],
+        undefined,
+        TOKEN_2022_PROGRAM_ID
+    );
+
+    console.log("tx", signature);
+}
+
