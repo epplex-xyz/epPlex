@@ -42,7 +42,7 @@ async function burn(connection: Connection) {
 
 
 
-async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
+export async function mint(connection: Connection, mint: PublicKey, payer: Keypair) {
     const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
         connection,
         payer,
