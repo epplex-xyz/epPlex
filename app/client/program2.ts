@@ -1,16 +1,16 @@
 import {
     Connection,
-    Keypair,
+    Keypair, ParsedAccountData,
     PublicKey,
     sendAndConfirmTransaction,
     SystemProgram, SYSVAR_RENT_PUBKEY, Transaction,
 } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { mintToIx, sendAndConfirmRawTransaction } from "../utils/solana";
+import { mintToIx, sendAndConfirmRawTransaction, tryCreateATAIx2 } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import {
-    ExtensionType,
+    ExtensionType, getAssociatedTokenAddressSync,
     getMintLen,
     getOrCreateAssociatedTokenAccount,
     mintTo,
@@ -82,7 +82,7 @@ export class Program2 {
 
         let tx;
         try {
-            tx = await sendAndConfirmRawTransaction(this.connection, transaction, payer, this.wallet, [mint]);;
+            tx = await sendAndConfirmRawTransaction(this.connection, transaction, payer, this.wallet, [mint]);
             console.log("tx", tx);
         } catch (e) {
             console.log("Failed to send tx", e);
@@ -92,32 +92,75 @@ export class Program2 {
 
     async burnToken(
         mint: PublicKey,
-        payer: Keypair
+        // payer: Keypair
     ) {
         const programDelegate = this.getProgramDelegate();
-        const account = await getOrCreateAssociatedTokenAccount(
-            this.connection,
-            payer,
+        // Probably this needs to be just get associated token account
+        // const account = await getOrCreateAssociatedTokenAccount(
+        //     this.connection,
+        //     payer,
+        //     mint,
+        //     payer.publicKey,
+        //     undefined,
+        //     undefined,
+        //     undefined,
+        //     TOKEN_2022_PROGRAM_ID
+        // );
+        //
+        const info = await this.connection.getAccountInfo(mint);
+        if (info === null){
+            throw Error("Mint does not exist");
+        }
+        // const mintKey = new PublicKey("FfWP2mXizKnHZLsG3mTDFC2vWoZFfZTQi1Rpvm2nQTgM");
+        const largestAccounts = await this.connection.getTokenLargestAccounts(mint);
+        const largestAccountInfo = await this.connection.getParsedAccountInfo(
+            largestAccounts.value[0].address  //first element is the largest account, assumed with 1
+        );
+        if (largestAccountInfo.value === null){
+            throw Error("Largest account does not exist");
+        }
+        const owner = (largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner;
+        console.log(" owner23 sds " ,(largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner);
+        // console.log("owner", info,/**/ JSON.stringify(info));
+        const ata = getAssociatedTokenAddressSync(
             mint,
-            payer.publicKey,
-            undefined,
-            undefined,
+            new PublicKey(owner),
             undefined,
             TOKEN_2022_PROGRAM_ID
         );
+        // const a = await this.connection.getAccountInfo(ata);
+        console.log("info",ata.toString());
+
+        // const resDestination = await tryCreateATAIx2(this.connection, this.wallet.payer, , token);
+        // if (resDestination === undefined) {
+        //     throw new Error("try create destination ATA failed");
+        // } else if (Array.isArray(resDestination)) {
+        //     const [ix, ata] = resDestination;
+        //     destinationAta = ata;
+        //     ixs.push(ix);
+        // } else {
+        //     destinationAta = resDestination;
+        // }
 
         const tokenBurnTx = await this.program.methods
             .tokenBurn({})
             .accounts({
                 mint: mint,
                 programDelegate: programDelegate,
-                tokenAccount: account.address,
+                tokenAccount: ata,
                 token22Program: TOKEN_2022_PROGRAM_ID,
             })
             .transaction();
 
-        const tx = await sendAndConfirmTransaction(this.connection, tokenBurnTx, [payer], CONFIRM_OPTIONS);
-        console.log("tx", tx);
+        const tx = await sendAndConfirmRawTransaction(
+            this.connection,
+            tokenBurnTx,
+            this.wallet.publicKey,
+            this.wallet,
+            []
+        );
+
+        return tx;
     }
 
 
