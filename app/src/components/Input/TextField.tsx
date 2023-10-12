@@ -41,10 +41,11 @@ export function StandardInput({
     };
 
     const inputComponent = <Input
-        autoComplete="off"
+        // autoComplete={"off"}
         value={input}
         placeholder={props.placeholder}
         multiline={props.multiline}
+        type={"text"}
         onChange={handleSearchChange}
         sx={{
             borderRadius: style.borderRadiusMd,
@@ -53,7 +54,12 @@ export function StandardInput({
                 height: height,
             },
             ...props,
-
+        }}
+        inputProps={{
+            autocomplete: 'chrome-off',
+            form: {
+                autocomplete: 'chrome-off',
+            },
         }}
     />;
 
