@@ -11,6 +11,7 @@ import { CopyTooltip } from "@components/Tooltip/MyTooltip";
 import Button from "@mui/material/Button";
 import BombIcon from "../../../public/icons/bomb.svg";
 import { useProgramApis } from "../../providers/ProgramApisProvider";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 function TraitContainer({trait, value}: {trait: string, value: string}) {
@@ -55,6 +56,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
     // probably dont need to use this in this contaienr
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
+    const [loading, setLoading] = React.useState(false);
 
     const fetchImage = useCallback(async () => {
         try {
@@ -96,6 +98,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
 
     const destroyNFT = useCallback(async (e) => {
         e.stopPropagation();
+        setLoading(true);
         try {
             const res = await program.burnToken(item.metadataAddress);
             if (res === "") {
@@ -106,7 +109,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
         } catch (e) {
             console.log("Failed to destroy", e);
         } finally {
-            e.stopPropagation();
+            setLoading(false);
         }
     }, [setHasCreated]);
 
@@ -177,7 +180,14 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     }}
                     onClick={destroyNFT}
                 >
-                    Destroy <BombIcon/>
+                    {loading ?
+                        <>
+                            Destroying <CircularProgress  size={"14px"} sx={{color: "text.secondary"}}/>
+                        </>
+                        : <>
+                            Destroy <BombIcon/>
+                        </>
+                    }
                 </Button>
             </div>
         </Box>

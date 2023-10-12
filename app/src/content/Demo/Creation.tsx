@@ -13,6 +13,7 @@ import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { Keypair } from "@solana/web3.js";
 import toast from "react-hot-toast";
 import { makeJson } from "../../../utils/metadata";
+import CircularProgress from "@mui/material/CircularProgress";
 // const trats = [
 //     {
 //         "trait_type": "WEBSITE",
@@ -49,8 +50,10 @@ export function Creation() {
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
+    const [loading, setLoading] = React.useState(false);
 
     const handleCreate = useCallback(async () => {
+        setLoading(true);
         try {
             const current = Math.floor((new Date()).getTime() / 1000);
             const offset = unixTime - current;
@@ -119,7 +122,7 @@ export function Creation() {
                 metadataRes.message, //metadata uri
             );
 
-            
+
             // TODO add a loader
             if (res === "") {
                 throw new Error("Failed to create epNFT");
@@ -130,6 +133,8 @@ export function Creation() {
         } catch (e: any) {
             console.log("Failed creating epNFT", e);
             toast.error(e.message);
+        } finally {
+            setLoading(false);
         }
     }, [
         unixTime,
@@ -200,11 +205,19 @@ export function Creation() {
                 <Button
                     variant={"contained"}
                     sx={{
-                        marginTop: "16px"
+                        marginTop: "16px",
+                        columnGap: "8px",
                     }}
                     onClick={handleCreate}
                 >
-                    Create epNFT
+                    {loading ?
+                        <>
+                            Creating <CircularProgress  size={"14px"} sx={{color: "text.secondary"}}/>
+                        </>
+                        : <>
+                            Create epNFT
+                        </>
+                    }
                 </Button>
             </div>
         </Box>
