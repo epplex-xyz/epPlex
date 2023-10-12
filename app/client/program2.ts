@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { mintToIx, sendAndConfirmRawTransaction, tryCreateATAIx2 } from "../utils/solana";
+import { getMintOwner, mintToIx, sendAndConfirmRawTransaction, tryCreateATAIx2 } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import {
     ExtensionType, getAssociatedTokenAddressSync,
@@ -95,52 +95,13 @@ export class Program2 {
         // payer: Keypair
     ) {
         const programDelegate = this.getProgramDelegate();
-        // Probably this needs to be just get associated token account
-        // const account = await getOrCreateAssociatedTokenAccount(
-        //     this.connection,
-        //     payer,
-        //     mint,
-        //     payer.publicKey,
-        //     undefined,
-        //     undefined,
-        //     undefined,
-        //     TOKEN_2022_PROGRAM_ID
-        // );
-        //
-        const info = await this.connection.getAccountInfo(mint);
-        if (info === null){
-            throw Error("Mint does not exist");
-        }
-        // const mintKey = new PublicKey("FfWP2mXizKnHZLsG3mTDFC2vWoZFfZTQi1Rpvm2nQTgM");
-        const largestAccounts = await this.connection.getTokenLargestAccounts(mint);
-        const largestAccountInfo = await this.connection.getParsedAccountInfo(
-            largestAccounts.value[0].address  //first element is the largest account, assumed with 1
-        );
-        if (largestAccountInfo.value === null){
-            throw Error("Largest account does not exist");
-        }
-        const owner = (largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner;
-        console.log(" owner23 sds " ,(largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner);
-        // console.log("owner", info,/**/ JSON.stringify(info));
+        const mintOwner = await getMintOwner(this.connection, mint);
         const ata = getAssociatedTokenAddressSync(
             mint,
-            new PublicKey(owner),
+            mintOwner,
             undefined,
             TOKEN_2022_PROGRAM_ID
         );
-        // const a = await this.connection.getAccountInfo(ata);
-        console.log("info",ata.toString());
-
-        // const resDestination = await tryCreateATAIx2(this.connection, this.wallet.payer, , token);
-        // if (resDestination === undefined) {
-        //     throw new Error("try create destination ATA failed");
-        // } else if (Array.isArray(resDestination)) {
-        //     const [ix, ata] = resDestination;
-        //     destinationAta = ata;
-        //     ixs.push(ix);
-        // } else {
-        //     destinationAta = resDestination;
-        // }
 
         const tokenBurnTx = await this.program.methods
             .tokenBurn({})

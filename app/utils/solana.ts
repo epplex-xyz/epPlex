@@ -1,7 +1,7 @@
 import {
     Commitment,
     Connection,
-    Keypair,
+    Keypair, ParsedAccountData,
     PublicKey,
     Transaction,
     TransactionInstruction,
@@ -57,11 +57,28 @@ export async function tryCreateATAIx2(
     }
 }
 
+export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
+    const largestAccounts = await connection.getTokenLargestAccounts(mint);
+    const largestAccountInfo = await connection.getParsedAccountInfo(
+        largestAccounts.value[0].address  //first element is the largest account, assumed with 1
+    );
+
+    if (largestAccountInfo.value === null){
+        throw Error("Largest account does not exist");
+    }
+
+    const owner = (largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner;
+
+    return new PublicKey(owner);
+
+}
 
 async function getToken22AccountInfo(connection: Connection, mint: PublicKey): Promise<Token22> {
     const info = await connection.getAccountInfo(mint);
     return Token22Layout.decode(info!.data);
 }
+
+
 
 export async function getToken22(
     connection: Connection,
