@@ -13,14 +13,20 @@ export const useProgramApis = (): ProgramInterface => {
 interface ProgramInterface {
     program: Program2;
 
+    // not the right place to put this
+    hasCreatedtState: {
+        hasCreated: boolean,
+        setHasCreated: React.Dispatch<React.SetStateAction<boolean>>,
+    }
 }
-const ProgramApisContext = createContext<ProgramInterface>({
-    program: {} as Program2,
-});
+const ProgramApisContext = createContext<ProgramInterface>(
+    {} as ProgramInterface,
+);
 
 const ProgramApisProvider = ({ children }) => {
     const { connection } = useConnection();
     const anchorWallet = useAnchorWallet();
+    const [hasCreated, setHasCreated] = React.useState<boolean>(false);
 
     const { program } = useMemo(() => {
         const program = new Program2(anchorWallet!, connection);
@@ -28,7 +34,11 @@ const ProgramApisProvider = ({ children }) => {
         return { program };
     }, [connection, anchorWallet]);
 
-    return <ProgramApisContext.Provider value={{ program }}>{children}</ProgramApisContext.Provider>;
+    return <ProgramApisContext.Provider
+        value={{ program, hasCreatedtState: {hasCreated, setHasCreated} }}
+    >
+        {children}
+    </ProgramApisContext.Provider>;
 };
 
 export default ProgramApisProvider;

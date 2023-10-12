@@ -28,7 +28,7 @@ export function Creation() {
     );
 
     const imageUpload = ImageUpload(null);
-    const {program} = useProgramApis();
+    const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
 
@@ -100,6 +100,8 @@ export function Creation() {
                 symbolInput.input,
                 metadataRes.message, //metadata uri
             );
+
+            setHasCreated((prev) => !prev);
             toast.success("Successfully created epNFT");
         } catch (e: any) {
             console.log("Failed creating epNFT", e);

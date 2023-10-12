@@ -9,27 +9,38 @@ import { Token22 } from "../../../client/types/token22";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Carousel } from "./Carousel";
 import { EpNFTContainer } from "./EpNFTContainer";
+import { useSearchParams } from "next/navigation";
+import { PublicKey } from "@solana/web3.js";
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 
 export function MyEpNFTs() {
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const [tokens, setTokens] = useState<Token22[]>([]);
-    const {program} = useProgramApis();
+    const {program, hasCreatedtState: {hasCreated}} = useProgramApis();
+    const path = useSearchParams();
 
     const fetchNFTs = useCallback(async (program) => {
         setIsFetching(true);
 
         try {
-            if (program.wallet !== undefined) {
-                const tokens = await getToken22(program.connection, program.wallet.publicKey);
-                setTokens(tokens);
+            let pubkey: PublicKey;
+            const urlPath = path.get("owner");
+            if (urlPath !== null) {
+                pubkey = new PublicKey(urlPath);
+            } else if (program.wallet !== undefined) {
+                pubkey = program.wallet.publicKey;
+            } else {
+                throw new Error("No publickey");
             }
+
+            const tokens = await getToken22(program.connection, pubkey);
+            setTokens(tokens);
         } catch (e) {
             console.log("Failed getting NFTs", e);
         } finally {
             setIsFetching(false);
         }
-    }, []);
+    }, [hasCreated]);
 
     useEffect(() => {
         fetchNFTs(program).then();
