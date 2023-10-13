@@ -57,6 +57,7 @@ export async function tryCreateATAIx2(
     }
 }
 
+// https://solana.stackexchange.com/questions/107/how-can-i-get-the-owner-wallet-of-an-nft-mint-using-web3-js
 export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
     const largestAccounts = await connection.getTokenLargestAccounts(mint);
     const largestAccountInfo = await connection.getParsedAccountInfo(

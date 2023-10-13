@@ -17,7 +17,7 @@ export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
     docs: {
         variant: "outlined",
         href: "https://twitter.com/epplex_xyz",
-        children: <Text.Body1>
+        children: <Text.Body1 color={"text.primary"} >
             Stay Updated
         </Text.Body1>,
         sx: {
