@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { TextDivider } from "@components/Divider/TextDivider";
 import { Text } from "@components/Text/TextComponent";
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import { getToken22 } from "../../../utils/solana";
 import { Token22 } from "../../../client/types/token22";
@@ -67,12 +67,12 @@ export function MyEpNFTs() {
                 {isFetching ? <CircularProgress sx={{color: "secondary.main"}} /> :
                     <>
                         { tokens.length === 0 ?
-                            <>
-                                <ChevronLeftIcon sx={{color: "secondary.main"}}/>
+                            <div className={"flex items-center gap-x-2"}>
+                                <ArrowBackIcon sx={{color: "secondary.main"}}/>
                                 <Text.H6>
-                                     Create an ephemeral NFT
+                                    Create an ephemeral epNFT
                                 </Text.H6>
-                            </>
+                            </div>
                             : <Carousel
                                 items={tokens}
                                 ItemComponent={EpNFTContainer}
