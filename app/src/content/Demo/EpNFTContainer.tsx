@@ -56,9 +56,13 @@ function AddressCopy({ address }: { address: string}) {
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
+
     // probably dont need to use this in this contaienr
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const [loading, setLoading] = React.useState(false);
+
+    const destroyTimestamp = Number(item.destroyTimestampValue);
+    const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
 
     const fetchImage = useCallback(async () => {
         try {
@@ -138,7 +142,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
             }}
         >
             <ContainedContainer>
-                <Timer endTimestamp={Number(item.destroyTimestampValue)}/>
+                <Timer endTimestamp={destroyTimestamp}/>
             </ContainedContainer>
 
             { image &&
@@ -182,8 +186,12 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     variant={"contained"}
                     sx={{
                         marginTop: "16px",
-                        columnGap: "8px"
+                        columnGap: "8px",
+                        '&:disabled': {
+                            backgroundColor: (theme) => theme.palette.secondary.main + "80",
+                        }
                     }}
+                    disabled={canDestroy}
                     onClick={destroyNFT}
                 >
                     {loading ?
