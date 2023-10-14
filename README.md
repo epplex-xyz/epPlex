@@ -63,9 +63,10 @@ Account closing fees
 - Bot infrastructure for destroying epNFTs
   - Using Clockwork
 - METAPLEX integration
-  - Token Metadata Program with Token2022 support is a prerequisite for proper epNFT adoption
+  - Token Metadata Program with Token2022 support is an assumed prerequisite for proper epNFT adoption
     - Token2022 audit should be finished by Q4 2023.
   - NOTE: Currently, Token2022 metadata is used, but it probably takes more time to be adopted by wallets
+    - I need to investigate how wallets index NFTs, whether it is purely based on MPLX Token Metadata Program.
 - State-compression for cheaper minting fees
 - Event-based ephemerality e.g. self-destruct
   - when BTC reaches $100k

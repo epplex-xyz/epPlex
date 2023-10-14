@@ -73,7 +73,9 @@ impl TokenCreate<'_> {
             &ctx.accounts.system_program,
             &ctx.accounts.payer,
             &ctx.accounts.mint,
-            10000000
+            // TODO need to compute exact amount
+            // 2000000 is OK
+            1800000 // 0.0005 SOL
         )?;
 
         add_token_metadata(
