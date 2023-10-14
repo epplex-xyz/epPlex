@@ -12,6 +12,8 @@ import Button from "@mui/material/Button";
 import BombIcon from "../../../public/icons/bomb.svg";
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import CircularProgress from "@mui/material/CircularProgress";
+import toast from "react-hot-toast";
+import { ToastText } from "@components/Text/ToastText";
 
 // JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 function TraitContainer({trait, value}: {trait: string, value: string}) {
@@ -100,14 +102,18 @@ export function EpNFTContainer({item}: {item: Token22}) {
         e.stopPropagation();
         setLoading(true);
         try {
-            const res = await program.burnToken(item.metadataAddress);
-            if (res === "") {
+            const txId = await program.burnToken(item.metadataAddress);
+            if (txId === "") {
                 throw new Error("Failed to destroy");
             }
 
+            toast.success(
+                <ToastText text={"Successfully destroyed epNFT:"} signature={txId}/>
+            );
             setHasCreated((prev) => !prev);
         } catch (e) {
             console.log("Failed to destroy", e);
+            toast.error("Failed to destroy");
         } finally {
             setLoading(false);
         }

@@ -41,7 +41,7 @@ export function StandardInput({
     };
 
     const inputComponent = <Input
-        // autoComplete={"off"}
+        autoComplete={"off"}
         value={input}
         placeholder={props.placeholder}
         multiline={props.multiline}
@@ -55,12 +55,12 @@ export function StandardInput({
             },
             ...props,
         }}
-        inputProps={{
-            autocomplete: 'chrome-off',
-            form: {
-                autocomplete: 'chrome-off',
-            },
-        }}
+        // inputProps={{
+        //     autocomplete: 'chrome-off',
+        //     form: {
+        //         autocomplete: 'chrome-off',
+        //     },
+        // }}
     />;
 
     return {inputComponent, input};

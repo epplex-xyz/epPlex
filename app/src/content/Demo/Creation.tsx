@@ -14,6 +14,8 @@ import { Keypair } from "@solana/web3.js";
 import toast from "react-hot-toast";
 import { makeJson } from "../../../utils/metadata";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ToastText } from "@components/Text/ToastText";
+
 // const trats = [
 //     {
 //         "trait_type": "WEBSITE",
@@ -114,7 +116,7 @@ export function Creation() {
             }
 
             const mint = Keypair.generate();
-            const res = await program.createToken(
+            const txId = await program.createToken(
                 mint,
                 offset,
                 nameInput.input,
@@ -122,13 +124,13 @@ export function Creation() {
                 metadataRes.message, //metadata uri
             );
 
-
-            // TODO add a loader
-            if (res === "") {
+            if (txId === "") {
                 throw new Error("Failed to create epNFT");
             } else {
                 setHasCreated((prev) => !prev);
-                toast.success("Successfully created epNFT");
+                toast.success(
+                    <ToastText text={"Successfully created epNFT:"} signature={txId}/>
+                );
             }
         } catch (e: any) {
             console.log("Failed creating epNFT", e);
