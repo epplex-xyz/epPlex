@@ -16,24 +16,7 @@ import { makeJson } from "../../../utils/metadata";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ToastText } from "@components/Text/ToastText";
 
-// const trats = [
-//     {
-//         "trait_type": "WEBSITE",
-//         "value": "www.helius.xyz"
-//     },
-//     {
-//         "trait_type": "PLAN",
-//         "value": "PRO"
-//     },
-//     {
-//         "trait_type": "BEARD",
-//         "value": "YES"
-//     }
-// ];
 
-// name: HELIUS PRO
-// symbol: SPEED
-// [ { "trait_type": "WEBSITE", "value": "www.helius.xyz" }, { "trait_type": "PLAN", "value": "PRO" }, { "trait_type": "BEARD", "value": "YES" }]
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});

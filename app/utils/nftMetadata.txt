@@ -1,0 +1,48 @@
+
+**** HELIUS PRO ****
+[
+    {
+        "trait_type": "WEBSITE",
+        "value": "www.helius.xyz"
+    },
+    {
+        "trait_type": "PLAN",
+        "value": "PRO"
+    },
+    {
+        "trait_type": "BEARD",
+        "value": "YES"
+    }
+];
+
+name: HELIUS PRO
+symbol: SPEED
+[ { "trait_type": "WEBSITE", "value": "www.helius.xyz" }, { "trait_type": "PLAN", "value": "PRO" }, { "trait_type": "BEARD", "value": "YES" }]
+
+
+**** TAMAGOTCHI ****
+name: TAMAGOTCHI
+symbol: PET
+[ { "trait_type": "LAST RESET", "value": "06/09/1420" }, { "trait_type": "LVL", "value": "9000" }, { "trait_type": "ANIMAL", "value": "BULL" }]
+
+
+**** BANKSY ****
+name: BALLOON GIRL
+symbol: ART
+[ { "trait_type": "ARTIST", "value": "BANKSY" }, { "trait_type": "YEAR", "value": "2002" }, { "trait_type": "MEDIUM", "value": "SPRAY PAINT" }]
+
+**** MONKEDAO ****
+name: DAO ACCESS
+symbol: FREE
+[ { "trait_type": "WEBSITE", "value": "www.monkedao.io" }, { "trait_type": "TIME", "value": "1 MONTH" }, { "trait_type": "BANANAS", "value": "YES" }]
+
+**** OPOS ****
+name: ADVERTISMENT
+symbol: OPOS
+[ { "trait_type": "WEBSITE", "value": "www.solana.com/hyperdrive" }, { "trait_type": "SPEED", "value": "YES" }, { "trait_type": "CHEAP", "value": "YES" }]
+
+
+*** EPHEMERAL BURGER ***
+name: Ephemeral burger
+symbol: EP
+[{"name":"🍔","symbol":"Burger","description":"As prophesized long ago, burgers are now making moves 👊","seller_fee_basis_points":500,"image":"https://arweave.net/7E6qB2WKSjVyCC5-3kG4iJOq_E36OmXAbgGiX7YHoYk?ext=png","attributes":[{"trait_type":"PSA1","value":"Burgers are coming 🚶"},{"trait_type":"PSA2","value":"Burger gonna murder 🔪"},{"trait_type":"Hide1","value":"yo kids 👶"},{"trait_type":"Hide2","value":"yo wives 👩"},{"trait_type":"Ingredients","value":"🤯"}],"properties":{"creators":[{"address":"C2WbuoTgLZMXwfJtbK3y4e9dhEgEMZDNTz6wrxjTLN1o","share":100}],"files":[{"uri":"35.png","type":"image/png"}]}}]
