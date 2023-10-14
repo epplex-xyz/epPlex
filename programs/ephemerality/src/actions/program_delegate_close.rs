@@ -28,6 +28,9 @@ impl ProgramDelegateClose<'_> {
     }
 
     pub fn actuate(_ctx: Context<Self>, _params: &ProgramDelegateCloseParams) -> Result<()> {
+        // TODO:
+        // Currently anyone would be able to invoke this instruction
+        // need to restrict this instruction to some kind of admin
         Ok(())
     }
 }

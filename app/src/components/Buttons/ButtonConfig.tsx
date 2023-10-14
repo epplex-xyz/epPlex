@@ -8,7 +8,7 @@ export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
         variant: "contained",
         href: "/demo",
         children: <Text.Body1 color={"text.secondary"}>
-            Try Demo
+            Devnet Demo
         </Text.Body1>,
         sx: {
             paddingX: '32px',
