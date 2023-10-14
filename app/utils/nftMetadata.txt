@@ -23,7 +23,7 @@ symbol: SPEED
 **** TAMAGOTCHI ****
 name: TAMAGOTCHI
 symbol: PET
-[ { "trait_type": "LAST RESET", "value": "06/09/1420" }, { "trait_type": "LVL", "value": "9000" }, { "trait_type": "ANIMAL", "value": "BULL" }]
+[ { "trait_type": "LVL", "value": "9000" }, { "trait_type": "ANIMAL", "value": "BULL" },{ "trait_type": "LAST RESET", "value": "06/09/1420" } ]
 
 
 **** BANKSY ****
@@ -33,8 +33,8 @@ symbol: ART
 
 **** MONKEDAO ****
 name: DAO ACCESS
-symbol: FREE
-[ { "trait_type": "WEBSITE", "value": "www.monkedao.io" }, { "trait_type": "TIME", "value": "1 MONTH" }, { "trait_type": "BANANAS", "value": "YES" }]
+symbol: MONKE
+[ { "trait_type": "WEBSITE", "value": "www.monkedao.io" }, { "trait_type": "DURATION", "value": "1 MONTH" }, { "trait_type": "BANANAS", "value": "YES" }]
 
 **** OPOS ****
 name: ADVERTISMENT

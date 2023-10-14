@@ -35,7 +35,8 @@ Although the idea probably needs to go through a few more idea iterations.
 
 ## How it works
 
-- Program delegate
+
+
 
 ### Creation
 Token2022
@@ -75,11 +76,17 @@ Account closing fees
 - Immutability
 
 
-## Tech stack
+## Development
+
+### Tech stack
 - NextJS Frontend/Backend (hosted on vercel) for demoing purposes
   - Uses Genesysgo SHDW for NFT metadata
 - Anchor Framework for epPlex contract
 
+### Folder structure
+    ├── app                                 # NextJS Frontend
+    ├── programs                            # epPlex Solana program
+    └── scripts                             # Scripts for testing purposes, althoguh I probably should have kept a test-suite
 
 ### Setup
 
@@ -96,7 +103,7 @@ Account closing fees
 
 
 ## Code quality
-Please do not expect high code-quality since majority of the code is hacked together.
+Please do not expect high code-quality since majority of the code is hacked together. For the sake of achieving a working MVP, code quality has been neglected.
 
 ## Disclaimer
 The code has not been audited. Furthermore, as of October 6th 2023, Token2022 is not officially production-ready.
