@@ -152,6 +152,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     alt={"logo"}
                     height={200}
                     width={200}
+                    style={{borderRadius: style.borderRadiusMd}}
                 />
             }
             {/* Just using emtadataAddress for now*/}
