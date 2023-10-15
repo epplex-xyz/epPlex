@@ -13,8 +13,8 @@ class MyDocument extends Document {
                 <Head>
                     <meta name="theme-color" content={theme("light").palette.primary.main} />
                     <meta charSet="utf-8" />
-                    <link rel="icon" href="/logos/newLogo.svg" />
-                    <link rel="apple-touch-icon" sizes="180x180" href="/logos/newLogo.svg" />
+                    <link rel="icon" href="/logos/newLogo.png" />
+                    <link rel="apple-touch-icon" sizes="180x180" href="/logos/newLogo.png" />
                     <link rel="manifest" href="/manifest.json" />
                     <meta name="emotion-insertion-point" content="" />
                     {(this.props as any).emotionStyleTags}
