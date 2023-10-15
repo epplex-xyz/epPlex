@@ -39,6 +39,8 @@ impl TokenCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+        // TODO add mint account creation within IX
+
         // Add closing authority
         Self::add_closing_authority(
             &ctx.accounts.mint,

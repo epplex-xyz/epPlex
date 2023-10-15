@@ -18,7 +18,7 @@ pub struct TokenBurn<'info> {
     )]
     pub program_delegate: Account<'info, ProgramDelegate>,
 
-    // TODO check that this is in fact a token account for th emint
+    // TODO check that this is in fact a token account for the mint
     #[account(
         mut
     )]
@@ -61,6 +61,7 @@ impl TokenBurn<'_> {
         close_mint(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
+            // Currently rent collector is hardcoded to be the Program Delegaate
             &ctx.accounts.program_delegate.to_account_info(),
             &ctx.accounts.program_delegate,
         )?;

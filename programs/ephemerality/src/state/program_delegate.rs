@@ -1,5 +1,7 @@
 use crate::*;
 
+pub const SEED_PROGRAM_DELEGATE: &[u8] = b"PROGRAM_DELEGATE";
+
 #[account]
 #[derive(Default, Debug)]
 pub struct ProgramDelegate {

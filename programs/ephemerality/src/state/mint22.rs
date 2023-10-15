@@ -13,6 +13,7 @@ pub struct Metadata {
     pub destroy_timestamp_value: String,
 }
 
+// TODO this is super hardcoded
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone)]
 pub struct Mint22 {
     /// Optional authority used to mint new tokens. The mint authority may only be provided during

@@ -16,6 +16,6 @@ wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/basic2.spec.ts"
-copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json client/idl/ephemerality.json && cp target/types/ephemerality.ts client/idl/ephemeralityTypes.ts"
+copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json app/client/idl/ephemerality.json && cp target/types/ephemerality.ts app/client/idl/ephemeralityTypes.ts"
 bd = "anchor build && anchor deploy && anchor run copy-to-app"
 depl = "anchor deploy && anchor run copy-to-app"
