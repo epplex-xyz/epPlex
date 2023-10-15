@@ -13,7 +13,6 @@ function LandingText(){
             </Text.H1>
             <Text.H3>
                 Empowering ephemeral NFTs on Solana
-                {/*[REDACTED REDACTED REDACTED]*/}
             </Text.H3>
         </div>
     );

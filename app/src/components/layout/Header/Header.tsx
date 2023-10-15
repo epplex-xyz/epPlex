@@ -10,10 +10,6 @@ import { ButtonLink } from "src/components/Buttons/LinkButton";
 import { ButtonConfig } from "src/components/Buttons/ButtonConfig";
 import { usePathname } from "next/navigation";
 import { MyMountedWalletButton } from "@components/Buttons/MyWalletConnectButton";
-import Image from "next/image";
-import { Text } from "@components/Text/TextComponent";
-import { TextBackground } from "@components/Text/Typography";
-import Link from "next/link";
 
 function HeaderLeft({TriggerButton}: {TriggerButton: () => React.ReactNode}) {
     return (
@@ -64,16 +60,6 @@ export function Header({ headerPosition }) {
 
     if (path === "/demo") {
         RightComponent = <>
-            {/*<Link href="/tools" style={{display: "flex", alignItems: "center"}}>*/}
-            {/*    <Text.H5*/}
-            {/*        fontVariant={"secondary"}*/}
-            {/*        textBackground={TextBackground.none}*/}
-            {/*        paddingRight={"16px"}*/}
-            {/*        // display={{ xs: "none", md: "none", lg: "flex", xl: "flex" }}*/}
-            {/*    >*/}
-            {/*        TOOLS*/}
-            {/*    </Text.H5>*/}
-            {/*</Link>*/}
             <MyMountedWalletButton/>
         </>;
     } else {

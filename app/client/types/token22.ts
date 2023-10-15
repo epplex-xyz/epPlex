@@ -9,6 +9,7 @@ type FixedLengthArray<T, L extends number> = L extends L
     : [...Array<L>]
   : never;
 
+// TODO this is super hardcoded
 export interface Token22 {
     mintAuthorityOption: 1 | 0;
     mintAuthority: PublicKey;

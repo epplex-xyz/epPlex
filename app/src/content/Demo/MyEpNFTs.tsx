@@ -11,7 +11,6 @@ import { Carousel } from "./Carousel";
 import { EpNFTContainer } from "./EpNFTContainer";
 import { useSearchParams } from "next/navigation";
 import { PublicKey } from "@solana/web3.js";
-// JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 
 export function MyEpNFTs() {
     const [isFetching, setIsFetching] = useState<boolean>(true);

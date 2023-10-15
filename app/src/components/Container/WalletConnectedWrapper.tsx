@@ -25,27 +25,3 @@ export function WalletConnectedWrapper({
     );
 }
 
-
-interface WalletConnectedWrappeProps2 {
-    children: React.ReactNode
-}
-export function WalletConnectedWrapper2({
-    children
-}: WalletConnectedWrappeProps2) {
-    const {mounted, connected} = useMountedWallet();
-
-    return (
-        <>
-            {mounted &&
-                <>
-                    { connected &&
-                        <>{children}</>
-                    }
-                </>
-            }
-        </>
-    );
-}
-
-
-

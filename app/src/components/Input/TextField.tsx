@@ -55,12 +55,6 @@ export function StandardInput({
             },
             ...props,
         }}
-        // inputProps={{
-        //     autocomplete: 'chrome-off',
-        //     form: {
-        //         autocomplete: 'chrome-off',
-        //     },
-        // }}
     />;
 
     return {inputComponent, input};

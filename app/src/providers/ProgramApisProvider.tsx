@@ -13,7 +13,7 @@ export const useProgramApis = (): ProgramInterface => {
 interface ProgramInterface {
     program: Program2;
 
-    // not the right place to put this
+    // TODO not the right place to put this
     hasCreatedtState: {
         hasCreated: boolean,
         setHasCreated: React.Dispatch<React.SetStateAction<boolean>>,

@@ -18,7 +18,7 @@ export function Carousel<T>({items, ItemComponent}: CarouselProps<T>) {
     const offsetX = useMotionValue(0);
     const sizeFactor = 0.8;
 
-    // a bit hardcoded, but fuk it
+    // TODO a bit hardcoded
     const containerSize = 380;
     const itemSize = 300;
 

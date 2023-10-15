@@ -1,6 +1,6 @@
 // https://www.codemzy.com/blog/ismounted-hook-with-useeffect-reactjs
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useWallet} from "@solana/wallet-adapter-react";
+import { useEffect, useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 
 export function useIsMounted() {

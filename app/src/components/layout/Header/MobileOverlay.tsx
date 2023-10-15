@@ -1,7 +1,7 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { HeaderBurgerMenu, HeaderButtons } from "./HeaderElements";
+import { HeaderBurgerMenu } from "./HeaderElements";
 import Link from "next/link";
 import { Text } from "../../Text/TextComponent";
 import palette from "../../../styles/palette.module.scss";

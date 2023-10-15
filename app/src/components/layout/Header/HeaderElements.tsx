@@ -1,33 +1,9 @@
 import React from "react";
-import {IconButton} from "@mui/material";
+import { IconButton } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import Box from "@mui/material/Box";
 import { Text } from "../../Text/TextComponent";
 import { TextBackground } from "../../Text/Typography";
-import { ButtonLink } from "src/components/Buttons/LinkButton";
-
-interface HeaderActionType {
-    name: string
-}
-export const HeaderActions: Record<string, HeaderActionType> = {
-    products: {
-        name: "Products",
-    },
-    docs: {
-        name: "Docs"
-    },
-    mission: {
-        name: "Mission"
-    },
-    changeLog: {
-        name: "Changelog"
-    }
-};
-
-const HeaderActionsList = Object.values(HeaderActions).map(action => ({
-    name: action.name
-}));
 
 
 export function HeaderLogo(){
@@ -65,23 +41,4 @@ export function HeaderBurgerMenu({openMenuStateFun, mobile = false}) {
         </IconButton>
     );
 }
-
-export function HeaderButtons() {
-    return (
-        <Box
-            component="div"
-            className="flex gap-x-2 items-center"
-        >
-            {HeaderActionsList.map(({name}) => (
-                <ButtonLink
-                    key={`Header-${name}`}
-                    href={`/${name.toLowerCase()}`}
-                >
-                    {name}
-                </ButtonLink>
-            ))}
-        </Box>
-    );
-}
-
 

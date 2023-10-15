@@ -1,61 +1,17 @@
-import {
-    Commitment,
-    Connection,
-    Keypair, ParsedAccountData,
-    PublicKey,
-    Transaction,
-    TransactionInstruction,
-    TransactionSignature,
-} from "@solana/web3.js";
+import { Connection, Keypair, ParsedAccountData, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
 import {
     AccountLayout,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    createAssociatedTokenAccountInstruction,
     createMintToInstruction,
+    getAssociatedTokenAddressSync,
     getOrCreateAssociatedTokenAccount,
     mintTo,
     TOKEN_2022_PROGRAM_ID,
-    getAssociatedTokenAddressSync,
-    createAssociatedTokenAccountInstruction,
-    ASSOCIATED_TOKEN_PROGRAM_ID, getAccount, TokenAccountNotFoundError, TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
-import { Token22Layout, Token22 } from "../client/types/token22";
+import { Token22, Token22Layout } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
-
-export async function tryCreateATAIx2(
-    connection: Connection,
-    payer: PublicKey,
-    owner: PublicKey,
-    mint: PublicKey,
-    allowOwnerOffCurve = false,
-    commitment: Commitment = COMMITMENT,
-    programId = TOKEN_2022_PROGRAM_ID,
-    associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
-): Promise<[TransactionInstruction, PublicKey] | PublicKey | undefined> {
-    const ata = getAssociatedTokenAddressSync(mint, owner, allowOwnerOffCurve, programId, associatedTokenProgramId);
-
-    try {
-        await getAccount(connection, ata, commitment, programId);
-        console.log(`Token account already exists: ${ata.toString()} for token ${mint.toString()}`);
-        return ata;
-    } catch (error: unknown) {
-        // TokenAccountNotFoundError can be possible if the associated address has already received some lamports,
-        // becoming a system account. Assuming program derived addressing is safe, this is the only case for the
-        // TokenInvalidAccountOwnerError in this code path.
-        if (error instanceof TokenAccountNotFoundError || error instanceof TokenInvalidAccountOwnerError) {
-            const ix = createAssociatedTokenAccountInstruction(
-                payer,
-                ata,
-                owner,
-                mint,
-                programId,
-                associatedTokenProgramId
-            );
-            return [ix, ata];
-        } else {
-            throw error;
-        }
-    }
-}
 
 // https://solana.stackexchange.com/questions/107/how-can-i-get-the-owner-wallet-of-an-nft-mint-using-web3-js
 export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
@@ -79,8 +35,6 @@ async function getToken22AccountInfo(connection: Connection, mint: PublicKey): P
     return Token22Layout.decode(info!.data);
 }
 
-
-
 export async function getToken22(
     connection: Connection,
     publicKey: PublicKey
@@ -90,6 +44,10 @@ export async function getToken22(
     const epNFTs: Token22[] = [];
     for (const [_, e] of allTokenAccounts.value.entries()) {
         const data = AccountLayout.decode(e.account.data);
+        if (["sNYtajQfDd6YpngQ413c4MfvC8A3H83uDGJkkXnLYpU", "DUcLE6TsMXq2TkUmBdXVvrz59ahRrTRmAcqZ7u5TJ4Xq", "A8DtomZ7KKQ2nHa6oS8toNFyNk99oREibZ59iy6PbhP"].includes(data.mint.toString())) {
+            continue;
+        }
+
         try {
             const mintInfo = await getToken22AccountInfo(connection, data.mint);
             if (mintInfo.destroyTimestampField !== undefined) {

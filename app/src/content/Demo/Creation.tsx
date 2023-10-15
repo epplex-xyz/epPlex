@@ -16,8 +16,6 @@ import { makeJson } from "../../../utils/metadata";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ToastText } from "@components/Text/ToastText";
 
-
-
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
     const {timeComponent, time} = MyTimePicker({width: "150px"});

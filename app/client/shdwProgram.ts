@@ -1,12 +1,10 @@
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { Wallet } from "@coral-xyz/anchor";
-import { ShadowUploadResponse, ShdwDrive } from "@shadow-drive/sdk";
+import { ShdwDrive } from "@shadow-drive/sdk";
 
 export class ShdwProgram {
     connection: Connection;
-
     signer: Keypair;
-
     drive: ShdwDrive;
 
     constructor(

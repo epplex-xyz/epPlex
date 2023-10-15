@@ -15,7 +15,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import toast from "react-hot-toast";
 import { ToastText } from "@components/Text/ToastText";
 
-// JG2sDKq9r3Q2HPzzJom6kXSuFZRB5LRFofW7f5xoCMy
 function TraitContainer({trait, value}: {trait: string, value: string}) {
     return (
         <Box

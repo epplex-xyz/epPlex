@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text } from "@components/Text/TextComponent";
 
 export function getTimeRemaining(endTime: Date) {
     const currentTime = new Date();

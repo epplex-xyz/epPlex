@@ -1,8 +1,3 @@
-
-export function cloneObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
 export function combineDateAndTime(date: Date, time: Date) {
     const year = date.getFullYear();
     const month = date.getMonth();

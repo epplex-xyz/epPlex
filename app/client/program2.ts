@@ -1,31 +1,15 @@
-import {
-    Connection,
-    Keypair, ParsedAccountData,
-    PublicKey,
-    sendAndConfirmTransaction,
-    SystemProgram, SYSVAR_RENT_PUBKEY, Transaction,
-} from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
-import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
-import { getMintOwner, mintToIx, sendAndConfirmRawTransaction, tryCreateATAIx2 } from "../utils/solana";
+import { AnchorProvider, BN, Wallet } from "@coral-xyz/anchor";
+import { getMintOwner, mintToIx, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
-import {
-    ExtensionType, getAssociatedTokenAddressSync,
-    getMintLen,
-    getOrCreateAssociatedTokenAccount,
-    mintTo,
-    TOKEN_2022_PROGRAM_ID,
-} from "@solana/spl-token";
-import {BN} from "@coral-xyz/anchor";
-import { AnchorWallet} from "@solana/wallet-adapter-react";
+import { ExtensionType, getAssociatedTokenAddressSync, getMintLen, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { AnchorWallet } from "@solana/wallet-adapter-react";
 
 export class Program2 {
     connection: Connection;
     program: EphemeralityProgram;
-
     wallet: Wallet;
-
-
     constructor(
         wallet: AnchorWallet,
         connection: Connection,
@@ -35,7 +19,6 @@ export class Program2 {
         this.connection = connection;
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
-
     async createToken(
         mint: Keypair,
         destroyTimestampOffset: number = 60 * 5,
@@ -69,6 +52,7 @@ export class Program2 {
         const mintLamports = await this.connection.getMinimumBalanceForRentExemption(mintLen);
 
         const transaction = new Transaction().add(...[
+            // TODO move this ix into solana program
             SystemProgram.createAccount({
                 fromPubkey: payer,
                 newAccountPubkey: mint.publicKey,
@@ -77,6 +61,8 @@ export class Program2 {
                 programId: TOKEN_2022_PROGRAM_ID,
             }),
             tokenCreateIx,
+
+            // TODO move this ix into solana program
             ...mintToIx(mint.publicKey, payer)
         ]);
 
@@ -92,7 +78,6 @@ export class Program2 {
 
     async burnToken(
         mint: PublicKey,
-        // payer: Keypair
     ) {
         const programDelegate = this.getProgramDelegate();
         const mintOwner = await getMintOwner(this.connection, mint);
