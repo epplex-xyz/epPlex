@@ -1,14 +1,18 @@
-<h1 align="center">EPPLEX | Hyperdrive Hackathon</h1>
+<h1 align="center">epPlex | Hyperdrive Hackathon</h1>
 
-epPlex is a new NFT protocol for ephemeral epNFTs.
+epPlex is a protocol for ephemeral epNFTs.
 I.e. NFTs that can self-destruct permissionlessly.
 
-It is an open-source Infrastructure Primitive & Public Good built on top of Token2022 & Metaplex
+It is an open-source Infrastructure Primitive & Public Good built on top of Token2022 & Metaplex.
 
-## Website
+Submitted tracks:
+- Public Goods (was not a choice in the submission form)
+- Crypto Infrastructure
+- Gaming & Entertainment
+
+
+## Links
 [https://epplex.xyz](https://epplex.xyz/)
-
-## Pitch Deck
 [Hyperdrive Pitch](https://epplex.xyz/HyperdrivePitch.pdf)
 
 
@@ -35,20 +39,61 @@ Although the idea probably needs to go through a few more idea iterations.
 
 ## How it works
 
+### epNFT representation
+An epNFT is currently represented as a Token2022 token with the following extensions
+- `Permanent Delegate`
+- `CloseAuthority`
+- `TokenMetadata` key-value pairs:
+    - `DestroyTimestamp`: unixTimestamp
+    - `name`: string
+    - `symbol`: string
+    - `uri`: string
 
+The `uri` field points to the off-chain JSON object with image URL and metadata.
 
+Ideally it would use the MPLX Token Metadata Program for wider ecosystem compatibility.
+Rumour has it that Token2022 support for MPLX Token Metadata Program is coming end of Oct 2023.
 
-### Creation
-Token2022
-- Permanent Delegate
-- CloseAuthority
-- TokenMetadata
-  - key-value pair: {DestroyTimestamp: unixTimestamp}
+OBS: I need to double check whether or not the supply is actually fixed to 1 and no Mint Authority exists.
 
-Bot infrastructure
+### Global Program Delegate
+The Program Delegate PDA is assigned elevated privileges through the Token2022 extensions.
+This enables the program to destroy epNFTs on behalf of the owner.
 
-NFT rent collector can
-Account closing fees
+### epNFT lifecycle
+1. User submits create instruction with TokenMetadata
+   2. epNFT is created through CPI into Token2022 program
+   3. Program Delegate is assigned `Permanent Delegate` and `CloseAuthority` privileges
+2. Anyone can submit destroy instruction on the epNFT
+   3. If `current_timestamp <= destroy_timestamp` then fail the transaction
+   4. Otherwise tx succeeds, where the Program Delegate acts as the authority to burn & close the epNFT.
+
+### Rent collection
+Currently, epPlex collects all the epNFT rent-exemption through the Program Delegate.
+Although, it can easily be modified to be: instruction invoker collects the rent.
+
+### Bot infrastructure
+I currently have not yet implemented any bot infrastructure for destroying epNFTs.
+One of the reasons is that this could be offloaded to arbitrageurs (rent farmers). The other reason is lack of time.
+It would be cool to have Open-Clockwork power this on-chain.
+
+## Future work
+- √ epPlex MVP
+- Build SDK for developers
+- Bot infrastructure for destroying epNFTs
+    - Using Open-Clockwork
+- METAPLEX integration
+    - Token Metadata Program with Token2022 support is an assumed prerequisite for proper epNFT adoption
+        - Token2022 audit should be finished by Q4 2023.
+    - NOTE: Currently, Token2022 metadata is used, but it probably takes more time to be adopted by wallets
+        - I need to investigate how wallets index NFTs, whether it is purely based on MPLX Token Metadata Program.
+- State-compression for cheaper minting fees
+- Event-based ephemerality e.g. self-destruct
+    - when BTC reaches $100k
+    - after X amount of transfers
+    - other programmable logic
+- Immutability
+
 
 ## Deployment
 
@@ -58,22 +103,6 @@ Account closing fees
 | Mainnet     | TBA                                           | TBA                                                                                                            |
 
 
-## Future work
-- √ epPlex MVP
-- Build SDK for developers
-- Bot infrastructure for destroying epNFTs
-  - Using Clockwork
-- METAPLEX integration
-  - Token Metadata Program with Token2022 support is an assumed prerequisite for proper epNFT adoption
-    - Token2022 audit should be finished by Q4 2023.
-  - NOTE: Currently, Token2022 metadata is used, but it probably takes more time to be adopted by wallets
-    - I need to investigate how wallets index NFTs, whether it is purely based on MPLX Token Metadata Program.
-- State-compression for cheaper minting fees
-- Event-based ephemerality e.g. self-destruct
-  - when BTC reaches $100k
-  - after X amount of transfers
-  - other programmable logic
-- Immutability
 
 
 ## Development
