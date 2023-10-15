@@ -13,7 +13,14 @@ Submitted tracks:
 
 ## Links
 [https://epplex.xyz](https://epplex.xyz/)
+
 [Hyperdrive Pitch](https://epplex.xyz/HyperdrivePitch.pdf)
+
+
+## How to use
+- The no-code creation UI should be rather straight forward. Example inputs can be found in `app/utils/nftMetadata.txt`.
+- You can check for epNFTs of any owner wallets by specifying the `owner` query parameter in the URL.
+  - [https://www.epplex.xyz/demo?owner=38ZEie1B9RFyvLaS1QCb4HjrXowXzgvqALv9JBMhmPxR](https://www.epplex.xyz/demo?owner=38ZEie1B9RFyvLaS1QCb4HjrXowXzgvqALv9JBMhmPxR)
 
 
 ## Use-cases
@@ -65,8 +72,8 @@ This enables the program to destroy epNFTs on behalf of the owner.
    2. epNFT is created through CPI into Token2022 program
    3. Program Delegate is assigned `Permanent Delegate` and `CloseAuthority` privileges
 2. Anyone can submit destroy instruction on the epNFT
-   3. If `current_timestamp <= destroy_timestamp` then fail the transaction
-   4. Otherwise tx succeeds, where the Program Delegate acts as the authority to burn & close the epNFT.
+   3. If `current_timestamp <= destroy_timestamp` then fail the tx
+   4. Otherwise tx succeeds, where the Program Delegate acts as the program-owned authority to burn & close the epNFT.
 
 ### Rent collection
 Currently, epPlex collects all the epNFT rent-exemption through the Program Delegate.
@@ -117,18 +124,23 @@ It would be cool to have Open-Clockwork power this on-chain.
     ├── programs                            # epPlex Solana program
     └── scripts                             # Scripts for testing purposes, althoguh I probably should have kept a test-suite
 
-### Setup
+### Setup App
 
-1. Fork and clone the repository.
-
-2. Go to `app` folder and Install dependencies:
+1. Go to `app` folder and Install dependencies:
 ```bash
     yarn install
 ```
-3. Start developing
+2. Start developing
 ```bash
     yarn dev
 ```
+
+
+### Deploy Solana program
+```bash
+    anchor run bd
+```
+
 
 
 ## Code quality
