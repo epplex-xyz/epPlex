@@ -44,9 +44,6 @@ export async function getToken22(
     const epNFTs: Token22[] = [];
     for (const [_, e] of allTokenAccounts.value.entries()) {
         const data = AccountLayout.decode(e.account.data);
-        if (["sNYtajQfDd6YpngQ413c4MfvC8A3H83uDGJkkXnLYpU", "DUcLE6TsMXq2TkUmBdXVvrz59ahRrTRmAcqZ7u5TJ4Xq", "A8DtomZ7KKQ2nHa6oS8toNFyNk99oREibZ59iy6PbhP"].includes(data.mint.toString())) {
-            continue;
-        }
 
         try {
             const mintInfo = await getToken22AccountInfo(connection, data.mint);
