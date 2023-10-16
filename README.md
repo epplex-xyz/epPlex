@@ -17,6 +17,8 @@ Submitted Hyperdrive tracks:
 [Hyperdrive Pitch PDF](https://epplex.xyz/HyperdrivePitch.pdf)
 
 
+[Pitch Presentation](https://youtu.be/FXaGxVFanDs?si=Tne5biENrXJKjiSY)
+
 ## How to use
 - The no-code creation UI should be rather straight forward. Example inputs can be found in `app/utils/nftMetadata.txt`.
 - Check for epNFTs of any wallet owner by specifying the `owner` query parameter in the URL.
