@@ -46,7 +46,6 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(
             MuiButton: {
                 defaultProps: {
                     disableRipple: true,
-
                 },
                 variants: [
                     {
@@ -74,6 +73,9 @@ const theme = (colorMode: PaletteMode) => responsiveFontSizes(
                         minWidth: 5,
                         textTransform: "none",
                         color: paletteLight.primary.main,
+                        '&:disabled': {
+                            backgroundColor: `${paletteLight.secondary.main}` + "80",
+                        }
                     },
                 },
             },

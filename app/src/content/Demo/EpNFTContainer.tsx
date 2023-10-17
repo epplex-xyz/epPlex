@@ -187,10 +187,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
                     variant={"contained"}
                     sx={{
                         marginTop: "16px",
-                        columnGap: "8px",
-                        '&:disabled': {
-                            backgroundColor: (theme) => theme.palette.secondary.main + "80",
-                        }
+                        columnGap: "8px"
                     }}
                     disabled={!canDestroy}
                     onClick={destroyNFT}

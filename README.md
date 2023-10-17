@@ -21,7 +21,7 @@ Submitted Hyperdrive tracks:
 
 ## How to use
 - The no-code creation UI should be rather straight forward. Example inputs can be found in `app/utils/nftMetadata.txt`.
-- Check for epNFTs of any wallet owner by specifying the `owner` query parameter in the URL.
+- Check for epNFTs of any wallet owner by specifying the `owner` query parameter in the URL (connect any wallet first)
   - [https://www.epplex.xyz/demo?owner=38ZEie1B9RFyvLaS1QCb4HjrXowXzgvqALv9JBMhmPxR](https://www.epplex.xyz/demo?owner=38ZEie1B9RFyvLaS1QCb4HjrXowXzgvqALv9JBMhmPxR)
 
 

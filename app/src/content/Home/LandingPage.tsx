@@ -12,7 +12,7 @@ function LandingText(){
                 epPlex
             </Text.H1>
             <Text.H3>
-                Empowering ephemeral NFTs on Solana
+                Empowering ephemeral epNFTs on Solana
             </Text.H3>
         </div>
     );
