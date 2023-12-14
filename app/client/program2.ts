@@ -94,6 +94,7 @@ export class Program2 {
                 mint: mint,
                 programDelegate: programDelegate,
                 tokenAccount: ata,
+                payer: this.wallet.publicKey,
                 token22Program: TOKEN_2022_PROGRAM_ID,
             })
             .transaction();

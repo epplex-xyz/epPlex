@@ -73,6 +73,11 @@
           ]
         },
         {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
           "name": "token22Program",
           "isMut": false,
           "isSigner": false

@@ -25,6 +25,9 @@ pub struct TokenBurn<'info> {
     /// CHECK
     pub token_account: AccountInfo<'info>,
 
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
     pub token22_program: Program<'info, Token2022>,
 }
 
@@ -62,7 +65,7 @@ impl TokenBurn<'_> {
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             // Currently rent collector is hardcoded to be the Program Delegaate
-            &ctx.accounts.program_delegate.to_account_info(),
+            &ctx.accounts.payer.to_account_info(),
             &ctx.accounts.program_delegate,
         )?;
 
