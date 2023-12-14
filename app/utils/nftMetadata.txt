@@ -15,10 +15,17 @@
     }
 ];
 
+
+**** HELIUS ****
 name: HELIUS PRO
 symbol: SPEED
 [ { "trait_type": "WEBSITE", "value": "www.helius.xyz" }, { "trait_type": "PLAN", "value": "PRO" }, { "trait_type": "BEARD", "value": "YES" }]
 
+
+**** GAME ****
+name: Seasonal Hat
+symbol: SANTA
+[{ "trait_type": "Game", "value": "Christmas" }, { "trait_type": "Luck Perk", "value": "10" }, { "trait_type": "Hunger Perk", "value": "10" }]
 
 **** TAMAGOTCHI ****
 name: TAMAGOTCHI
