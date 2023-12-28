@@ -44,6 +44,16 @@ pub mod ephemerality {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
+        TokenRenew::actuate(ctx, &params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn create_collection(ctx: Context<CollectionCreate>, params: CollectionCreateParams) -> Result<()> {
+        CollectionCreate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
         ProgramDelegateCreate::actuate(ctx, &params)
     }
