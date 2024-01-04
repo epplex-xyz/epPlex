@@ -34,7 +34,7 @@ pub struct TokenRenew<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenRenewParams {
-    renewTerms: u16,
+    renew_terms: u16,
 }
 
 impl TokenRenew<'_> {

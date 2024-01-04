@@ -1,5 +1,5 @@
 use crate::*;
-use solana_program::system_instruction;
+use solana_program::{system_instruction, instruction::Instruction};
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
@@ -211,6 +211,46 @@ pub fn transfer_sol<'info>(
     Ok(())
 }
 
+
+pub fn create_collection_instruction(
+    payer: &Pubkey, // The account paying for the transaction
+    program_id: &Pubkey, // The Program ID of your CollectionCreate program
+    mint: &Pubkey, // The mint account
+    program_delegate: &Pubkey, // The program delegate account
+    collection_config: &Pubkey, // The collection config account
+    token22_program_id: &Pubkey, // The Token22 program ID
+    params: CollectionCreateParams, // The parameters for collection creation
+    system_program_id: &Pubkey, // The System Program ID
+) -> Result<Instruction> {
+    // Define the accounts that will be passed to the instruction
+    let accounts = vec![
+        AccountMeta::new(*mint, false),
+        AccountMeta::new_readonly(*program_delegate, false),
+        AccountMeta::new(*collection_config, false),
+        AccountMeta::new(*payer, true), // Signer account must be marked as a signer
+        AccountMeta::new_readonly(*token22_program_id, false),
+        AccountMeta::new_readonly(*system_program_id, false),
+    ];
+
+    // Serialize the instruction data
+    let instruction_data = CollectionCreateParams {
+        authority: params.authority,
+        renewal_price: params.renewal_price,
+        standard_duration: params.standard_duration,
+        grace_period: params.grace_period,
+        treasury: params.treasury,
+        collection_size: params.collection_size,
+        collection_name: params.collection_name,
+    };
+    let data = instruction_data.try_to_vec()?; // Using Borsh to serialize
+
+    // Create the instruction
+    Ok(Instruction {
+        program_id: *program_id,
+        accounts,
+        data,
+    })
+}
 
 // Fails here
 // https://explorer.solana.com/tx/33rZroF4LnJ8Buu3fnpeE7gHRWjBcJwecmrByMuC7CKxxJzpT9oqFge99T4zqwnSDkUAttUeN4E4ADa6F8wVnYQu?cluster=devnet

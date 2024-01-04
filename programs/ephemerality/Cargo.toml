@@ -10,6 +10,11 @@ keywords = ["blockchain", "rust", "solana"]
 
 [features]
 mainnet = []
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
 
 [dependencies]
 anchor-lang = { version = "^0.28.0" }

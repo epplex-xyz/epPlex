@@ -2,20 +2,21 @@
 seeds = false
 
 [programs.localnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ep_mint = "DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN"
+ephemerality = "7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR"
 
 [programs.devnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ephemerality = "7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR"
 
 [programs.mainnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ephemerality = "7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR"
 
 [provider]
-cluster = "https://api.devnet.solana.com"
-wallet = "/Users/Mac/.config/solana/test.json"
+cluster = "Localnet"
+wallet = "/home/sleyn/.config/solana/id.json"
 
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/basic2.spec.ts"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json app/client/idl/ephemerality.json && cp target/types/ephemerality.ts app/client/idl/ephemeralityTypes.ts"
 bd = "anchor build && anchor deploy && anchor run copy-to-app"
 depl = "anchor deploy && anchor run copy-to-app"
