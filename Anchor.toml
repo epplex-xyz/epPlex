@@ -2,13 +2,13 @@
 seeds = false
 
 [programs.localnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [programs.devnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [programs.mainnet]
-ephemerality = "BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY"
+ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [provider]
 cluster = "https://api.devnet.solana.com"

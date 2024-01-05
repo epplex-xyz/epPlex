@@ -20,16 +20,18 @@ export class Program2 {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
     async createToken(
-        mint: Keypair,
         destroyTimestampOffset: number = 60 * 5,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
         uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
     ) {
-        const METADATAPOINTER_SIZE = 64 + 2 + 2;
+        const mint = Keypair.generate();
+        // const METADATAPOINTER_SIZE = 64 + 2 + 2;
         const programDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
 
+        console.log("mint", mint.publicKey.toString());
+        // console.log("porg", this.program.programId.toString());
         const tokenCreateIx = await this.program.methods
             .tokenCreate({
                 destroyTimestampOffset: new BN(destroyTimestampOffset),
@@ -47,19 +49,19 @@ export class Program2 {
             })
             .instruction();
 
-        const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
-        const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
-        const mintLamports = await this.connection.getMinimumBalanceForRentExemption(mintLen);
+        // const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
+        // const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
+        // const mintLamports = await this.connection.getMinimumBalanceForRentExemption(mintLen);
 
         const transaction = new Transaction().add(...[
             // TODO move this ix into solana program
-            SystemProgram.createAccount({
-                fromPubkey: payer,
-                newAccountPubkey: mint.publicKey,
-                space: mintLen,
-                lamports: mintLamports,
-                programId: TOKEN_2022_PROGRAM_ID,
-            }),
+            // SystemProgram.createAccount({
+            //     fromPubkey: payer,
+            //     newAccountPubkey: mint.publicKey,
+            //     space: mintLen,
+            //     lamports: mintLamports,
+            //     programId: TOKEN_2022_PROGRAM_ID,
+            // }),
             tokenCreateIx,
 
             // TODO move this ix into solana program
@@ -108,6 +110,27 @@ export class Program2 {
         );
 
         return tx;
+    }
+
+    async createProgramDelegate() {
+        const programDelegate = this.getProgramDelegate();
+
+        const tx = await this.program.methods
+            .programDelegateCreate({})
+            .accounts({
+                programDelegate,
+                payer: this.wallet.publicKey,
+                systemProgram: SystemProgram.programId,
+            })
+            .transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("tx", id);
+
+        return id;
+
     }
 
 

@@ -6,7 +6,6 @@ import style from "../../styles/style.module.scss";
 import Image from "next/image";
 import { Timer } from "@components/Text/Timer";
 import { ContainedContainer } from "@components/Container/ContainedContainer";
-import { spliceAddress } from "../../../utils/general";
 import { CopyTooltip } from "@components/Tooltip/MyTooltip";
 import Button from "@mui/material/Button";
 import BombIcon from "../../../public/icons/bomb.svg";
@@ -40,17 +39,17 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
     );
 }
 
-function AddressCopy({ address }: { address: string}) {
-    return (
-        <div className="flex gap-x-1 items-center">
-            <Text.Body2>
-                {spliceAddress(address)}
-            </Text.Body2>
-
-            <CopyTooltip copyText={address} />
-        </div>
-    );
-}
+// function AddressCopy({ address }: { address: string}) {
+//     return (
+//         <div className="flex gap-x-1 items-center">
+//             <Text.Body2>
+//                 {spliceAddress(address)}
+//             </Text.Body2>
+//
+//             <CopyTooltip copyText={address} />
+//         </div>
+//     );
+// }
 
 export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
@@ -62,7 +61,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
 
     const destroyTimestamp = Number(item.destroyTimestampValue);
     const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
-    console.log("Math.floor(Date.now() / 1000) > destroyTimestamp;", Math.floor(Date.now() / 1000), destroyTimestamp);
+    // console.log("Math.floor(Date.now() / 1000) > destroyTimestamp;", Math.floor(Date.now() / 1000), destroyTimestamp);
 
     const fetchImage = useCallback(async () => {
         try {

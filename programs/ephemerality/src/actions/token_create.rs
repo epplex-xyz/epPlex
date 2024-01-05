@@ -4,12 +4,16 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenCreate<'info> {
-    #[account(
-        mut,
-        owner = token22_program.key(),
-    )]
+    // #[account(
+    //     init,
+    //     payer = payer,
+    //     space = Mint::LEN,
+    // )]
+    // /// CHECK
+    // pub mint: Box<InterfaceAccount<'info, MintInterface>>,
+    #[account(mut)]
     /// CHECK
-    pub mint: AccountInfo<'info>,
+    pub mint: UncheckedAccount<'info>,
 
     #[account(
         seeds = [SEED_PROGRAM_DELEGATE],
@@ -38,33 +42,70 @@ impl TokenCreate<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {3
         // TODO add mint account creation within IX
+
+        // Has to be similar to the old create Ticket account
+
+        // extended_mint.rs, at line 44
+        let extension_sizes = ExtensionType::try_calculate_account_len::<Mint>(
+            &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
+        ).unwrap();
+
+        let rent = &Rent::from_account_info(&ctx.accounts.rent.to_account_info())?;
+        let space = extension_sizes + (64 + 2 + 2);
+        let ix = solana_program::system_instruction::create_account(
+            &ctx.accounts.payer.key(),
+            &ctx.accounts.mint.key(),
+            rent.minimum_balance(space),
+            space as u64,
+            &spl_token_2022::id(),
+        );
+
+        let account_infos: Vec<AccountInfo> = vec![
+            ctx.accounts.payer.to_account_info(),
+            ctx.accounts.mint.to_account_info(),
+        ];
+
+        solana_program::program::invoke(
+            &ix,
+            &account_infos[..],
+        )?;
+
+        // Self::create_mint_account(
+        //     &ctx.accounts.mint,
+        //     ctx.accounts.token22_program.key(),
+        //     ctx.accounts.program_delegate.key(),
+        // )?;
 
         // Add closing authority
         Self::add_closing_authority(
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             ctx.accounts.token22_program.key(),
             ctx.accounts.program_delegate.key(),
         )?;
 
         // Add permanent delegate
         Self::add_permanent_delegate(
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             ctx.accounts.token22_program.key(),
             ctx.accounts.program_delegate.key()
         )?;
 
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
             ctx.accounts.mint.key(),
         )?;
 
         // Initialize mint
         initialize_mint(
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent,
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.payer.key(),
@@ -74,7 +115,8 @@ impl TokenCreate<'_> {
         transfer_sol(
             &ctx.accounts.system_program,
             &ctx.accounts.payer,
-            &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
+            // &ctx.accounts.mint,
             // TODO need to compute exact amount
             // 2000000 is OK
             1800000 // 0.0005 SOL
@@ -82,9 +124,11 @@ impl TokenCreate<'_> {
 
         add_token_metadata(
             &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.payer,
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.payer,
             params.name,
             params.symbol,
@@ -100,7 +144,8 @@ impl TokenCreate<'_> {
 
         update_token_metadata(
             &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint,
+            // &ctx.accounts.mint,
+            &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.payer, // who is allowed to make changes here? Changes have to go through program?
             spl_token_metadata_interface::state::Field::Key(field.to_string()),
             destroy_timestamp.to_string(),
@@ -108,6 +153,40 @@ impl TokenCreate<'_> {
 
         Ok(())
     }
+
+    // fn create_mint_account(
+    //     mint_account: &AccountInfo,
+    //     program: Pubkey,
+    //     program_delegate: Pubkey
+    // ) -> Result<()> {
+    //     // Has to be similar to the old create Ticket account
+    //
+    //     // extended_mint.rs, at line 44
+    //     let extension_sizes = ExtensionType::try_calculate_account_len::<Mint>(
+    //         &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
+    //     ).unwrap();
+    //
+    //     let rent = &Rent::from_account_info(rent_sysvar_info)?;
+    //     let space = extension_sizes + (64 + 2 + 2);
+    //     let ix = solana_program::system_instruction::create_account(
+    //         &ctx.payer.pubkey(),
+    //         &mint_account.pubkey(),
+    //         rent.minimum_balance(space),
+    //         space as u64,
+    //         &spl_token_2022::id(),
+    //     );
+    //
+    //     let account_infos: Vec<AccountInfo> = vec![
+    //         mint_account.to_account_info(),
+    //     ];
+    //
+    //     solana_program::program::invoke(
+    //         &ix,
+    //         &account_infos[..],
+    //     )?;
+    //
+    //     Ok(())
+    // }
 
     fn add_closing_authority(
         mint_account: &AccountInfo,

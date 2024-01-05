@@ -39,6 +39,7 @@ export async function getToken22(
     connection: Connection,
     publicKey: PublicKey
 ) {
+    // TODO: need to specify the epPlex NFTs
     const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
 
     const epNFTs: Token22[] = [];
@@ -71,7 +72,7 @@ export async function sendAndConfirmRawTransaction(
     tx.feePayer = feePayer;
 
     if (partialSigners) {
-        partialSigners.forEach((s) => tx.partialSign(s));
+        partialSigners.forEach((s) => tx.sign(s));
     }
 
     let txId = "";

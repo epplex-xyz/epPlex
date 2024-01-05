@@ -96,14 +96,13 @@ export function Creation() {
                 throw new Error("Failed to upload metadata");
             }
 
-            const mint = Keypair.generate();
             const txId = await program.createToken(
-                mint,
                 offset,
                 nameInput.input,
                 symbolInput.input,
                 metadataRes.message, //metadata uri
             );
+            // const txId = await program.createProgramDelegate();
 
             if (txId === "") {
                 throw new Error("Failed to create epNFT");
