@@ -10,12 +10,12 @@ pub struct CollectionConfig {
     pub bump: u8,
     pub authority: Pubkey,
     // This should be denoted in USDC
-    pub renewalPrice: u64,
-    pub standardDuration: u32,
-    pub gracePeriod: i64,
+    pub renewal_price: u64,
+    pub standard_duration: u32,
+    pub grace_period: i64,
     pub treasury: Pubkey,
-    pub collectionSize: u32,
-    pub collectionName: Vec<u8>,
+    pub collection_size: u32,
+    pub collection_name: Vec<u8>,
 }
 
 impl CollectionConfig {
@@ -33,12 +33,12 @@ impl CollectionConfig {
         Self {
             bump,
             authority: params.authority,
-            renewalPrice: params.renewalPrice,
-            standardDuration: params.standardDuration,
-            gracePeriod: params.gracePeriod,
+            renewal_price: params.renewal_price,
+            standard_duration: params.standard_duration,
+            grace_period: params.grace_period,
             treasury: params.treasury,
-            collectionSize: params.collectionSize,
-            collectionName: params.collectionName,
+            collection_size: params.collection_size,
+            collection_name: params.collection_name,
         }
     }
 
