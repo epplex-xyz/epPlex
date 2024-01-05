@@ -59,7 +59,7 @@ impl CollectionCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: CollectionCreateParams) -> Result<()> {
         CollectionConfig::new(
-            *ctx.bumps.get("collection_config").unwrap(),
+            ctx.bumps.collection_config,
             params
         );
 
