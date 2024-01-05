@@ -14,10 +14,18 @@ pub use errors::*;
 pub use program_wrappers::*;
 
 use anchor_lang::prelude::*;
-use spl_token_2022::state::Mint;
-use spl_token_metadata_interface;
+use spl_token_2022::{
+    extension::ExtensionType,
+    state::{Mint},
+};
+use anchor_spl::{
+    token_interface::{Mint as MintInterface}
+};
+use spl_token_metadata_interface::{state::TokenMetadata};
 
-
+// extension::{
+// transfer_fee, BaseStateWithExtensions, ExtensionType, StateWithExtensionsOwned,
+// },
 // use spl_token_2022::ID as SPL_TOKEN_2022_ID;
 
 #[program]
