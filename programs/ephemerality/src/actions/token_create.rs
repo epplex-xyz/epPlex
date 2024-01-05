@@ -6,7 +6,6 @@ use crate::*;
 pub struct TokenCreate<'info> {
     #[account(
         mut,
-        owner = token22_program.key(),
     )]
     /// CHECK
     pub mint: AccountInfo<'info>,
@@ -27,10 +26,10 @@ pub struct TokenCreate<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenCreateParams {
-    destroy_timestamp_offset: i64,
-    name: String,
-    symbol: String,
-    uri: String,
+    pub destroy_timestamp_offset: i64,
+    pub name: String,
+    pub symbol: String,
+    pub uri: String,
 }
 
 impl TokenCreate<'_> {
@@ -40,6 +39,8 @@ impl TokenCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
         // TODO add mint account creation within IX
+
+        Self::create_token_mint()?;
 
         // Add closing authority
         Self::add_closing_authority(
@@ -106,6 +107,11 @@ impl TokenCreate<'_> {
             destroy_timestamp.to_string(),
         )?;
 
+        Ok(())
+    }
+
+    fn create_token_mint() -> Result<()> {
+        //TODO implement this
         Ok(())
     }
 

@@ -5,14 +5,12 @@ use crate::*;
 #[instruction(params: CollectionCreateParams)]
 pub struct CollectionCreate<'info> {
 
-    //TODO create mint before calling function
-    /*#[account(
-        mut,
-        owner = token22_program.key()
+    #[account(
+        mut
     )]
     /// CHECK
     pub mint: AccountInfo<'info>,
-*/
+
     #[account(
         mut,
         seeds = [SEED_PROGRAM_DELEGATE],
@@ -59,6 +57,8 @@ impl CollectionCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: CollectionCreateParams) -> Result<()> {
+
+        Self::create_collection_mint();
         
         let config_acc = &mut ctx.accounts.collection_config;
 
@@ -75,6 +75,11 @@ impl CollectionCreate<'_> {
         config_acc.collection_size = cfg.collection_size;
         config_acc.collection_name = cfg.collection_name;
 
+        Ok(())
+    }
+
+    fn create_collection_mint() -> Result<()> {
+        //TODO implement this
         Ok(())
     }
 }
