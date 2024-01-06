@@ -64,6 +64,7 @@ impl TokenCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+        // Initialise Mint Account
         let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(
             &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
         ).unwrap();
@@ -88,12 +89,6 @@ impl TokenCreate<'_> {
             &ix,
             &account_infos[..],
         )?;
-
-        // Self::create_mint_account(
-        //     &ctx.accounts.mint,
-        //     ctx.accounts.token22_program.key(),
-        //     ctx.accounts.program_delegate.key(),
-        // )?;
 
         // Add closing authority
         Self::add_closing_authority(
@@ -201,14 +196,6 @@ impl TokenCreate<'_> {
 
         Ok(())
     }
-
-    // fn create_mint_account(
-    //     mint_account: &AccountInfo,
-    //     program: Pubkey,
-    //     program_delegate: Pubkey
-    // ) -> Result<()> {
-    //     Ok(())
-    // }
 
     fn add_closing_authority(
         mint_account: &AccountInfo,
