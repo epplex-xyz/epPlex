@@ -18,15 +18,11 @@ use spl_token_2022::{
     extension::ExtensionType,
 };
 use anchor_spl::{
-    token_interface::{Mint, MintTo},
-    associated_token::AssociatedToken
+    token_interface::{Mint, MintTo, TokenAccount},
+    associated_token::AssociatedToken,
 };
 use spl_token_metadata_interface::{state::TokenMetadata};
 
-// extension::{
-// transfer_fee, BaseStateWithExtensions, ExtensionType, StateWithExtensionsOwned,
-// },
-// use spl_token_2022::ID as SPL_TOKEN_2022_ID;
 
 #[program]
 pub mod ephemerality {

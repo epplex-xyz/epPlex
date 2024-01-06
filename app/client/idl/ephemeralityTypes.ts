@@ -117,20 +117,17 @@ export type Ephemerality = {
           ]
         },
         {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "programDelegate",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "payer",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
@@ -405,6 +402,43 @@ export type Ephemerality = {
       }
     },
     {
+      "name": "Metadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "dunno7",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "destroyTimestampField",
+            "type": "string"
+          },
+          {
+            "name": "destroyTimestampValue",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "Mint22",
       "type": {
         "kind": "struct",
@@ -519,43 +553,6 @@ export type Ephemerality = {
             "name": "metadataAddress",
             "type": "publicKey"
           },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "type": "string"
-          },
-          {
-            "name": "dunno7",
-            "type": {
-              "array": [
-                "u8",
-                4
-              ]
-            }
-          },
-          {
-            "name": "destroyTimestampField",
-            "type": "string"
-          },
-          {
-            "name": "destroyTimestampValue",
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Metadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
           {
             "name": "name",
             "type": "string"
@@ -722,20 +719,17 @@ export const IDL: Ephemerality = {
           ]
         },
         {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "programDelegate",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "payer",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
@@ -1010,6 +1004,43 @@ export const IDL: Ephemerality = {
       }
     },
     {
+      "name": "Metadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "dunno7",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "destroyTimestampField",
+            "type": "string"
+          },
+          {
+            "name": "destroyTimestampValue",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "Mint22",
       "type": {
         "kind": "struct",
@@ -1124,43 +1155,6 @@ export const IDL: Ephemerality = {
             "name": "metadataAddress",
             "type": "publicKey"
           },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "type": "string"
-          },
-          {
-            "name": "dunno7",
-            "type": {
-              "array": [
-                "u8",
-                4
-              ]
-            }
-          },
-          {
-            "name": "destroyTimestampField",
-            "type": "string"
-          },
-          {
-            "name": "destroyTimestampValue",
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Metadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
           {
             "name": "name",
             "type": "string"

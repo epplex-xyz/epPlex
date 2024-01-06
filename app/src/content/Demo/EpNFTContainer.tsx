@@ -55,6 +55,7 @@ export function EpNFTContainer({item}: {item: Token22}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
 
+    console.log("item", item.name, item.symbol, item.metadataAddress.toString());
     // probably dont need to use this in this contaienr
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const [loading, setLoading] = React.useState(false);

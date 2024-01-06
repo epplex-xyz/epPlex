@@ -127,7 +127,35 @@ export class Program2 {
         console.log("tx", id);
 
         return id;
+    }
 
+    async renewToken() {
+        const mint = new PublicKey("3zp83fqD8GTQFKi1TUQhLpWf94TvrgFfFqfqKA9A9hyQ");
+        const ata = getAssociatedTokenAddressSync(
+            mint,
+            this.wallet.publicKey,
+            undefined,
+            TOKEN_2022_PROGRAM_ID
+        );
+        const programDelegate = this.getProgramDelegate();
+
+        const tx = await this.program.methods
+            .tokenRenew({renewTerms: 1})
+            .accounts({
+                mint,
+                tokenAccount: ata,
+                programDelegate,
+                authority: this.wallet.publicKey,
+                token22Program: TOKEN_2022_PROGRAM_ID,
+            })
+            .transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("tx", id);
+
+        return id;
     }
 
 

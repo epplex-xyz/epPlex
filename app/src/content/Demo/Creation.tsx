@@ -35,6 +35,11 @@ export function Creation() {
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
     const [loading, setLoading] = React.useState(false);
 
+    const testButton = useCallback(async () => {
+        // const txId = await program.createProgramDelegate();
+        const txId = await program.renewToken();
+    }, []);
+
     const handleCreate = useCallback(async () => {
         setLoading(true);
         try {
@@ -102,7 +107,6 @@ export function Creation() {
                 symbolInput.input,
                 metadataRes.message, //metadata uri
             );
-            // const txId = await program.createProgramDelegate();
 
             if (txId === "") {
                 throw new Error("Failed to create epNFT");
