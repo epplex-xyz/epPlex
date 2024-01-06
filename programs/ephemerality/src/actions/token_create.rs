@@ -1,19 +1,38 @@
 use crate::*;
 
-
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenCreate<'info> {
-    // #[account(
-    //     init,
-    //     payer = payer,
-    //     space = Mint::LEN,
-    // )]
-    // /// CHECK
-    // pub mint: Box<InterfaceAccount<'info, MintInterface>>,
+    // TODO: is unchecked account correct?
     #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
+
+    // TODO: is it possible to use this?
+    // TODO: ensure this is token2022 account
+    // #[account(
+    //     init,
+    //     payer = payer,
+    //     associated_token::authority = payer,
+    //     associated_token::mint = mint,
+    // )]
+    // pub ata: Account<'info, TokenAccount>,
+    #[account(mut)]
+    /// CHECK
+    pub ata: UncheckedAccount<'info>,
+
+    // #[account(
+    //     init,
+    //     seeds = [
+    //         SEED_TOKEN_METADATA,
+    //         ID,
+    //         mint.key().as_ref()
+    //     ],
+    //     payer = payer,
+    //     space = TokenMetadata::LEN
+    //     bump,
+    // )]
+    // pub token_metadata: Account<'info, TokenMetadata>,
 
     #[account(
         seeds = [SEED_PROGRAM_DELEGATE],
@@ -27,6 +46,7 @@ pub struct TokenCreate<'info> {
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
+    pub associated_token: Program<'info, AssociatedToken>
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -42,17 +62,13 @@ impl TokenCreate<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {3
-        // TODO add mint account creation within IX
-
-        // Has to be similar to the old create Ticket account
-
-        // extended_mint.rs, at line 44
-        let extension_sizes = ExtensionType::try_calculate_account_len::<Mint>(
+    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+        let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(
             &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
         ).unwrap();
-
         let rent = &Rent::from_account_info(&ctx.accounts.rent.to_account_info())?;
+
+        // TODO: need to calculate this properly
         let space = extension_sizes + (64 + 2 + 2);
         let ix = solana_program::system_instruction::create_account(
             &ctx.accounts.payer.key(),
@@ -99,6 +115,7 @@ impl TokenCreate<'_> {
             // &ctx.accounts.mint,
             &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
+            // TODO this address needs to change to separate PDA
             ctx.accounts.mint.key(),
         )?;
 
@@ -126,7 +143,7 @@ impl TokenCreate<'_> {
             &ctx.accounts.token22_program.key(),
             // &ctx.accounts.mint,
             &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.payer,
+            &ctx.accounts.payer, // this needs to change
             // &ctx.accounts.mint,
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.payer,
@@ -135,6 +152,8 @@ impl TokenCreate<'_> {
             params.uri,
         )?;
 
+        // TODO this can be done better
+        // https://github.com/solana-labs/solana-program-library/blob/f382e76c5c1be20be208ce54c32719e8f0a2f5e1/token/program-2022-test/tests/token_metadata_initialize.rs#L60
         let field = "destroyTimestamp";
         let now = Clock::get().unwrap().unix_timestamp;
         let destroy_timestamp = now
@@ -151,6 +170,34 @@ impl TokenCreate<'_> {
             destroy_timestamp.to_string(),
         )?;
 
+        // Create ATA
+        anchor_spl::associated_token::create(
+        CpiContext::new(
+        ctx.accounts.token22_program.to_account_info(),
+        anchor_spl::associated_token::Create {
+                    payer: ctx.accounts.payer.to_account_info(), // payer
+                    associated_token: ctx.accounts.ata.to_account_info(),
+                    authority: ctx.accounts.payer.to_account_info(), // owner
+                    mint: ctx.accounts.mint.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    token_program: ctx.accounts.token22_program.to_account_info(),
+                }
+            ),
+        )?;
+
+        // Mint to ATA
+        anchor_spl::token_interface::mint_to(
+        CpiContext::new(
+        ctx.accounts.token22_program.to_account_info(),
+        MintTo {
+                    mint: ctx.accounts.mint.to_account_info().clone(),
+                    to: ctx.accounts.ata.to_account_info().clone(),
+                    authority: ctx.accounts.payer.to_account_info(),
+                }
+            ),
+        1
+        )?;
+
         Ok(())
     }
 
@@ -159,32 +206,6 @@ impl TokenCreate<'_> {
     //     program: Pubkey,
     //     program_delegate: Pubkey
     // ) -> Result<()> {
-    //     // Has to be similar to the old create Ticket account
-    //
-    //     // extended_mint.rs, at line 44
-    //     let extension_sizes = ExtensionType::try_calculate_account_len::<Mint>(
-    //         &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
-    //     ).unwrap();
-    //
-    //     let rent = &Rent::from_account_info(rent_sysvar_info)?;
-    //     let space = extension_sizes + (64 + 2 + 2);
-    //     let ix = solana_program::system_instruction::create_account(
-    //         &ctx.payer.pubkey(),
-    //         &mint_account.pubkey(),
-    //         rent.minimum_balance(space),
-    //         space as u64,
-    //         &spl_token_2022::id(),
-    //     );
-    //
-    //     let account_infos: Vec<AccountInfo> = vec![
-    //         mint_account.to_account_info(),
-    //     ];
-    //
-    //     solana_program::program::invoke(
-    //         &ix,
-    //         &account_infos[..],
-    //     )?;
-    //
     //     Ok(())
     // }
 
