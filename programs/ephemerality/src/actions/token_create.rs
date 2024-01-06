@@ -8,6 +8,7 @@ pub struct TokenCreate<'info> {
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
+    // TODO does this ensure consistent ATA seeds?
     // TODO: is it possible to use this?
     // TODO: ensure this is token2022 account
     // #[account(
