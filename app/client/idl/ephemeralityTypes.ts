@@ -14,6 +14,14 @@ export type Ephemerality = {
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "programDelegate",
           "isMut": false,
           "isSigner": false
@@ -35,6 +43,11 @@ export type Ephemerality = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
           "isMut": false,
           "isSigner": false
         }
@@ -93,6 +106,96 @@ export type Ephemerality = {
       ]
     },
     {
+      "name": "tokenRenew",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenRenewParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "createCollection",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionCreateParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -146,6 +249,49 @@ export type Ephemerality = {
   ],
   "accounts": [
     {
+      "name": "collectionConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "renewalPrice",
+            "type": "u64"
+          },
+          {
+            "name": "standardDuration",
+            "type": "u32"
+          },
+          {
+            "name": "gracePeriod",
+            "type": "i64"
+          },
+          {
+            "name": "treasury",
+            "type": "publicKey"
+          },
+          {
+            "name": "collectionSize",
+            "type": "u32"
+          },
+          {
+            "name": "collectionName",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -162,6 +308,42 @@ export type Ephemerality = {
     }
   ],
   "types": [
+    {
+      "name": "CollectionCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "renewalPrice",
+            "type": "u64"
+          },
+          {
+            "name": "standardDuration",
+            "type": "u32"
+          },
+          {
+            "name": "gracePeriod",
+            "type": "i64"
+          },
+          {
+            "name": "treasury",
+            "type": "publicKey"
+          },
+          {
+            "name": "collectionSize",
+            "type": "u32"
+          },
+          {
+            "name": "collectionName",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
     {
       "name": "ProgramDelegateCloseParams",
       "type": {
@@ -203,6 +385,18 @@ export type Ephemerality = {
           {
             "name": "uri",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenRenewParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "renewTerms",
+            "type": "u16"
           }
         ]
       }
@@ -422,6 +616,14 @@ export const IDL: Ephemerality = {
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "programDelegate",
           "isMut": false,
           "isSigner": false
@@ -443,6 +645,11 @@ export const IDL: Ephemerality = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
           "isMut": false,
           "isSigner": false
         }
@@ -501,6 +708,96 @@ export const IDL: Ephemerality = {
       ]
     },
     {
+      "name": "tokenRenew",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenRenewParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "createCollection",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionCreateParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -554,6 +851,49 @@ export const IDL: Ephemerality = {
   ],
   "accounts": [
     {
+      "name": "collectionConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "renewalPrice",
+            "type": "u64"
+          },
+          {
+            "name": "standardDuration",
+            "type": "u32"
+          },
+          {
+            "name": "gracePeriod",
+            "type": "i64"
+          },
+          {
+            "name": "treasury",
+            "type": "publicKey"
+          },
+          {
+            "name": "collectionSize",
+            "type": "u32"
+          },
+          {
+            "name": "collectionName",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -570,6 +910,42 @@ export const IDL: Ephemerality = {
     }
   ],
   "types": [
+    {
+      "name": "CollectionCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "renewalPrice",
+            "type": "u64"
+          },
+          {
+            "name": "standardDuration",
+            "type": "u32"
+          },
+          {
+            "name": "gracePeriod",
+            "type": "i64"
+          },
+          {
+            "name": "treasury",
+            "type": "publicKey"
+          },
+          {
+            "name": "collectionSize",
+            "type": "u32"
+          },
+          {
+            "name": "collectionName",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
     {
       "name": "ProgramDelegateCloseParams",
       "type": {
@@ -611,6 +987,18 @@ export const IDL: Ephemerality = {
           {
             "name": "uri",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenRenewParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "renewTerms",
+            "type": "u16"
           }
         ]
       }

@@ -15,7 +15,7 @@ pub struct CollectionConfig {
     pub grace_period: i64,
     pub treasury: Pubkey,
     pub collection_size: u32,
-    pub collection_name: String,
+    pub collection_name: Vec<u8>,
 }
 
 impl CollectionConfig {

@@ -44,7 +44,7 @@ pub struct CollectionCreateParams {
     pub grace_period: i64,
     pub treasury: Pubkey,
     pub collection_size: u32,
-    pub collection_name: String,
+    pub collection_name: Vec<u8>,
 }
 
 impl CollectionCreate<'_> {
@@ -63,7 +63,7 @@ impl CollectionCreate<'_> {
         let config_acc = &mut ctx.accounts.collection_config;
 
         let cfg = CollectionConfig::new(
-    *ctx.bumps.get("collection_config").unwrap(),
+            ctx.bumps.collection_config,
             params
         );
 
