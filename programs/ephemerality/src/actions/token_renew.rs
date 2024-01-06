@@ -10,7 +10,7 @@ pub struct TokenRenew<'info> {
         mint::token_program = token22_program.key(),
     )]
     /// CHECK
-    pub mint: Box<InterfaceAccount<'info, MintInterface>>,
+    pub mint: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
         mut,
@@ -40,7 +40,7 @@ pub struct TokenRenewParams {
 impl TokenRenew<'_> {
     pub fn validate(
         &self,
-        ctx: &Context<Self>,
+        _ctx: &Context<Self>,
         _params: &TokenRenewParams,
     ) -> Result<()> {
         // TODO need to turn this into a helper function
@@ -60,7 +60,7 @@ impl TokenRenew<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: &TokenRenewParams) -> Result<()> {
+    pub fn actuate(_ctx: Context<Self>, _params: &TokenRenewParams) -> Result<()> {
         // TODO can I change token metadata without any auth?
 
         // Also need to be able to transfer

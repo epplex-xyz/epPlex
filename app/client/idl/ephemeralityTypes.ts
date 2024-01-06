@@ -14,6 +14,14 @@ export type Ephemerality = {
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "programDelegate",
           "isMut": false,
           "isSigner": false
@@ -35,6 +43,11 @@ export type Ephemerality = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
           "isMut": false,
           "isSigner": false
         }
@@ -392,43 +405,6 @@ export type Ephemerality = {
       }
     },
     {
-      "name": "Metadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "type": "string"
-          },
-          {
-            "name": "dunno7",
-            "type": {
-              "array": [
-                "u8",
-                4
-              ]
-            }
-          },
-          {
-            "name": "destroyTimestampField",
-            "type": "string"
-          },
-          {
-            "name": "destroyTimestampValue",
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
       "name": "Mint22",
       "type": {
         "kind": "struct",
@@ -543,6 +519,43 @@ export type Ephemerality = {
             "name": "metadataAddress",
             "type": "publicKey"
           },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "dunno7",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "destroyTimestampField",
+            "type": "string"
+          },
+          {
+            "name": "destroyTimestampValue",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Metadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
             "name": "name",
             "type": "string"
@@ -606,6 +619,14 @@ export const IDL: Ephemerality = {
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "programDelegate",
           "isMut": false,
           "isSigner": false
@@ -627,6 +648,11 @@ export const IDL: Ephemerality = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
           "isMut": false,
           "isSigner": false
         }
@@ -984,43 +1010,6 @@ export const IDL: Ephemerality = {
       }
     },
     {
-      "name": "Metadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "type": "string"
-          },
-          {
-            "name": "dunno7",
-            "type": {
-              "array": [
-                "u8",
-                4
-              ]
-            }
-          },
-          {
-            "name": "destroyTimestampField",
-            "type": "string"
-          },
-          {
-            "name": "destroyTimestampValue",
-            "type": "string"
-          }
-        ]
-      }
-    },
-    {
       "name": "Mint22",
       "type": {
         "kind": "struct",
@@ -1135,6 +1124,43 @@ export const IDL: Ephemerality = {
             "name": "metadataAddress",
             "type": "publicKey"
           },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "dunno7",
+            "type": {
+              "array": [
+                "u8",
+                4
+              ]
+            }
+          },
+          {
+            "name": "destroyTimestampField",
+            "type": "string"
+          },
+          {
+            "name": "destroyTimestampValue",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Metadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
             "name": "name",
             "type": "string"

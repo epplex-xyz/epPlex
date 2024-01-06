@@ -16,10 +16,10 @@ pub use program_wrappers::*;
 use anchor_lang::prelude::*;
 use spl_token_2022::{
     extension::ExtensionType,
-    state::{Mint},
 };
 use anchor_spl::{
-    token_interface::{Mint as MintInterface}
+    token_interface::{Mint, MintTo},
+    associated_token::AssociatedToken
 };
 use spl_token_metadata_interface::{state::TokenMetadata};
 
