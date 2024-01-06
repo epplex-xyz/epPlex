@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use spl_token_2022::ID as TOKEN_2022_PROGRAM_ID;
 
 #[derive(Clone)]
 pub struct Token2022;
