@@ -14,6 +14,14 @@ export type Ephemerality = {
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "tokenMetadata",
           "isMut": true,
           "isSigner": false
@@ -664,6 +672,14 @@ export const IDL: Ephemerality = {
       "accounts": [
         {
           "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "ata",
           "isMut": true,
           "isSigner": false,
           "docs": [

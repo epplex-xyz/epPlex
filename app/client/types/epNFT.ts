@@ -1,8 +1,6 @@
 import {PublicKey} from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-import { Mint, PermanentDelegate } from "@solana/spl-token";
 import { RawMint } from "@solana/spl-token/src/state/mint";
-import * as B from "@native-to-anchor/buffer-layout";
 
 type FixedLengthArray<T, L extends number> = L extends L
     ? number[] extends ((
@@ -42,9 +40,6 @@ export const EpNFTLayout = borsh.struct<EpNFTExtensions>([
 
     borsh.u32("permanentDelegateOption"),
     borsh.publicKey("permanentDelegate"),
-    borsh.array(borsh.u8(), 4, "dunno3"),
-    borsh.publicKey("dunno4"),
-    borsh.publicKey("dunno5"), // mint address
 
     borsh.u32("metadataPointerAuthorityOption"),
     borsh.publicKey("metadataPointerAuthority"),
@@ -54,23 +49,28 @@ export const EpNFTLayout = borsh.struct<EpNFTExtensions>([
 
 
 export interface TokenMetadata {
-    // TokenMetadata
+    metadataAuthorityOption: 1 | 0,
+    metadataAuthority: PublicKey,
+    mint: PublicKey,
     name: string,
     symbol: string,
     uri: string,
     // How to corrobate these two
     dunno7: FixedLengthArray<any, 4>
-    destroyTimestampField: string,
-    destroyTimestampValue: string
+    expirationDate: string,
+    expirationDateValue: string
 }
 
 // /** Buffer layout for de/serializing a mint */
 export const TokenMetadataLayout = borsh.struct<TokenMetadata>([
     // TokenMetadata
+    borsh.u8("metadataAuthorityOption"),
+    borsh.publicKey("metadataAuthority"),
+    borsh.publicKey("mint"),
     borsh.str("name"),
     borsh.str("symbol"),
     borsh.str("uri"),
     borsh.array(borsh.u8(), 4, "dunno7"),
-    borsh.str("destroyTimestampField"),
-    borsh.str("destroyTimestampValue"),
+    borsh.str("expirationDate"),
+    borsh.str("expirationDateValue"),
 ]);

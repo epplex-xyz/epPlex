@@ -11,16 +11,16 @@ import { Carousel } from "./Carousel";
 import { EpNFTContainer } from "./EpNFTContainer";
 import { useSearchParams } from "next/navigation";
 import { PublicKey } from "@solana/web3.js";
+import { EpNFT, TokenMetadata } from "../../../client/types/epNFT";
 
 export function MyEpNFTs() {
     const [isFetching, setIsFetching] = useState<boolean>(true);
-    const [tokens, setTokens] = useState<Token22[]>([]);
+    const [tokens, setTokens] = useState<TokenMetadata[]>([]);
     const {program, hasCreatedtState: {hasCreated}} = useProgramApis();
     const path = useSearchParams();
 
     const fetchNFTs = useCallback(async (program) => {
         setIsFetching(true);
-
         try {
             let pubkey: PublicKey;
             const urlPath = path.get("owner");

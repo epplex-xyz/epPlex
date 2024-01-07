@@ -177,4 +177,14 @@ export class Program2 {
         return programDelegate;
     }
 
+    static staticGetTokenMetadata(mint: PublicKey): PublicKey {
+        // TODO dont hardcode this
+        const pid = new PublicKey("epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex");
+        const [programDelegate] = PublicKey.findProgramAddressSync(
+            [Buffer.from("metadata"), pid.toBuffer(), mint.toBuffer()],
+            pid
+        );
+        return programDelegate;
+    }
+
 }
