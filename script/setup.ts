@@ -3,7 +3,7 @@ import {
     Connection,
     Transaction,
     SystemProgram,
-    sendAndConfirmTransaction,
+    sendAndConfirmTransaction, PublicKey,
 } from "@solana/web3.js";
 import {
     ExtensionType,
@@ -86,6 +86,18 @@ async function test() {
     // await program.burnToken(mintKeypair.publicKey, payer);
 }
 
+function byteToPubkeyString() {
+    const inputString = "234 86 246 193 255 234 210 52 77 211 118 42 111 252 130 84 81 176 232 153 129 251 194 18 168 86 187 130 50 172 81 43";
+
+    // Split the input string into an array of strings representing individual numbers
+    const numStrings = inputString.split(" ");
+
+    // Convert each string to a number
+    const numArray = numStrings.map((numString) => parseInt(numString, 10));
+    const pub = new PublicKey(new Uint8Array(numArray));
+    console.log(pub.toString());
+}
+
 async function main() {
     try {
         // await setup();
@@ -94,5 +106,5 @@ async function main() {
         console.log("err", e);
     }
 }
-
-main();
+byteToPubkeyString()
+// main();
