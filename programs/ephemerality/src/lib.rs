@@ -18,7 +18,7 @@ use spl_token_2022::{
     extension::ExtensionType,
 };
 use anchor_spl::{
-    token_interface::{Mint, MintTo, TokenAccount},
+    token_interface::{Mint, TokenAccount},
     associated_token::AssociatedToken,
 };
 use spl_token_metadata_interface::{state::TokenMetadata};
