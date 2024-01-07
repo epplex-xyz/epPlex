@@ -14,6 +14,14 @@
           ]
         },
         {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
           "name": "tokenMetadata",
           "isMut": true,
           "isSigner": false

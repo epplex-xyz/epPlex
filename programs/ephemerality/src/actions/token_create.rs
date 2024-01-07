@@ -1,3 +1,6 @@
+use anchor_spl::{
+    token_interface::MintTo
+};
 use crate::*;
 
 #[derive(Accounts)]
@@ -19,9 +22,9 @@ pub struct TokenCreate<'info> {
     // )]
     // pub ata: Account<'info, TokenAccount>,
 
-    // #[account(mut)]
-    // /// CHECK
-    // pub ata: UncheckedAccount<'info>,
+    #[account(mut)]
+    /// CHECK
+    pub ata: UncheckedAccount<'info>,
 
     // TODO how to get exact space of this?
     #[account(
@@ -149,6 +152,34 @@ impl TokenCreate<'_> {
         // validate extensions are there and that metadata is created
 
         msg!("Wrote state {:?}", ctx.accounts.token_metadata);
+
+        // Create ATA
+        anchor_spl::associated_token::create(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::associated_token::Create {
+                    payer: ctx.accounts.payer.to_account_info(), // payer
+                    associated_token: ctx.accounts.ata.to_account_info(),
+                    authority: ctx.accounts.payer.to_account_info(), // owner
+                    mint: ctx.accounts.mint.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    token_program: ctx.accounts.token22_program.to_account_info(),
+                }
+            ),
+        )?;
+
+        // Mint to ATA
+        anchor_spl::token_interface::mint_to(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                MintTo {
+                    mint: ctx.accounts.mint.to_account_info().clone(),
+                    to: ctx.accounts.ata.to_account_info().clone(),
+                    authority: ctx.accounts.payer.to_account_info(),
+                }
+            ),
+            1
+        )?;
 
         Ok(())
     }
