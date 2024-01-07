@@ -4,7 +4,7 @@ import { TextDivider } from "@components/Divider/TextDivider";
 import { Text } from "@components/Text/TextComponent";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
-import { getToken22 } from "../../../utils/solana";
+import { getEpNFTs, getToken22 } from "../../../utils/solana";
 import { Token22 } from "../../../client/types/token22";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Carousel } from "./Carousel";
@@ -32,7 +32,7 @@ export function MyEpNFTs() {
                 throw new Error("No publickey");
             }
 
-            const tokens = await getToken22(program.connection, pubkey);
+            const tokens = await getEpNFTs(program.connection, pubkey);
             setTokens(tokens);
         } catch (e) {
             console.log("Failed getting NFTs", e);

@@ -12,6 +12,7 @@ import {
 import { Token22, Token22Layout } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
+import { EpNFT, EpNFTLayout, TokenMetadataLayout } from "../client/types/epNFT";
 
 // https://solana.stackexchange.com/questions/107/how-can-i-get-the-owner-wallet-of-an-nft-mint-using-web3-js
 export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
@@ -39,18 +40,51 @@ export async function getToken22(
     connection: Connection,
     publicKey: PublicKey
 ) {
-    // TODO: need to specify the epPlex NFTs
     const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
 
-    const epNFTs: Token22[] = [];
+    const token22s: Token22[] = [];
     for (const [_, e] of allTokenAccounts.value.entries()) {
         const data = AccountLayout.decode(e.account.data);
 
         try {
             const mintInfo = await getToken22AccountInfo(connection, data.mint);
             if (mintInfo.destroyTimestampField !== undefined) {
-                epNFTs.push(mintInfo);
+                token22s.push(mintInfo);
             }
+        } catch (e) {
+            console.log("Failed to decode", e);
+        }
+    }
+
+    return token22s;
+}
+
+
+async function getEpNFTaccountInfo(connection: Connection, mint: PublicKey): Promise<EpNFT> {
+    const info = await connection.getAccountInfo(mint);
+    return EpNFTLayout.decode(info!.data);
+}
+export async function getEpNFTs(
+    connection: Connection,
+    publicKey: PublicKey
+) {
+    const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
+
+    const epNFTs: EpNFT[] = [];
+    for (const [_, e] of allTokenAccounts.value.entries()) {
+        const data = AccountLayout.decode(e.account.data);
+
+        try {
+            const mintInfo = await getEpNFTaccountInfo(connection, data.mint);
+
+            const metadata = mintInfo.metadataAddress;
+            const info = await connection.getAccountInfo(metadata);
+
+            if (info === null) {
+                throw Error(`Not epNFT ${data.mint.toString()}`);
+            }
+
+            epNFTs.push(TokenMetadataLayout.decode(info!.data));
         } catch (e) {
             console.log("Failed to decode", e);
         }
@@ -58,6 +92,7 @@ export async function getToken22(
 
     return epNFTs;
 }
+
 
 export async function sendAndConfirmRawTransaction(
     connection: Connection,
