@@ -62,7 +62,6 @@ export function EpNFTContainer({item}: {item: Token22}) {
 
     const destroyTimestamp = Number(item.destroyTimestampValue);
     const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
-    // console.log("Math.floor(Date.now() / 1000) > destroyTimestamp;", Math.floor(Date.now() / 1000), destroyTimestamp);
 
     const fetchImage = useCallback(async () => {
         try {
