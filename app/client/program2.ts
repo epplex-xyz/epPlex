@@ -39,6 +39,7 @@ export class Program2 {
             TOKEN_2022_PROGRAM_ID,
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
+        const tm = this.getTokenMetadata(mint.publicKey);
 
         const tokenCreateTx = await this.program.methods
             .tokenCreate({
@@ -50,6 +51,7 @@ export class Program2 {
             .accounts({
                 mint: mint.publicKey,
                 ata,
+                tokenMetadata: tm,
                 programDelegate: programDelegate,
                 payer: payer,
                 systemProgram: SystemProgram.programId,
@@ -130,7 +132,7 @@ export class Program2 {
     }
 
     async renewToken() {
-        const mint = new PublicKey("3zp83fqD8GTQFKi1TUQhLpWf94TvrgFfFqfqKA9A9hyQ");
+        const mint = new PublicKey("DRa4aV8SMbcM9g9aDiiWnHgmwNcNNcxvTHh1Bfg1z1zJ");
         const ata = getAssociatedTokenAddressSync(
             mint,
             this.wallet.publicKey,
@@ -162,6 +164,14 @@ export class Program2 {
     getProgramDelegate(): PublicKey {
         const [programDelegate] = PublicKey.findProgramAddressSync(
             [Buffer.from("PROGRAM_DELEGATE")],
+            this.program.programId
+        );
+        return programDelegate;
+    }
+
+    getTokenMetadata(mint: PublicKey): PublicKey {
+        const [programDelegate] = PublicKey.findProgramAddressSync(
+            [Buffer.from("metadata"), this.program.programId.toBuffer(), mint.toBuffer()],
             this.program.programId
         );
         return programDelegate;
