@@ -6,11 +6,13 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: TokenRenewParams)]
 pub struct TokenRenew<'info> {
+    // TOOD add other checks here
     #[account(
         mut,
         mint::token_program = token22_program.key(),
+        constraint = mint.decimals == 0,
+        constraint = mint.supply == 1,
     )]
-    /// CHECK
     pub mint: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
@@ -28,7 +30,6 @@ pub struct TokenRenew<'info> {
     pub program_delegate: Account<'info, ProgramDelegate>,
 
     // TODO: test not authority
-    // Signer cus need to pay
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -46,18 +47,44 @@ impl TokenRenew<'_> {
         _ctx: &Context<Self>,
         _params: &TokenRenewParams,
     ) -> Result<()> {
+        // from metaplex Metadata.rs
 
-
-        // let data_bytes = ctx.accounts.mint.try_borrow_data()?;
-        // let (_, metadata_bytes) = data_bytes.split_at(METADATA_OFFSET);
-        // let metadata: Metadata = Metadata::try_from_slice(metadata_bytes)?;
-        // let destroy_timestamp = metadata.destroy_timestamp_value.parse::<i64>().unwrap();
-
-        // let now = Clock::get().unwrap().unix_timestamp;
-        // if now < destroy_timestamp {
-        //     return err!(EphemeralityError::DestroyTimestampNotExceeded);
+        // // Only the Update Authority can update this section.
+        // match &args {
+        //     UpdateArgs::V1 {
+        //         new_update_authority,
+        //         uses,
+        //         collection_details,
+        //         ..
+        //     }
+        //     | UpdateArgs::AsUpdateAuthorityV2 {
+        //         new_update_authority,
+        //         uses,
+        //         collection_details,
+        //         ..
+        //     } => {
+        //         if let Some(authority) = new_update_authority {
+        //             self.update_authority = *authority;
+        //         }
+        //
+        //         if uses.is_some() {
+        //             let uses_option = uses.clone().to_option();
+        //             // If already None leave it as None.
+        //             assert_valid_use(&uses_option, &self.uses)?;
+        //             self.uses = uses_option;
+        //         }
+        //
+        //         if let CollectionDetailsToggle::Set(collection_details) = collection_details {
+        //             // only unsized collections can have the size set, and only once.
+        //             if self.collection_details.is_some() {
+        //                 return Err(MetadataError::SizedCollection.into());
+        //             }
+        //
+        //             self.collection_details = Some(collection_details.clone());
+        //         }
+        //     }
+        //     _ => (),
         // }
-
         Ok(())
     }
 
@@ -71,11 +98,11 @@ impl TokenRenew<'_> {
         // should compute the costs
 
 
+        // Scoping because borrowing later
         // TODO need to turn this into a helper function
         let buffer = ctx.accounts.mint.to_account_info();
         let expiry_date;
         {
-
             let mint_data = buffer.try_borrow_data()?;
             let state = spl_token_2022::extension::StateWithExtensions::<spl_token_2022::state::Mint>::unpack(&mint_data)?;
             let metadata_bytes = state.get_extension_bytes::<TokenMetadata>().unwrap();
