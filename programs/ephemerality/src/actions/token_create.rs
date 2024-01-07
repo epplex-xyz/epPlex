@@ -1,4 +1,3 @@
-use spl_token_2022::extension::StateWithExtensionsMut;
 use crate::*;
 
 #[derive(Accounts)]
@@ -20,9 +19,9 @@ pub struct TokenCreate<'info> {
     // )]
     // pub ata: Account<'info, TokenAccount>,
 
-    #[account(mut)]
-    /// CHECK
-    pub ata: UncheckedAccount<'info>,
+    // #[account(mut)]
+    // /// CHECK
+    // pub ata: UncheckedAccount<'info>,
 
     // TODO how to get exact space of this?
     #[account(
@@ -136,18 +135,6 @@ impl TokenCreate<'_> {
             .ok_or(EphemeralityError::InvalidCalculation)
             .unwrap();
 
-        // let data = TokenMetadata {
-        //     name: params.name,
-        //     symbol: params.symbol,
-        //     uri: params.uri,
-        //     update_authority,
-        //     mint: *ctx.accounts.mint.key,
-        //     additional_metadata: vec![(EXPIRY_FIELD.to_string(), destroy_timestamp.to_string())]
-        // };
-        // account_info.realloc(new_account_len, false)?;
-        // let mut buffer = ctx.accounts.token_metadata.to_account_info().try_borrow_mut_data()?;
-
-
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = EphemeralMetadata {
             update_authority: Some(*ctx.accounts.payer.key),
@@ -158,99 +145,10 @@ impl TokenCreate<'_> {
             additional_metadata: vec![[EXPIRY_FIELD.to_string(), destroy_timestamp.to_string()]]
         };
 
-        // now alloc in the TLV buffer and write the data
-        // let mut state = StateWithExtensionsMut::<TokenMetadata>::unpack(&mut buffer)?;
-        // state.init_variable_len_extension(&token_metadata, false)?;
+        // TODO need to validate proper creation of everything
+        // validate extensions are there and that metadata is created
 
         msg!("Wrote state {:?}", ctx.accounts.token_metadata);
-
-
-
-
-
-
-
-
-
-
-        // TODO: These are only useful if you need to store on the Mint Account itself
-
-        // transfer_sol(
-        //     &ctx.accounts.system_program,
-        //     &ctx.accounts.payer,
-        //     &ctx.accounts.mint.to_account_info(),
-        //     // TODO need to compute exact amount
-        //     // https://github.com/solana-labs/solana-program-library/blob/e08f30b3ae056dcec3aeca83b48707dae50e1a31/token/client/src/token.rs#L3515
-        //     // https://github.com/solana-labs/solana-program-library/blob/e08f30b3ae056dcec3aeca83b48707dae50e1a31/token/client/src/token.rs#L3550
-        //     // https://github.com/solana-labs/solana-program-library/blob/e08f30b3ae056dcec3aeca83b48707dae50e1a31/token/program-2022/src/extension/token_metadata/processor.rs#L101C99-L101C99
-        //     // 2000000 is OK
-        //     1800000 // 0.0005 SOL
-        // )?;
-
-
-        // Initialize token metadata
-        // add_token_metadata(
-        //     &ctx.accounts.token22_program.key(),
-        //     &ctx.accounts.token_metadata.to_account_info(),
-        //     // TODO: rethink
-        //     // &ctx.accounts.program_delegate.to_account_info(),
-        //     &ctx.accounts.payer.to_account_info(),
-        //     &ctx.accounts.mint.to_account_info(),
-        //     &ctx.accounts.payer,
-        //     params.name,
-        //     params.symbol,
-        //     params.uri,
-        // )?;
-
-        // TODO this can be done better
-        // // https://github.com/solana-labs/solana-program-library/blob/f382e76c5c1be20be208ce54c32719e8f0a2f5e1/token/program-2022-test/tests/token_metadata_initialize.rs#L60
-        // let now = Clock::get().unwrap().unix_timestamp;
-        // let destroy_timestamp = now
-        //     .checked_add(params.destroy_timestamp_offset)
-        //     .ok_or(EphemeralityError::InvalidCalculation)
-        //     .unwrap();
-
-        // update_token_metadata(
-        //     &ctx.accounts.token22_program.key(),
-        //     &ctx.accounts.token_metadata.to_account_info(),
-        //     // who is allowed to make changes here? Changes have to go through program?
-        //     // TODO: this is incorrect
-        //     // The NFT owner = payer, should not be allowed to update their own nft, will just set to program delegate for now
-        //     &ctx.accounts.payer.to_account_info(),
-        //     spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
-        //     destroy_timestamp.to_string(),
-        // )?;
-
-
-
-        // don't need to create CPI
-        // Create ATA
-        // anchor_spl::associated_token::create(
-        // CpiContext::new(
-        // ctx.accounts.token22_program.to_account_info(),
-        // anchor_spl::associated_token::Create {
-        //             payer: ctx.accounts.payer.to_account_info(), // payer
-        //             associated_token: ctx.accounts.ata.to_account_info(),
-        //             authority: ctx.accounts.payer.to_account_info(), // owner
-        //             mint: ctx.accounts.mint.to_account_info(),
-        //             system_program: ctx.accounts.system_program.to_account_info(),
-        //             token_program: ctx.accounts.token22_program.to_account_info(),
-        //         }
-        //     ),
-        // )?;
-        //
-        // // Mint to ATA
-        // anchor_spl::token_interface::mint_to(
-        // CpiContext::new(
-        // ctx.accounts.token22_program.to_account_info(),
-        // MintTo {
-        //             mint: ctx.accounts.mint.to_account_info().clone(),
-        //             to: ctx.accounts.ata.to_account_info().clone(),
-        //             authority: ctx.accounts.payer.to_account_info(),
-        //         }
-        //     ),
-        // 1
-        // )?;
 
         Ok(())
     }

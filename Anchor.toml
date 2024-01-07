@@ -11,8 +11,8 @@ ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [provider]
-#cluster = "https://api.devnet.solana.com"
-cluster = "http://127.0.0.1:8899"
+cluster = "https://api.devnet.solana.com"
+#cluster = "http://127.0.0.1:8899"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
