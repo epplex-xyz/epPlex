@@ -1,17 +1,20 @@
 import { Connection, Keypair, ParsedAccountData, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
 import {
+    MINT_SIZE,
     AccountLayout,
     ASSOCIATED_TOKEN_PROGRAM_ID,
     createAssociatedTokenAccountInstruction,
     createMintToInstruction,
     getAssociatedTokenAddressSync,
-    getOrCreateAssociatedTokenAccount,
+    getOrCreateAssociatedTokenAccount, MintLayout,
     mintTo,
     TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import { Token22, Token22Layout } from "../client/types/token22";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
+import { EpNFT, EpNFTLayout, TokenMetadata, TokenMetadataLayout } from "../client/types/epNFT";
+import { Program2 } from "../client/program2";
 
 // https://solana.stackexchange.com/questions/107/how-can-i-get-the-owner-wallet-of-an-nft-mint-using-web3-js
 export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
@@ -41,22 +44,80 @@ export async function getToken22(
 ) {
     const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
 
-    const epNFTs: Token22[] = [];
+    const token22s: Token22[] = [];
     for (const [_, e] of allTokenAccounts.value.entries()) {
         const data = AccountLayout.decode(e.account.data);
 
         try {
             const mintInfo = await getToken22AccountInfo(connection, data.mint);
             if (mintInfo.destroyTimestampField !== undefined) {
-                epNFTs.push(mintInfo);
+                token22s.push(mintInfo);
             }
         } catch (e) {
             console.log("Failed to decode", e);
         }
     }
 
+    return token22s;
+}
+
+
+async function getEpNFTaccountInfo(connection: Connection, mint: PublicKey): Promise<EpNFT> {
+    const info = await connection.getAccountInfo(mint);
+    const data = info!.data;
+
+
+    const tokenBaseData = data.slice(0, MINT_SIZE);
+    const mintDetailsData = data.slice(MINT_SIZE + 83);
+
+    const tokenBase = MintLayout.decode(tokenBaseData);
+    const mintDetails = EpNFTLayout.decode(mintDetailsData);
+
+    return { ...tokenBase, ...mintDetails};
+}
+export async function getEpNFTs(
+    connection: Connection,
+    publicKey: PublicKey
+) {
+    const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
+
+    const epNFTs: TokenMetadata[] = [];
+    for (const [_, e] of allTokenAccounts.value.entries()) {
+        const data = AccountLayout.decode(e.account.data);
+
+        try {
+            const mintInfo = await getEpNFTaccountInfo(connection, data.mint);
+            const metadata = mintInfo.metadataAddress;
+
+            const pda = Program2.staticGetTokenMetadata(data.mint).toString();
+
+            const isEpNFT = metadata.toString() === pda;
+            if (!isEpNFT) {
+                throw Error(`1 Not epNFT ${data.mint.toString()}`);
+            }
+
+            const info = await connection.getAccountInfo(metadata);
+            if (info === null) {
+                throw Error(`2 Not epNFT ${data.mint.toString()}`);
+            }
+            const pdaData = info!.data;
+            console.log("pda addy", metadata.toString());
+            console.log("pda data", info);
+            const dis = pdaData.slice(8);
+            console.log("data, pdaData", dis);
+            const decoded = TokenMetadataLayout.decode(dis);
+            console.log("decoded", decoded);
+
+            epNFTs.push(decoded);
+        } catch (e) {
+            console.log("Failed to decode", e);
+        }
+    }
+    console.log();
+
     return epNFTs;
 }
+
 
 export async function sendAndConfirmRawTransaction(
     connection: Connection,
@@ -71,7 +132,7 @@ export async function sendAndConfirmRawTransaction(
     tx.feePayer = feePayer;
 
     if (partialSigners) {
-        partialSigners.forEach((s) => tx.partialSign(s));
+        partialSigners.forEach((s) => tx.sign(s));
     }
 
     let txId = "";

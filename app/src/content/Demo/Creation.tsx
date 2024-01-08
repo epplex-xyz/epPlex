@@ -35,6 +35,11 @@ export function Creation() {
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
     const [loading, setLoading] = React.useState(false);
 
+    const testButton = useCallback(async () => {
+        // const txId = await program.createProgramDelegate();
+        const txId = await program.renewToken();
+    }, []);
+
     const handleCreate = useCallback(async () => {
         setLoading(true);
         try {
@@ -96,9 +101,7 @@ export function Creation() {
                 throw new Error("Failed to upload metadata");
             }
 
-            const mint = Keypair.generate();
             const txId = await program.createToken(
-                mint,
                 offset,
                 nameInput.input,
                 symbolInput.input,

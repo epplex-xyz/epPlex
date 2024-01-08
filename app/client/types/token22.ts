@@ -1,24 +1,26 @@
+
 import {PublicKey} from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
 
 type FixedLengthArray<T, L extends number> = L extends L
-  ? number[] extends ((
-      ...args: [...Array<L>]
-    ) => void)
-    ? T[]
-    : [...Array<L>]
-  : never;
+    ? number[] extends ((
+            ...args: [...Array<L>]
+        ) => void)
+        ? T[]
+        : [...Array<L>]
+    : never;
 
 // TODO this is super hardcoded
 export interface Token22 {
-    mintAuthorityOption: 1 | 0;
-    mintAuthority: PublicKey;
-    supply: bigint;
-    decimals: number;
-    isInitialized: boolean;
-    freezeAuthorityOption: 1 | 0;
-    freezeAuthority: PublicKey;
-    padding: FixedLengthArray<any, 83>,
+    mintAuthorityOption: 1 | 0; // 4
+    mintAuthority: PublicKey; // 36
+    supply: bigint; // 44
+    decimals: number;  // 45
+    isInitialized: boolean; // 46
+    freezeAuthorityOption: 1 | 0; // 50
+    freezeAuthority: PublicKey; // 82
+    padding: FixedLengthArray<any, 83>, // 165
+
     dunno1: FixedLengthArray<any, 5>,
     closeAuthority: PublicKey,
     dunno2: FixedLengthArray<any, 4>,

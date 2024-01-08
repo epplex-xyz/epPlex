@@ -32,8 +32,7 @@ pub struct CollectionCreate<'info> {
     pub payer: Signer<'info>,
 
     pub token22_program: Program<'info, Token2022>,
-
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -59,7 +58,7 @@ impl CollectionCreate<'_> {
     pub fn actuate(ctx: Context<Self>, params: CollectionCreateParams) -> Result<()> {
 
         Self::create_collection_mint();
-        
+
         let config_acc = &mut ctx.accounts.collection_config;
 
         let cfg = CollectionConfig::new(

@@ -4,27 +4,25 @@ pub mod security;
 pub mod state;
 pub mod instructions;
 pub mod errors;
+pub mod program_wrappers;
 
 pub use actions::*;
 pub use id::ID;
 pub use state::*;
 pub use instructions::*;
 pub use errors::*;
+pub use program_wrappers::*;
 
 use anchor_lang::prelude::*;
-use spl_token_2022;
-use spl_token_metadata_interface;
+use spl_token_2022::{
+    extension::ExtensionType,
+};
+use anchor_spl::{
+    token_interface::{Mint, TokenAccount},
+    associated_token::AssociatedToken,
+};
+use spl_token_metadata_interface::{state::TokenMetadata};
 
-#[derive(Clone)]
-pub struct Token2022;
-
-impl Id for Token2022 {
-    fn id() -> Pubkey {
-        spl_token_2022::ID
-    }
-}
-
-// use spl_token_2022::ID as SPL_TOKEN_2022_ID;
 
 #[program]
 pub mod ephemerality {

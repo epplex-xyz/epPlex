@@ -1,9 +1,13 @@
-import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { createProgram, EphemeralityProgram } from "./types/programTypes";
 import { AnchorProvider, BN, Wallet } from "@coral-xyz/anchor";
-import { getMintOwner, mintToIx, sendAndConfirmRawTransaction } from "../utils/solana";
+import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
-import { ExtensionType, getAssociatedTokenAddressSync, getMintLen, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    getAssociatedTokenAddressSync,
+    TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 
 export class Program2 {
@@ -20,17 +24,24 @@ export class Program2 {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
     async createToken(
-        mint: Keypair,
         destroyTimestampOffset: number = 60 * 5,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
         uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
     ) {
-        const METADATAPOINTER_SIZE = 64 + 2 + 2;
         const programDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
+        const mint = Keypair.generate();
+        const ata = getAssociatedTokenAddressSync(
+            mint.publicKey,
+            payer,
+            undefined,
+            TOKEN_2022_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+        const tm = this.getTokenMetadata(mint.publicKey);
 
-        const tokenCreateIx = await this.program.methods
+        const tokenCreateTx = await this.program.methods
             .tokenCreate({
                 destroyTimestampOffset: new BN(destroyTimestampOffset),
                 name: name,
@@ -39,41 +50,31 @@ export class Program2 {
             })
             .accounts({
                 mint: mint.publicKey,
+                ata,
+                tokenMetadata: tm,
                 programDelegate: programDelegate,
                 payer: payer,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 rent: SYSVAR_RENT_PUBKEY,
+                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
             })
-            .instruction();
+            .transaction();
 
-        const extensions = [ExtensionType.MintCloseAuthority, ExtensionType.PermanentDelegate];
-        const mintLen = getMintLen(extensions) + METADATAPOINTER_SIZE;
-        const mintLamports = await this.connection.getMinimumBalanceForRentExemption(mintLen);
-
-        const transaction = new Transaction().add(...[
-            // TODO move this ix into solana program
-            SystemProgram.createAccount({
-                fromPubkey: payer,
-                newAccountPubkey: mint.publicKey,
-                space: mintLen,
-                lamports: mintLamports,
-                programId: TOKEN_2022_PROGRAM_ID,
-            }),
-            tokenCreateIx,
-
-            // TODO move this ix into solana program
-            ...mintToIx(mint.publicKey, payer)
-        ]);
-
-        let tx;
+        let id;
         try {
-            tx = await sendAndConfirmRawTransaction(this.connection, transaction, payer, this.wallet, [mint]);
-            console.log("tx", tx);
+            id = await sendAndConfirmRawTransaction(
+                this.connection,
+                tokenCreateTx,
+                payer,
+                this.wallet,
+                [mint]
+            );
+            console.log("tx", id);
         } catch (e) {
             console.log("Failed to send tx", e);
         }
-        return tx;
+        return id;
     }
 
     async burnToken(
@@ -110,11 +111,78 @@ export class Program2 {
         return tx;
     }
 
+    async createProgramDelegate() {
+        const programDelegate = this.getProgramDelegate();
+
+        const tx = await this.program.methods
+            .programDelegateCreate({})
+            .accounts({
+                programDelegate,
+                payer: this.wallet.publicKey,
+                systemProgram: SystemProgram.programId,
+            })
+            .transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("tx", id);
+
+        return id;
+    }
+
+    async renewToken() {
+        const mint = new PublicKey("DRa4aV8SMbcM9g9aDiiWnHgmwNcNNcxvTHh1Bfg1z1zJ");
+        const ata = getAssociatedTokenAddressSync(
+            mint,
+            this.wallet.publicKey,
+            undefined,
+            TOKEN_2022_PROGRAM_ID
+        );
+        const programDelegate = this.getProgramDelegate();
+
+        const tx = await this.program.methods
+            .tokenRenew({renewTerms: 1})
+            .accounts({
+                mint,
+                tokenAccount: ata,
+                programDelegate,
+                authority: this.wallet.publicKey,
+                token22Program: TOKEN_2022_PROGRAM_ID,
+            })
+            .transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("tx", id);
+
+        return id;
+    }
+
 
     getProgramDelegate(): PublicKey {
         const [programDelegate] = PublicKey.findProgramAddressSync(
             [Buffer.from("PROGRAM_DELEGATE")],
             this.program.programId
+        );
+        return programDelegate;
+    }
+
+    getTokenMetadata(mint: PublicKey): PublicKey {
+        const [programDelegate] = PublicKey.findProgramAddressSync(
+            [Buffer.from("metadata"), this.program.programId.toBuffer(), mint.toBuffer()],
+            this.program.programId
+        );
+        return programDelegate;
+    }
+
+    static staticGetTokenMetadata(mint: PublicKey): PublicKey {
+        // TODO dont hardcode this
+        const pid = new PublicKey("epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex");
+        const [programDelegate] = PublicKey.findProgramAddressSync(
+            [Buffer.from("metadata"), pid.toBuffer(), mint.toBuffer()],
+            pid
         );
         return programDelegate;
     }

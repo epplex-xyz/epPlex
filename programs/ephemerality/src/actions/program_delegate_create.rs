@@ -34,7 +34,7 @@ impl ProgramDelegateCreate<'_> {
     pub fn actuate(ctx: Context<Self>, _params: &ProgramDelegateCreateParams) -> Result<()> {
         let program_delegate = &mut ctx.accounts.program_delegate;
         **program_delegate = ProgramDelegate::new(
-            *ctx.bumps.get("program_delegate").unwrap(),
+            ctx.bumps.program_delegate,
         );
 
         Ok(())
