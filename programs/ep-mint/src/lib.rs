@@ -1,10 +1,39 @@
 use anchor_lang::prelude::*;
-use ephemerality::{cpi::accounts::CollectionCreate, cpi::accounts::TokenCreate, program::Ephemerality};
+use ephemerality::{
+    cpi::accounts::{CollectionCreate, TokenCreate},
+    EphemeralMetadata, program::Ephemerality,
+    SEED_TOKEN_METADATA,
+    SEED_COLLECTION_CONFIG
+
+};
 use ephemerality::{CollectionCreateParams, CollectionConfig, TokenCreateParams};
 use spl_token_2022;
-declare_id!("DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN");
+use anchor_spl::{
+    associated_token::AssociatedToken,
+};
+
+declare_id!("JD71HNmjLZbk3Y2kHY8muShHaNvMCcb7amDx9SsQTbxp");
+
 
 const GUARD_SEED: &[u8] = b"guard";
+
+#[derive(Clone)]
+pub struct Token2022;
+
+impl Id for Token2022 {
+    fn id() -> Pubkey {
+        spl_token_2022::ID
+    }
+}
+
+// #[derive(Clone)]
+// pub struct EphemeralityId;
+// impl anchor_lang::Id for EphemeralityId {
+//     fn id() -> Pubkey {
+//         ephemerality::ID
+//     }
+// }
+
 
 #[program]
 pub mod ep_mint {
@@ -17,7 +46,7 @@ pub mod ep_mint {
         let mint_guard = &mut ctx.accounts.mint_guard;
         mint_guard.authority = ctx.accounts.creator.key();
         mint_guard.items_minted = 0;
-        mint_guard.bump = *ctx.bumps.get("mint_guard").unwrap();
+        mint_guard.bump = ctx.bumps.mint_guard;
 
         //create cpi
         let cpi_program = ctx.accounts.epplex_program.to_account_info();
@@ -45,29 +74,46 @@ pub mod ep_mint {
         };
 
         ephemerality::cpi::create_collection(cpi_ctx, collection_create_params)?;
-        
         Ok(())
     }
 
     pub fn mint_from_collection(ctx: Context<MintFromCollection>, collection_name: String) -> Result<()> {
-        
         let collection_config = &mut ctx.accounts.collection_config;
         let mint_guard = &mut ctx.accounts.mint_guard;
 
         //create cpi
-        let cpi_program = ctx.accounts.epplex_program.to_account_info();
 
         let cpi_accounts = TokenCreate {
-            mint: ctx.accounts.token_mint.to_account_info(),
-            program_delegate: ctx.accounts.program_delegate.to_account_info(),
-            payer: ctx.accounts.minter.to_account_info(),
-            rent: ctx.accounts.rent.to_account_info(),
-            token22_program: ctx.accounts.token22_program.to_account_info(),
-            system_program: ctx.accounts.system_program.to_account_info()
+            mint: ctx.accounts.token_mint.to_account_info().clone(),
+            ata: ctx.accounts.ata.to_account_info().clone(),
+            token_metadata: ctx.accounts.token_metadata.to_account_info().clone(),
+            program_delegate: ctx.accounts.program_delegate.to_account_info().clone(),
+            payer: ctx.accounts.minter.to_account_info().clone(),
+            rent: ctx.accounts.rent.to_account_info().clone(),
+            token22_program: ctx.accounts.token22_program.to_account_info().clone(),
+            system_program: ctx.accounts.system_program.to_account_info().clone(),
+            associated_token: ctx.accounts.associated_token.to_account_info().clone()
         };
 
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-        
+        // let cpi_ctx = CpiContext::new_with_signer(
+        //     cpi_program,
+        //     cpi_accounts
+        // );
+
+        // let seeds = &[SEED_LOTTO, lotto_id.as_ref(), &[lotto.bump]];
+        // token::transfer(
+        //     CpiContext::new_with_signer(
+        //         token_program.to_account_info(),
+        //         Transfer {
+        //             from: token_vault.to_account_info(),
+        //             to: token_owner_account.to_account_info(),
+        //             authority: lotto.to_account_info(),
+        //         },
+        //         &[&seeds[..]],
+        //     ),
+        //     amount,
+        // )
+
         //create token creation params
         let mut token_name = collection_config.collection_name.to_owned();
         token_name.push_str(&mint_guard.items_minted.to_string());
@@ -80,7 +126,19 @@ pub mod ep_mint {
             uri: "".to_string()
         };
 
-        ephemerality::cpi::token_create(cpi_ctx, params)?;
+        // let seeds = &[SEED_TOKEN_METADATA, lotto_id.as_ref(), &[lotto.bump]];
+        ephemerality::cpi::token_create(
+            // CpiContext::new_with_signer(
+            //     ctx.accounts.epplex_program.to_account_info(),
+            //     cpi_accounts,
+            // ),
+            CpiContext::new(
+                ctx.accounts.epplex_program.to_account_info(),
+                cpi_accounts,
+            ),
+            params
+        )?;
+
         Ok(())
     }
 
@@ -89,14 +147,18 @@ pub mod ep_mint {
 #[derive(Accounts)]
 #[instruction(params: InitMintGuardParams)]
 pub struct InitMintGuard<'info> {
-
     #[account(mut)]
     pub creator: Signer<'info>,
 
     #[account(
         init,
+        seeds = [
+            GUARD_SEED,
+            params.collection_name.as_ref()
+        ],
         payer = creator,
-        space = 8 + MintGuard::MAX_SIZE, seeds = [GUARD_SEED, params.collection_name.as_bytes()], bump
+        space = 8 + MintGuard::MAX_SIZE,
+        bump
     )]
     pub mint_guard: Account<'info, MintGuard>,
 
@@ -115,16 +177,6 @@ pub struct InitMintGuard<'info> {
     pub system_program: Program<'info, System>
 }
 
-#[account]
-pub struct MintGuard {
-    pub authority: Pubkey,
-    pub items_minted: u32,
-    pub bump: u8
-}
-
-impl MintGuard {
-    pub const MAX_SIZE: usize = 32 + 4 + 1;
-}
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct InitMintGuardParams {
@@ -138,25 +190,54 @@ pub struct InitMintGuardParams {
 #[derive(Accounts)]
 #[instruction(collection_name: String)]
 pub struct MintFromCollection<'info> {
-
     #[account(mut)]
     pub minter: Signer<'info>,
 
     #[account(
-        seeds = [GUARD_SEED, collection_name.as_bytes()],
+        seeds = [
+            GUARD_SEED,
+            collection_name.as_ref()
+        ],
         bump = mint_guard.bump
     )]
     pub mint_guard: Account<'info, MintGuard>,
 
     pub epplex_program: Program<'info, Ephemerality>,
 
-    #[account()]
+    // TODO: need to place constraint on collection_name
+    #[account(
+        seeds = [
+            SEED_COLLECTION_CONFIG,
+            collection_config.collection_name.as_ref()
+        ],
+        seeds::program = ephemerality::ID.key(),
+        bump = collection_config.bump
+    )]
     /// CHECK
     pub collection_config: Account<'info, CollectionConfig>,
 
+    #[account(mut, signer)]
     /// CHECK
+    pub token_mint: UncheckedAccount<'info>,
+
     #[account(mut)]
-    pub token_mint: AccountInfo<'info>,
+    /// CHECK
+    pub ata: UncheckedAccount<'info>,
+
+    // #[account(
+    //     seeds = [
+    //         SEED_TOKEN_METADATA,
+    //         ephemerality::ID.key().as_ref(),
+    //         token_mint.key().as_ref()
+    //     ],
+    //     seeds::program = ephemerality::ID.key(),
+    //     bump,
+    // )]
+    // pub token_metadata: Account<'info, EphemeralMetadata>,
+
+    #[account(mut)]
+    /// CHECK
+    pub token_metadata: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK
@@ -164,15 +245,20 @@ pub struct MintFromCollection<'info> {
 
     pub rent: Sysvar<'info, Rent>,
     pub token22_program: Program<'info, Token2022>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
+    pub associated_token: Program<'info, AssociatedToken>
 }
 
 
-#[derive(Clone)]
-pub struct Token2022;
-
-impl Id for Token2022 {
-    fn id() -> Pubkey {
-        spl_token_2022::ID
-    }
+#[account]
+pub struct MintGuard {
+    pub authority: Pubkey,
+    pub items_minted: u32,
+    pub bump: u8
 }
+
+impl crate::MintGuard {
+    pub const MAX_SIZE: usize = 32 + 4 + 1;
+}
+
+

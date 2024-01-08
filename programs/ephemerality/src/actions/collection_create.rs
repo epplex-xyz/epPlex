@@ -13,14 +13,19 @@ pub struct CollectionCreate<'info> {
 
     #[account(
         mut,
-        seeds = [SEED_PROGRAM_DELEGATE],
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
         bump = program_delegate.bump,
     )]
     pub program_delegate: Account<'info, ProgramDelegate>,
 
     #[account(
         init,
-        seeds = [SEED_COLLECTION_CONFIG, params.collection_name.as_ref()],
+        seeds = [
+            SEED_COLLECTION_CONFIG,
+            params.collection_name.as_ref()
+        ],
         bump,
         payer = payer,
         space = CollectionConfig::LEN,
@@ -56,29 +61,12 @@ impl CollectionCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: CollectionCreateParams) -> Result<()> {
-
-        Self::create_collection_mint();
-
-        let config_acc = &mut ctx.accounts.collection_config;
-
-        let cfg = CollectionConfig::new(
-    *ctx.bumps.get("collection_config").unwrap(),
+        let config = &mut ctx.accounts.collection_config;
+        **config = CollectionConfig::new(
+            ctx.bumps.collection_config,
             params
         );
 
-        config_acc.authority = cfg.authority;
-        config_acc.renewal_price = cfg.renewal_price;
-        config_acc.standard_duration = cfg.standard_duration;
-        config_acc.grace_period = cfg.grace_period;
-        config_acc.treasury = cfg.treasury;
-        config_acc.collection_size = cfg.collection_size;
-        config_acc.collection_name = cfg.collection_name;
-
-        Ok(())
-    }
-
-    fn create_collection_mint() -> Result<()> {
-        //TODO implement this
         Ok(())
     }
 }

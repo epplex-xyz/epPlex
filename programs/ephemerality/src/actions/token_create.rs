@@ -7,7 +7,7 @@ use crate::*;
 #[instruction(params: TokenCreateParams)]
 pub struct TokenCreate<'info> {
     // TODO: is unchecked account correct?
-    #[account(mut)]
+    #[account(mut, signer)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
@@ -99,8 +99,6 @@ impl TokenCreate<'_> {
             &account_infos[..],
         )?;
 
-        Self::create_token_mint()?;
-
         // Add closing authority
         Self::add_closing_authority(
             &ctx.accounts.mint.to_account_info(),
@@ -186,10 +184,6 @@ impl TokenCreate<'_> {
         Ok(())
     }
 
-    fn create_token_mint() -> Result<()> {
-        //TODO implement this
-        Ok(())
-    }
 
     fn add_closing_authority(
         mint_account: &AccountInfo,
