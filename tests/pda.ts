@@ -1,20 +1,18 @@
 import { PublicKey } from "@solana/web3.js"
 import * as anchor from "@coral-xyz/anchor";
 
-const programId = new PublicKey("DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN")
-const epplexId = new PublicKey("7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR")
 
-export function programDelegate() {
+export function programDelegate(programId: PublicKey) {
     const [programDelegatePDA, programDelegateBump] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("PROGRAM_DELEGATE"),
         ],
-        epplexId
+        programId
       )
       return programDelegatePDA;
 }
 
-export function mintGuard(collectionName: string) {
+export function mintGuard(collectionName: string, programId: PublicKey) {
     const [mintGuardPDA, mintGuardBump] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("guard"),
@@ -27,11 +25,20 @@ export function mintGuard(collectionName: string) {
 }
 
 
-export function collectionConfig(collectionName: string) {
+export function collectionConfig(collectionName: string, programId: PublicKey) {
     const [collectionConfigPDA, collectionConfigBump] = PublicKey.findProgramAddressSync(
         [Buffer.from("CONFIG"), Buffer.from(collectionName)],
-        epplexId
+        programId
       )
 
       return collectionConfigPDA
+}
+
+export function tokenMetadata(mint: PublicKey, programId: PublicKey) {
+    const [metadata, metadataBump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("metadata"), programId.toBuffer(), mint.toBuffer()],
+        programId
+    )
+
+    return metadata
 }

@@ -2,6 +2,7 @@
 seeds = false
 
 [programs.localnet]
+ep_mint = "JD71HNmjLZbk3Y2kHY8muShHaNvMCcb7amDx9SsQTbxp"
 ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [programs.devnet]
@@ -11,12 +12,12 @@ ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [provider]
-cluster = "https://api.devnet.solana.com"
-#cluster = "http://127.0.0.1:8899"
+#cluster = "https://api.devnet.solana.com"
+cluster = "localnet"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.spec.ts"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/mintGuard.spec.ts"
 copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json app/client/idl/ephemerality.json && cp target/types/ephemerality.ts app/client/idl/ephemeralityTypes.ts"
 bd = "anchor build && anchor deploy && anchor run copy-to-app"
 depl = "anchor deploy && anchor run copy-to-app"

@@ -8,7 +8,7 @@ export type Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
+          "isSigner": true,
           "docs": [
             "CHECK"
           ]
@@ -288,7 +288,7 @@ export type Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }
@@ -402,7 +402,7 @@ export type Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }
@@ -673,7 +673,7 @@ export const IDL: Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
+          "isSigner": true,
           "docs": [
             "CHECK"
           ]
@@ -953,7 +953,7 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }
@@ -1067,7 +1067,7 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }
