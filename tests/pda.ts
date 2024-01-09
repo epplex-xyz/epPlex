@@ -1,25 +1,22 @@
 import { PublicKey } from "@solana/web3.js"
 import * as anchor from "@coral-xyz/anchor";
 
-const programId = new PublicKey("DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN")
-const epplexId = new PublicKey("7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR")
 
-export function programDelegate() {
+export function programDelegate(programId: PublicKey) {
     const [programDelegatePDA, programDelegateBump] = PublicKey.findProgramAddressSync(
         [
           anchor.utils.bytes.utf8.encode("PROGRAM_DELEGATE"),
         ],
-        epplexId
+        programId
       )
       return programDelegatePDA;
 }
 
-export function mintGuard(collectionName: string) {
+export function mintGuard(collectionConfig: PublicKey, programId: PublicKey) {
     const [mintGuardPDA, mintGuardBump] = PublicKey.findProgramAddressSync(
         [
-          anchor.utils.bytes.utf8.encode("guard"),
-          anchor.utils.bytes.utf8.encode(collectionName),
-  
+          anchor.utils.bytes.utf8.encode("GUARD"),
+          collectionConfig.toBuffer()
         ],
         programId
       )
@@ -27,11 +24,37 @@ export function mintGuard(collectionName: string) {
 }
 
 
-export function collectionConfig(collectionName: string) {
+export function collectionConfig(counter: anchor.BN, programId: PublicKey) {
     const [collectionConfigPDA, collectionConfigBump] = PublicKey.findProgramAddressSync(
-        [Buffer.from("CONFIG"), Buffer.from(collectionName)],
-        epplexId
+        [
+          Buffer.from("CONFIG"),
+          Uint8Array.of(...counter.toArray('be', 8))
+        ],
+        programId
       )
 
       return collectionConfigPDA
+}
+
+export function globalCollectionConfig(programId: PublicKey): PublicKey {
+  const [globalCollectionConfig] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("GLOBAL_COLLECTION")
+      ],
+      programId
+  );
+  return globalCollectionConfig;
+}
+
+export function tokenMetadata(mint: PublicKey, programId: PublicKey) {
+    const [metadata, metadataBump] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("metadata"),
+          programId.toBuffer(),
+          mint.toBuffer()
+        ],
+        programId
+    )
+
+    return metadata
 }

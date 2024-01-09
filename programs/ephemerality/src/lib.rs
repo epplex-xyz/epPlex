@@ -18,7 +18,7 @@ use spl_token_2022::{
     extension::ExtensionType,
 };
 use anchor_spl::{
-    token_interface::{Mint, MintTo, TokenAccount},
+    token_interface::{Mint, TokenAccount},
     associated_token::AssociatedToken,
 };
 use spl_token_metadata_interface::{state::TokenMetadata};
@@ -49,6 +49,11 @@ pub mod ephemerality {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn create_collection(ctx: Context<CollectionCreate>, params: CollectionCreateParams) -> Result<()> {
         CollectionCreate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn create_global_collection_config(ctx: Context<GlobalCollectionConfigCreate>) -> Result<()> {
+        GlobalCollectionConfigCreate::actuate(ctx)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]

@@ -13,6 +13,7 @@ import { useProgramApis } from "../../providers/ProgramApisProvider";
 import CircularProgress from "@mui/material/CircularProgress";
 import toast from "react-hot-toast";
 import { ToastText } from "@components/Text/ToastText";
+import { EpNFT, TokenMetadata } from "../../../client/types/epNFT";
 
 function TraitContainer({trait, value}: {trait: string, value: string}) {
     return (
@@ -51,18 +52,17 @@ function TraitContainer({trait, value}: {trait: string, value: string}) {
 //     );
 // }
 
-export function EpNFTContainer({item}: {item: Token22}) {
+export function EpNFTContainer({item}: {item: TokenMetadata}) {
     const [image, setImage] = useState<string>("");
     const [traitList, setTraitList] = useState<any[]>([]); // State for the list of trait objects
 
-    console.log("item", item.name, item.symbol, item.metadataAddress.toString());
+    console.log("item", item.name, item.symbol);
     // probably dont need to use this in this contaienr
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const [loading, setLoading] = React.useState(false);
 
     const destroyTimestamp = Number(item.destroyTimestampValue);
     const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
-    // console.log("Math.floor(Date.now() / 1000) > destroyTimestamp;", Math.floor(Date.now() / 1000), destroyTimestamp);
 
     const fetchImage = useCallback(async () => {
         try {
@@ -105,22 +105,22 @@ export function EpNFTContainer({item}: {item: Token22}) {
     const destroyNFT = useCallback(async (e) => {
         e.stopPropagation();
         setLoading(true);
-        try {
-            const txId = await program.burnToken(item.metadataAddress);
-            if (txId === "") {
-                throw new Error("Failed to destroy");
-            }
-
-            toast.success(
-                <ToastText text={"Successfully destroyed epNFT:"} signature={txId}/>
-            );
-            setHasCreated((prev) => !prev);
-        } catch (e) {
-            console.log("Failed to destroy", e);
-            toast.error("Failed to destroy");
-        } finally {
-            setLoading(false);
-        }
+        // try {
+        //     const txId = await program.burnToken(item.metadataAddress);
+        //     if (txId === "") {
+        //         throw new Error("Failed to destroy");
+        //     }
+        //
+        //     toast.success(
+        //         <ToastText text={"Successfully destroyed epNFT:"} signature={txId}/>
+        //     );
+        //     setHasCreated((prev) => !prev);
+        // } catch (e) {
+        //     console.log("Failed to destroy", e);
+        //     toast.error("Failed to destroy");
+        // } finally {
+        //     setLoading(false);
+        // }
     }, [setHasCreated]);
 
 

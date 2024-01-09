@@ -16,6 +16,7 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.28.0"
-spl-token-2022 = {version = "0.8.0", features = ["no-entrypoint"] }
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 ephemerality = { path = "../ephemerality", features = ["cpi"] }

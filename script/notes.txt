@@ -39,7 +39,7 @@ createInitializeMetadataPointerInstruction(mint, permanentDelegate.publicKey, mi
 // Tools:
 https://cryptii.com/pipes/integer-encoder //Checking for first 8 bytes in instruction discriminator
 https://onlinestringtools.com/convert-string-to-bytes //Checking what is the byte representation of a string
-https://emn178.github.io/online-tools/sha256.html // Convert bytes to decimal representation for input in client Uint8Array
+https://emn178.github.io/online-tools/sha256.html // Convert bytes to decimal representation for input in client Uint8Array (for checking backwards - i.e. string on tokenmetadata)
 
 
 // first 8 bytes is the instruction name, then comes 0b 00 00 00
@@ -105,6 +105,7 @@ https://emn178.github.io/online-tools/sha256.html // Convert bytes to decimal re
 // const pub = new PublicKey(a);
 // console.log(pub.toString());
 
+// 6d 2d 6c 3e b5 fd 9d fb 3e c5 cb d1 19 91 e2 0b 8f 8c 4c 32 57 2a ee 56 e5 e2 5e b0 2e 78 8f 39
 //6d2d6c3eb5fd9dfb3ec5cbd11991e20b8f8c4c32572aee56e5e25eb02e788f39
 // const string = "109 45 108 62 181 253 157 251 62 197 203 209 25 145 226 11 143 140 76 50 87 42 238 86 229 226 94 176 46 120 143 57";
 // const arr = [109, 45, 108, 62, 181, 253, 157, 251, 62, 197, 203, 209, 25, 145, 226, 11, 143, 140, 76, 50, 87, 42, 238, 86, 229, 226, 94, 176, 46, 120, 143, 57];
@@ -133,3 +134,55 @@ https://explorer.solana.com/tx/36fDdnBwLrVrsCArAhNkbjTdXszyyNqbCzTtT1HBZi5zMpatX
 
 
 
+
+
+
+// new analysis
+solana account BDMNRhWWarEeqDTc44d6HBkYDEHhQ3EoKa2iYQd9rGp4
+0000:   01 00 00 00  ea 56 f6 c1  ff ea d2 34  4d d3 76 2a   .....V.....4M.v*
+0010:   6f fc 82 54  51 b0 e8 99  81 fb c2 12  a8 56 bb 82   o..TQ........V..
+0020:   32 ac 51 2b  01 00 00 00  00 00 00 00  00 01 01 00   2.Q+............
+0030:   00 00 ea 56  f6 c1 ff ea  d2 34 4d d3  76 2a 6f fc   ...V.....4M.v*o.
+0040:   82 54 51 b0  e8 99 81 fb  c2 12 a8 56  bb 82 32 ac   .TQ........V..2.
+0050:   51 2b 00 00  00 00 00 00  00 00 00 00  00 00 00 00   Q+..............
+0060:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+0070:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+0080:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+0090:   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00   ................
+00a0:   00 00 00 00  00 01 03 00  20 00, b2 cb  43 96 e4 8f   ........ ...C...
+00b0:   92 95 53 58  80 56 f4 1e  06 ad 0c a8  64 91 b5 2d   ..SX.V......d..-
+00c0:   ee bc f9 04  ea 9d ab ea  2d 2c, 0c 00  20 00, b2 cb   ........-,.. ... // close auth
+00d0:   43 96 e4 8f  92 95 53 58  80 56 f4 1e  06 ad 0c a8   C.....SX.V......
+00e0:   64 91 b5 2d  ee bc f9 04  ea 9d ab ea  2d 2c, 12 00   d..-........-,.. // perm delegate
+00f0:   40 00, b2 cb  43 96 e4 8f  92 95 53 58  80 56 f4 1e   @...C.....SX.V.. //
+0100:   06 ad 0c a8  64 91 b5 2d  ee bc f9 04  ea 9d ab ea   ....d..-........
+0110:   2d 2c, cc ba  3e d5 a0 eb  aa 69 f0 93  33 a5 58 83   -,..>....i..3.X. // metadatapointerAuth
+0120:   0f e4 5a 04  d5 e5 e3 50  db 2a bf 48  18 1b 59 02   ..Z....P.*.H..Y.
+0130:   45 31
+
+
+b2cb4396e4 8f 92 95 53 58  80 56 f4 1e  06 ad 0c a8  64 91 b5 2d ee bc f9 04  ea 9d ab ea  2d 2c
+https://cryptii.com/pipes/integer-encoder =>
+178 203 67 150 228 143 146 149 83 88 128 86 244 30 6 173 12 168 100 145 181 45 238 188 249 4 234 157 171 234 45 44
+input into setup.ts function
+
+
+
+0000:   bb c5 dd 88  b0 eb d9 69,  01, ea 56 f6  c1 ff ea d2   .......i..V.....
+0010:   34 4d d3 76  2a 6f fc 82  54 51 b0 e8  99 81 fb c2   4M.v*o..TQ......
+0020:   12 a8 56 bb  82 32 ac 51  2b, 97 be de  e8 bd 14 6a   ..V..2.Q+......j
+0030:   fb 15 19 75  d8 8f 64 b7  d7 76 8e 7b  e8 7f df 67   ...u..d..v.{...g
+0040:   ba f0 6d e0  86 3d 52 f0  ad 02 00 00  00, 31 32 02   ..m..=R......12.
+0050:   00 00 00 33  31 57 00 00  00 68 74 74  70 73 3a 2f   ...31W...https:/
+0060:   2f 73 68 64  77 2d 64 72  69 76 65 2e  67 65 6e 65   /shdw-drive.gene
+0070:   73 79 73 67  6f 2e 6e 65  74 2f 35 65  5a 56 50 5a   sysgo.net/5eZVPZ
+0080:   4a 6a 74 38  62 36 36 70  73 6b 69 73  51 48 6a 6d   Jjt8b66pskisQHjm
+0090:   50 44 7a 6b  6f 48 58 35  6d 68 61 48  58 54 78 52   PDzkoHX5mhaHXTxR
+00a0:   63 61 6d 32  4d 77 2f 54  61 6d 61 2e  6a 73 6f 6e   cam2Mw/Tama.json
+00b0:   01 00 00 00  0e 00 00 00,  65 78 70 69  72 61 74 69   ........expirati
+00c0:   6f 6e 44 61  74 65, 0a 00  00 00 31 37  30 34 36 36   onDate....170466
+00d0:   38 34 31 39  00 00 00 00  00 00 00 00  00 00 00 00   8419............
+14 rows
+
+updateauth ea 56 f6  c1 ff ea d2  34 4d d3 76  2a 6f fc 82  54 51 b0 e8  99 81 fb c2  12 a8 56 bb  82 32 ac 51  2b
+mint 97 be de  e8 bd 14 6a  fb 15 19 75  d8 8f 64 b7  d7 76 8e 7b  e8 7f df 67  ba f0 6d e0  86 3d 52 f0  ad

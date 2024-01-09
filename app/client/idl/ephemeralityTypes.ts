@@ -8,7 +8,7 @@ export type Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
+          "isSigner": true,
           "docs": [
             "CHECK"
           ]
@@ -20,6 +20,11 @@ export type Ephemerality = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "programDelegate",
@@ -111,10 +116,7 @@ export type Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "tokenAccount",
@@ -286,7 +288,68 @@ export type Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ephemeralMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "updateAuthority",
+            "docs": [
+              "The authority that can sign to update the metadata"
+            ],
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "mint",
+            "docs": [
+              "The associated mint, used to counter spoofing to be sure that metadata",
+              "belongs to a particular mint"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "The longer name of the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "docs": [
+              "The shortened symbol for the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "docs": [
+              "The URI pointing to richer metadata"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "docs": [
+              "Any additional metadata about the token as key-value pairs. The program",
+              "must avoid storing the same key twice."
+            ],
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
           }
         ]
       }
@@ -339,7 +402,7 @@ export type Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }
@@ -610,7 +673,7 @@ export const IDL: Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
+          "isSigner": true,
           "docs": [
             "CHECK"
           ]
@@ -622,6 +685,11 @@ export const IDL: Ephemerality = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "programDelegate",
@@ -713,10 +781,7 @@ export const IDL: Ephemerality = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "tokenAccount",
@@ -888,7 +953,68 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ephemeralMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "updateAuthority",
+            "docs": [
+              "The authority that can sign to update the metadata"
+            ],
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "mint",
+            "docs": [
+              "The associated mint, used to counter spoofing to be sure that metadata",
+              "belongs to a particular mint"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "The longer name of the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "docs": [
+              "The shortened symbol for the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "docs": [
+              "The URI pointing to richer metadata"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "docs": [
+              "Any additional metadata about the token as key-value pairs. The program",
+              "must avoid storing the same key twice."
+            ],
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
           }
         ]
       }
@@ -941,7 +1067,7 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "collectionName",
-            "type": "bytes"
+            "type": "string"
           }
         ]
       }

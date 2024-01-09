@@ -12,3 +12,6 @@ pub use mint22::*;
 
 pub mod ephemeral_state;
 pub use ephemeral_state::*;
+
+pub mod global_collection_config;
+pub use global_collection_config::*;
