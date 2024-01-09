@@ -56,6 +56,7 @@ pub struct CollectionCreateParams {
     pub treasury: Pubkey,
     pub collection_size: u32,
     pub collection_name: String,
+    pub collection_symbol: String
 }
 
 impl CollectionCreate<'_> {

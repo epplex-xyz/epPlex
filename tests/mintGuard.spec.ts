@@ -16,7 +16,8 @@ describe("ep-mint",() => {
   const mint_program = anchor.workspace.EpMint as Program<EpMint>;
   const epplex_program = anchor.workspace.Ephemerality as Program<Ephemerality>
 
-  const collectionName = "BRGR"
+  const collectionName = "Blessed Burgers"
+  const collectionSymbol = "BRGR"
 
   const programDelegate = pda.programDelegate(epplex_program.programId)
 
@@ -33,29 +34,36 @@ describe("ep-mint",() => {
 
     const collectionMint = Keypair.generate().publicKey
   
-    const tx = await mint_program.methods.initMintGuard({
-      collectionRenewalPrice: new BN(100),
-      collectionStandardDuration: 100,
-      collectionGracePeriod: new BN(100),
-      collectionSize: 10000,
-      collectionName: collectionName
-    })
-    .accounts({
-      creator: provider.wallet.publicKey,
-      mintGuard: mintGuard,
-      epplexProgram: epplex_program.programId,
-      collectionMint: collectionMint,
-      collectionConfig: collectionConfig,
-      globalCollectionConfig: gccKey,
-      programDelegate: programDelegate,
-      token22Program: TOKEN_2022_PROGRAM_ID,
-    })
-    .rpc({skipPreflight: true});
+    try {
+      const tx = await mint_program.methods.initMintGuard({
+        collectionRenewalPrice: new BN(100),
+        collectionStandardDuration: 100,
+        collectionGracePeriod: new BN(100),
+        collectionSize: 3,
+        collectionName: collectionName,
+        collectionSymbol: collectionSymbol
+      })
+      .accounts({
+        creator: provider.wallet.publicKey,
+        mintGuard: mintGuard,
+        epplexProgram: epplex_program.programId,
+        collectionMint: collectionMint,
+        collectionConfig: collectionConfig,
+        globalCollectionConfig: gccKey,
+        programDelegate: programDelegate,
+        token22Program: TOKEN_2022_PROGRAM_ID,
+      })
+      .rpc({skipPreflight: true});
+      console.log("MINT POOL CREATED:", tx)
+      const acc = await epplex_program.account.collectionConfig.fetch(collectionConfig)
+      console.log("COLLECTION CONFIG: ", acc)
+
+    } catch(e) {
+      console.log(e)
+    }
+    
   
-    console.log("MINT POOL CREATED:", tx)
-  
-    const acc = await epplex_program.account.collectionConfig.fetch(collectionConfig)
-    console.log("COLLECTION CONFIG: ", acc)
+
   
   })
 

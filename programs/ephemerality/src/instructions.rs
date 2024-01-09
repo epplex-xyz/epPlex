@@ -241,6 +241,7 @@ pub fn create_collection_instruction(
         treasury: params.treasury,
         collection_size: params.collection_size,
         collection_name: params.collection_name,
+        collection_symbol: params.collection_symbol
     };
     let data = instruction_data.try_to_vec()?; // Using Borsh to serialize
 

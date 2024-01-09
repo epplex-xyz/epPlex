@@ -1,3 +1,5 @@
+use ephemerality::ONE_WEEK;
+
 use crate::*;
 
 #[derive(Accounts)]
@@ -6,6 +8,7 @@ pub struct MintFromCollection<'info> {
     pub minter: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [
             GUARD_SEED,
             collection_config.key().as_ref()
@@ -63,7 +66,15 @@ pub struct MintFromCollection<'info> {
 
 impl MintFromCollection<'_> {
     
-    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
+    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+
+        let mint_guard = &ctx.accounts.mint_guard;
+        let collection_config = &ctx.accounts.collection_config;
+
+        if collection_config.collection_size <= mint_guard.items_minted {
+            panic!("Collection already minted out")
+        };
+
         Ok(())
     }
 
@@ -109,10 +120,10 @@ impl MintFromCollection<'_> {
         token_name.push_str(&mint_guard.items_minted.to_string());
 
         let params = TokenCreateParams {
-            destroy_timestamp_offset: 1000,
+            destroy_timestamp_offset: ONE_WEEK,
             name: token_name,
             //TODO add collection symbol to collection config
-            symbol: "BRGR".to_string(),
+            symbol: collection_config.collection_symbol.to_owned(),
             uri: "".to_string()
         };
 
@@ -128,6 +139,8 @@ impl MintFromCollection<'_> {
             ),
             params
         )?;
+
+        mint_guard.items_minted += 1;
 
         Ok(())
     }

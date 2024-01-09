@@ -47,7 +47,8 @@ pub struct InitMintGuardParams {
     collection_standard_duration: u32,
     collection_grace_period: i64,
     collection_size: u32,
-    collection_name: String
+    collection_name: String,
+    collection_symbol: String
 }
 
 impl InitMintGuard<'_> {
@@ -88,7 +89,8 @@ impl InitMintGuard<'_> {
             grace_period: params.collection_grace_period,
             treasury: mint_guard.key(),
             collection_size: params.collection_size,
-            collection_name: params.collection_name
+            collection_name: params.collection_name,
+            collection_symbol: params.collection_symbol
         };
 
         ephemerality::cpi::create_collection(cpi_ctx, collection_create_params)?;

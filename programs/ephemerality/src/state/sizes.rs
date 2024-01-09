@@ -7,3 +7,4 @@ pub const BITS_64: usize              = 8;
 pub const BITS_32: usize              = 4;
 
 pub const COLLECTION_NAME_LENGTH: usize = 25;
+pub const COLLECTION_SYMBOL_LENGTH: usize = 5;

@@ -16,6 +16,7 @@ pub struct CollectionConfig {
     pub treasury: Pubkey,
     pub collection_size: u32,
     pub collection_name: String,
+    pub collection_symbol: String
 }
 
 impl CollectionConfig {
@@ -26,7 +27,8 @@ impl CollectionConfig {
         + BITS_64
         + BITS_32
         + PUBLIC_KEY_LENGTH
-        + (VEC_PREFIX + BITS_8 * COLLECTION_NAME_LENGTH);
+        + (VEC_PREFIX + BITS_8 * COLLECTION_NAME_LENGTH)
+        + (VEC_PREFIX + BITS_8 * COLLECTION_SYMBOL_LENGTH);
 
     // TODO need to account for dynamic length in collection name
     pub fn new(bump: u8, params: CollectionCreateParams) -> Self {
@@ -39,6 +41,7 @@ impl CollectionConfig {
             treasury: params.treasury,
             collection_size: params.collection_size,
             collection_name: params.collection_name,
+            collection_symbol: params.collection_symbol
         }
     }
 
