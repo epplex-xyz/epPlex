@@ -7,3 +7,9 @@ pub enum EphemeralityError {
     #[msg("Destroy timestamp has not been exceeded")]
     DestroyTimestampNotExceeded
 }
+
+#[error_code]
+pub enum MintError {
+    #[msg("unauthorized mint authority")]
+    UnauthorizedMintAuthority
+}

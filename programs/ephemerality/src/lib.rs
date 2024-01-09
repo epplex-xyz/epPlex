@@ -37,6 +37,11 @@ pub mod ephemerality {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_create_from_collection(ctx: Context<TokenCreateFromCollection>, params: TokenCreateFromCollectionParams) -> Result<()> {
+        TokenCreateFromCollection::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
         TokenBurn::actuate(ctx, &params)
     }
