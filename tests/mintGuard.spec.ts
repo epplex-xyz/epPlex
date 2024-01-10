@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import * as pda from "./pda";
 import { Program, BN } from "@coral-xyz/anchor";
 import { EpMint } from "../target/types/ep_mint";
-import { Connection, Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { Ephemerality } from "../app/client/idl/ephemeralityTypes";
 import { tokenMetadata } from "./pda";
@@ -40,6 +40,7 @@ describe("ep-mint",() => {
         collectionStandardDuration: 100,
         collectionGracePeriod: new BN(100),
         collectionSize: 3,
+        collectionMintPrice: new BN(LAMPORTS_PER_SOL),
         collectionName: collectionName,
         collectionSymbol: collectionSymbol
       })
@@ -61,9 +62,6 @@ describe("ep-mint",() => {
     } catch(e) {
       console.log(e)
     }
-    
-  
-
   
   })
 
@@ -111,6 +109,28 @@ describe("ep-mint",() => {
       console.log("err", e)
     }
 
+  })
+
+  it("shall withdraw mint funds from the guard", async() => {
+    const collectionCounter = new BN(0);
+    const collectionConfig = pda.collectionConfig(collectionCounter, epplex_program.programId)
+    const mintGuard = pda.mintGuard(collectionConfig, mint_program.programId)
+
+    try {
+      const tx = await mint_program.methods.withdrawFunds({
+        amount: new BN(LAMPORTS_PER_SOL)
+      })
+      .accounts({
+        mintGuard: mintGuard,
+        collectionConfig: collectionConfig,
+        systemProgram: SystemProgram.programId
+      })
+      .rpc()
+
+      console.log("Withdrew funds: ", tx)
+    } catch(e) {
+      console.log(e)
+    }
 
   })
 
