@@ -1,4 +1,5 @@
 use ephemerality::GlobalCollectionConfig;
+use ephemerality::cpi::accounts::CollectionCreate;
 
 use crate::*;
 
@@ -44,6 +45,7 @@ pub struct InitMintGuard<'info> {
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct InitMintGuardParams {
     collection_renewal_price: u64,
+    collection_mint_price: u64,
     collection_standard_duration: u32,
     collection_grace_period: i64,
     collection_size: u32,
@@ -59,7 +61,7 @@ impl InitMintGuard<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: InitMintGuardParams) -> Result<()> {
 
-        //init mint pool
+        //init mint guard
         let mint_guard = &mut ctx.accounts.mint_guard;
         mint_guard.authority = ctx.accounts.creator.key();
         mint_guard.items_minted = 0;
@@ -85,6 +87,7 @@ impl InitMintGuard<'_> {
         let collection_create_params = CollectionCreateParams {
             authority: mint_guard.key(),
             renewal_price: params.collection_renewal_price,
+            mint_price: params.collection_mint_price,
             standard_duration: params.collection_standard_duration,
             grace_period: params.collection_grace_period,
             treasury: mint_guard.key(),

@@ -43,6 +43,11 @@ pub struct TokenCreateFromCollection<'info> {
     #[account()]
     pub collection_config: Account<'info, CollectionConfig>,
 
+    #[account(mut)]
+    ///CHECK: Checked in validate
+    pub treasury: AccountInfo<'info>,
+
+
     #[account(
         seeds = [SEED_PROGRAM_DELEGATE],
         bump = program_delegate.bump,
@@ -76,16 +81,29 @@ impl TokenCreateFromCollection<'_> {
             return err!(MintError::UnauthorizedMintAuthority)
         };
 
+        if ctx.accounts.treasury.key() != ctx.accounts.collection_config.treasury {
+            return err!(MintError::InvalidTreasuryAccount)
+        };
+
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateFromCollectionParams) -> Result<()> {
+
+        //transfer mint price to treasury
+        transfer_sol(
+            &ctx.accounts.system_program,
+            &ctx.accounts.payer,
+            &ctx.accounts.treasury,
+            ctx.accounts.collection_config.mint_price
+        )?;
+
+
         // Initialise Mint Account
         let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(
             &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
         ).unwrap();
         let rent = &Rent::from_account_info(&ctx.accounts.rent.to_account_info())?;
-        // TODO need to have collectionConfig passed in
 
         // TODO: all NFTs should have same expiration date upon mint
         // maybe just save the now date and the destroytimeoffset

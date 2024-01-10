@@ -11,5 +11,8 @@ pub enum EphemeralityError {
 #[error_code]
 pub enum MintError {
     #[msg("unauthorized mint authority")]
-    UnauthorizedMintAuthority
+    UnauthorizedMintAuthority,
+
+    #[msg("the given treasury account does not match with the configured treasury")]
+    InvalidTreasuryAccount
 }

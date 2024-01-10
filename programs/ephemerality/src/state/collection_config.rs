@@ -11,18 +11,21 @@ pub struct CollectionConfig {
     pub authority: Pubkey,
     // This should be denoted in USDC
     pub renewal_price: u64,
+    pub mint_price: u64,
     pub standard_duration: u32,
     pub grace_period: i64,
     pub treasury: Pubkey,
     pub collection_size: u32,
     pub collection_name: String,
-    pub collection_symbol: String
+    pub collection_symbol: String,
+
 }
 
 impl CollectionConfig {
     pub const LEN: usize = DISCRIMINATOR_LENGTH
         + BITS_8
         + PUBLIC_KEY_LENGTH
+        + BITS_64
         + BITS_64
         + BITS_64
         + BITS_32
@@ -36,6 +39,7 @@ impl CollectionConfig {
             bump,
             authority: params.authority,
             renewal_price: params.renewal_price,
+            mint_price: params.mint_price,
             standard_duration: params.standard_duration,
             grace_period: params.grace_period,
             treasury: params.treasury,

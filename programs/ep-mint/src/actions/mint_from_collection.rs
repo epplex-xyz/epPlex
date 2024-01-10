@@ -95,7 +95,8 @@ impl MintFromCollection<'_> {
             system_program: ctx.accounts.system_program.to_account_info().clone(),
             associated_token: ctx.accounts.associated_token.to_account_info().clone(),
             collection_config: collection_config.to_account_info().clone(),
-            mint_authority: mint_guard.to_account_info().clone()
+            mint_authority: mint_guard.to_account_info().clone(),
+            treasury: mint_guard.to_account_info().clone()
         };
 
         // let cpi_ctx = CpiContext::new_with_signer(

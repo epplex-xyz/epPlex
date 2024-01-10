@@ -51,6 +51,7 @@ pub struct CollectionCreate<'info> {
 pub struct CollectionCreateParams {
     pub authority: Pubkey,
     pub renewal_price: u64,
+    pub mint_price: u64,
     pub standard_duration: u32,
     pub grace_period: i64,
     pub treasury: Pubkey,
