@@ -51,11 +51,11 @@ impl TokenCreate<'_> {
        
        Self::execute(
         ctx.accounts.mint.to_account_info().clone(),
-        ctx.accounts.token_metadata.to_account_info().clone(),
         ctx.accounts.program_delegate.to_account_info().clone(),
         ctx.accounts.payer.to_account_info().clone(),
         ctx.accounts.rent.to_account_info().clone(),
-        ctx.accounts.token22_program.to_account_info().clone()
+        ctx.accounts.token22_program.to_account_info().clone(),
+        &[ExtensionType::MetadataPointer]
        )?;
 
         Ok(())
@@ -63,18 +63,19 @@ impl TokenCreate<'_> {
 
     pub fn execute<'info> (
         mint: AccountInfo<'info>,
-        token_metadata: AccountInfo<'info>,
         program_delegate: AccountInfo<'info>,
         payer: AccountInfo<'info>,
         rent_account: AccountInfo<'info>,
         token22_program: AccountInfo<'info>,
+        additional_extensions: &[ExtensionType]
     ) -> Result<()> {
 
         // Initialise Mint Account
         Self::init_mint_account(
             rent_account.to_account_info(),
             payer.to_account_info(),
-            mint.to_account_info()
+            mint.to_account_info(),
+            additional_extensions
         )?;
 
         // Add closing authority
@@ -91,15 +92,6 @@ impl TokenCreate<'_> {
             program_delegate.key()
         )?;
         
-        // Add metadata pointer
-        add_metadata_pointer(
-            token22_program.key(),
-            &mint.to_account_info(),
-            // TODO: who should have authority here
-            program_delegate.key(),
-            token_metadata.key(),
-        )?;
-
         // Initialize the actual mint data
         initialize_mint(
             &mint.to_account_info(),
@@ -118,11 +110,20 @@ impl TokenCreate<'_> {
         rent_account: AccountInfo<'info>,
         payer: AccountInfo<'info>,
         mint: AccountInfo<'info>,
+        additional_extensions: &[ExtensionType]
     ) -> Result<()> {
 
-         let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(
-            &[ExtensionType::PermanentDelegate, ExtensionType::MintCloseAuthority]
-        ).unwrap();
+        // standard extensions
+        let mut extensions = vec![
+            ExtensionType::PermanentDelegate,
+            ExtensionType::MintCloseAuthority
+        ];
+
+        extensions.extend_from_slice(additional_extensions);
+
+        // calculate extension sizes
+        let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
+
         let rent = &Rent::from_account_info(&rent_account)?;
         // TODO need to have collectionConfig passed in
 

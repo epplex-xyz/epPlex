@@ -44,11 +44,11 @@ impl MintToken<'_> {
         // Create the ephemeral token
         TokenCreate::execute(
             ctx.accounts.mint.to_account_info().clone(),
-            ctx.accounts.token_metadata.to_account_info().clone(),
             ctx.accounts.program_delegate.to_account_info().clone(),
             ctx.accounts.payer.to_account_info().clone(),
             ctx.accounts.rent.to_account_info().clone(),
-            ctx.accounts.token22_program.to_account_info().clone()
+            ctx.accounts.token22_program.to_account_info().clone(),
+            &[ExtensionType::MetadataPointer]
         )?;
 
         // Create metadata account
@@ -61,6 +61,15 @@ impl MintToken<'_> {
             params
         )?;
 
+        // Add metadata pointer
+        add_metadata_pointer(
+            ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            // TODO: who should have authority here
+            ctx.accounts.program_delegate.key(),
+            ctx.accounts.token_metadata.key(),
+        )?;
+        
         // Create ATA
         anchor_spl::associated_token::create(
             CpiContext::new(
