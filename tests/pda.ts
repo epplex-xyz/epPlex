@@ -50,7 +50,6 @@ export function tokenMetadata(mint: PublicKey, programId: PublicKey) {
     const [metadata, metadataBump] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("metadata"),
-          programId.toBuffer(),
           mint.toBuffer()
         ],
         programId

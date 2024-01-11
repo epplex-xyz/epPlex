@@ -20,3 +20,4 @@ anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
 spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 ephemerality = { path = "../ephemerality", features = ["cpi"] }
+ephemeral-metadata = { path = "../ephemeral-metadata", features = ["cpi"] }

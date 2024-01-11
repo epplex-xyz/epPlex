@@ -37,8 +37,13 @@ pub mod ephemerality {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_create_from_collection(ctx: Context<TokenCreateFromCollection>, params: TokenCreateFromCollectionParams) -> Result<()> {
-        TokenCreateFromCollection::actuate(ctx, params)
+    pub fn mint_token(ctx: Context<MintToken>, params: TokenCreateParams) -> Result<()> {
+        MintToken::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn mint_token_from_collection(ctx: Context<MintTokenFromCollection>, params: TokenCreateParams) -> Result<()> {
+        MintTokenFromCollection::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]

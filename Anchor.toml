@@ -1,12 +1,14 @@
 [features]
 seeds = false
+skip-lint = false
+
+[programs.devnet]
+ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
 
 [programs.localnet]
 ep_mint = "DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN"
 ephemerality = "7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR"
-
-[programs.devnet]
-ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+ephermal-metadata = "4SoP3wSVEaAGjpqNuNQTeRHRXRp8cyEvHdABWtXDULLY"
 
 [programs.mainnet]
 ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"

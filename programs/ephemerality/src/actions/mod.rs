@@ -1,8 +1,11 @@
 pub mod token_create;
 pub use token_create::*;
 
-pub mod token_create_from_collection;
-pub use token_create_from_collection::*;
+pub mod mint_token;
+pub use mint_token::*;
+
+pub mod mint_token_from_collection;
+pub use mint_token_from_collection::*;
 
 pub mod token_burn;
 pub use token_burn::*;

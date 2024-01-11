@@ -7,6 +7,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_
 import { Ephemerality } from "../app/client/idl/ephemeralityTypes";
 import { tokenMetadata } from "./pda";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
+import { EphemeralMetadata } from "../target/types/ephemeral_metadata";
 
 describe("ep-mint",() => {
 
@@ -15,6 +16,7 @@ describe("ep-mint",() => {
   anchor.setProvider(provider)
   const mint_program = anchor.workspace.EpMint as Program<EpMint>;
   const epplex_program = anchor.workspace.Ephemerality as Program<Ephemerality>
+  const metadata_program = anchor.workspace.EphemeralMetadata as Program<EphemeralMetadata>
 
   const collectionName = "Blessed Burgers"
   const collectionSymbol = "BRGR"
@@ -90,12 +92,13 @@ describe("ep-mint",() => {
             collectionConfig: collectionConfig,
             tokenMint: tokenMint.publicKey,
             ata: ata,
-            tokenMetadata: pda.tokenMetadata(tokenMint.publicKey, epplex_program.programId),
+            tokenMetadata: pda.tokenMetadata(tokenMint.publicKey, metadata_program.programId),
             programDelegate: programDelegate,
             rent: SYSVAR_RENT_PUBKEY,
             token22Program: TOKEN_2022_PROGRAM_ID,
             systemProgram: SystemProgram.programId,
             associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+            metadataProgram: metadata_program.programId
           })
           .transaction()
 
@@ -104,6 +107,7 @@ describe("ep-mint",() => {
         );
 
       console.log("MINTED: ", id)
+
 
     } catch (e) {
       console.log("err", e)

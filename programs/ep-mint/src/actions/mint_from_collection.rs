@@ -1,6 +1,7 @@
 use crate::*;
 
-use ephemerality::{TokenCreateFromCollectionParams, ONE_WEEK};
+use ephemerality::{ONE_WEEK, TokenCreateParams};
+use ephemeral_metadata::program::EphemeralMetadata;
 
 
 #[derive(Accounts)]
@@ -39,17 +40,6 @@ pub struct MintFromCollection<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    // #[account(
-    //     seeds = [
-    //         SEED_TOKEN_METADATA,
-    //         ephemerality::ID.key().as_ref(),
-    //         token_mint.key().as_ref()
-    //     ],
-    //     seeds::program = ephemerality::ID.key(),
-    //     bump,
-    // )]
-    // pub token_metadata: Account<'info, EphemeralMetadata>,
-
     #[account(mut)]
     /// CHECK
     pub token_metadata: UncheckedAccount<'info>,
@@ -61,7 +51,8 @@ pub struct MintFromCollection<'info> {
     pub rent: Sysvar<'info, Rent>,
     pub token22_program: Program<'info, Token2022>,
     pub system_program: Program<'info, System>,
-    pub associated_token: Program<'info, AssociatedToken>
+    pub associated_token: Program<'info, AssociatedToken>,
+    pub metadata_program: Program<'info, EphemeralMetadata>
 }
 
 impl MintFromCollection<'_> {
@@ -84,7 +75,7 @@ impl MintFromCollection<'_> {
 
         //create cpi
 
-        let cpi_accounts = ephemerality::cpi::accounts::TokenCreateFromCollection {
+        let cpi_accounts = ephemerality::cpi::accounts::MintTokenFromCollection {
             mint: ctx.accounts.token_mint.to_account_info().clone(),
             ata: ctx.accounts.ata.to_account_info().clone(),
             token_metadata: ctx.accounts.token_metadata.to_account_info().clone(),
@@ -96,33 +87,15 @@ impl MintFromCollection<'_> {
             associated_token: ctx.accounts.associated_token.to_account_info().clone(),
             collection_config: collection_config.to_account_info().clone(),
             mint_authority: mint_guard.to_account_info().clone(),
-            treasury: mint_guard.to_account_info().clone()
+            treasury: mint_guard.to_account_info().clone(),
+            metadata_program: ctx.accounts.metadata_program.to_account_info().clone()
         };
-
-        // let cpi_ctx = CpiContext::new_with_signer(
-        //     cpi_program,
-        //     cpi_accounts
-        // );
-
-        // let seeds = &[SEED_LOTTO, lotto_id.as_ref(), &[lotto.bump]];
-        // token::transfer(
-        //     CpiContext::new_with_signer(
-        //         token_program.to_account_info(),
-        //         Transfer {
-        //             from: token_vault.to_account_info(),
-        //             to: token_owner_account.to_account_info(),
-        //             authority: lotto.to_account_info(),
-        //         },
-        //         &[&seeds[..]],
-        //     ),
-        //     amount,
-        // )
 
         //create token creation params
         let mut token_name = collection_config.collection_name.to_owned();
         token_name.push_str(&mint_guard.items_minted.to_string());
 
-        let params = TokenCreateFromCollectionParams {
+        let params = TokenCreateParams {
             destroy_timestamp_offset: ONE_WEEK,
             name: token_name,
             //TODO add collection symbol to collection config
@@ -130,11 +103,10 @@ impl MintFromCollection<'_> {
             uri: "".to_string()
         };
 
-
         let collection_config_key = collection_config.key();
 
         let seeds = &[GUARD_SEED, collection_config_key.as_ref(), &[mint_guard.bump]];
-        ephemerality::cpi::token_create_from_collection(
+        ephemerality::cpi::mint_token_from_collection(
             CpiContext::new_with_signer(
                 ctx.accounts.epplex_program.to_account_info(),
                 cpi_accounts,

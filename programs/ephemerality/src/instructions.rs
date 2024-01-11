@@ -1,4 +1,5 @@
 use crate::*;
+use ephemeral_metadata::CreateMetadataParams;
 use solana_program::system_instruction;
 
 pub fn burn_token<'info>(
@@ -64,7 +65,7 @@ pub fn close_mint<'info>(
 
 pub fn initialize_mint<'info>(
     mint_account: &AccountInfo<'info>,
-    rent_account: &Sysvar<'info, Rent>,
+    rent_account: &AccountInfo<'info>,
     program: &Pubkey,
     mint_auth: &Pubkey,
     freeze_auth: &Pubkey,
@@ -117,6 +118,44 @@ pub fn add_metadata_pointer(
     )?;
 
     Ok(())
+}
+
+pub fn create_metadata_account<'info>(
+    metadata_program: AccountInfo<'info>,
+    payer: AccountInfo<'info>,
+    mint: AccountInfo<'info>,
+    token_metadata: AccountInfo<'info>,
+    system_program: AccountInfo<'info>,
+    params: TokenCreateParams
+) -> Result<()> {
+        //calculate destroy timestamp
+        let now = Clock::get().unwrap().unix_timestamp;
+        let destroy_timestamp = now
+            .checked_add(params.destroy_timestamp_offset)
+            .ok_or(EphemeralityError::InvalidCalculation)
+            .unwrap();
+
+        //create metadata account
+        let cpi_ctx = CpiContext::new(
+            metadata_program,
+            ephemeral_metadata::cpi::accounts::CreateMetadata {
+                payer: payer,
+                mint: mint,
+                token_metadata: token_metadata,
+                system_program: system_program
+            }
+        );
+
+        let cpi_params = CreateMetadataParams {
+            destroy_timestamp: destroy_timestamp,
+            name: params.name,
+            symbol: params.symbol,
+            uri: params.uri
+        };
+
+        ephemeral_metadata::cpi::create_metadata(cpi_ctx, cpi_params)?;
+
+        Ok(())
 }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?

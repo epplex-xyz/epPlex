@@ -26,6 +26,7 @@ solana-security-txt = "1.0.1"
 spl-associated-token-account = "2.3.0"
 spl-token-metadata-interface = "0.2.0"
 ahash = "=0.8.6"
+ephemeral-metadata = { path = "../ephemeral-metadata", features = ["cpi"] }
 
 [lib]
 name = "ephemerality"
