@@ -78,8 +78,6 @@ impl MintTokenFromCollection<'_> {
             &[ExtensionType::GroupPointer, ExtensionType::GroupMemberPointer]
         )?;
 
-
-
         // Point Group Pointer to collection config
         Self::add_group_pointer(
             ctx.accounts.token22_program.key(),
@@ -104,6 +102,17 @@ impl MintTokenFromCollection<'_> {
             &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
             ctx.accounts.token_metadata.key()
+        )?;
+
+        // Initialize the actual mint data
+        initialize_mint(
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.rent.to_account_info(),
+            &ctx.accounts.token22_program.key(),
+            // TODO incorrect
+            &ctx.accounts.payer.key(),
+            // TODO incorrect
+            &ctx.accounts.payer.key(),
         )?;
 
         // Create ATA

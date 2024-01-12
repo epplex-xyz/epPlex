@@ -58,6 +58,17 @@ impl TokenCreate<'_> {
         &[ExtensionType::MetadataPointer]
        )?;
 
+        // Initialize the actual mint data
+        initialize_mint(
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.rent.to_account_info(),
+            &ctx.accounts.token22_program.key(),
+            // TODO incorrect
+            &ctx.accounts.payer.key(),
+            // TODO incorrect
+            &ctx.accounts.payer.key(),
+        )?;
+
         Ok(())
     }
 
@@ -92,17 +103,6 @@ impl TokenCreate<'_> {
             program_delegate.key()
         )?;
         
-        // Initialize the actual mint data
-        initialize_mint(
-            &mint.to_account_info(),
-            &rent_account.to_account_info(),
-            &token22_program.key(),
-            // TODO incorrect
-            &payer.key(),
-            // TODO incorrect
-            &payer.key(),
-        )?;
-
         Ok(())
     }
 
@@ -131,12 +131,11 @@ impl TokenCreate<'_> {
         // maybe just save the now date and the destroytimeoffset
 
         // TODO: need to calculate this properly
-        let space = extension_sizes + (64 + 2 + 2);
         let ix = solana_program::system_instruction::create_account(
             &payer.key(),
             &mint.key(),
-            rent.minimum_balance(space),
-            space as u64,
+            rent.minimum_balance(extension_sizes),
+            extension_sizes as u64,
             &spl_token_2022::id(),
         );
 
