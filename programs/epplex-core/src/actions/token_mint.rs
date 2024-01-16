@@ -43,7 +43,7 @@ impl TokenMint<'_> {
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
  
         // Create the ephemeral token
-        TokenCreate::execute(
+        token_create_basic(
             ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.program_delegate.to_account_info().clone(),
             ctx.accounts.payer.to_account_info().clone(),

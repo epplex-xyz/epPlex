@@ -2,13 +2,13 @@ pub mod actions;
 pub mod id;
 pub mod security;
 pub mod state;
-pub mod instructions;
+pub mod utils;
 pub mod errors;
 
 pub use actions::*;
 pub use id::ID;
 pub use state::*;
-pub use instructions::*;
+pub use utils::*;
 pub use errors::*;
 
 use anchor_lang::prelude::*;

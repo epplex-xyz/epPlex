@@ -1,6 +1,40 @@
 use crate::*;
 use epplex_metadata::CreateMetadataParams;
-use solana_program::system_instruction;
+
+
+ pub fn token_create_basic<'info> (
+    mint: AccountInfo<'info>,
+    program_delegate: AccountInfo<'info>,
+    payer: AccountInfo<'info>,
+    rent_account: AccountInfo<'info>,
+    token22_program: AccountInfo<'info>,
+    additional_extensions: &[ExtensionType]
+) -> Result<()> {
+
+    // Initialise Mint Account
+    init_mint_account(
+        rent_account.to_account_info(),
+        payer.to_account_info(),
+        mint.to_account_info(),
+        additional_extensions
+    )?;
+
+    // Add closing authority
+    add_closing_authority(
+        &mint,
+        token22_program.key(),
+        program_delegate.key(),
+    )?;
+
+    // Add permanent delegate
+    add_permanent_delegate(
+        &mint.to_account_info(),
+        token22_program.key(),
+        program_delegate.key()
+    )?;
+    
+    Ok(())
+}
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
@@ -223,23 +257,21 @@ pub fn update_token_metadata<'info>(
     Ok(())
 }
 
-// Probably system program already has this callable, I just copied from there
-pub fn transfer_sol<'info>(
-    program_id: &AccountInfo<'info>,
-    from: &AccountInfo<'info>,
-    to: &AccountInfo<'info>,
-    amount: u64
+pub fn add_group_pointer(
+    token_program_id: Pubkey,
+    mint_account: &AccountInfo,
+    authority: Pubkey,
+    group_address: Pubkey,
 ) -> Result<()> {
-    let ix = system_instruction::transfer(
-        &from.key(),
-        &to.key(),
-        amount,
-    );
+    let ix = spl_token_2022::extension::group_pointer::instruction::initialize(
+        &token_program_id,
+        &mint_account.key(),
+        Some(authority),
+        Some(group_address)
+    )?;
 
     let account_infos: Vec<AccountInfo> = vec![
-        from.to_account_info(),
-        to.to_account_info(),
-        program_id.to_account_info(),
+        mint_account.to_account_info(),
     ];
 
     solana_program::program::invoke(
@@ -249,6 +281,126 @@ pub fn transfer_sol<'info>(
 
     Ok(())
 }
+
+pub fn add_group_member_pointer(
+    token_program_id: Pubkey,
+    mint_account: &AccountInfo,
+    authority: Pubkey,
+    group_member_address: Pubkey,
+) -> Result<()> {
+    let ix = spl_token_2022::extension::group_member_pointer::instruction::initialize(
+        &token_program_id,
+        &mint_account.key(),
+        Some(authority),
+        Some(group_member_address)
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn init_mint_account<'info> (
+    rent_account: AccountInfo<'info>,
+    payer: AccountInfo<'info>,
+    mint: AccountInfo<'info>,
+    additional_extensions: &[ExtensionType]
+) -> Result<()> {
+
+    // standard extensions
+    let mut extensions = vec![
+        ExtensionType::PermanentDelegate,
+        ExtensionType::MintCloseAuthority
+    ];
+
+    extensions.extend_from_slice(additional_extensions);
+
+    // calculate extension sizes
+    let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
+
+    msg!(&extension_sizes.to_string());
+
+    let rent = &Rent::from_account_info(&rent_account)?;
+    // TODO need to have collectionConfig passed in
+
+    // TODO: all NFTs should have same expiration date upon mint
+    // maybe just save the now date and the destroytimeoffset
+
+    // TODO: need to calculate this properly
+    let ix = solana_program::system_instruction::create_account(
+        &payer.key(),
+        &mint.key(),
+        rent.minimum_balance(extension_sizes),
+        extension_sizes as u64,
+        &spl_token_2022::id(),
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        payer,
+        mint
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn add_closing_authority(
+    mint_account: &AccountInfo,
+    program: Pubkey,
+    program_delegate: Pubkey
+) -> Result<()> {
+    let ix = spl_token_2022::instruction::initialize_mint_close_authority(
+        &program,
+        &mint_account.key(),
+        Some(&program_delegate),
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn add_permanent_delegate(
+    mint_account: &AccountInfo,
+    program: Pubkey,
+    program_delegate: Pubkey
+) -> Result<()> {
+    let ix = spl_token_2022::instruction::initialize_permanent_delegate(
+        &program,
+        &mint_account.key(),
+        &program_delegate,
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info()
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
 
 // Fails here
 // https://explorer.solana.com/tx/33rZroF4LnJ8Buu3fnpeE7gHRWjBcJwecmrByMuC7CKxxJzpT9oqFge99T4zqwnSDkUAttUeN4E4ADa6F8wVnYQu?cluster=devnet

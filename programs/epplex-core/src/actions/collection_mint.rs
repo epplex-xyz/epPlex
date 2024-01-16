@@ -70,7 +70,7 @@ impl CollectionMint<'_> {
         )?;
 
         // Create the ephemeral token
-        TokenCreate::execute(
+        token_create_basic(
             ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.program_delegate.to_account_info().clone(),
             ctx.accounts.payer.to_account_info().clone(),
@@ -100,7 +100,7 @@ impl CollectionMint<'_> {
 
 
         // Point group Member Pointer to token metadata
-        Self::add_group_member_pointer(
+        add_group_member_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
@@ -146,32 +146,6 @@ impl CollectionMint<'_> {
             1
         )?;
 
-        Ok(())
-    }
-
-
-    pub fn add_group_member_pointer(
-        token_program_id: Pubkey,
-        mint_account: &AccountInfo,
-        authority: Pubkey,
-        group_member_address: Pubkey,
-    ) -> Result<()> {
-        let ix = spl_token_2022::extension::group_member_pointer::instruction::initialize(
-            &token_program_id,
-            &mint_account.key(),
-            Some(authority),
-            Some(group_member_address)
-        )?;
-    
-        let account_infos: Vec<AccountInfo> = vec![
-            mint_account.to_account_info(),
-        ];
-    
-        solana_program::program::invoke(
-            &ix,
-            &account_infos[..],
-        )?;
-    
         Ok(())
     }
 

@@ -82,31 +82,6 @@ impl CollectionCreate<'_> {
 
         Ok(())
     }
-
-    pub fn add_group_pointer(
-        token_program_id: Pubkey,
-        mint_account: &AccountInfo,
-        authority: Pubkey,
-        group_address: Pubkey,
-    ) -> Result<()> {
-        let ix = spl_token_2022::extension::group_pointer::instruction::initialize(
-            &token_program_id,
-            &mint_account.key(),
-            Some(authority),
-            Some(group_address)
-        )?;
-    
-        let account_infos: Vec<AccountInfo> = vec![
-            mint_account.to_account_info(),
-        ];
-    
-        solana_program::program::invoke(
-            &ix,
-            &account_infos[..],
-        )?;
-    
-        Ok(())
-    }
 }
 
 
