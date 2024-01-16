@@ -26,7 +26,7 @@ pub struct MintFromCollection<'info> {
     #[account(
         seeds = [
             SEED_COLLECTION_CONFIG,
-            &mint_guard.collection_counter.to_be_bytes(),
+            &mint_guard.collection_counter.to_le_bytes(),
         ],
         seeds::program = epplex_core::ID.key(),
         bump = collection_config.bump

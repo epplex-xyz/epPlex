@@ -28,7 +28,7 @@ export function collectionConfig(counter: anchor.BN, programId: PublicKey) {
     const [collectionConfigPDA, collectionConfigBump] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("CONFIG"),
-          Uint8Array.of(...counter.toArray('be', 8))
+          Uint8Array.of(...counter.toArray('le', 8))
         ],
         programId
       )

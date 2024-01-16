@@ -25,7 +25,7 @@ pub struct CollectionCreate<'info> {
         init,
         seeds = [
             SEED_COLLECTION_CONFIG,
-            &global_collection_config.collection_counter.to_be_bytes()
+            &global_collection_config.collection_counter.to_le_bytes()
         ],
         bump,
         payer = payer,
