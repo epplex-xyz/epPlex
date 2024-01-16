@@ -75,16 +75,9 @@ impl MintTokenFromCollection<'_> {
             ctx.accounts.payer.to_account_info().clone(),
             ctx.accounts.rent.to_account_info().clone(),
             ctx.accounts.token22_program.to_account_info().clone(),
-            &[ExtensionType::GroupPointer, ExtensionType::GroupMemberPointer]
+            &[ExtensionType::MetadataPointer, ExtensionType::GroupMemberPointer]
         )?;
 
-        // Point Group Pointer to collection config
-        Self::add_group_pointer(
-            ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.to_account_info(),
-            ctx.accounts.program_delegate.key(),
-            ctx.accounts.collection_config.key()
-        )?;
 
         // Create token metadata account
         create_metadata_account(
@@ -96,12 +89,21 @@ impl MintTokenFromCollection<'_> {
             params
         )?;
 
+        // Point to created the metadata account
+        add_metadata_pointer(
+            ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            ctx.accounts.program_delegate.key(),
+            ctx.accounts.token_metadata.key()
+        )?;
+
+
         // Point group Member Pointer to token metadata
         Self::add_group_member_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
-            ctx.accounts.token_metadata.key()
+            ctx.accounts.collection_config.key()
         )?;
 
         // Initialize the actual mint data
@@ -146,30 +148,6 @@ impl MintTokenFromCollection<'_> {
         Ok(())
     }
 
-    pub fn add_group_pointer(
-        token_program_id: Pubkey,
-        mint_account: &AccountInfo,
-        authority: Pubkey,
-        group_address: Pubkey,
-    ) -> Result<()> {
-        let ix = spl_token_2022::extension::group_pointer::instruction::initialize(
-            &token_program_id,
-            &mint_account.key(),
-            Some(authority),
-            Some(group_address)
-        )?;
-    
-        let account_infos: Vec<AccountInfo> = vec![
-            mint_account.to_account_info(),
-        ];
-    
-        solana_program::program::invoke(
-            &ix,
-            &account_infos[..],
-        )?;
-    
-        Ok(())
-    }
 
     pub fn add_group_member_pointer(
         token_program_id: Pubkey,
