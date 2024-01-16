@@ -1,9 +1,60 @@
 {
   "version": "0.0.1",
-  "name": "ephemerality",
+  "name": "epplex_core",
   "instructions": [
     {
       "name": "tokenCreate",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenMint",
       "accounts": [
         {
           "name": "mint",
@@ -24,7 +75,10 @@
         {
           "name": "tokenMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
         },
         {
           "name": "programDelegate",
@@ -53,6 +107,11 @@
         },
         {
           "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -149,7 +208,7 @@
       ]
     },
     {
-      "name": "createCollection",
+      "name": "collectionCreate",
       "accounts": [
         {
           "name": "mint",
@@ -171,6 +230,11 @@
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -196,6 +260,114 @@
           }
         }
       ]
+    },
+    {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "globalCollectionConfigCreate",
+      "accounts": [
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "programDelegateCreate",
@@ -271,6 +443,10 @@
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -289,67 +465,26 @@
           {
             "name": "collectionName",
             "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
+            "type": "string"
           }
         ]
       }
     },
     {
-      "name": "EphemeralMetadata",
+      "name": "GlobalCollectionConfig",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "updateAuthority",
-            "docs": [
-              "The authority that can sign to update the metadata"
-            ],
-            "type": {
-              "option": "publicKey"
-            }
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
-            "name": "mint",
-            "docs": [
-              "The associated mint, used to counter spoofing to be sure that metadata",
-              "belongs to a particular mint"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "name",
-            "docs": [
-              "The longer name of the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "docs": [
-              "The shortened symbol for the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "docs": [
-              "The URI pointing to richer metadata"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "additionalMetadata",
-            "docs": [
-              "Any additional metadata about the token as key-value pairs. The program",
-              "must avoid storing the same key twice."
-            ],
-            "type": {
-              "vec": {
-                "array": [
-                  "string",
-                  2
-                ]
-              }
-            }
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -385,6 +520,10 @@
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -402,6 +541,10 @@
           },
           {
             "name": "collectionName",
+            "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
             "type": "string"
           }
         ]
@@ -647,6 +790,20 @@
           }
         ]
       }
+    },
+    {
+      "name": "MintError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "UnauthorizedMintAuthority"
+          },
+          {
+            "name": "InvalidTreasuryAccount"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -662,6 +819,6 @@
     }
   ],
   "metadata": {
-    "address": "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+    "address": "2qie61sigqbg3xkh3UkpLPJppjbjKQa8FStcB5k5XYff"
   }
 }

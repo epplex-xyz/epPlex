@@ -1,9 +1,60 @@
-export type Ephemerality = {
+export type EpplexCore = {
   "version": "0.0.1",
-  "name": "ephemerality",
+  "name": "epplex_core",
   "instructions": [
     {
       "name": "tokenCreate",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenMint",
       "accounts": [
         {
           "name": "mint",
@@ -24,7 +75,10 @@ export type Ephemerality = {
         {
           "name": "tokenMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
         },
         {
           "name": "programDelegate",
@@ -53,6 +107,11 @@ export type Ephemerality = {
         },
         {
           "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -149,7 +208,7 @@ export type Ephemerality = {
       ]
     },
     {
-      "name": "createCollection",
+      "name": "collectionCreate",
       "accounts": [
         {
           "name": "mint",
@@ -171,6 +230,11 @@ export type Ephemerality = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -196,6 +260,114 @@ export type Ephemerality = {
           }
         }
       ]
+    },
+    {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "globalCollectionConfigCreate",
+      "accounts": [
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "programDelegateCreate",
@@ -271,6 +443,10 @@ export type Ephemerality = {
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -289,67 +465,26 @@ export type Ephemerality = {
           {
             "name": "collectionName",
             "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
+            "type": "string"
           }
         ]
       }
     },
     {
-      "name": "ephemeralMetadata",
+      "name": "globalCollectionConfig",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "updateAuthority",
-            "docs": [
-              "The authority that can sign to update the metadata"
-            ],
-            "type": {
-              "option": "publicKey"
-            }
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
-            "name": "mint",
-            "docs": [
-              "The associated mint, used to counter spoofing to be sure that metadata",
-              "belongs to a particular mint"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "name",
-            "docs": [
-              "The longer name of the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "docs": [
-              "The shortened symbol for the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "docs": [
-              "The URI pointing to richer metadata"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "additionalMetadata",
-            "docs": [
-              "Any additional metadata about the token as key-value pairs. The program",
-              "must avoid storing the same key twice."
-            ],
-            "type": {
-              "vec": {
-                "array": [
-                  "string",
-                  2
-                ]
-              }
-            }
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -385,6 +520,10 @@ export type Ephemerality = {
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -402,6 +541,10 @@ export type Ephemerality = {
           },
           {
             "name": "collectionName",
+            "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
             "type": "string"
           }
         ]
@@ -644,6 +787,20 @@ export type Ephemerality = {
           {
             "name": "destroyTimestampValue",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "UnauthorizedMintAuthority"
+          },
+          {
+            "name": "InvalidTreasuryAccount"
           }
         ]
       }
@@ -663,12 +820,63 @@ export type Ephemerality = {
   ]
 };
 
-export const IDL: Ephemerality = {
+export const IDL: EpplexCore = {
   "version": "0.0.1",
-  "name": "ephemerality",
+  "name": "epplex_core",
   "instructions": [
     {
       "name": "tokenCreate",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenMint",
       "accounts": [
         {
           "name": "mint",
@@ -689,7 +897,10 @@ export const IDL: Ephemerality = {
         {
           "name": "tokenMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
         },
         {
           "name": "programDelegate",
@@ -718,6 +929,11 @@ export const IDL: Ephemerality = {
         },
         {
           "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -814,7 +1030,7 @@ export const IDL: Ephemerality = {
       ]
     },
     {
-      "name": "createCollection",
+      "name": "collectionCreate",
       "accounts": [
         {
           "name": "mint",
@@ -836,6 +1052,11 @@ export const IDL: Ephemerality = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -861,6 +1082,114 @@ export const IDL: Ephemerality = {
           }
         }
       ]
+    },
+    {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "ata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCreateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "globalCollectionConfigCreate",
+      "accounts": [
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "programDelegateCreate",
@@ -936,6 +1265,10 @@ export const IDL: Ephemerality = {
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -954,67 +1287,26 @@ export const IDL: Ephemerality = {
           {
             "name": "collectionName",
             "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
+            "type": "string"
           }
         ]
       }
     },
     {
-      "name": "ephemeralMetadata",
+      "name": "globalCollectionConfig",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "updateAuthority",
-            "docs": [
-              "The authority that can sign to update the metadata"
-            ],
-            "type": {
-              "option": "publicKey"
-            }
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
-            "name": "mint",
-            "docs": [
-              "The associated mint, used to counter spoofing to be sure that metadata",
-              "belongs to a particular mint"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "name",
-            "docs": [
-              "The longer name of the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "docs": [
-              "The shortened symbol for the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "docs": [
-              "The URI pointing to richer metadata"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "additionalMetadata",
-            "docs": [
-              "Any additional metadata about the token as key-value pairs. The program",
-              "must avoid storing the same key twice."
-            ],
-            "type": {
-              "vec": {
-                "array": [
-                  "string",
-                  2
-                ]
-              }
-            }
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1050,6 +1342,10 @@ export const IDL: Ephemerality = {
             "type": "u64"
           },
           {
+            "name": "mintPrice",
+            "type": "u64"
+          },
+          {
             "name": "standardDuration",
             "type": "u32"
           },
@@ -1067,6 +1363,10 @@ export const IDL: Ephemerality = {
           },
           {
             "name": "collectionName",
+            "type": "string"
+          },
+          {
+            "name": "collectionSymbol",
             "type": "string"
           }
         ]
@@ -1309,6 +1609,20 @@ export const IDL: Ephemerality = {
           {
             "name": "destroyTimestampValue",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "UnauthorizedMintAuthority"
+          },
+          {
+            "name": "InvalidTreasuryAccount"
           }
         ]
       }

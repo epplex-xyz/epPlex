@@ -42,7 +42,7 @@ export class Program2 {
         const tm = this.getTokenMetadata(mint.publicKey);
 
         const tokenCreateTx = await this.program.methods
-            .tokenCreate({
+            .tokenMint({
                 destroyTimestampOffset: new BN(destroyTimestampOffset),
                 name: name,
                 symbol: symbol,
@@ -50,7 +50,7 @@ export class Program2 {
             })
             .accounts({
                 mint: mint.publicKey,
-                ata,
+                ata: ata,
                 tokenMetadata: tm,
                 programDelegate: programDelegate,
                 payer: payer,

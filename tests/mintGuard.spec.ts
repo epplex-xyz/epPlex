@@ -1,37 +1,36 @@
 import * as anchor from "@coral-xyz/anchor";
 import * as pda from "./pda";
 import { Program, BN } from "@coral-xyz/anchor";
-import { EpMint } from "../target/types/ep_mint";
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
-import { Ephemerality } from "../app/client/idl/ephemeralityTypes";
-import { tokenMetadata } from "./pda";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
-import { EphemeralMetadata } from "../target/types/ephemeral_metadata";
+import { EpplexMint } from "../target/types/epplex_mint";
+import { EpplexMetadata } from "../target/types/epplex_metadata";
+import { EpplexCore } from "../target/types/epplex_core";
 
 describe("ep-mint",() => {
 
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.local()
   anchor.setProvider(provider)
-  const mint_program = anchor.workspace.EpMint as Program<EpMint>;
-  const epplex_program = anchor.workspace.Ephemerality as Program<Ephemerality>
-  const metadata_program = anchor.workspace.EphemeralMetadata as Program<EphemeralMetadata>
+  const mint_program = anchor.workspace.EpplexMint as Program<EpplexMint>;
+  const core_program = anchor.workspace.EpplexCore as Program<EpplexCore>
+  const metadata_program = anchor.workspace.EpplexMetadata as Program<EpplexMetadata>
 
   const collectionName = "Blessed Burgers"
   const collectionSymbol = "BRGR"
 
-  const programDelegate = pda.programDelegate(epplex_program.programId)
+  const programDelegate = pda.programDelegate(core_program.programId)
 
   it("shall set up a mint guard", async() => {
 
-    let gccKey = pda.globalCollectionConfig(epplex_program.programId)
-    let gcc = await epplex_program.account.globalCollectionConfig.fetch(gccKey)
-    const collectionConfig = pda.collectionConfig(gcc.collectionCounter, epplex_program.programId)
+    let gccKey = pda.globalCollectionConfig(core_program.programId)
+    let gcc = await core_program.account.globalCollectionConfig.fetch(gccKey)
+    const collectionConfig = pda.collectionConfig(gcc.collectionCounter, core_program.programId)
     const mintGuard = pda.mintGuard(collectionConfig, mint_program.programId)
 
 
-    console.log(pda.globalCollectionConfig(epplex_program.programId))
+    console.log(pda.globalCollectionConfig(core_program.programId))
     console.log(gcc)
 
     const collectionMint = Keypair.generate().publicKey
@@ -49,7 +48,7 @@ describe("ep-mint",() => {
       .accounts({
         creator: provider.wallet.publicKey,
         mintGuard: mintGuard,
-        epplexProgram: epplex_program.programId,
+        epplexProgram: core_program.programId,
         collectionMint: collectionMint,
         collectionConfig: collectionConfig,
         globalCollectionConfig: gccKey,
@@ -58,7 +57,7 @@ describe("ep-mint",() => {
       })
       .rpc({skipPreflight: true});
       console.log("MINT POOL CREATED:", tx)
-      const acc = await epplex_program.account.collectionConfig.fetch(collectionConfig)
+      const acc = await core_program.account.collectionConfig.fetch(collectionConfig)
       console.log("COLLECTION CONFIG: ", acc)
 
     } catch(e) {
@@ -70,7 +69,7 @@ describe("ep-mint",() => {
   it("shall mint from a collection", async() => {
     
     const collectionCounter = new BN(0);
-    const collectionConfig = pda.collectionConfig(collectionCounter, epplex_program.programId)
+    const collectionConfig = pda.collectionConfig(collectionCounter, core_program.programId)
     const mintGuard = pda.mintGuard(collectionConfig, mint_program.programId)
 
     const tokenMint = Keypair.generate()
@@ -88,7 +87,7 @@ describe("ep-mint",() => {
           .accounts({
             minter: provider.wallet.publicKey,
             mintGuard: mintGuard,
-            epplexProgram: epplex_program.programId,
+            epplexProgram: core_program.programId,
             collectionConfig: collectionConfig,
             tokenMint: tokenMint.publicKey,
             ata: ata,
@@ -117,7 +116,7 @@ describe("ep-mint",() => {
 
   it("shall withdraw mint funds from the guard", async() => {
     const collectionCounter = new BN(0);
-    const collectionConfig = pda.collectionConfig(collectionCounter, epplex_program.programId)
+    const collectionConfig = pda.collectionConfig(collectionCounter, core_program.programId)
     const mintGuard = pda.mintGuard(collectionConfig, mint_program.programId)
 
     try {

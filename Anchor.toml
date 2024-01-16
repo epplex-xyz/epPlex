@@ -1,25 +1,29 @@
+[toolchain]
+
 [features]
 seeds = false
 skip-lint = false
 
 [programs.devnet]
-ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+epplex_core = "3mYw5ZvWhmYRgB3pPqj6mcsRndUJWiAFwkHzfNj1m1Ct"
 
 [programs.localnet]
-ep_mint = "DWQ12BSvpNq6AxX18Xgm72avoCT8nL8G7R886NeiLFeN"
-ephemerality = "7N839QzgShmkazepHcHx87u4gg29jTsYYeY8rNV7XffR"
-ephermal-metadata = "4SoP3wSVEaAGjpqNuNQTeRHRXRp8cyEvHdABWtXDULLY"
+epplex_core = "2qie61sigqbg3xkh3UkpLPJppjbjKQa8FStcB5k5XYff"
+epplex_metadata = "37ZXXzuuiTPsH7upkRMq897M1nhXq1HP3fBSGB1hpbQ1"
+epplex_mint = "9y9Y8sGsuv7k3WGyrrGiTjpT1ugzf9hBaAvkWemtwqkL"
 
 [programs.mainnet]
-ephemerality = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+epplex_core = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+
+[registry]
+url = "https://api.apr.dev"
 
 [provider]
-#cluster = "https://api.devnet.solana.com"
-cluster = "localnet"
+cluster = "Localnet"
 wallet = "/home/sleyn/.config/solana/id.json"
 
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*spec.ts"
-copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json app/client/idl/ephemerality.json && cp target/types/ephemerality.ts app/client/idl/ephemeralityTypes.ts"
 bd = "anchor build && anchor deploy && anchor run copy-to-app"
+copy-to-app = "mkdir -p client/idl && cp target/idl/epplex_core.json app/client/idl/ephemerality.json && cp target/types/epplex_core.ts app/client/idl/ephemeralityTypes.ts"
 depl = "anchor deploy && anchor run copy-to-app"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*spec.ts"

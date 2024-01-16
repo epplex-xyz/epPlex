@@ -34,7 +34,7 @@ describe('epplex Basic API', () => {
     })
 
     it("Create Global Collection Config", async() => {
-        await program.methods.createGlobalCollectionConfig()
+        await program.methods.globalCollectionConfigCreate()
         .accounts({
             globalCollectionConfig: p.globalCollectionConfig(),
             payer: payer
@@ -44,7 +44,7 @@ describe('epplex Basic API', () => {
 
     it('Mint epNFT', async () => {
         const tokenCreateTx = await program.methods
-            .mintToken({
+            .tokenMint({
                 destroyTimestampOffset: new BN(1000),
                 name: "hello",
                 symbol: "sm",
