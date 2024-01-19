@@ -42,7 +42,7 @@ export class Program2 {
         const tm = this.getTokenMetadata(mint.publicKey);
 
         const tokenCreateTx = await this.program.methods
-            .tokenCreate({
+            .tokenMint({
                 destroyTimestampOffset: new BN(destroyTimestampOffset),
                 name: name,
                 symbol: symbol,
@@ -167,6 +167,14 @@ export class Program2 {
             this.program.programId
         );
         return programDelegate;
+    }
+
+    globalCollectionConfig(): PublicKey {
+        const [globalCollectionConfig] = PublicKey.findProgramAddressSync(
+            [Buffer.from("GLOBAL_COLLECTION")],
+            this.program.programId
+        );
+        return globalCollectionConfig;
     }
 
     getTokenMetadata(mint: PublicKey): PublicKey {

@@ -903,6 +903,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ep-mint"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "ephemerality",
+ "spl-token-2022 1.0.0",
+]
+
+[[package]]
 name = "ephemerality"
 version = "0.0.1"
 dependencies = [
