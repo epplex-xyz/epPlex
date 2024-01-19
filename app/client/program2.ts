@@ -50,7 +50,7 @@ export class Program2 {
             })
             .accounts({
                 mint: mint.publicKey,
-                ata: ata,
+                ata,
                 tokenMetadata: tm,
                 programDelegate: programDelegate,
                 payer: payer,

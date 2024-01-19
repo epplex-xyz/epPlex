@@ -490,6 +490,67 @@ export type EpplexCore = {
       }
     },
     {
+      "name": "ephemeralMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "updateAuthority",
+            "docs": [
+              "The authority that can sign to update the metadata"
+            ],
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "mint",
+            "docs": [
+              "The associated mint, used to counter spoofing to be sure that metadata",
+              "belongs to a particular mint"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "The longer name of the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "docs": [
+              "The shortened symbol for the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "docs": [
+              "The URI pointing to richer metadata"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "docs": [
+              "Any additional metadata about the token as key-value pairs. The program",
+              "must avoid storing the same key twice."
+            ],
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -1307,6 +1368,67 @@ export const IDL: EpplexCore = {
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ephemeralMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "updateAuthority",
+            "docs": [
+              "The authority that can sign to update the metadata"
+            ],
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "mint",
+            "docs": [
+              "The associated mint, used to counter spoofing to be sure that metadata",
+              "belongs to a particular mint"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "The longer name of the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "docs": [
+              "The shortened symbol for the token"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "docs": [
+              "The URI pointing to richer metadata"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "docs": [
+              "Any additional metadata about the token as key-value pairs. The program",
+              "must avoid storing the same key twice."
+            ],
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
           }
         ]
       }
