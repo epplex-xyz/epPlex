@@ -61,17 +61,16 @@ impl InitMintGuard<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: InitMintGuardParams) -> Result<()> {
-
-        //init mint guard
+        // Init mint guard
+        // TODO put into state account
         let mint_guard = &mut ctx.accounts.mint_guard;
         mint_guard.authority = ctx.accounts.creator.key();
         mint_guard.items_minted = 0;
         mint_guard.collection_counter = ctx.accounts.global_collection_config.collection_counter;
         mint_guard.bump = ctx.bumps.mint_guard;
 
-        //create cpi
+        // Create cpi
         let cpi_program = ctx.accounts.epplex_program.to_account_info();
-
         let cpi_accounts = CollectionCreate {
             mint: ctx.accounts.collection_mint.to_account_info(),
             program_delegate: ctx.accounts.program_delegate.to_account_info(),
@@ -81,10 +80,9 @@ impl InitMintGuard<'_> {
             system_program: ctx.accounts.system_program.to_account_info(),
             payer: ctx.accounts.creator.to_account_info()
         };
-
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
-        //create params
+        // Create params
         let collection_create_params = CollectionCreateParams {
             authority: mint_guard.key(),
             renewal_price: params.collection_renewal_price,
@@ -98,7 +96,7 @@ impl InitMintGuard<'_> {
         };
 
         epplex_core::cpi::collection_create(cpi_ctx, collection_create_params)?;
+
         Ok(())
     }
-
 }

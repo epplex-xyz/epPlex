@@ -59,7 +59,6 @@ pub struct MintFromCollection<'info> {
 impl MintFromCollection<'_> {
     
     pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
-
         let mint_guard = &ctx.accounts.mint_guard;
         let collection_config = &ctx.accounts.collection_config;
 
@@ -74,8 +73,7 @@ impl MintFromCollection<'_> {
         let collection_config = &mut ctx.accounts.collection_config;
         let mint_guard = &mut ctx.accounts.mint_guard;
 
-        //create cpi
-
+        // Create cpi
         let cpi_accounts = epplex_core::cpi::accounts::CollectionMint {
             mint: ctx.accounts.token_mint.to_account_info().clone(),
             ata: ctx.accounts.ata.to_account_info().clone(),
@@ -92,15 +90,15 @@ impl MintFromCollection<'_> {
             metadata_program: ctx.accounts.metadata_program.to_account_info().clone()
         };
 
-        //create token creation params
-        let mut token_name = collection_config.collection_name.to_owned();
-        token_name.push_str(&mint_guard.items_minted.to_string());
+        // Create token creation params
+        let mut token_name = collection_config.collection_name.clone();
+        token_name.push_str(&mint_guard.items_minted.to_string()); // TODO does this add a space?
+        let collection_symbol = collection_config.collection_symbol.clone();
 
         let params = TokenCreateParams {
             destroy_timestamp_offset: ONE_WEEK,
             name: token_name,
-            //TODO add collection symbol to collection config
-            symbol: collection_config.collection_symbol.to_owned(),
+            symbol: collection_symbol,
             uri: "".to_string()
         };
 
