@@ -55,7 +55,7 @@ impl TokenBuy<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>) -> Result<()> {
+    pub fn actuate(_ctx: Context<Self>, _params: TokenBuyParams) -> Result<()> {
         //Transfer price
         // let ix = solana_program::system_instruction::transfer(
         //     &ctx.accounts.buyer.key(),
