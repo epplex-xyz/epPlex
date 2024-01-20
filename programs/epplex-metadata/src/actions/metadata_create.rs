@@ -1,6 +1,7 @@
 use crate::*;
 
 #[derive(Accounts)]
+#[instruction(params: MetadataCreateParams)]
 pub struct MetadataCreate<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
