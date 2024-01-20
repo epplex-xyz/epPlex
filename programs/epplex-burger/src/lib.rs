@@ -34,4 +34,13 @@ pub mod epplex_burger {
         TokenBuy::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_renew(ctx: Context<TokenRenew>, params: &TokenRenewParams) -> Result<()> {
+        TokenRenew::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
+        VoteCast::actuate(ctx, params)
+    }
 }

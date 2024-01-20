@@ -29,6 +29,9 @@ pub mod epplex_core {
         TokenCreate::actuate(ctx, params)
     }
 
+    /*
+     * Does the mint account creation and mints it
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_mint(ctx: Context<TokenMint>, params: TokenCreateParams) -> Result<()> {
         TokenMint::actuate(ctx, params)
