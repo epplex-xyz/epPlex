@@ -1,6 +1,6 @@
 [package]
 name = "epplex-core"
-version = "0.0.1"
+version = "0.1.0"
 description = "Ephemeral NFT creation"
 authors = ["Burger Bob twitter.com/burger606"]
 license = "Apache-2.0"
