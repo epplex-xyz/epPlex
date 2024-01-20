@@ -68,6 +68,8 @@ impl CollectionMint<'_> {
             ctx.accounts.collection_config.mint_price
         )?;
 
+        // TODO This one is probably missing the permanent delegate extension
+        // TODO Probably need to clearly define what this does
         // Create the ephemeral token
         token_create_basic(
             ctx.accounts.mint.to_account_info().clone(),

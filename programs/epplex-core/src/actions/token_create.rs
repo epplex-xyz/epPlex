@@ -1,4 +1,3 @@
-use epplex_metadata::TokenMetadata;
 use epplex_shared::Token2022;
 use crate::*;
 
@@ -18,7 +17,7 @@ pub struct TokenCreate<'info> {
     //     seeds::program = epplex_metadata::ID.key(),
     //     bump
     // )]
-    #[account]
+    #[account()]
     /// CHECK inside CPI
     pub token_metadata: UncheckedAccount<'info, >,
 

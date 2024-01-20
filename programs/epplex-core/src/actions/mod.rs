@@ -7,12 +7,6 @@ pub use token_mint::*;
 pub mod collection_mint;
 pub use collection_mint::*;
 
-pub mod token_burn;
-pub use token_burn::*;
-
-pub mod token_renew;
-pub use token_renew::*;
-
 pub mod collection_create;
 pub use collection_create::*;
 

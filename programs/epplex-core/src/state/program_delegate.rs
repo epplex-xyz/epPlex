@@ -17,5 +17,4 @@ impl ProgramDelegate {
     pub fn new(bump: u8) -> Self {
         Self {bump}
     }
-
 }

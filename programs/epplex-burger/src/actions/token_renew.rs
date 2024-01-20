@@ -1,8 +1,7 @@
 use std::ops::Add;
-use anchor_lang::prelude::borsh::BorshDeserialize;
+use crate::*;
 use epplex_shared::Token2022;
 use spl_token_2022::extension::BaseStateWithExtensions;
-use crate::*;
 
 #[derive(Accounts)]
 #[instruction(params: TokenRenewParams)]
@@ -23,12 +22,15 @@ pub struct TokenRenew<'info> {
     )]
     pub token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    #[account(
-        mut,
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // #[account(
+    //     mut,
+    //     seeds = [SEED_PROGRAM_DELEGATE],
+    //     bump = program_delegate.bump,
+    // )]
+    // pub program_delegate: Account<'info, ProgramDelegate>,
+    #[account()]
+    /// CHECK
+    pub program_delegate: AccountInfo<'info>,
 
     // TODO: test not authority
     #[account(mut)]

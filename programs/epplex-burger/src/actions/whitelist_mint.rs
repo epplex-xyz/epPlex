@@ -1,7 +1,3 @@
-use epplex_core::GlobalCollectionConfig;
-use epplex_core::cpi::accounts::CollectionCreate;
-use epplex_shared::Token2022;
-
 use crate::*;
 
 #[derive(Accounts)]
@@ -23,6 +19,7 @@ impl WhitelistMint<'_> {
     }
 
     pub fn actuate(_ctx: Context<Self>, _params: WhitelistMintParams) -> Result<()> {
+        // simply need to call launchpad with its own permanent delegate
         Ok(())
     }
 
