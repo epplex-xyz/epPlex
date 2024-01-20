@@ -13,13 +13,7 @@ pub struct WhitelistMint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WhitelistMintParams {
-    collection_renewal_price: u64,
-    collection_mint_price: u64,
-    collection_standard_duration: u32,
-    collection_grace_period: i64,
-    collection_size: u32,
-    collection_name: String,
-    collection_symbol: String
+
 }
 
 impl WhitelistMint<'_> {
