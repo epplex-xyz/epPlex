@@ -19,6 +19,24 @@ export type EpplexBurger = {
           }
         }
       ]
+    },
+    {
+      "name": "tokenBuy",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBuyParams"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -49,39 +67,36 @@ export type EpplexBurger = {
   ],
   "types": [
     {
-      "name": "WhitelistMintParams",
+      "name": "TokenBurnParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenBuyParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "collectionRenewalPrice",
-            "type": "u64"
-          },
-          {
-            "name": "collectionMintPrice",
-            "type": "u64"
-          },
-          {
-            "name": "collectionStandardDuration",
-            "type": "u32"
-          },
-          {
-            "name": "collectionGracePeriod",
-            "type": "i64"
-          },
-          {
-            "name": "collectionSize",
-            "type": "u32"
-          },
-          {
-            "name": "collectionName",
-            "type": "string"
-          },
-          {
-            "name": "collectionSymbol",
-            "type": "string"
+            "name": "renewTerms",
+            "type": "u16"
           }
         ]
+      }
+    },
+    {
+      "name": "WhitelistMintParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
       }
     },
     {
@@ -126,6 +141,24 @@ export const IDL: EpplexBurger = {
           }
         }
       ]
+    },
+    {
+      "name": "tokenBuy",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBuyParams"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -156,39 +189,36 @@ export const IDL: EpplexBurger = {
   ],
   "types": [
     {
-      "name": "WhitelistMintParams",
+      "name": "TokenBurnParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenBuyParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "collectionRenewalPrice",
-            "type": "u64"
-          },
-          {
-            "name": "collectionMintPrice",
-            "type": "u64"
-          },
-          {
-            "name": "collectionStandardDuration",
-            "type": "u32"
-          },
-          {
-            "name": "collectionGracePeriod",
-            "type": "i64"
-          },
-          {
-            "name": "collectionSize",
-            "type": "u32"
-          },
-          {
-            "name": "collectionName",
-            "type": "string"
-          },
-          {
-            "name": "collectionSymbol",
-            "type": "string"
+            "name": "renewTerms",
+            "type": "u16"
           }
         ]
+      }
+    },
+    {
+      "name": "WhitelistMintParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
       }
     },
     {

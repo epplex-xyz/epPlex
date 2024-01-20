@@ -3,7 +3,7 @@ export type EpplexMetadata = {
   "name": "epplex_metadata",
   "instructions": [
     {
-      "name": "createMetadata",
+      "name": "metadataCreate",
       "accounts": [
         {
           "name": "payer",
@@ -33,7 +33,7 @@ export type EpplexMetadata = {
         {
           "name": "params",
           "type": {
-            "defined": "CreateMetadataParams"
+            "defined": "MetadataCreateParams"
           }
         }
       ]
@@ -102,7 +102,7 @@ export type EpplexMetadata = {
   ],
   "types": [
     {
-      "name": "CreateMetadataParams",
+      "name": "MetadataCreateParams",
       "type": {
         "kind": "struct",
         "fields": [
@@ -133,7 +133,7 @@ export const IDL: EpplexMetadata = {
   "name": "epplex_metadata",
   "instructions": [
     {
-      "name": "createMetadata",
+      "name": "metadataCreate",
       "accounts": [
         {
           "name": "payer",
@@ -163,7 +163,7 @@ export const IDL: EpplexMetadata = {
         {
           "name": "params",
           "type": {
-            "defined": "CreateMetadataParams"
+            "defined": "MetadataCreateParams"
           }
         }
       ]
@@ -232,7 +232,7 @@ export const IDL: EpplexMetadata = {
   ],
   "types": [
     {
-      "name": "CreateMetadataParams",
+      "name": "MetadataCreateParams",
       "type": {
         "kind": "struct",
         "fields": [

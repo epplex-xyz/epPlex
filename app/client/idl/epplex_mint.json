@@ -3,7 +3,7 @@
   "name": "epplex_mint",
   "instructions": [
     {
-      "name": "initMintGuard",
+      "name": "mintGuardInit",
       "accounts": [
         {
           "name": "creator",
@@ -67,13 +67,13 @@
         {
           "name": "params",
           "type": {
-            "defined": "InitMintGuardParams"
+            "defined": "MintGuardInitParams"
           }
         }
       ]
     },
     {
-      "name": "mintFromCollection",
+      "name": "collectionMintFrom",
       "accounts": [
         {
           "name": "minter",
@@ -153,10 +153,17 @@
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionMintFromParams"
+          }
+        }
+      ]
     },
     {
-      "name": "withdrawFunds",
+      "name": "fundsWithdraw",
       "accounts": [
         {
           "name": "authority",
@@ -183,7 +190,7 @@
         {
           "name": "params",
           "type": {
-            "defined": "WithdrawFundsParams"
+            "defined": "FundsWithdrawParams"
           }
         }
       ]
@@ -217,7 +224,26 @@
   ],
   "types": [
     {
-      "name": "InitMintGuardParams",
+      "name": "CollectionMintFromParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "FundsWithdrawParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintGuardInitParams",
       "type": {
         "kind": "struct",
         "fields": [
@@ -248,18 +274,6 @@
           {
             "name": "collectionSymbol",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WithdrawFundsParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "amount",
-            "type": "u64"
           }
         ]
       }

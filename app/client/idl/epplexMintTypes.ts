@@ -3,7 +3,7 @@ export type EpplexMint = {
   "name": "epplex_mint",
   "instructions": [
     {
-      "name": "initMintGuard",
+      "name": "mintGuardInit",
       "accounts": [
         {
           "name": "creator",
@@ -67,13 +67,13 @@ export type EpplexMint = {
         {
           "name": "params",
           "type": {
-            "defined": "InitMintGuardParams"
+            "defined": "MintGuardInitParams"
           }
         }
       ]
     },
     {
-      "name": "mintFromCollection",
+      "name": "collectionMintFrom",
       "accounts": [
         {
           "name": "minter",
@@ -153,10 +153,17 @@ export type EpplexMint = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionMintFromParams"
+          }
+        }
+      ]
     },
     {
-      "name": "withdrawFunds",
+      "name": "fundsWithdraw",
       "accounts": [
         {
           "name": "authority",
@@ -183,7 +190,7 @@ export type EpplexMint = {
         {
           "name": "params",
           "type": {
-            "defined": "WithdrawFundsParams"
+            "defined": "FundsWithdrawParams"
           }
         }
       ]
@@ -217,7 +224,26 @@ export type EpplexMint = {
   ],
   "types": [
     {
-      "name": "InitMintGuardParams",
+      "name": "CollectionMintFromParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "FundsWithdrawParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintGuardInitParams",
       "type": {
         "kind": "struct",
         "fields": [
@@ -248,18 +274,6 @@ export type EpplexMint = {
           {
             "name": "collectionSymbol",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WithdrawFundsParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "amount",
-            "type": "u64"
           }
         ]
       }
@@ -290,7 +304,7 @@ export const IDL: EpplexMint = {
   "name": "epplex_mint",
   "instructions": [
     {
-      "name": "initMintGuard",
+      "name": "mintGuardInit",
       "accounts": [
         {
           "name": "creator",
@@ -354,13 +368,13 @@ export const IDL: EpplexMint = {
         {
           "name": "params",
           "type": {
-            "defined": "InitMintGuardParams"
+            "defined": "MintGuardInitParams"
           }
         }
       ]
     },
     {
-      "name": "mintFromCollection",
+      "name": "collectionMintFrom",
       "accounts": [
         {
           "name": "minter",
@@ -440,10 +454,17 @@ export const IDL: EpplexMint = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionMintFromParams"
+          }
+        }
+      ]
     },
     {
-      "name": "withdrawFunds",
+      "name": "fundsWithdraw",
       "accounts": [
         {
           "name": "authority",
@@ -470,7 +491,7 @@ export const IDL: EpplexMint = {
         {
           "name": "params",
           "type": {
-            "defined": "WithdrawFundsParams"
+            "defined": "FundsWithdrawParams"
           }
         }
       ]
@@ -504,7 +525,26 @@ export const IDL: EpplexMint = {
   ],
   "types": [
     {
-      "name": "InitMintGuardParams",
+      "name": "CollectionMintFromParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "FundsWithdrawParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintGuardInitParams",
       "type": {
         "kind": "struct",
         "fields": [
@@ -535,18 +575,6 @@ export const IDL: EpplexMint = {
           {
             "name": "collectionSymbol",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WithdrawFundsParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "amount",
-            "type": "u64"
           }
         ]
       }

@@ -16,7 +16,10 @@
         {
           "name": "tokenMetadata",
           "isMut": false,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK inside CPI"
+          ]
         },
         {
           "name": "programDelegate",
@@ -121,88 +124,6 @@
           "name": "params",
           "type": {
             "defined": "TokenCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenBurn",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenBurnParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenRenew",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenRenewParams"
           }
         }
       ]
@@ -565,13 +486,6 @@
       }
     },
     {
-      "name": "TokenBurnParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
@@ -591,18 +505,6 @@
           {
             "name": "uri",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "TokenRenewParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "renewTerms",
-            "type": "u16"
           }
         ]
       }

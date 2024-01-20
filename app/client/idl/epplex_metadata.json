@@ -3,7 +3,7 @@
   "name": "epplex_metadata",
   "instructions": [
     {
-      "name": "createMetadata",
+      "name": "metadataCreate",
       "accounts": [
         {
           "name": "payer",
@@ -33,7 +33,7 @@
         {
           "name": "params",
           "type": {
-            "defined": "CreateMetadataParams"
+            "defined": "MetadataCreateParams"
           }
         }
       ]
@@ -102,7 +102,7 @@
   ],
   "types": [
     {
-      "name": "CreateMetadataParams",
+      "name": "MetadataCreateParams",
       "type": {
         "kind": "struct",
         "fields": [

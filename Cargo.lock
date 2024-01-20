@@ -911,7 +911,9 @@ dependencies = [
  "epplex-core",
  "epplex-metadata",
  "epplex-shared",
+ "solana-program",
  "spl-token-2022 1.0.0",
+ "spl-token-metadata-interface",
 ]
 
 [[package]]
