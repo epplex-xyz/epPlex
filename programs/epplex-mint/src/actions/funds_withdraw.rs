@@ -1,7 +1,8 @@
 use crate::*;
 
 #[derive(Accounts)]
-pub struct WithdrawFunds<'info> {
+#[instruction(params: FundsWithdrawParams)]
+pub struct FundsWithdraw<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -28,14 +29,12 @@ pub struct WithdrawFunds<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct WithdrawFundsParams {
+pub struct FundsWithdrawParams {
     amount: u64
 }
 
-impl WithdrawFunds<'_> {
-
-    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
-
+impl FundsWithdraw<'_> {
+    pub fn validate(&self, ctx: &Context<Self>, _params: &FundsWithdrawParams) -> Result<()> {
         if ctx.accounts.mint_guard.authority != ctx.accounts.authority.key() {
             return err!(WithdrawError::InvalidAuthority);
         }
@@ -43,8 +42,7 @@ impl WithdrawFunds<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: WithdrawFundsParams) -> Result<()> {
-
+    pub fn actuate(ctx: Context<Self>, params: FundsWithdrawParams) -> Result<()> {
         let mint_guard = ctx.accounts.mint_guard.to_account_info();
         let authority = ctx.accounts.authority.to_account_info();
 

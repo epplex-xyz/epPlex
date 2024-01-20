@@ -5,8 +5,8 @@ use epplex_shared::Token2022;
 use crate::*;
 
 #[derive(Accounts)]
-#[instruction(params: InitMintGuardParams)]
-pub struct InitMintGuard<'info> {
+#[instruction(params: MintGuardInitParams)]
+pub struct MintGuardInit<'info> {
     #[account(mut)]
     pub creator: Signer<'info>,
 
@@ -44,7 +44,7 @@ pub struct InitMintGuard<'info> {
 
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct InitMintGuardParams {
+pub struct MintGuardInitParams {
     collection_renewal_price: u64,
     collection_mint_price: u64,
     collection_standard_duration: u32,
@@ -54,13 +54,13 @@ pub struct InitMintGuardParams {
     collection_symbol: String
 }
 
-impl InitMintGuard<'_> {
 
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &InitMintGuardParams) -> Result<()> {
+impl MintGuardInit<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &MintGuardInitParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: InitMintGuardParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: MintGuardInitParams) -> Result<()> {
         // Init mint guard
         // TODO put into state account
         let mint_guard = &mut ctx.accounts.mint_guard;

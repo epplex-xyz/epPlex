@@ -15,21 +15,20 @@ use anchor_spl::associated_token::AssociatedToken;
 
 #[program]
 pub mod epplex_mint {
-
     use super::*;
     
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn init_mint_guard(ctx: Context<InitMintGuard>, params: InitMintGuardParams) -> Result<()> {
-        InitMintGuard::actuate(ctx, params)
+    pub fn mint_guard_init(ctx: Context<MintGuardInit>, params: MintGuardInitParams) -> Result<()> {
+        MintGuardInit::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn mint_from_collection(ctx: Context<MintFromCollection>) -> Result<()> {
-        MintFromCollection::actuate(ctx)
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_mint_from(ctx: Context<CollectionMintFrom>, params: CollectionMintFromParams) -> Result<()> {
+        CollectionMintFrom::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn withdraw_funds(ctx: Context<WithdrawFunds>, params: WithdrawFundsParams) -> Result<()> {
-        WithdrawFunds::actuate(ctx, params)
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn funds_withdraw(ctx: Context<FundsWithdraw>, params: FundsWithdrawParams) -> Result<()> {
+        FundsWithdraw::actuate(ctx, params)
     }
 }

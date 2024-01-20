@@ -4,9 +4,9 @@ use epplex_core::{ONE_WEEK, TokenCreateParams};
 use epplex_metadata::program::EpplexMetadata;
 use epplex_shared::Token2022;
 
-
 #[derive(Accounts)]
-pub struct MintFromCollection<'info> {
+#[instruction(params: CollectionMintFromParams)]
+pub struct CollectionMintFrom<'info> {
     #[account(mut)]
     pub minter: Signer<'info>,
 
@@ -56,9 +56,13 @@ pub struct MintFromCollection<'info> {
     pub metadata_program: Program<'info, EpplexMetadata>
 }
 
-impl MintFromCollection<'_> {
-    
-    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct CollectionMintFromParams {
+
+}
+
+impl CollectionMintFrom<'_> {
+    pub fn validate(&self, ctx: &Context<Self>, _params: &CollectionMintFromParams) -> Result<()> {
         let mint_guard = &ctx.accounts.mint_guard;
         let collection_config = &ctx.accounts.collection_config;
 
@@ -69,7 +73,7 @@ impl MintFromCollection<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, _params: CollectionMintFromParams) -> Result<()> {
         let collection_config = &mut ctx.accounts.collection_config;
         let mint_guard = &mut ctx.accounts.mint_guard;
 

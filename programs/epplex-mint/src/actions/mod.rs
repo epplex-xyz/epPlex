@@ -1,8 +1,8 @@
-pub mod init_mint_guard;
-pub use init_mint_guard::*;
+pub mod mint_guard_init;
+pub use mint_guard_init::*;
 
-pub mod mint_from_collection;
-pub use mint_from_collection::*;
+pub mod collection_mint_from;
+pub use collection_mint_from::*;
 
-pub mod withdraw_funds;
-pub use withdraw_funds::*;
+pub mod funds_withdraw;
+pub use funds_withdraw::*;
