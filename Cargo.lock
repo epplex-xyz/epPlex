@@ -939,6 +939,10 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "epplex-shared",
+ "solana-program",
+ "spl-pod",
+ "spl-token-metadata-interface",
+ "spl-type-length-value",
 ]
 
 [[package]]
