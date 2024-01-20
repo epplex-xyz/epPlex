@@ -4,30 +4,42 @@
 seeds = false
 skip-lint = false
 
+#[programs.mainnet]
+#epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
+#epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
+#epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
+#epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+
 [programs.devnet]
-epplex_core = "3mYw5ZvWhmYRgB3pPqj6mcsRndUJWiAFwkHzfNj1m1Ct"
+epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
+epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
+epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
+epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.localnet]
-epplex_core = "2qie61sigqbg3xkh3UkpLPJppjbjKQa8FStcB5k5XYff"
-epplex_metadata = "37ZXXzuuiTPsH7upkRMq897M1nhXq1HP3fBSGB1hpbQ1"
-epplex_mint = "9y9Y8sGsuv7k3WGyrrGiTjpT1ugzf9hBaAvkWemtwqkL"
-
-[programs.mainnet]
-epplex_core = "epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex"
+epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
+epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
+epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
+epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-
-#cluster = "https://api.devnet.solana.com"
-cluster = "Localnet"
+cluster = "https://api.devnet.solana.com"
+#cluster = "Localnet"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.spec.ts"
-copy-to-app = "mkdir -p client/idl && cp target/idl/ephemerality.json app/client/idl/ephemerality.json && cp target/types/ephemerality.ts app/client/idl/ephemeralityTypes.ts"
+
+copy-burger = "mkdir -p client/idl && cp target/idl/epplex_burger.json app/client/idl/epplex_burger.json && cp target/types/epplex_burger.ts app/client/idl/epplexBurgerTypes.ts"
+copy-mint = "mkdir -p client/idl && cp target/idl/epplex_mint.json app/client/idl/epplex_mint.json && cp target/types/epplex_mint.ts app/client/idl/epplexMintTypes.ts"
+copy-metadata = "mkdir -p client/idl && cp target/idl/epplex_metadata.json app/client/idl/epplex_metadata.json && cp target/types/epplex_metadata.ts app/client/idl/epplexMetadataTypes.ts"
+copy-core = "mkdir -p client/idl && cp target/idl/epplex_core.json app/client/idl/epplex_core.json && cp target/types/epplex_core.ts app/client/idl/epplexCoreTypes.ts"
+copy-to-app = "anchor run copy-core && anchor run copy-metadata && anchor run copy-mint && anchor run copy-burger"
+
 bd = "anchor build && anchor deploy && anchor run copy-to-app"
-copy-to-app = "mkdir -p client/idl && cp target/idl/epplex_core.json app/client/idl/ephemerality.json && cp target/types/epplex_core.ts app/client/idl/ephemeralityTypes.ts"
 depl = "anchor deploy && anchor run copy-to-app"
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*spec.ts"
