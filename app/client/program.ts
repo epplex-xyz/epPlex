@@ -6,7 +6,7 @@ import {
     SystemProgram, SYSVAR_RENT_PUBKEY, Transaction,
     TransactionInstruction,
 } from "@solana/web3.js";
-import { createProgram, EphemeralityProgram } from "./types/programTypes";
+import { createProgram, EpplexCoreProgram } from "./types/programTypes";
 import {AnchorProvider, Wallet} from "@coral-xyz/anchor";
 import { CONFIRM_OPTIONS } from "./constants";
 import { ExtensionType, getMintLen, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
@@ -15,7 +15,7 @@ import {BN} from "@coral-xyz/anchor";
 export class Program {
     signer: Keypair;
     connection: Connection;
-    program: EphemeralityProgram;
+    program: EpplexCoreProgram;
 
     constructor(
         signer: Keypair,

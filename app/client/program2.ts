@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { createProgram, EphemeralityProgram } from "./types/programTypes";
+import { createProgram, EpplexCoreProgram } from "./types/programTypes";
 import { AnchorProvider, BN, Wallet } from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
@@ -12,7 +12,7 @@ import { AnchorWallet } from "@solana/wallet-adapter-react";
 
 export class Program2 {
     connection: Connection;
-    program: EphemeralityProgram;
+    program: EpplexCoreProgram;
     wallet: Wallet;
     constructor(
         wallet: AnchorWallet,
