@@ -1,10 +1,10 @@
 import { AnchorProvider, Program } from "@coral-xyz/anchor";
-import idl from "../idl/ephemerality.json";
-import { EpplexCore, IDL } from "../idl/ephemeralityTypes";
+import EpplexCoreIdl from "../idl/epplex_core.json";
+import { EpplexCore, IDL } from "../idl/epplexCoreTypes";
 import { PublicKey } from "@solana/web3.js";
 
 
-export type EphemeralityProgram = Program<EpplexCore>;
-export const PROGRAM_ID = new PublicKey(idl.metadata.address);
+export type EpplexCoreProgram = Program<EpplexCore>;
+export const PROGRAM_ID = new PublicKey(EpplexCoreIdl.metadata.address);
 
 export const createProgram = (provider: AnchorProvider) => new Program(IDL, PROGRAM_ID, provider);

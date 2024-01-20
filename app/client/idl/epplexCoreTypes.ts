@@ -1,5 +1,5 @@
 export type EpplexCore = {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "name": "epplex_core",
   "instructions": [
     {
@@ -16,7 +16,10 @@ export type EpplexCore = {
         {
           "name": "tokenMetadata",
           "isMut": false,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK inside CPI"
+          ]
         },
         {
           "name": "programDelegate",
@@ -121,88 +124,6 @@ export type EpplexCore = {
           "name": "params",
           "type": {
             "defined": "TokenCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenBurn",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenBurnParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenRenew",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenRenewParams"
           }
         }
       ]
@@ -490,67 +411,6 @@ export type EpplexCore = {
       }
     },
     {
-      "name": "ephemeralMetadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "updateAuthority",
-            "docs": [
-              "The authority that can sign to update the metadata"
-            ],
-            "type": {
-              "option": "publicKey"
-            }
-          },
-          {
-            "name": "mint",
-            "docs": [
-              "The associated mint, used to counter spoofing to be sure that metadata",
-              "belongs to a particular mint"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "name",
-            "docs": [
-              "The longer name of the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "docs": [
-              "The shortened symbol for the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "docs": [
-              "The URI pointing to richer metadata"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "additionalMetadata",
-            "docs": [
-              "Any additional metadata about the token as key-value pairs. The program",
-              "must avoid storing the same key twice."
-            ],
-            "type": {
-              "vec": {
-                "array": [
-                  "string",
-                  2
-                ]
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -626,13 +486,6 @@ export type EpplexCore = {
       }
     },
     {
-      "name": "TokenBurnParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
@@ -652,18 +505,6 @@ export type EpplexCore = {
           {
             "name": "uri",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "TokenRenewParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "renewTerms",
-            "type": "u16"
           }
         ]
       }
@@ -882,7 +723,7 @@ export type EpplexCore = {
 };
 
 export const IDL: EpplexCore = {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "name": "epplex_core",
   "instructions": [
     {
@@ -899,7 +740,10 @@ export const IDL: EpplexCore = {
         {
           "name": "tokenMetadata",
           "isMut": false,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "CHECK inside CPI"
+          ]
         },
         {
           "name": "programDelegate",
@@ -1004,88 +848,6 @@ export const IDL: EpplexCore = {
           "name": "params",
           "type": {
             "defined": "TokenCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenBurn",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenBurnParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "tokenRenew",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenRenewParams"
           }
         }
       ]
@@ -1373,67 +1135,6 @@ export const IDL: EpplexCore = {
       }
     },
     {
-      "name": "ephemeralMetadata",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "updateAuthority",
-            "docs": [
-              "The authority that can sign to update the metadata"
-            ],
-            "type": {
-              "option": "publicKey"
-            }
-          },
-          {
-            "name": "mint",
-            "docs": [
-              "The associated mint, used to counter spoofing to be sure that metadata",
-              "belongs to a particular mint"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "name",
-            "docs": [
-              "The longer name of the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "symbol",
-            "docs": [
-              "The shortened symbol for the token"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "uri",
-            "docs": [
-              "The URI pointing to richer metadata"
-            ],
-            "type": "string"
-          },
-          {
-            "name": "additionalMetadata",
-            "docs": [
-              "Any additional metadata about the token as key-value pairs. The program",
-              "must avoid storing the same key twice."
-            ],
-            "type": {
-              "vec": {
-                "array": [
-                  "string",
-                  2
-                ]
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -1509,13 +1210,6 @@ export const IDL: EpplexCore = {
       }
     },
     {
-      "name": "TokenBurnParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
@@ -1535,18 +1229,6 @@ export const IDL: EpplexCore = {
           {
             "name": "uri",
             "type": "string"
-          }
-        ]
-      }
-    },
-    {
-      "name": "TokenRenewParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "renewTerms",
-            "type": "u16"
           }
         ]
       }

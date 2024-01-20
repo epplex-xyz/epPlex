@@ -2,7 +2,6 @@ use crate::*;
 
 #[derive(Accounts)]
 pub struct GlobalCollectionConfigCreate<'info> {
-
     #[account(
         init,
         seeds =  [SEED_GLOBAL_COLLECTION_CONFIG],

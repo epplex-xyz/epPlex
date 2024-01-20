@@ -6,9 +6,15 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import { tokenMetadata } from './pda';
 describe('epplex Basic API', () => {
-    const { program, metadata_program, connection, wallet } = testPrelude();
-    const p = new Program2(wallet, connection);
-    const programDelegate = p.getProgramDelegate();
+    const {
+        coreProgram,
+        metadataProgram,
+        connection,
+        wallet
+    } = testPrelude();
+
+    const mainProgram = new Program2(wallet, connection);
+    const programDelegate = mainProgram.getProgramDelegate();
     const mint = Keypair.generate();
     const payer = wallet.publicKey
     const ata = getAssociatedTokenAddressSync(
@@ -19,13 +25,11 @@ describe('epplex Basic API', () => {
         ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
-    const tm = tokenMetadata(mint.publicKey, metadata_program.programId)
-
-    const options = {skipPreflight: true}
+    const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
 
     // In case the program delegate has not been created.
     it("Init delegate", async() => {
-        await program.methods.programDelegateCreate([])
+        await coreProgram.methods.programDelegateCreate([])
             .accounts({
                 programDelegate,
                 payer
@@ -34,16 +38,16 @@ describe('epplex Basic API', () => {
     })
 
     it("Create Global Collection Config", async() => {
-        await program.methods.globalCollectionConfigCreate()
-        .accounts({
-            globalCollectionConfig: p.globalCollectionConfig(),
-            payer: payer
-        })
-        .rpc()
+        await coreProgram.methods.globalCollectionConfigCreate()
+            .accounts({
+                globalCollectionConfig: mainProgram.globalCollectionConfig(),
+                payer: payer
+            })
+            .rpc()
     })
 
     it('Mint epNFT', async () => {
-        const tokenCreateTx = await program.methods
+        const tokenCreateTx = await coreProgram.methods
             .tokenMint({
                 destroyTimestampOffset: new BN(1000),
                 name: "hello",
@@ -60,7 +64,7 @@ describe('epplex Basic API', () => {
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 rent: SYSVAR_RENT_PUBKEY,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-                metadataProgram: metadata_program.programId
+                metadataProgram: metadataProgram.programId
             })
             .transaction()
 
@@ -72,8 +76,6 @@ describe('epplex Basic API', () => {
             [mint]
         );
 
-
-        console.log("tx", id)
-
+        console.log("TX Mint epNFT", id)
     });
 });

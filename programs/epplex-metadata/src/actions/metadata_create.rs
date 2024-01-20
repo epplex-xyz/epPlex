@@ -1,8 +1,7 @@
 use crate::*;
 
 #[derive(Accounts)]
-pub struct CreateMetadata<'info> {
-
+pub struct MetadataCreate<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -29,33 +28,32 @@ pub struct CreateMetadata<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct CreateMetadataParams {
+pub struct MetadataCreateParams {
     pub destroy_timestamp: i64,
     pub name: String,
     pub symbol: String,
     pub uri: String,
 }
 
-impl CreateMetadata<'_> {
-
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &CreateMetadataParams) -> Result<()> {
+impl MetadataCreate<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &MetadataCreateParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: CreateMetadataParams) -> Result<()> {
-
+    pub fn actuate(ctx: Context<Self>, params: MetadataCreateParams) -> Result<()> {
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = TokenMetadata {
+            // TODO this update auth seems incorrect
             update_authority: self::ID,
             name: params.name,
             symbol: params.symbol,
             uri: params.uri,
             mint: *ctx.accounts.mint.key,
-            additional_metadata: vec![[EXPIRY_FIELD.to_string(), params.destroy_timestamp.to_string()]]
+            additional_metadata: vec![
+                [EXPIRY_FIELD.to_string(), params.destroy_timestamp.to_string()]
+            ]
         };
 
         Ok(())
     }
-
-
 }

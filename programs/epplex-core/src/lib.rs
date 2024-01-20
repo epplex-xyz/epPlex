@@ -14,11 +14,8 @@ pub use errors::*;
 use anchor_lang::prelude::*;
 use spl_token_2022::extension::ExtensionType;
 use anchor_spl::{
-    token_interface::{Mint, TokenAccount},
     associated_token::AssociatedToken,
 };
-use spl_token_metadata_interface::state::TokenMetadata;
-
 
 #[program]
 pub mod epplex_core {
@@ -37,15 +34,15 @@ pub mod epplex_core {
         TokenMint::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
-        TokenBurn::actuate(ctx, &params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
+    //     TokenBurn::actuate(ctx, &params)
+    // }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
-        TokenRenew::actuate(ctx, &params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
+    //     TokenRenew::actuate(ctx, &params)
+    // }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn collection_create(ctx: Context<CollectionCreate>, params: CollectionCreateParams) -> Result<()> {

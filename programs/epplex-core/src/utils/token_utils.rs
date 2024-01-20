@@ -1,7 +1,8 @@
 use crate::*;
-use epplex_metadata::CreateMetadataParams;
+use epplex_metadata::MetadataCreateParams;
 
 
+// TODO additional extensions not used correctly
  pub fn token_create_basic<'info> (
     mint: AccountInfo<'info>,
     program_delegate: AccountInfo<'info>,
@@ -36,66 +37,7 @@ use epplex_metadata::CreateMetadataParams;
     Ok(())
 }
 
-pub fn burn_token<'info>(
-    mint_account: &AccountInfo<'info>,
-    token_account: &AccountInfo<'info>,
-    program: Pubkey,
-    authority: &Account<'info, ProgramDelegate>
-) -> Result<()> {
-    let ix = spl_token_2022::instruction::burn(
-        &program,
-        &token_account.key(),
-        &mint_account.key(),
-        &authority.key(),
-        &[],
-        1
-    )?;
 
-    let account_infos: Vec<AccountInfo> = vec![
-        token_account.to_account_info(),
-        mint_account.to_account_info(),
-        authority.to_account_info(),
-    ];
-
-    let seeds = &[SEED_PROGRAM_DELEGATE, &[authority.bump]];
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[&seeds[..]]
-    )?;
-
-    Ok(())
-}
-
-pub fn close_mint<'info>(
-    program: Pubkey,
-    token_account: &AccountInfo<'info>,
-    destination_account: &AccountInfo<'info>,
-    owner: &Account<'info, ProgramDelegate>
-) -> Result<()> {
-    let ix = spl_token_2022::instruction::close_account(
-        &program,
-        &token_account.key(),
-        &destination_account.key(),
-        &owner.key(),
-        &[]
-    )?;
-
-    let account_infos: Vec<AccountInfo> = vec![
-        token_account.to_account_info(),
-        destination_account.to_account_info(),
-        owner.to_account_info(),
-    ];
-
-    let seeds = &[SEED_PROGRAM_DELEGATE, &[owner.bump]];
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[&seeds[..]]
-    )?;
-
-    Ok(())
-}
 
 pub fn initialize_mint<'info>(
     mint_account: &AccountInfo<'info>,
@@ -162,34 +104,34 @@ pub fn create_metadata_account<'info>(
     system_program: AccountInfo<'info>,
     params: TokenCreateParams
 ) -> Result<()> {
-        //calculate destroy timestamp
-        let now = Clock::get().unwrap().unix_timestamp;
-        let destroy_timestamp = now
-            .checked_add(params.destroy_timestamp_offset)
-            .ok_or(EphemeralityError::InvalidCalculation)
-            .unwrap();
+    //calculate destroy timestamp
+    let now = Clock::get().unwrap().unix_timestamp;
+    let destroy_timestamp = now
+        .checked_add(params.destroy_timestamp_offset)
+        .ok_or(EphemeralityError::InvalidCalculation)
+        .unwrap();
 
-        //create metadata account
-        let cpi_ctx = CpiContext::new(
-            metadata_program,
-            epplex_metadata::cpi::accounts::CreateMetadata {
-                payer: payer,
-                mint: mint,
-                token_metadata: token_metadata,
-                system_program: system_program
-            }
-        );
+    //create metadata account
+    let cpi_ctx = CpiContext::new(
+        metadata_program,
+        epplex_metadata::cpi::accounts::MetadataCreate {
+            payer: payer,
+            mint: mint,
+            token_metadata: token_metadata,
+            system_program: system_program
+        }
+    );
 
-        let cpi_params = CreateMetadataParams {
-            destroy_timestamp: destroy_timestamp,
-            name: params.name,
-            symbol: params.symbol,
-            uri: params.uri
-        };
+    let cpi_params = MetadataCreateParams {
+        destroy_timestamp: destroy_timestamp,
+        name: params.name,
+        symbol: params.symbol,
+        uri: params.uri
+    };
 
-        epplex_metadata::cpi::create_metadata(cpi_ctx, cpi_params)?;
+    epplex_metadata::cpi::metadata_create(cpi_ctx, cpi_params)?;
 
-        Ok(())
+    Ok(())
 }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?

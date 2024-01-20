@@ -18,7 +18,7 @@ pub struct CollectionMint<'info> {
     #[account(mut)]
     /// CHECK
     pub token_metadata: UncheckedAccount<'info>,
-    
+
     #[account()]
     pub collection_config: Account<'info, CollectionConfig>,
 
@@ -47,7 +47,7 @@ pub struct CollectionMint<'info> {
 
 impl CollectionMint<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {
-
+        // TODO use as constraints
         if ctx.accounts.mint_authority.key() != ctx.accounts.collection_config.authority {
             return err!(MintError::UnauthorizedMintAuthority)
         };
@@ -60,8 +60,7 @@ impl CollectionMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
-
-        //transfer mint price to treasury
+        // Transfer mint price to treasury
         transfer_sol(
             &ctx.accounts.system_program,
             &ctx.accounts.payer,
@@ -69,6 +68,8 @@ impl CollectionMint<'_> {
             ctx.accounts.collection_config.mint_price
         )?;
 
+        // TODO This one is probably missing the permanent delegate extension
+        // TODO Probably need to clearly define what this does
         // Create the ephemeral token
         token_create_basic(
             ctx.accounts.mint.to_account_info().clone(),
@@ -76,7 +77,7 @@ impl CollectionMint<'_> {
             ctx.accounts.payer.to_account_info().clone(),
             ctx.accounts.rent.to_account_info().clone(),
             ctx.accounts.token22_program.to_account_info().clone(),
-            &[ExtensionType::MetadataPointer, ExtensionType::GroupMemberPointer]
+            &[ExtensionType::MetadataPointer]
         )?;
 
 
@@ -96,15 +97,6 @@ impl CollectionMint<'_> {
             &ctx.accounts.mint.to_account_info(),
             ctx.accounts.program_delegate.key(),
             ctx.accounts.token_metadata.key()
-        )?;
-
-
-        // Point group Member Pointer to token metadata
-        add_group_member_pointer(
-            ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.to_account_info(),
-            ctx.accounts.program_delegate.key(),
-            ctx.accounts.collection_config.key()
         )?;
 
         // Initialize the actual mint data

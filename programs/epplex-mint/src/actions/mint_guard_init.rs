@@ -5,8 +5,8 @@ use epplex_shared::Token2022;
 use crate::*;
 
 #[derive(Accounts)]
-#[instruction(params: InitMintGuardParams)]
-pub struct InitMintGuard<'info> {
+#[instruction(params: MintGuardInitParams)]
+pub struct MintGuardInit<'info> {
     #[account(mut)]
     pub creator: Signer<'info>,
 
@@ -44,7 +44,7 @@ pub struct InitMintGuard<'info> {
 
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct InitMintGuardParams {
+pub struct MintGuardInitParams {
     collection_renewal_price: u64,
     collection_mint_price: u64,
     collection_standard_duration: u32,
@@ -54,24 +54,23 @@ pub struct InitMintGuardParams {
     collection_symbol: String
 }
 
-impl InitMintGuard<'_> {
 
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &InitMintGuardParams) -> Result<()> {
+impl MintGuardInit<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &MintGuardInitParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: InitMintGuardParams) -> Result<()> {
-
-        //init mint guard
+    pub fn actuate(ctx: Context<Self>, params: MintGuardInitParams) -> Result<()> {
+        // Init mint guard
+        // TODO put into state account
         let mint_guard = &mut ctx.accounts.mint_guard;
         mint_guard.authority = ctx.accounts.creator.key();
         mint_guard.items_minted = 0;
         mint_guard.collection_counter = ctx.accounts.global_collection_config.collection_counter;
         mint_guard.bump = ctx.bumps.mint_guard;
 
-        //create cpi
+        // Create cpi
         let cpi_program = ctx.accounts.epplex_program.to_account_info();
-
         let cpi_accounts = CollectionCreate {
             mint: ctx.accounts.collection_mint.to_account_info(),
             program_delegate: ctx.accounts.program_delegate.to_account_info(),
@@ -81,10 +80,9 @@ impl InitMintGuard<'_> {
             system_program: ctx.accounts.system_program.to_account_info(),
             payer: ctx.accounts.creator.to_account_info()
         };
-
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
-        //create params
+        // Create params
         let collection_create_params = CollectionCreateParams {
             authority: mint_guard.key(),
             renewal_price: params.collection_renewal_price,
@@ -98,7 +96,7 @@ impl InitMintGuard<'_> {
         };
 
         epplex_core::cpi::collection_create(cpi_ctx, collection_create_params)?;
+
         Ok(())
     }
-
 }

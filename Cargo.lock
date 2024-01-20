@@ -903,28 +903,62 @@ dependencies = [
 ]
 
 [[package]]
-name = "ep-mint"
+name = "epplex-burger"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
- "ephemerality",
+ "epplex-core",
+ "epplex-metadata",
+ "epplex-shared",
+ "solana-program",
  "spl-token-2022 1.0.0",
+ "spl-token-metadata-interface",
 ]
 
 [[package]]
-name = "ephemerality"
-version = "0.0.1"
+name = "epplex-core"
+version = "0.1.0"
 dependencies = [
  "ahash 0.8.6",
  "anchor-lang",
  "anchor-spl",
  "bytemuck",
+ "epplex-metadata",
+ "epplex-shared",
  "solana-program",
  "solana-security-txt",
  "spl-associated-token-account",
  "spl-token-2022 1.0.0",
  "spl-token-metadata-interface",
+]
+
+[[package]]
+name = "epplex-metadata"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "epplex-shared",
+]
+
+[[package]]
+name = "epplex-mint"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "epplex-core",
+ "epplex-metadata",
+ "epplex-shared",
+ "spl-token-2022 1.0.0",
+]
+
+[[package]]
+name = "epplex-shared"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "spl-token-2022 1.0.0",
 ]
 
 [[package]]

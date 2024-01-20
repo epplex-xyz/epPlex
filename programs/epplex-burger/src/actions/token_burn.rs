@@ -1,6 +1,6 @@
+use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
 use epplex_shared::Token2022;
-use crate::*;
 
 #[derive(Accounts)]
 #[instruction(params: TokenBurnParams)]
@@ -12,12 +12,16 @@ pub struct TokenBurn<'info> {
     /// CHECK
     pub mint: AccountInfo<'info>,
 
-    #[account(
-        mut,
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // TODO fix
+    // #[account(
+    //     mut,
+    //     seeds = [SEED_PROGRAM_DELEGATE],
+    //     bump = program_delegate.bump,
+    // )]
+    // pub program_delegate: Account<'info, ProgramDelegate>,
+    #[account()]
+    /// CHECK
+    pub program_delegate: AccountInfo<'info>,
 
     // TODO check that this is in fact a token account for the mint
     #[account(
@@ -38,18 +42,18 @@ pub struct TokenBurnParams {}
 impl TokenBurn<'_> {
     pub fn validate(
         &self,
-        ctx: &Context<Self>,
+        _ctx: &Context<Self>,
         _params: &TokenBurnParams,
     ) -> Result<()> {
-        let data_bytes = ctx.accounts.mint.try_borrow_data()?;
-        let (_, metadata_bytes) = data_bytes.split_at(METADATA_OFFSET);
-        let metadata: Metadata = Metadata::try_from_slice(metadata_bytes)?;
-        let destroy_timestamp = metadata.destroy_timestamp_value.parse::<i64>().unwrap();
-
-        let now = Clock::get().unwrap().unix_timestamp;
-        if now < destroy_timestamp {
-            return err!(EphemeralityError::DestroyTimestampNotExceeded);
-        }
+        // let data_bytes = ctx.accounts.mint.try_borrow_data()?;
+        // let (_, metadata_bytes) = data_bytes.split_at(METADATA_OFFSET);
+        // let metadata: Metadata = Metadata::try_from_slice(metadata_bytes)?;
+        // let destroy_timestamp = metadata.destroy_timestamp_value.parse::<i64>().unwrap();
+        //
+        // let now = Clock::get().unwrap().unix_timestamp;
+        // if now < destroy_timestamp {
+        //     return err!(EphemeralityError::DestroyTimestampNotExceeded);
+        // }
 
         Ok(())
     }

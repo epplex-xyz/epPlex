@@ -109,11 +109,13 @@ It would be cool to have Open-Clockwork power this on-chain.
 
 ## Deployment
 
-| Description | Address                                       | Link                                                                                                           |
-|-------------|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| Devnet      | `BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY` | [solexplorer](https://explorer.solana.com/address/BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY?cluster=devnet) |
-| Mainnet     | TBA                                           | TBA                                                                                                            |
-
+| Name            | Networks      | Responsibility               | Address | Link                                                                                                           |
+|-----------------|---------------|------------------------------|---------|----------------------------------------------------------------------------------------------------------------|
+| epplex-core     | Devnet        | Main epplex NFT              | `epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg`     | [solexplorer](https://explorer.solana.com/address/BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY?cluster=devnet) |
+| epplex-mint     | Devnet        | Minting guard for collection | `epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4`     | TBA                                                                                                            |
+| epplex-metadata | Devnet        | For handling the metadata    | `epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb`     | TBA                                                                                                            | 
+| epplex-burger   | Devnet        | For custom NFT logic         | `epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n`     | TBA                                                                                                            |
+| epplex-shared   | Devnet        | For shared stuff             | `epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ`     | TBA                                                                                                            |
 
 
 
