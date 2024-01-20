@@ -41,7 +41,7 @@ impl TokenMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
- 
+        // TODO need to look into extensions
         // Create the ephemeral token
         token_create_basic(
             ctx.accounts.mint.to_account_info().clone(),

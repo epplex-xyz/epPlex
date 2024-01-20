@@ -10,16 +10,17 @@ pub struct TokenCreate<'info> {
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
-    // TODO how to get exact space of this?
-    #[account(
-        seeds = [
-            SEED_TOKEN_METADATA,
-            mint.key().as_ref()
-        ],
-        seeds::program = epplex_metadata::ID.key(),
-        bump
-    )]
-    pub token_metadata: Account<'info, TokenMetadata>,
+    // #[account(
+    //     seeds = [
+    //         SEED_TOKEN_METADATA,
+    //         mint.key().as_ref()
+    //     ],
+    //     seeds::program = epplex_metadata::ID.key(),
+    //     bump
+    // )]
+    #[account]
+    /// CHECK inside CPI
+    pub token_metadata: UncheckedAccount<'info, >,
 
     #[account(
         seeds = [SEED_PROGRAM_DELEGATE],

@@ -1,5 +1,5 @@
 use crate::*;
-use epplex_metadata::CreateMetadataParams;
+use epplex_metadata::MetadataCreateParams;
 
 
  pub fn token_create_basic<'info> (
@@ -162,34 +162,34 @@ pub fn create_metadata_account<'info>(
     system_program: AccountInfo<'info>,
     params: TokenCreateParams
 ) -> Result<()> {
-        //calculate destroy timestamp
-        let now = Clock::get().unwrap().unix_timestamp;
-        let destroy_timestamp = now
-            .checked_add(params.destroy_timestamp_offset)
-            .ok_or(EphemeralityError::InvalidCalculation)
-            .unwrap();
+    //calculate destroy timestamp
+    let now = Clock::get().unwrap().unix_timestamp;
+    let destroy_timestamp = now
+        .checked_add(params.destroy_timestamp_offset)
+        .ok_or(EphemeralityError::InvalidCalculation)
+        .unwrap();
 
-        //create metadata account
-        let cpi_ctx = CpiContext::new(
-            metadata_program,
-            epplex_metadata::cpi::accounts::CreateMetadata {
-                payer: payer,
-                mint: mint,
-                token_metadata: token_metadata,
-                system_program: system_program
-            }
-        );
+    //create metadata account
+    let cpi_ctx = CpiContext::new(
+        metadata_program,
+        epplex_metadata::cpi::accounts::MetadataCreate {
+            payer: payer,
+            mint: mint,
+            token_metadata: token_metadata,
+            system_program: system_program
+        }
+    );
 
-        let cpi_params = CreateMetadataParams {
-            destroy_timestamp: destroy_timestamp,
-            name: params.name,
-            symbol: params.symbol,
-            uri: params.uri
-        };
+    let cpi_params = MetadataCreateParams {
+        destroy_timestamp: destroy_timestamp,
+        name: params.name,
+        symbol: params.symbol,
+        uri: params.uri
+    };
 
-        epplex_metadata::cpi::create_metadata(cpi_ctx, cpi_params)?;
+    epplex_metadata::cpi::metadata_create(cpi_ctx, cpi_params)?;
 
-        Ok(())
+    Ok(())
 }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?
