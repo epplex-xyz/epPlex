@@ -47,7 +47,7 @@ describe("ep-mint", () => {
 
         try {
             const tx = await mintProgram.methods
-                .initMintGuard({
+                .mintGuardInit({
                     collectionRenewalPrice: new BN(100),
                     collectionStandardDuration: 100,
                     collectionGracePeriod: new BN(100),
@@ -98,7 +98,7 @@ describe("ep-mint", () => {
 
         try {
             const tx = await mintProgram.methods
-                .mintFromCollection()
+                .collectionMintFrom({})
                 .accounts({
                     minter: wallet.publicKey,
                     mintGuard: mintGuard,
@@ -148,7 +148,7 @@ describe("ep-mint", () => {
 
         try {
             const tx = await mintProgram.methods
-                .withdrawFunds({
+                .fundsWithdraw({
                     amount: new BN(LAMPORTS_PER_SOL),
                 })
                 .accounts({

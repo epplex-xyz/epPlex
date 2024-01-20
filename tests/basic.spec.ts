@@ -76,8 +76,6 @@ describe('epplex Basic API', () => {
             [mint]
         );
 
-
         console.log("TX Mint epNFT", id)
-
     });
 });
