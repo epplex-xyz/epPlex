@@ -1,6 +1,6 @@
 use crate::*;
 
-use epplex_core::{ONE_WEEK, TokenCreateParams};
+use epplex_core::{TokenCreateParams};
 use epplex_metadata::program::EpplexMetadata;
 use epplex_shared::Token2022;
 
@@ -99,8 +99,9 @@ impl CollectionMintFrom<'_> {
         token_name.push_str(&mint_guard.items_minted.to_string()); // TODO does this add a space?
         let collection_symbol = collection_config.collection_symbol.clone();
 
+        // TODO don't hardcode
         let params = TokenCreateParams {
-            destroy_timestamp_offset: ONE_WEEK,
+            destroy_timestamp_offset: 604800,
             name: token_name,
             symbol: collection_symbol,
             uri: "".to_string()
