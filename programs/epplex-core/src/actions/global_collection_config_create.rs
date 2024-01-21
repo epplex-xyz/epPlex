@@ -26,6 +26,7 @@ impl GlobalCollectionConfigCreate<'_> {
         let config = &mut ctx.accounts.global_collection_config;
         config.collection_counter = 0;
         config.bump = ctx.bumps.global_collection_config;
+
         Ok(())
     }
 }

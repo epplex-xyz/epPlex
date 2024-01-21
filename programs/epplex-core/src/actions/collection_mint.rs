@@ -47,7 +47,7 @@ pub struct CollectionMint<'info> {
 
 impl CollectionMint<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {
-        // TODO use as constraints
+        // TODO use as constraints -- why aren't these checks inside the colleciton mint funciton?
         if ctx.accounts.mint_authority.key() != ctx.accounts.collection_config.authority {
             return err!(MintError::UnauthorizedMintAuthority)
         };
@@ -59,9 +59,9 @@ impl CollectionMint<'_> {
         Ok(())
     }
 
-    // TODO ALL OF THIS LOGIC IS PROBABLY REDUNDANT, SHOULD JUST CALL THE EPPLEX CORE DIRECTLY
-    // WE DONT LIKE DUPLICATE CODE, WHY IS THIS DUPLICATED
-    // OR ACTUACTE THE TOKEN_MINT INSTRUCTION
+    // TODO all of this logic is probably redundant, should just call token_mint directly from epplex mint
+    // we don't like duplicate code, why is this duplicated?
+    // basically the same function as token_mint, should just actuate token_mint
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
         // Transfer mint price to treasury
         // transfer_sol(
