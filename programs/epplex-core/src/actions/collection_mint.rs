@@ -60,6 +60,7 @@ impl CollectionMint<'_> {
     }
 
     // TODO ALL OF THIS LOGIC IS PROBABLY REDUNDANT, SHOULD JUST CALL THE EPPLEX CORE DIRECTLY
+    // WE DONT LIKE DUPLICATE CODE, WHY IS THIS DUPLICATED
     // OR ACTUACTE THE TOKEN_MINT INSTRUCTION
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
         // Transfer mint price to treasury

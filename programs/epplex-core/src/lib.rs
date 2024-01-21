@@ -52,10 +52,10 @@ pub mod epplex_core {
         CollectionCreate::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCreateParams) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCreateParams) -> Result<()> {
+    //     CollectionMint::actuate(ctx, params)
+    // }
 
     #[access_control(ctx.accounts.validate(&ctx))]
     pub fn global_collection_config_create(ctx: Context<GlobalCollectionConfigCreate>) -> Result<()> {
