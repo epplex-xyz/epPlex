@@ -26,11 +26,11 @@ pub struct CollectionMint<'info> {
     ///CHECK: Checked in validate
     pub treasury: AccountInfo<'info>,
 
-    #[account(
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // #[account(
+    //     seeds = [SEED_PROGRAM_DELEGATE],
+    //     bump = program_delegate.bump,
+    // )]
+    // pub program_delegate: Account<'info, ProgramDelegate>,
 
     #[account(mut)]
     pub payer: Signer<'info>,

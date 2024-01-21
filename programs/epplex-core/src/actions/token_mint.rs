@@ -18,12 +18,10 @@ pub struct TokenMint<'info> {
     /// CHECK
     pub token_metadata: UncheckedAccount<'info>,
 
-    // This is going to be the delegate
-    #[account(
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // TODO: is unchecked account correct?
+    #[account()]
+    /// CHECK
+    pub permanent_delegate: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -84,7 +82,7 @@ impl TokenMint<'_> {
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             // TODO: who should have authority here - permanent delegate should be passed in
-            ctx.accounts.program_delegate.key(),
+            ctx.accounts.permanent_delegate.key(),
             ctx.accounts.mint.key(),
         )?;
 

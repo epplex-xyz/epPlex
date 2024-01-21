@@ -1,26 +1,9 @@
 use anchor_lang::prelude::borsh::BorshDeserialize;
-use epplex_shared::Token2022;
 use crate::*;
 
 #[derive(Accounts)]
 #[instruction(params: CollectionCreateParams)]
 pub struct CollectionCreate<'info> {
-
-    #[account(
-        mut
-    )]
-    /// CHECK
-    pub mint: AccountInfo<'info>,
-
-    #[account(
-        mut,
-        seeds = [
-            SEED_PROGRAM_DELEGATE
-        ],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
-
     #[account(
         init,
         seeds = [
@@ -44,7 +27,6 @@ pub struct CollectionCreate<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    pub token22_program: Program<'info, Token2022>,
     pub system_program: Program<'info, System>,
 }
 

@@ -21,11 +21,10 @@ pub struct TokenCreate<'info> {
     /// CHECK inside CPI
     pub token_metadata: UncheckedAccount<'info, >,
 
-    #[account(
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // TODO: is unchecked account correct?
+    #[account()]
+    /// CHECK
+    pub permanent_delegate: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -45,7 +44,7 @@ impl TokenCreate<'_> {
     pub fn actuate(ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
        token_create_basic(
         ctx.accounts.mint.to_account_info().clone(),
-        ctx.accounts.program_delegate.to_account_info().clone(),
+        ctx.accounts.permanent_delegate.to_account_info().clone(),
         ctx.accounts.payer.to_account_info().clone(),
         ctx.accounts.rent.to_account_info().clone(),
         ctx.accounts.token22_program.to_account_info().clone(),

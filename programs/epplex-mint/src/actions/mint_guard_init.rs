@@ -21,12 +21,11 @@ pub struct MintGuardInit<'info> {
         bump
     )]
     pub mint_guard: Account<'info, MintGuard>,
-
-    pub epplex_program: Program<'info, EpplexCore>,
     
     #[account(mut)]
     /// CHECK
     pub collection_mint: AccountInfo<'info>,
+
     #[account(mut)]
     /// CHECK
     pub collection_config: AccountInfo<'info>,
@@ -39,7 +38,8 @@ pub struct MintGuardInit<'info> {
     /// CHECK
     pub program_delegate: AccountInfo<'info>,
     pub token22_program: Program<'info, Token2022>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
+    pub epplex_program: Program<'info, EpplexCore>,
 }
 
 
@@ -72,11 +72,8 @@ impl MintGuardInit<'_> {
         // Create cpi
         let cpi_program = ctx.accounts.epplex_program.to_account_info();
         let cpi_accounts = CollectionCreate {
-            mint: ctx.accounts.collection_mint.to_account_info(),
-            program_delegate: ctx.accounts.program_delegate.to_account_info(),
             collection_config: ctx.accounts.collection_config.to_account_info(),
             global_collection_config: ctx.accounts.global_collection_config.to_account_info(),
-            token22_program: ctx.accounts.token22_program.to_account_info(),
             system_program: ctx.accounts.system_program.to_account_info(),
             payer: ctx.accounts.creator.to_account_info()
         };
