@@ -31,6 +31,57 @@ pub fn update_token_metadata<'info>(
     Ok(())
 }
 
+
+pub fn transfer_token_with_pda<'info>(
+    amount: u64,
+    decimals: u8,
+    token_program: &AccountInfo<'info>,
+    source_pubkey: &AccountInfo<'info>,
+    mint: &AccountInfo<'info>,
+    destination_pubkey: &AccountInfo<'info>,
+    authority_pubkey: &AccountInfo<'info>,
+    signer_pubkeys: &[&Pubkey],
+) -> Result<()> {
+    let ix = spl_token_2022::instruction::transfer_checked(
+        token_program.key,
+        source_pubkey.key,
+        mint.key,
+        destination_pubkey.key,
+        authority_pubkey.key,
+        signer_pubkeys,
+        amount,
+        decimals
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        source_pubkey.to_account_info(),
+        mint.to_account_info(),
+        destination_pubkey.to_account_info(),
+        authority_pubkey.to_account_info()
+    ];
+
+    // TODO not ideal
+    let (_, bump) = Pubkey::find_program_address(
+        &[
+            SEED_PROGRAM_DELEGATE
+        ],
+        &ID,
+    );
+    let program_delegate_seeds = &[
+        SEED_PROGRAM_DELEGATE,
+        &[bump]
+    ];
+
+    solana_program::program::invoke_signed(
+        &ix,
+        &account_infos[..],
+        &[program_delegate_seeds]
+    )?;
+
+    Ok(())
+}
+
+
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
     token_account: &AccountInfo<'info>,
@@ -107,3 +158,29 @@ pub fn close_mint<'info>(
 
     Ok(())
 }
+
+
+// Anchor transfer method
+// pub fn transfer_token<'info>(
+//     amount: u64,
+//     decimals: u8,
+//     authority: &Signer<'info>,
+//     mint: &AccountInfo<'info>,
+//     token_owner_account: &Account<'info, TokenAccount>,
+//     token_vault: &Account<'info, TokenAccount>,
+//     token_program: &AccountInfo<'info>,
+// ) -> Result<()> {
+//     token_2022::transfer_checked(
+//         CpiContext::new(
+//             token_program.to_account_info(),
+//             token_2022::TransferChecked {
+//                 from: token_owner_account.to_account_info(),
+//                 to: token_vault.to_account_info(),
+//                 mint: mint.to_account_info(),
+//                 authority: authority.to_account_info(),
+//             },
+//         ),
+//         amount,
+//         decimals
+//     )
+// }

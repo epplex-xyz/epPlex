@@ -30,6 +30,7 @@ pub struct TokenBurn<'info> {
     /// CHECK
     pub token_account: AccountInfo<'info>,
 
+    // TODO put constraint on payer
     #[account(mut)]
     pub payer: Signer<'info>,
 

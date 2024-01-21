@@ -9,39 +9,34 @@ pub struct TokenBuy<'info> {
     pub mint: UncheckedAccount<'info>,
 
     // #[account(
-    // seeds = [
-    // SEED_TOKEN_METADATA,
-    // mint.key().as_ref()
-    // ],
-    // bump,
-    // )]
-    // pub token_metadata: Account<'info, TokenMetadata>,
-    // #[account(
-    // seeds = [SEED_PROGRAM_DELEGATE],
-    // bump = program_delegate.bump,
+    //     seeds = [SEED_PROGRAM_DELEGATE],
+    //     bump = program_delegate.bump,
     // )]
     // pub program_delegate: Account<'info, ProgramDelegate>,
-    //
-    // #[account(mut)]
-    // pub buyer: Signer<'info>,
-    //
-    //
-    // #[account(mut)]
-    // /// CHECK
-    // pub ata_buyer: UncheckedAccount<'info>,
-    //
-    // /// CHECK
-    // #[account(mut)]
-    // pub seller: UncheckedAccount<'info>,
-    //
-    // #[account(mut)]
-    // /// CHECK
-    // pub ata_seller: UncheckedAccount<'info>,
-    //
-    // pub rent: Sysvar<'info, Rent>,
-    // pub system_program: Program<'info, System>,
-    // pub token22_program: Program<'info, Token2022>,
-    // pub associated_token: Program<'info, AssociatedToken>,
+    #[account()]
+    /// CHECK
+    pub program_delegate: AccountInfo<'info>,
+
+
+    #[account(mut)]
+    pub buyer: Signer<'info>,
+
+
+    #[account(mut)]
+    /// CHECK
+    pub ata_buyer: UncheckedAccount<'info>,
+
+    /// CHECK
+    #[account(mut)]
+    pub seller: UncheckedAccount<'info>,
+
+    #[account(mut)]
+    /// CHECK
+    pub ata_seller: UncheckedAccount<'info>,
+
+    pub rent: Sysvar<'info, Rent>,
+    pub system_program: Program<'info, System>,
+    pub token22_program: Program<'info, Token2022>,
 }
 
 
@@ -55,7 +50,7 @@ impl TokenBuy<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, _params: TokenBuyParams) -> Result<()> {
         //Transfer price
         // let ix = solana_program::system_instruction::transfer(
         //     &ctx.accounts.buyer.key(),
@@ -91,35 +86,20 @@ impl TokenBuy<'_> {
         // )?;
         //
         //
-        // let ix = spl_token_2022::instruction::transfer_checked(
-        //     ctx.accounts.token22_program.key,
-        //     &ctx.accounts.ata_seller.key(),
-        //     &ctx.accounts.mint.key(),
-        //     &ctx.accounts.ata_buyer.key(),
-        //     &ctx.accounts.program_delegate.key(),
-        //     &[
-        //         &ctx.accounts.program_delegate.key()
-        //     ],
-        //     1,
-        //     0)?;
-        //
-        // let account_infos: Vec<AccountInfo> = vec![
-        //     ctx.accounts.ata_seller.to_account_info(),
-        //     ctx.accounts.mint.to_account_info(),
-        //     ctx.accounts.ata_buyer.to_account_info(),
-        //     ctx.accounts.program_delegate.to_account_info()
-        // ];
-        //
-        // let program_delegate_seeds = &[
-        //     SEED_PROGRAM_DELEGATE,
-        //     &[ctx.accounts.program_delegate.bump]
-        // ];
-        //
-        // solana_program::program::invoke_signed(
-        //     &ix,
-        //     &account_infos[..],
-        //     &[program_delegate_seeds]
-        // )?;
+
+        transfer_token_with_pda(
+            1,
+            0,
+            &ctx.accounts.token22_program,
+            &ctx.accounts.ata_seller,
+            &ctx.accounts.mint,
+            &ctx.accounts.ata_buyer,
+            &ctx.accounts.program_delegate,
+            &[
+                &ctx.accounts.program_delegate.key()
+            ]
+        )?;
+
         //
         // // disable listing
         // let metadata = &mut ctx.accounts.token_metadata;
