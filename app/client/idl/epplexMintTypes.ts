@@ -16,11 +16,6 @@ export type EpplexMint = {
           "isSigner": false
         },
         {
-          "name": "epplexProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "collectionMint",
           "isMut": true,
           "isSigner": false,
@@ -59,6 +54,11 @@ export type EpplexMint = {
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "epplexProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -317,11 +317,6 @@ export const IDL: EpplexMint = {
           "isSigner": false
         },
         {
-          "name": "epplexProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "collectionMint",
           "isMut": true,
           "isSigner": false,
@@ -360,6 +355,11 @@ export const IDL: EpplexMint = {
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "epplexProgram",
           "isMut": false,
           "isSigner": false
         }

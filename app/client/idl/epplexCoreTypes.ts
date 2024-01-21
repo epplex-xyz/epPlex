@@ -3,60 +3,6 @@ export type EpplexCore = {
   "name": "epplex_core",
   "instructions": [
     {
-      "name": "tokenCreate",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "tokenMetadata",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK inside CPI"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenCreateParams"
-          }
-        }
-      ]
-    },
-    {
       "name": "tokenMint",
       "accounts": [
         {
@@ -76,17 +22,12 @@ export type EpplexCore = {
           ]
         },
         {
-          "name": "tokenMetadata",
-          "isMut": true,
+          "name": "permanentDelegate",
+          "isMut": false,
           "isSigner": false,
           "docs": [
             "CHECK"
           ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
         },
         {
           "name": "payer",
@@ -112,11 +53,6 @@ export type EpplexCore = {
           "name": "associatedToken",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "metadataProgram",
-          "isMut": false,
-          "isSigner": false
         }
       ],
       "args": [
@@ -131,19 +67,6 @@ export type EpplexCore = {
     {
       "name": "collectionCreate",
       "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
         {
           "name": "collectionConfig",
           "isMut": true,
@@ -163,11 +86,6 @@ export type EpplexCore = {
           "isSigner": true
         },
         {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -178,93 +96,6 @@ export type EpplexCore = {
           "name": "params",
           "type": {
             "defined": "CollectionCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "collectionMint",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "ata",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "tokenMetadata",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "collectionConfig",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "treasury",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "mintAuthority",
-          "isMut": false,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedToken",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "metadataProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenCreateParams"
           }
         }
       ]
@@ -289,57 +120,6 @@ export type EpplexCore = {
         }
       ],
       "args": []
-    },
-    {
-      "name": "programDelegateCreate",
-      "accounts": [
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "ProgramDelegateCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "programDelegateClose",
-      "accounts": [
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "ProgramDelegateCloseParams"
-          }
-        }
-      ]
     }
   ],
   "accounts": [
@@ -409,21 +189,6 @@ export type EpplexCore = {
           }
         ]
       }
-    },
-    {
-      "name": "programDelegate",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "bump",
-            "docs": [
-              "The bump, used for PDA validation."
-            ],
-            "type": "u8"
-          }
-        ]
-      }
     }
   ],
   "types": [
@@ -472,28 +237,10 @@ export type EpplexCore = {
       }
     },
     {
-      "name": "ProgramDelegateCloseParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
-      "name": "ProgramDelegateCreateParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
         "fields": [
-          {
-            "name": "destroyTimestampOffset",
-            "type": "i64"
-          },
           {
             "name": "name",
             "type": "string"
@@ -505,6 +252,17 @@ export type EpplexCore = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
           }
         ]
       }
@@ -543,60 +301,6 @@ export const IDL: EpplexCore = {
   "name": "epplex_core",
   "instructions": [
     {
-      "name": "tokenCreate",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "tokenMetadata",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK inside CPI"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenCreateParams"
-          }
-        }
-      ]
-    },
-    {
       "name": "tokenMint",
       "accounts": [
         {
@@ -616,17 +320,12 @@ export const IDL: EpplexCore = {
           ]
         },
         {
-          "name": "tokenMetadata",
-          "isMut": true,
+          "name": "permanentDelegate",
+          "isMut": false,
           "isSigner": false,
           "docs": [
             "CHECK"
           ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
         },
         {
           "name": "payer",
@@ -652,11 +351,6 @@ export const IDL: EpplexCore = {
           "name": "associatedToken",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "metadataProgram",
-          "isMut": false,
-          "isSigner": false
         }
       ],
       "args": [
@@ -671,19 +365,6 @@ export const IDL: EpplexCore = {
     {
       "name": "collectionCreate",
       "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
         {
           "name": "collectionConfig",
           "isMut": true,
@@ -703,11 +384,6 @@ export const IDL: EpplexCore = {
           "isSigner": true
         },
         {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -718,93 +394,6 @@ export const IDL: EpplexCore = {
           "name": "params",
           "type": {
             "defined": "CollectionCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "collectionMint",
-      "accounts": [
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "ata",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "tokenMetadata",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "collectionConfig",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "treasury",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "mintAuthority",
-          "isMut": false,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "token22Program",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedToken",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "metadataProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "TokenCreateParams"
           }
         }
       ]
@@ -829,57 +418,6 @@ export const IDL: EpplexCore = {
         }
       ],
       "args": []
-    },
-    {
-      "name": "programDelegateCreate",
-      "accounts": [
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "ProgramDelegateCreateParams"
-          }
-        }
-      ]
-    },
-    {
-      "name": "programDelegateClose",
-      "accounts": [
-        {
-          "name": "programDelegate",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": "ProgramDelegateCloseParams"
-          }
-        }
-      ]
     }
   ],
   "accounts": [
@@ -949,21 +487,6 @@ export const IDL: EpplexCore = {
           }
         ]
       }
-    },
-    {
-      "name": "programDelegate",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "bump",
-            "docs": [
-              "The bump, used for PDA validation."
-            ],
-            "type": "u8"
-          }
-        ]
-      }
     }
   ],
   "types": [
@@ -1012,28 +535,10 @@ export const IDL: EpplexCore = {
       }
     },
     {
-      "name": "ProgramDelegateCloseParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
-      "name": "ProgramDelegateCreateParams",
-      "type": {
-        "kind": "struct",
-        "fields": []
-      }
-    },
-    {
       "name": "TokenCreateParams",
       "type": {
         "kind": "struct",
         "fields": [
-          {
-            "name": "destroyTimestampOffset",
-            "type": "i64"
-          },
           {
             "name": "name",
             "type": "string"
@@ -1045,6 +550,17 @@ export const IDL: EpplexCore = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
           }
         ]
       }
