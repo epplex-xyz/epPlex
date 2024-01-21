@@ -24,10 +24,10 @@ pub mod epplex_core {
     /*
      * @dev callable by operator
      */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
-        TokenCreate::actuate(ctx, params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
+    //     TokenCreate::actuate(ctx, params)
+    // }
 
     /*
      * Does the mint account creation and mints it
