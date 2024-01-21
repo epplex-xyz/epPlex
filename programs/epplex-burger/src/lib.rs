@@ -26,7 +26,6 @@ use epplex_shared::Token2022;
 
 #[program]
 pub mod epplex_burger {
-    use epplex_core::{ProgramDelegateClose, ProgramDelegateCloseParams, ProgramDelegateCreate, ProgramDelegateCreateParams};
     use super::*;
     
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -65,6 +64,9 @@ pub mod epplex_burger {
         ProgramDelegateCreate::actuate(ctx, &params)
     }
 
+    /*
+     * @dev callable by operator
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
         ProgramDelegateClose::actuate(ctx, &params)
