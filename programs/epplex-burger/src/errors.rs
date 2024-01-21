@@ -1,13 +1,11 @@
 use anchor_lang::prelude::*;
 
 #[error_code]
-pub enum MintError {
-    #[msg("Collection already minted out")]
-    CollectionMintedOut
+pub enum BurgerError {
+    #[msg("Destroy timestamp has been exceeded")]
+    DestroyTimestampHasBeenExceeded,
+
+    #[msg("Token not supported")]
+    TokenNotSupported
 }
 
-#[error_code]
-pub enum WithdrawError {
-    #[msg("The signer is not the authority")]
-    InvalidAuthority
-}
