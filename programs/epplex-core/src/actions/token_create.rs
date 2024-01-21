@@ -42,14 +42,14 @@ impl TokenCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
-       token_create_basic(
-        ctx.accounts.mint.to_account_info().clone(),
-        ctx.accounts.permanent_delegate.to_account_info().clone(),
-        ctx.accounts.payer.to_account_info().clone(),
-        ctx.accounts.rent.to_account_info().clone(),
-        ctx.accounts.token22_program.to_account_info().clone(),
-        &[ExtensionType::MetadataPointer]
-       )?;
+       // token_create_basic(
+       //  ctx.accounts.mint.to_account_info().clone(),
+       //  ctx.accounts.permanent_delegate.to_account_info().clone(),
+       //  ctx.accounts.payer.to_account_info().clone(),
+       //  ctx.accounts.rent.to_account_info().clone(),
+       //  ctx.accounts.token22_program.to_account_info().clone(),
+       //  &[ExtensionType::MetadataPointer]
+       // )?;
 
         // Initialize the actual mint data
         initialize_mint(

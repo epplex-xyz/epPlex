@@ -1,42 +1,44 @@
+use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
 use epplex_metadata::MetadataCreateParams;
 
 
 
 // TODO additional extensions not used correctly
- pub fn token_create_basic<'info> (
-    mint: AccountInfo<'info>,
-    program_delegate: AccountInfo<'info>,
-    payer: AccountInfo<'info>,
-    rent_account: AccountInfo<'info>,
-    token22_program: AccountInfo<'info>,
-    additional_extensions: &[ExtensionType]
-) -> Result<()> {
-
-    // Initialise Mint Account
-    init_mint_account(
-        rent_account.to_account_info(),
-        payer.to_account_info(),
-        mint.to_account_info(),
-        additional_extensions
-    )?;
-
-    // Add closing authority
-    add_closing_authority(
-        &mint,
-        token22_program.key(),
-        program_delegate.key(),
-    )?;
-
-    // Add permanent delegate
-    add_permanent_delegate(
-        &mint.to_account_info(),
-        token22_program.key(),
-        program_delegate.key()
-    )?;
-    
-    Ok(())
-}
+// what is the responsibility of this?
+//  pub fn token_create_basic<'info> (
+//     mint: AccountInfo<'info>,
+//     program_delegate: AccountInfo<'info>,
+//     payer: AccountInfo<'info>,
+//     rent_account: AccountInfo<'info>,
+//     token22_program: AccountInfo<'info>,
+//     additional_extensions: &[ExtensionType]
+// ) -> Result<()> {
+//
+//     // Initialise Mint Account
+//     init_mint_account(
+//         rent_account.to_account_info(),
+//         payer.to_account_info(),
+//         mint.to_account_info(),
+//         additional_extensions
+//     )?;
+//
+//     // Add closing authority
+//     add_closing_authority(
+//         &mint,
+//         token22_program.key(),
+//         program_delegate.key(),
+//     )?;
+//
+//     // Add permanent delegate
+//     add_permanent_delegate(
+//         &mint.to_account_info(),
+//         token22_program.key(),
+//         program_delegate.key()
+//     )?;
+//
+//     Ok(())
+// }
 
 
 
@@ -95,43 +97,43 @@ pub fn add_metadata_pointer(
     Ok(())
 }
 
-pub fn create_metadata_account<'info>(
-    metadata_program: AccountInfo<'info>,
-    payer: AccountInfo<'info>,
-    mint: AccountInfo<'info>,
-    token_metadata: AccountInfo<'info>,
-    system_program: AccountInfo<'info>,
-    params: TokenCreateParams
-) -> Result<()> {
-    //calculate destroy timestamp
-    let now = Clock::get().unwrap().unix_timestamp;
-    let destroy_timestamp = now
-        .checked_add(params.destroy_timestamp_offset)
-        .ok_or(EphemeralityError::InvalidCalculation)
-        .unwrap();
-
-    //create metadata account
-    let cpi_ctx = CpiContext::new(
-        metadata_program,
-        epplex_metadata::cpi::accounts::MetadataCreate {
-            payer: payer,
-            mint: mint,
-            token_metadata: token_metadata,
-            system_program: system_program
-        }
-    );
-
-    let cpi_params = MetadataCreateParams {
-        destroy_timestamp: destroy_timestamp,
-        name: params.name,
-        symbol: params.symbol,
-        uri: params.uri
-    };
-
-    epplex_metadata::cpi::metadata_create(cpi_ctx, cpi_params)?;
-
-    Ok(())
-}
+// pub fn create_metadata_account<'info>(
+//     metadata_program: AccountInfo<'info>,
+//     payer: AccountInfo<'info>,
+//     mint: AccountInfo<'info>,
+//     token_metadata: AccountInfo<'info>,
+//     system_program: AccountInfo<'info>,
+//     params: TokenCreateParams
+// ) -> Result<()> {
+//     //calculate destroy timestamp
+//     let now = Clock::get().unwrap().unix_timestamp;
+//     let destroy_timestamp = now
+//         .checked_add(params.destroy_timestamp_offset)
+//         .ok_or(EphemeralityError::InvalidCalculation)
+//         .unwrap();
+//
+//     //create metadata account
+//     let cpi_ctx = CpiContext::new(
+//         metadata_program,
+//         epplex_metadata::cpi::accounts::MetadataCreate {
+//             payer: payer,
+//             mint: mint,
+//             token_metadata: token_metadata,
+//             system_program: system_program
+//         }
+//     );
+//
+//     let cpi_params = MetadataCreateParams {
+//         destroy_timestamp: destroy_timestamp,
+//         name: params.name,
+//         symbol: params.symbol,
+//         uri: params.uri
+//     };
+//
+//     epplex_metadata::cpi::metadata_create(cpi_ctx, cpi_params)?;
+//
+//     Ok(())
+// }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?
 pub fn add_token_metadata<'info>(
@@ -253,17 +255,20 @@ pub fn init_mint_account<'info> (
     payer: AccountInfo<'info>,
     mint: AccountInfo<'info>,
     rent_account: AccountInfo<'info>,
-    extensions: &[ExtensionType]
+    extensions: &[ExtensionType],
+    token_metadata: TokenMetadata
 ) -> Result<()> {
     // Calculate extension sizes
-    let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
-    let rent = &Rent::from_account_info(&rent_account)?;
+    let base_size = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
+    let extension_extra_space = token_metadata.tlv_size_of().unwrap();
 
+    let rent = &Rent::from_account_info(&rent_account)?;
+    let lamports = rent.minimum_balance(base_size + extension_extra_space);
     let ix = solana_program::system_instruction::create_account(
         &payer.key(),
         &mint.key(),
-        rent.minimum_balance(extension_sizes),
-        extension_sizes as u64,
+        lamports,
+        (base_size).try_into().unwrap(),
         &spl_token_2022::id(),
     );
 
