@@ -17,6 +17,7 @@ pub struct TokenMint<'info> {
     /// CHECK
     pub token_metadata: UncheckedAccount<'info>,
 
+    // This is going to be the delegate
     #[account(
         seeds = [SEED_PROGRAM_DELEGATE],
         bump = program_delegate.bump,
@@ -39,35 +40,43 @@ impl TokenMint<'_> {
         Ok(())
     }
 
+    // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
-        // TODO need to look into extensions
+        // let update_authority =
+        //     OptionalNonZeroPubkey::try_from(Some(deployment.key())).expect("Bad update auth");
+
         // Create the ephemeral token
-        token_create_basic(
-            ctx.accounts.mint.to_account_info().clone(),
-            ctx.accounts.program_delegate.to_account_info().clone(),
+        init_mint_account(
             ctx.accounts.payer.to_account_info().clone(),
+            ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.rent.to_account_info().clone(),
-            ctx.accounts.token22_program.to_account_info().clone(),
-            &[ExtensionType::MetadataPointer]
+            &[
+                ExtensionType::PermanentDelegate,
+                ExtensionType::MintCloseAuthority,
+                ExtensionType::MetadataPointer
+            ]
         )?;
 
+        // TODO Need to create a separate PDA that simply has a bump - can do this later
+        // Could also simply check for the permanent delegate address
+
         // Create metadata account
-        create_metadata_account(
-            ctx.accounts.metadata_program.to_account_info().clone(),
-            ctx.accounts.payer.to_account_info().clone(),
-            ctx.accounts.mint.to_account_info().clone(),
-            ctx.accounts.token_metadata.to_account_info().clone(),
-            ctx.accounts.system_program.to_account_info().clone(),
-            params
-        )?;
+        // create_metadata_account(
+        //     ctx.accounts.metadata_program.to_account_info().clone(),
+        //     ctx.accounts.payer.to_account_info().clone(),
+        //     ctx.accounts.mint.to_account_info().clone(),
+        //     ctx.accounts.token_metadata.to_account_info().clone(),
+        //     ctx.accounts.system_program.to_account_info().clone(),
+        //     params
+        // )?;
 
         // Add metadata pointer
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: who should have authority here
+            // TODO: who should have authority here - permanent delegate should be passed in
             ctx.accounts.program_delegate.key(),
-            ctx.accounts.token_metadata.key(),
+            ctx.accounts.mint.key(),
         )?;
 
         // Initialize the actual mint data
