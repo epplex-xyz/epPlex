@@ -1,6 +1,6 @@
 use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
-use epplex_metadata::MetadataCreateParams;
+// use epplex_metadata::MetadataCreateParams;
 
 
 
@@ -136,7 +136,7 @@ pub fn add_metadata_pointer(
 // }
 
 // actually does anchor spl_token have the src/extension/metadatapointer?
-pub fn add_token_metadata<'info>(
+pub fn initialize_token_metadata<'info>(
     program_id: &Pubkey,
     metadata: &AccountInfo<'info>,
     update_authority: &AccountInfo<'info>,
