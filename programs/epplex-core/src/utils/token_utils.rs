@@ -2,6 +2,7 @@ use crate::*;
 use epplex_metadata::MetadataCreateParams;
 
 
+
 // TODO additional extensions not used correctly
  pub fn token_create_basic<'info> (
     mint: AccountInfo<'info>,
@@ -69,7 +70,6 @@ pub fn initialize_mint<'info>(
 
 }
 
-// actually does anchor spl_token have the src/extension/metadatapointer?
 pub fn add_metadata_pointer(
     token_program_id: Pubkey,
     mint_account: &AccountInfo,
@@ -83,7 +83,6 @@ pub fn add_metadata_pointer(
         Some(metadata_address)
     )?;
 
-    // TODO: frontend instruction passed in 4 accountinfos and I think 1 is enough
     let account_infos: Vec<AccountInfo> = vec![
         mint_account.to_account_info(),
     ];
@@ -249,33 +248,17 @@ pub fn add_group_member_pointer(
     Ok(())
 }
 
+// TODO this function needs to be similar to create_token_2022_and_metadata in LibrePlex
 pub fn init_mint_account<'info> (
-    rent_account: AccountInfo<'info>,
     payer: AccountInfo<'info>,
     mint: AccountInfo<'info>,
-    additional_extensions: &[ExtensionType]
+    rent_account: AccountInfo<'info>,
+    extensions: &[ExtensionType]
 ) -> Result<()> {
-
-    // standard extensions
-    let mut extensions = vec![
-        ExtensionType::PermanentDelegate,
-        ExtensionType::MintCloseAuthority
-    ];
-
-    extensions.extend_from_slice(additional_extensions);
-
-    // calculate extension sizes
+    // Calculate extension sizes
     let extension_sizes = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
-
-    msg!(&extension_sizes.to_string());
-
     let rent = &Rent::from_account_info(&rent_account)?;
-    // TODO need to have collectionConfig passed in
 
-    // TODO: all NFTs should have same expiration date upon mint
-    // maybe just save the now date and the destroytimeoffset
-
-    // TODO: need to calculate this properly
     let ix = solana_program::system_instruction::create_account(
         &payer.key(),
         &mint.key(),

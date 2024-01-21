@@ -26,7 +26,7 @@ use epplex_shared::Token2022;
 
 #[program]
 pub mod epplex_burger {
-
+    use epplex_core::{ProgramDelegateClose, ProgramDelegateCloseParams, ProgramDelegateCreate, ProgramDelegateCreateParams};
     use super::*;
     
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -54,9 +54,19 @@ pub mod epplex_burger {
         TokenSell::actuate(ctx, params)
     }
 
+    // // Todo this should simply be updating the metadata field
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
+    //     VoteCast::actuate(ctx, params)
+    // }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
-        VoteCast::actuate(ctx, params)
+    pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
+        ProgramDelegateCreate::actuate(ctx, &params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
+        ProgramDelegateClose::actuate(ctx, &params)
     }
 }
