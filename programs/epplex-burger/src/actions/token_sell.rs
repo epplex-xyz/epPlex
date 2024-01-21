@@ -50,7 +50,7 @@ impl TokenSell<'_> {
         Ok(())
     }
 
-    pub fn actuate(_ctx: Context<Self>, _params: &TokenSellParams) -> Result<()> {
+    pub fn actuate(_ctx: Context<Self>, _params: TokenSellParams) -> Result<()> {
 
         Ok(())
     }
