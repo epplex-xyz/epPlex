@@ -49,7 +49,6 @@ impl TokenCreate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
-       
        token_create_basic(
         ctx.accounts.mint.to_account_info().clone(),
         ctx.accounts.program_delegate.to_account_info().clone(),
@@ -64,9 +63,9 @@ impl TokenCreate<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent.to_account_info(),
             &ctx.accounts.token22_program.key(),
-            // TODO incorrect
+            // TODO incorrect mint auth
             &ctx.accounts.payer.key(),
-            // TODO incorrect
+            // TODO incorrect freeze auth
             &ctx.accounts.payer.key(),
         )?;
 

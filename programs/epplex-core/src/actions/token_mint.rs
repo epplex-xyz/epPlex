@@ -75,12 +75,12 @@ impl TokenMint<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent.to_account_info(),
             &ctx.accounts.token22_program.key(),
-            // TODO incorrect
+            // TODO incorrect mint auth
             &ctx.accounts.payer.key(),
-            // TODO incorrect
+            // TODO incorrect freeze auth
             &ctx.accounts.payer.key(),
         )?;
-        
+
         // Create ATA
         anchor_spl::associated_token::create(
             CpiContext::new(
@@ -108,7 +108,9 @@ impl TokenMint<'_> {
             ),
             1
         )?;
-        
+
+        // TODO after minting should prolly burn the mint auth
+
         Ok(())
     }
 
