@@ -13,13 +13,15 @@ pub struct WhitelistMint<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    #[account(mut)]
-    /// CHECK
-    pub token_metadata: UncheckedAccount<'info>,
+    // #[account(mut)]
+    // /// CHECK
+    // pub token_metadata: UncheckedAccount<'info>,
 
     // TODO: is unchecked account correct?
     #[account(
-        seeds = [SEED_PROGRAM_DELEGATE],
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
         bump = permanent_delegate.bump
     )]
     /// CHECK
@@ -52,11 +54,11 @@ impl WhitelistMint<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: WhitelistMintParams) -> Result<()> {
         let additional_metadata = vec![
-            (EXPIRY_FIELD.to_string(), params.destroy_timestamp),
-            (RENEWAL_FIELD.to_string(), "0".to_string()),
-            (FOR_SALE_FIELD.to_string(), "0".to_string()),
-            (PRICE_FIELD.to_string(), "9999".to_string()),
-            (GAME_STATE.to_string(), "0".to_string())
+            [EXPIRY_FIELD.to_string(), params.destroy_timestamp],
+            [RENEWAL_FIELD.to_string(), "0".to_string()],
+            [FOR_SALE_FIELD.to_string(), "0".to_string()],
+            [PRICE_FIELD.to_string(), "9999".to_string()],
+            [GAME_STATE.to_string(), "0".to_string()]
         ];
 
         // CPI into token_mint
