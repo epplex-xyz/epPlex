@@ -5,6 +5,9 @@ pub enum BurgerError {
     #[msg("Destroy timestamp has been exceeded")]
     DestroyTimestampHasBeenExceeded,
 
+    #[msg("Invalid calculation")]
+    InvalidCalculation,
+
     #[msg("Token not supported")]
     TokenNotSupported
 }

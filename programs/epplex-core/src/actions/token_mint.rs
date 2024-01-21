@@ -1,6 +1,7 @@
 use crate::*;
 use epplex_metadata::program::EpplexMetadata;
 use anchor_spl::token_interface::MintTo;
+use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::Token2022;
 
 #[derive(Accounts)]
@@ -14,9 +15,9 @@ pub struct TokenMint<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    #[account(mut)]
-    /// CHECK
-    pub token_metadata: UncheckedAccount<'info>,
+    // #[account(mut)]
+    // /// CHECK
+    // pub token_metadata: UncheckedAccount<'info>,
 
     // TODO: is unchecked account correct?
     #[account()]
@@ -30,15 +31,15 @@ pub struct TokenMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    pub metadata_program: Program<'info, EpplexMetadata>
+    // pub metadata_program: Program<'info, EpplexMetadata>
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenCreateParams {
-    pub destroy_timestamp_offset: i64,
     pub name: String,
     pub symbol: String,
     pub uri: String,
+    pub additional_metadata: Vec<(String, String)>,
 }
 
 impl TokenMint<'_> {
@@ -48,9 +49,20 @@ impl TokenMint<'_> {
     }
 
     // This function should be a general purpose minter
-    pub fn actuate(ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
-        // let update_authority =
-        //     OptionalNonZeroPubkey::try_from(Some(deployment.key())).expect("Bad update auth");
+    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+        // TODO set to permanent delegate for now
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
+            Some(ctx.accounts.permanent_delegate.key())
+        ).expect("Bad update auth");
+
+        let tm = TokenMetadata {
+            update_authority,
+            mint: ctx.accounts.mint.key(),
+            name: params.name.clone(),
+            symbol: params.symbol.clone(),
+            uri: params.uri.clone(),
+            additional_metadata: params.additional_metadata.clone()
+        };
 
         // Create the ephemeral token
         init_mint_account(
@@ -61,7 +73,8 @@ impl TokenMint<'_> {
                 ExtensionType::PermanentDelegate,
                 ExtensionType::MintCloseAuthority,
                 ExtensionType::MetadataPointer
-            ]
+            ],
+            tm
         )?;
 
         // TODO Need to create a separate PDA that simply has a bump - can do this later
@@ -81,7 +94,6 @@ impl TokenMint<'_> {
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: who should have authority here - permanent delegate should be passed in
             ctx.accounts.permanent_delegate.key(),
             ctx.accounts.mint.key(),
         )?;
@@ -96,6 +108,36 @@ impl TokenMint<'_> {
             // TODO incorrect freeze auth
             &ctx.accounts.payer.key(),
         )?;
+        // In LibrePlex, the mint auth and freeze auth are the deployment pda
+
+
+
+        // Initialize token metadata
+        add_token_metadata(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            // TODO update auth
+            &ctx.accounts.permanent_delegate.to_account_info(),
+            &ctx.accounts.mint.to_account_info(),
+            // TODO: mint auth
+            &ctx.accounts.payer,
+            params.name.clone(),
+            params.symbol.clone(),
+            params.uri.clone(),
+        )?;
+
+        // Add all the metadata
+        for (field, value) in params.additional_metadata.clone().into_iter() {
+            update_token_metadata(
+                &ctx.accounts.token22_program.key(),
+                // Metadata on mint account
+                &ctx.accounts.mint.to_account_info(),
+                // TODO: mint auth
+                &ctx.accounts.payer.to_account_info(),
+                spl_token_metadata_interface::state::Field::Key(field),
+                value,
+            )?;
+        }
 
         // Create ATA
         anchor_spl::associated_token::create(
