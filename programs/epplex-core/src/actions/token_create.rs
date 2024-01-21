@@ -35,13 +35,7 @@ pub struct TokenCreate<'info> {
     pub token22_program: Program<'info, Token2022>
 }
 
-#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenCreateParams {
-    pub destroy_timestamp_offset: i64,
-    pub name: String,
-    pub symbol: String,
-    pub uri: String,
-}
+
 
 impl TokenCreate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {

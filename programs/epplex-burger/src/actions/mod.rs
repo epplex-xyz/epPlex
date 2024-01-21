@@ -16,6 +16,11 @@ pub use token_delist::*;
 pub mod token_sell;
 pub use token_sell::*;
 
-
 pub mod vote_cast;
 pub use vote_cast::*;
+
+pub mod program_delegate_create;
+pub use program_delegate_create::*;
+
+pub mod program_delegate_close;
+pub use program_delegate_close::*;

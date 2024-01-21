@@ -1,4 +1,4 @@
-use anchor_spl::token_interface::MintTo;
+// use anchor_spl::token_interface::MintTo;
 use epplex_metadata::program::EpplexMetadata;
 use epplex_shared::Token2022;
 use crate::*;
@@ -62,7 +62,7 @@ impl CollectionMint<'_> {
     // TODO all of this logic is probably redundant, should just call token_mint directly from epplex mint
     // we don't like duplicate code, why is this duplicated?
     // basically the same function as token_mint, should just actuate token_mint
-    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+    pub fn actuate(_ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
         // Transfer mint price to treasury
         // transfer_sol(
         //     &ctx.accounts.system_program,

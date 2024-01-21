@@ -73,7 +73,7 @@ impl CollectionMintFrom<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, _params: CollectionMintFromParams) -> Result<()> {
+    pub fn actuate(_ctx: Context<Self>, _params: CollectionMintFromParams) -> Result<()> {
         // let collection_config = &mut ctx.accounts.collection_config;
         // let mint_guard = &mut ctx.accounts.mint_guard;
         //

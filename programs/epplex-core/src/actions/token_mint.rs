@@ -4,6 +4,7 @@ use anchor_spl::token_interface::MintTo;
 use epplex_shared::Token2022;
 
 #[derive(Accounts)]
+#[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
     #[account(mut, signer)]
     /// CHECK
@@ -34,6 +35,14 @@ pub struct TokenMint<'info> {
     pub metadata_program: Program<'info, EpplexMetadata>
 }
 
+#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct TokenCreateParams {
+    pub destroy_timestamp_offset: i64,
+    pub name: String,
+    pub symbol: String,
+    pub uri: String,
+}
+
 impl TokenMint<'_> {
 
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {
@@ -41,7 +50,7 @@ impl TokenMint<'_> {
     }
 
     // This function should be a general purpose minter
-    pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, _params: TokenCreateParams) -> Result<()> {
         // let update_authority =
         //     OptionalNonZeroPubkey::try_from(Some(deployment.key())).expect("Bad update auth");
 
