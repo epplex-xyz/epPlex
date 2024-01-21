@@ -37,6 +37,89 @@
           }
         }
       ]
+    },
+    {
+      "name": "metadataCreateSeparate",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "MetadataCreateSeparateParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "metadataUpdate",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "UpdateFieldData"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -102,6 +185,26 @@
   ],
   "types": [
     {
+      "name": "MetadataCreateSeparateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "MetadataCreateParams",
       "type": {
         "kind": "struct",
@@ -121,6 +224,53 @@
           {
             "name": "uri",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateFieldData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "field",
+            "docs": [
+              "Field to update in the metadata"
+            ],
+            "type": {
+              "defined": "AnchorField"
+            }
+          },
+          {
+            "name": "value",
+            "docs": [
+              "Value to write for the field"
+            ],
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AnchorField",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Name"
+          },
+          {
+            "name": "Symbol"
+          },
+          {
+            "name": "Uri"
+          },
+          {
+            "name": "Key",
+            "fields": [
+              "string"
+            ]
           }
         ]
       }

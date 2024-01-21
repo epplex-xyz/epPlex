@@ -3,6 +3,9 @@ use anchor_lang::prelude::*;
 
 pub const SEED_TOKEN_METADATA: &[u8] = b"metadata";
 
+// Hardcode the burn auth for now
+pub const BURN_AUTH: Pubkey = pubkey!("So11111111111111111111111111111111111111112");
+
 pub const SOL: Pubkey = pubkey!("So11111111111111111111111111111111111111112");
 pub const SUPPORTED_TOKENS: [Pubkey;1] = [
     SOL
