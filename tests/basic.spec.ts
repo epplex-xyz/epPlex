@@ -4,17 +4,19 @@ import { BN } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
-import { tokenMetadata } from './pda';
+import * as pda from './pda';
+
 describe('epplex Basic API', () => {
     const {
         coreProgram,
+        burgerProgram,
         metadataProgram,
         connection,
         wallet
     } = testPrelude();
 
     const mainProgram = new Program2(wallet, connection);
-    const programDelegate = mainProgram.getProgramDelegate();
+    const burgerProgramDelegate = pda.burgerProgramDelegate(burgerProgram.programId);
     const mint = Keypair.generate();
     const payer = wallet.publicKey
     const ata = getAssociatedTokenAddressSync(
@@ -25,46 +27,47 @@ describe('epplex Basic API', () => {
         ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
-    const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
+    // const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
 
-    // In case the program delegate has not been created.
-    it("Init delegate", async() => {
-        await coreProgram.methods.programDelegateCreate([])
-            .accounts({
-                programDelegate,
-                payer
-            })
-            .rpc()
-    })
 
-    it("Create Global Collection Config", async() => {
-        await coreProgram.methods.globalCollectionConfigCreate()
-            .accounts({
-                globalCollectionConfig: mainProgram.globalCollectionConfig(),
-                payer: payer
-            })
-            .rpc()
+    it("Create burger ", async() => {
+        try {
+            const tx = await burgerProgram.methods.programDelegateCreate({})
+                .accounts({
+                    programDelegate: burgerProgramDelegate,
+                    payer: payer,
+                    systemProgram: SystemProgram.programId
+                })
+                .rpc({skipPreflight: true})
+
+            console.log("tx", tx)
+        } catch (e) {
+            console.log("error", e)
+        }
+
+        console.log("\n")
     })
 
     it('Mint epNFT', async () => {
-        const tokenCreateTx = await coreProgram.methods
-            .tokenMint({
-                destroyTimestampOffset: new BN(1000),
+        const tokenCreateTx = await burgerProgram.methods
+            .whitelistMint({
                 name: "hello",
                 symbol: "sm",
                 uri: "",
+                destroyTimestamp: "1705952387"
             })
             .accounts({
                 mint: mint.publicKey,
                 ata,
-                tokenMetadata: tm,
-                programDelegate: programDelegate,
+                // tokenMetadata: tm,
+                permanentDelegate: burgerProgramDelegate,
                 payer,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 rent: SYSVAR_RENT_PUBKEY,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-                metadataProgram: metadataProgram.programId
+                epplexCore: coreProgram.programId
+                // metadataProgram: metadataProgram.programId
             })
             .transaction()
 
@@ -77,5 +80,6 @@ describe('epplex Basic API', () => {
         );
 
         console.log("TX Mint epNFT", id)
+        console.log("\n")
     });
 });

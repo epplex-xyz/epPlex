@@ -2,6 +2,16 @@ import { PublicKey } from "@solana/web3.js"
 import * as anchor from "@coral-xyz/anchor";
 
 
+export function burgerProgramDelegate(programId: PublicKey) {
+    const [programDelegatePDA, programDelegateBump] = PublicKey.findProgramAddressSync(
+        [
+            anchor.utils.bytes.utf8.encode("BURGER_DELEGATE"),
+        ],
+        programId
+    )
+    return programDelegatePDA;
+}
+
 export function programDelegate(programId: PublicKey) {
     const [programDelegatePDA, programDelegateBump] = PublicKey.findProgramAddressSync(
         [
