@@ -24,10 +24,10 @@ pub mod epplex_core {
     /*
      * @dev callable by operator
      */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
-        TokenCreate::actuate(ctx, params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_create(ctx: Context<TokenCreate>, params: TokenCreateParams) -> Result<()> {
+    //     TokenCreate::actuate(ctx, params)
+    // }
 
     /*
      * Does the mint account creation and mints it
@@ -52,23 +52,23 @@ pub mod epplex_core {
         CollectionCreate::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCreateParams) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCreateParams) -> Result<()> {
+    //     CollectionMint::actuate(ctx, params)
+    // }
 
     #[access_control(ctx.accounts.validate(&ctx))]
     pub fn global_collection_config_create(ctx: Context<GlobalCollectionConfigCreate>) -> Result<()> {
         GlobalCollectionConfigCreate::actuate(ctx)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
-        ProgramDelegateCreate::actuate(ctx, &params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
-        ProgramDelegateClose::actuate(ctx, &params)
-    }
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
+    //     ProgramDelegateCreate::actuate(ctx, &params)
+    // }
+    //
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
+    //     ProgramDelegateClose::actuate(ctx, &params)
+    // }
 }

@@ -1,6 +1,3 @@
-pub mod program_delegate;
-pub use program_delegate::*;
-
 pub mod collection_config;
 pub use collection_config::*;
 

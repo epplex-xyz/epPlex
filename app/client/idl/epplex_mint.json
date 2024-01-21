@@ -16,11 +16,6 @@
           "isSigner": false
         },
         {
-          "name": "epplexProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "collectionMint",
           "isMut": true,
           "isSigner": false,
@@ -59,6 +54,11 @@
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "epplexProgram",
           "isMut": false,
           "isSigner": false
         }

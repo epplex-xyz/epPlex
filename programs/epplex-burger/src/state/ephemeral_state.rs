@@ -1,7 +1,6 @@
 use anchor_lang::solana_program::pubkey;
 use anchor_lang::prelude::*;
 
-pub const SEED_TOKEN_METADATA: &[u8] = b"metadata";
 
 // Hardcode the burn auth for now
 pub const BURN_AUTH: Pubkey = pubkey!("So11111111111111111111111111111111111111112");
@@ -13,10 +12,11 @@ pub const SUPPORTED_TOKENS: [Pubkey;1] = [
 
 
 // Fields
-pub const EXPIRY_FIELD: &str = "expirationDate";
+pub const EXPIRY_FIELD: &str = "expirationDate"; // should just add onto this
 pub const RENEWAL_FIELD: &str = "renewalAmount";
 pub const FOR_SALE_FIELD: &str = "forSale";
 pub const PRICE_FIELD: &str = "price";
+pub const GAME_STATE: &str = "gameState";
 
 
 

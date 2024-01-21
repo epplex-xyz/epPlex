@@ -929,6 +929,7 @@ dependencies = [
  "solana-program",
  "solana-security-txt",
  "spl-associated-token-account",
+ "spl-pod",
  "spl-token-2022 1.0.0",
  "spl-token-metadata-interface",
 ]

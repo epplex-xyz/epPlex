@@ -9,12 +9,10 @@ pub use id::ID;
 pub mod actions;
 pub use actions::*;
 
-pub mod utils;
-pub use utils::*;
+pub mod metadata_update_utils;
+pub use metadata_update_utils::*;
 
-use spl_token_metadata_interface::{
-    state::{TokenMetadata as TM},
-};
+use spl_token_metadata_interface::state::{TokenMetadata as TM, Field};
 
 #[program]
 pub mod epplex_metadata {

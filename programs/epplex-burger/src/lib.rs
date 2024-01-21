@@ -26,7 +26,6 @@ use epplex_shared::Token2022;
 
 #[program]
 pub mod epplex_burger {
-
     use super::*;
     
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -45,7 +44,31 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
-        VoteCast::actuate(ctx, params)
+    pub fn token_delist(ctx: Context<TokenDelist>, params: TokenDelistParams) -> Result<()> {
+        TokenDelist::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_sell(ctx: Context<TokenSell>, params: TokenSellParams) -> Result<()> {
+        TokenSell::actuate(ctx, params)
+    }
+
+    // // Todo this should simply be updating the metadata field
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
+    //     VoteCast::actuate(ctx, params)
+    // }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
+        ProgramDelegateCreate::actuate(ctx, &params)
+    }
+
+    /*
+     * @dev callable by operator
+     */
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
+        ProgramDelegateClose::actuate(ctx, &params)
     }
 }

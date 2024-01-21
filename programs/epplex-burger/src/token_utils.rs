@@ -1,5 +1,4 @@
 use anchor_lang::solana_program;
-use epplex_core::{SEED_PROGRAM_DELEGATE};
 use crate::*;
 
 

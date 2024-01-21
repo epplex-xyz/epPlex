@@ -1,9 +1,11 @@
 use crate::*;
-use epplex_metadata::program::EpplexMetadata;
+// use epplex_metadata::program::EpplexMetadata;
 use anchor_spl::token_interface::MintTo;
-use epplex_shared::Token2022;
+use spl_token_metadata_interface::state::TokenMetadata;
+use epplex_shared::{Token2022,};
 
 #[derive(Accounts)]
+#[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
     #[account(mut, signer)]
     /// CHECK
@@ -13,15 +15,14 @@ pub struct TokenMint<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    #[account(mut)]
-    /// CHECK
-    pub token_metadata: UncheckedAccount<'info>,
+    // #[account(mut)]
+    // /// CHECK
+    // pub token_metadata: UncheckedAccount<'info>,
 
-    #[account(
-        seeds = [SEED_PROGRAM_DELEGATE],
-        bump = program_delegate.bump,
-    )]
-    pub program_delegate: Account<'info, ProgramDelegate>,
+    // TODO: is unchecked account correct?
+    #[account()]
+    /// CHECK
+    pub permanent_delegate: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -30,7 +31,15 @@ pub struct TokenMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    pub metadata_program: Program<'info, EpplexMetadata>
+    // pub metadata_program: Program<'info, EpplexMetadata>
+}
+
+#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct TokenCreateParams {
+    pub name: String,
+    pub symbol: String,
+    pub uri: String,
+    pub additional_metadata: Vec<[String;2]>,
 }
 
 impl TokenMint<'_> {
@@ -39,35 +48,74 @@ impl TokenMint<'_> {
         Ok(())
     }
 
+    // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
-        // TODO need to look into extensions
+        // TODO set to permanent delegate for now
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
+            Some(ctx.accounts.payer.key())
+        ).expect("Bad update auth");
+
+        // Convert from Vec<[String;2]> to Vec<(String, String)>
+        let converted_metadata: Vec<(String, String)> = params.additional_metadata
+            .iter()
+            .map(|array| (array[0].clone(), array[1].clone()))
+            .collect();
+
+        let tm = TokenMetadata {
+            update_authority,
+            mint: ctx.accounts.mint.key(),
+            name: params.name.clone(),
+            symbol: params.symbol.clone(),
+            uri: params.uri.clone(),
+            additional_metadata: converted_metadata.clone()
+        };
+
         // Create the ephemeral token
-        token_create_basic(
-            ctx.accounts.mint.to_account_info().clone(),
-            ctx.accounts.program_delegate.to_account_info().clone(),
+        init_mint_account(
             ctx.accounts.payer.to_account_info().clone(),
+            ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.rent.to_account_info().clone(),
-            ctx.accounts.token22_program.to_account_info().clone(),
-            &[ExtensionType::MetadataPointer]
+            &[
+                ExtensionType::MintCloseAuthority,
+                ExtensionType::PermanentDelegate,
+                ExtensionType::MetadataPointer
+            ],
+            tm
         )?;
 
-        // Create metadata account
-        create_metadata_account(
-            ctx.accounts.metadata_program.to_account_info().clone(),
-            ctx.accounts.payer.to_account_info().clone(),
-            ctx.accounts.mint.to_account_info().clone(),
-            ctx.accounts.token_metadata.to_account_info().clone(),
-            ctx.accounts.system_program.to_account_info().clone(),
-            params
+        // Add closing auth
+        add_closing_authority(
+            &ctx.accounts.mint,
+            ctx.accounts.token22_program.key(),
+            ctx.accounts.permanent_delegate.key(),
         )?;
+
+        // Add permanent delegate
+        add_permanent_delegate(
+            &ctx.accounts.mint,
+            ctx.accounts.token22_program.key(),
+            ctx.accounts.permanent_delegate.key(),
+        )?;
+
+        // TODO Need to create a separate PDA that simply has a bump - can do this later
+        // Could also simply check for the permanent delegate address
+
+        // Create metadata account
+        // create_metadata_account(
+        //     ctx.accounts.metadata_program.to_account_info().clone(),
+        //     ctx.accounts.payer.to_account_info().clone(),
+        //     ctx.accounts.mint.to_account_info().clone(),
+        //     ctx.accounts.token_metadata.to_account_info().clone(),
+        //     ctx.accounts.system_program.to_account_info().clone(),
+        //     params
+        // )?;
 
         // Add metadata pointer
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: who should have authority here
-            ctx.accounts.program_delegate.key(),
-            ctx.accounts.token_metadata.key(),
+            ctx.accounts.permanent_delegate.key(),
+            ctx.accounts.mint.key(),
         )?;
 
         // Initialize the actual mint data
@@ -75,12 +123,41 @@ impl TokenMint<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent.to_account_info(),
             &ctx.accounts.token22_program.key(),
-            // TODO incorrect
+            // TODO incorrect mint auth
             &ctx.accounts.payer.key(),
-            // TODO incorrect
+            // TODO incorrect freeze auth
             &ctx.accounts.payer.key(),
         )?;
-        
+        // In LibrePlex, the mint auth and freeze auth are the deployment pda
+
+
+        // Initialize token metadata
+        initialize_token_metadata(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            // TODO update auth
+            &ctx.accounts.payer.to_account_info(),
+            &ctx.accounts.mint.to_account_info(),
+            // TODO: mint auth
+            &ctx.accounts.payer,
+            params.name.clone(),
+            params.symbol.clone(),
+            params.uri.clone(),
+        )?;
+
+        // Add all the metadata
+        for (field, value) in converted_metadata.into_iter() {
+            update_token_metadata(
+                &ctx.accounts.token22_program.key(),
+                // Metadata on mint account
+                &ctx.accounts.mint.to_account_info(),
+                // TODO: update_authority
+                &ctx.accounts.payer.to_account_info(),
+                spl_token_metadata_interface::state::Field::Key(field),
+                value,
+            )?;
+        }
+
         // Create ATA
         anchor_spl::associated_token::create(
             CpiContext::new(
@@ -108,7 +185,9 @@ impl TokenMint<'_> {
             ),
             1
         )?;
-        
+
+        // TODO after minting should prolly burn the mint auth
+
         Ok(())
     }
 

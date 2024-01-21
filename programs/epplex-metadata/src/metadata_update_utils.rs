@@ -1,8 +1,5 @@
 use crate::*;
 
-use spl_token_metadata_interface::{
-    state::{Field},
-};
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateFieldData {
     /// Field to update in the metadata
