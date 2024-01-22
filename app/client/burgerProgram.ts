@@ -23,7 +23,8 @@ export class Program2 {
         this.connection = connection;
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
-    async createToken(
+
+    async createWhitelistMint(
         destroyTimestampOffset: number = 60 * 5,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
@@ -39,42 +40,41 @@ export class Program2 {
             TOKEN_2022_PROGRAM_ID,
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
-        const tm = this.getTokenMetadata(mint.publicKey);
 
-        // const tokenCreateTx = await this.program.methods
-        //     .tokenMint({
-        //         destroyTimestampOffset: new BN(destroyTimestampOffset),
-        //         name: name,
-        //         symbol: symbol,
-        //         uri: uri,
-        //     })
-        //     .accounts({
-        //         mint: mint.publicKey,
-        //         ata,
-        //         tokenMetadata: tm,
-        //         programDelegate: programDelegate,
-        //         payer: payer,
-        //         systemProgram: SystemProgram.programId,
-        //         token22Program: TOKEN_2022_PROGRAM_ID,
-        //         rent: SYSVAR_RENT_PUBKEY,
-        //         associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-        //     })
-        //     .transaction();
-        //
-        // let id;
-        // try {
-        //     id = await sendAndConfirmRawTransaction(
-        //         this.connection,
-        //         tokenCreateTx,
-        //         payer,
-        //         this.wallet,
-        //         [mint]
-        //     );
-        //     console.log("tx", id);
-        // } catch (e) {
-        //     console.log("Failed to send tx", e);
-        // }
-        // return id;
+        const tokenCreateTx = await this.program.methods
+            .whitelistMint({
+                name: name,
+                symbol: symbol,
+                uri: uri,
+                destroyTimestamp: "1705952387"
+            })
+            .accounts({
+                mint: mint.publicKey,
+                ata,
+                // tokenMetadata: tm,
+                permanentDelegate: programDelegate,
+                payer: payer,
+                systemProgram: SystemProgram.programId,
+                token22Program: TOKEN_2022_PROGRAM_ID,
+                rent: SYSVAR_RENT_PUBKEY,
+                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+            })
+            .transaction();
+
+        let id;
+        try {
+            id = await sendAndConfirmRawTransaction(
+                this.connection,
+                tokenCreateTx,
+                payer,
+                this.wallet,
+                [mint]
+            );
+            console.log("tx", id);
+        } catch (e) {
+            console.log("Failed to send tx", e);
+        }
+        return id;
     }
 
     async burnToken(
@@ -160,37 +160,10 @@ export class Program2 {
         return id;
     }
 
-
     getProgramDelegate(): PublicKey {
         const [programDelegate] = PublicKey.findProgramAddressSync(
-            [Buffer.from("PROGRAM_DELEGATE")],
+            [Buffer.from("BURGER_DELEGATE")],
             this.program.programId
-        );
-        return programDelegate;
-    }
-
-    globalCollectionConfig(): PublicKey {
-        const [globalCollectionConfig] = PublicKey.findProgramAddressSync(
-            [Buffer.from("GLOBAL_COLLECTION")],
-            this.program.programId
-        );
-        return globalCollectionConfig;
-    }
-
-    getTokenMetadata(mint: PublicKey): PublicKey {
-        const [programDelegate] = PublicKey.findProgramAddressSync(
-            [Buffer.from("metadata"), this.program.programId.toBuffer(), mint.toBuffer()],
-            this.program.programId
-        );
-        return programDelegate;
-    }
-
-    static staticGetTokenMetadata(mint: PublicKey): PublicKey {
-        // TODO dont hardcode this
-        const pid = new PublicKey("epPgfrTRUdijJdkjn6EYBNsPrf8YSV7JeUGGhWSwkex");
-        const [programDelegate] = PublicKey.findProgramAddressSync(
-            [Buffer.from("metadata"), pid.toBuffer(), mint.toBuffer()],
-            pid
         );
         return programDelegate;
     }

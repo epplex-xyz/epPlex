@@ -1,17 +1,10 @@
 
 import {PublicKey} from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
+import { FixedLengthArray } from "./helperTypes";
 
-type FixedLengthArray<T, L extends number> = L extends L
-    ? number[] extends ((
-            ...args: [...Array<L>]
-        ) => void)
-        ? T[]
-        : [...Array<L>]
-    : never;
 
-// TODO this is super hardcoded
-export interface Token22 {
+export interface Token2022Interface {
     mintAuthorityOption: 1 | 0; // 4
     mintAuthority: PublicKey; // 36
     supply: bigint; // 44
@@ -42,7 +35,7 @@ export interface Token22 {
 }
 
 // /** Buffer layout for de/serializing a mint */
-export const Token22Layout = borsh.struct<Token22>([
+export const Token22Layout = borsh.struct<Token2022Interface>([
     borsh.u32('mintAuthorityOption'),
     borsh.publicKey('mintAuthority'),
     borsh.u64('supply'),
