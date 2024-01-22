@@ -21,7 +21,7 @@ pub struct TokenBurn<'info> {
     // pub program_delegate: Account<'info, ProgramDelegate>,
     #[account()]
     /// CHECK
-    pub program_delegate: AccountInfo<'info>,
+    pub permament_delegate: AccountInfo<'info>,
 
     // TODO check that this is in fact a token account for the mint
     #[account(
@@ -64,7 +64,7 @@ impl TokenBurn<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.token_account,
             ctx.accounts.token22_program.key(),
-            &ctx.accounts.program_delegate,
+            &ctx.accounts.permament_delegate,
         )?;
 
         close_mint(
@@ -72,8 +72,11 @@ impl TokenBurn<'_> {
             &ctx.accounts.mint.to_account_info(),
             // Currently rent collector is hardcoded to be the Program Delegaate
             &ctx.accounts.payer.to_account_info(),
-            &ctx.accounts.program_delegate,
+            // Authority to close the mint
+            &ctx.accounts.permament_delegate,
         )?;
+
+        // TODO prolly would still need to close the token account
 
         Ok(())
     }

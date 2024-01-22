@@ -6,7 +6,7 @@ import { Program2 } from "../client/program2";
 import {TokenMetadata} from  "@solana/spl-token-metadata";
 
 // Old decoding method
-export async function getToken22(
+export async function getToken22WithInterface(
     connection: Connection,
     publicKey: PublicKey
 ): Promise<Token2022Interface[]> {
@@ -27,6 +27,23 @@ export async function getToken22(
         } catch (e) {
             console.log("Failed to decode", e);
         }
+    }
+
+    return token22s;
+}
+
+export async function getToken22(
+    connection: Connection,
+    publicKey: PublicKey
+): Promise<PublicKey[]> {
+    // Get all Token2022s of owner
+    const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
+
+    const token22s: PublicKey[] = [];
+    for (const [_, e] of allTokenAccounts.value.entries()) {
+        // Get raw data
+        const data = AccountLayout.decode(e.account.data);
+        token22s.push(data.mint);
     }
 
     return token22s;

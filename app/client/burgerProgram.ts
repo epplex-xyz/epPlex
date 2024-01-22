@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { createBurgerProgram, EpplexBurgerProgram,  } from "./types/programTypes";
+import { CORE_PROGRAM_ID, createBurgerProgram, EpplexBurgerProgram } from "./types/programTypes";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
@@ -52,6 +52,7 @@ export class BurgerProgram {
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 rent: SYSVAR_RENT_PUBKEY,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+                epplexCore: CORE_PROGRAM_ID,
             })
             .transaction();
 

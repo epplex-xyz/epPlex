@@ -43,7 +43,6 @@ export function EpNFTContainer({item}: {item: TokenMetadata}) {
                     Object.prototype.hasOwnProperty.call(traitObject, 'value')
                 );
 
-
                 if (isValid) {
                     // Add the array of trait objects to the list
                     setTraitList([...traitObjects]);
