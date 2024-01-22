@@ -1,72 +1,65 @@
-import { Connection } from "@solana/web3.js";
+import { Connection, Transaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
 import {Program2} from "../app/client/program2";
-import { BN } from "@coral-xyz/anchor";
+import { BN, Wallet } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import * as pda from './pda';
+import { getToken22 } from "../app/utils/token2022";
+import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
+import { loadKeypairFromFile } from "../script/utils/helpers";
+
+const secretKeypair = loadKeypairFromFile("/Users/Mac/.config/solana/test.json")
 
 describe('Environment setup', () => {
-    // const {
-    //     coreProgram,
-    //     burgerProgram,
-    //     metadataProgram,
-    //     connection,
-    //     wallet
-    // } = testPrelude();
+    const tempProvider = anchor.AnchorProvider.env();
+    anchor.setProvider(tempProvider);
 
-    const provider = anchor.AnchorProvider.env();
+    const provider = new anchor.AnchorProvider(
+        tempProvider.connection,
+        new Wallet(secretKeypair),
+        {skipPreflight: true}
+    )
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
-    //
-    // const mainProgram = new Program2(wallet, connection);
-    // const burgerProgramDelegate = pda.burgerProgramDelegate(burgerProgram.programId);
-    // const mint = Keypair.generate();
-    // const payer = wallet.publicKey
-    // const ata = getAssociatedTokenAddressSync(
-    //     mint.publicKey,
-    //     payer,
-    //     undefined,
-    //     TOKEN_2022_PROGRAM_ID,
-    //     ASSOCIATED_TOKEN_PROGRAM_ID
-    // );
 
-    // const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
+    const burgerDelegate = burgerProgram.getProgramDelegate();
+    const destroyTimestamp: string = "1706020091"
 
-
-    it("Create burger delegate ", async() => {
-        await burgerProgram.createProgramDelegate();
-    })
+    // it("Create burger delegate ", async() => {
+    //     await burgerProgram.createProgramDelegate();
+    // })
 
     it('Mint tokens', async () => {
-        // async function burnTokens() {
-        //
-        //     // 1706020091
-        //     // const payer = loadOrGenerateKeypair("payer");
-        //     // const mintKeypair = loadOrGenerateKeypair("mint");
-        //     // const program = new Program(payer, connection);
-        //
-        //
-        //     // await program.createToken(mintKeypair, payer);
-        //     // await mint(connection, mintKeypair.publicKey, payer);
-        //     // await program.burnToken(mintKeypair.publicKey, payer);
-        // }
+        await burgerProgram.createWhitelistMint(destroyTimestamp)
     });
 
-    it('Burn tokens', async () => {
-        // async function burnTokens() {
-        //
-        //     // 1706020091
-        //     // const payer = loadOrGenerateKeypair("payer");
-        //     // const mintKeypair = loadOrGenerateKeypair("mint");
-        //     // const program = new Program(payer, connection);
-        //
-        //
-        //     // await program.createToken(mintKeypair, payer);
-        //     // await mint(connection, mintKeypair.publicKey, payer);
-        //     // await program.burnToken(mintKeypair.publicKey, payer);
-        // }
-    });
+    // TODO uncomment if you want to burn your tokens
+    // it('Burn tokens', async () => {
+    //     const allTokens = await getToken22(
+    //         provider.connection,
+    //         provider.publicKey
+    //     )
+    //
+    //     console.log("Total tokens", allTokens.length);
+    //     // Close one by one
+    //     for (const mint of allTokens) {
+    //         console.log("Closing mint", mint.toString());
+    //         const ixs = await createTokenCloseAndBurnIx(
+    //             provider.connection,
+    //             secretKeypair,
+    //             mint,
+    //         )
+    //
+    //         await sendAndConfirmRawTransaction(
+    //             provider.connection,
+    //             new Transaction().add(...ixs),
+    //             secretKeypair.publicKey,
+    //             undefined,
+    //             [secretKeypair]
+    //         )
+    //     }
+    // });
 });
