@@ -13,11 +13,19 @@ pub struct WhitelistMint<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    // #[account(mut)]
-    // /// CHECK
-    // pub token_metadata: UncheckedAccount<'info>,
+    #[account(
+        init,
+        seeds = [
+            SEED_BURGER_METADATA,
+            mint.key().as_ref()
+        ],
+        payer = payer,
+        space = BurgerMetadata::LEN,
+        bump,
+    )]
+    /// CHECK
+    pub token_metadata: Account<'info, BurgerMetadata>,
 
-    // TODO: is unchecked account correct?
     #[account(
         seeds = [
             SEED_PROGRAM_DELEGATE
@@ -27,6 +35,7 @@ pub struct WhitelistMint<'info> {
     /// CHECK
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
+    // TODO should gate this to specific admin
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -47,6 +56,8 @@ pub struct WhitelistMintParams {
 
 impl WhitelistMint<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &WhitelistMintParams) -> Result<()> {
+        // prolly need to setup some collection configs
+
         // TODO need to check for destroy timestamp
         //  need to do some validations
         // let now = Clock::get().unwrap().unix_timestamp;
@@ -54,6 +65,12 @@ impl WhitelistMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: WhitelistMintParams) -> Result<()> {
+        // Create the burger metadata
+        let token_metadata = &mut ctx.accounts.token_metadata;
+        **token_metadata = BurgerMetadata::new(
+            ctx.bumps.token_metadata,
+        );
+
         let additional_metadata = vec![
             [EXPIRY_FIELD.to_string(), params.destroy_timestamp],
             [RENEWAL_FIELD.to_string(), "0".to_string()],
