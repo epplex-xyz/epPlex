@@ -93,7 +93,8 @@ export async function getEpNFTs(
             const metadata = mintInfo.metadataAddress;
 
             // Fetch the pda
-            const pda = Program2.staticGetTokenMetadata(data.mint).toString();
+            // const pda = Program2.staticGetTokenMetadata(data.mint).toString();
+            const pda = PublicKey.default.toString();
 
             // Check if they equal - means it is from our program
             const isEpNFT = metadata.toString() === pda;

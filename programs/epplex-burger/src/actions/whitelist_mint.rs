@@ -48,6 +48,7 @@ pub struct WhitelistMintParams {
 impl WhitelistMint<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &WhitelistMintParams) -> Result<()> {
         // TODO need to check for destroy timestamp
+        //  need to do some validations
         // let now = Clock::get().unwrap().unix_timestamp;
         Ok(())
     }
