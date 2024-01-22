@@ -53,6 +53,11 @@ pub mod epplex_burger {
         TokenSell::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
+        TokenBurn::actuate(ctx, params)
+    }
+
     // // Todo this should simply be updating the metadata field
     // #[access_control(ctx.accounts.validate(&ctx, &params))]
     // pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {

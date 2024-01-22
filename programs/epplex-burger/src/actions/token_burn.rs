@@ -59,7 +59,7 @@ impl TokenBurn<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, _params: &TokenBurnParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, _params: TokenBurnParams) -> Result<()> {
         burn_token(
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.token_account,

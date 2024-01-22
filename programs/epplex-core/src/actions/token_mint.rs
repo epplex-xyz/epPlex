@@ -145,6 +145,7 @@ impl TokenMint<'_> {
             params.uri.clone(),
         )?;
 
+        // prolly needs to do invoke signed
         // Add all the metadata
         for (field, value) in converted_metadata.into_iter() {
             update_token_metadata(
