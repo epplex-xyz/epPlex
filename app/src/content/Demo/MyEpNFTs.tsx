@@ -4,14 +4,13 @@ import { TextDivider } from "@components/Divider/TextDivider";
 import { Text } from "@components/Text/TextComponent";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useProgramApis } from "../../providers/ProgramApisProvider";
-import { getEpNFTs, getToken22 } from "../../../utils/solana";
-import { Token22 } from "../../../client/types/token22";
+import { myGetTokenMetadata } from "../../../utils/token2022";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Carousel } from "./Carousel";
 import { EpNFTContainer } from "./EpNFTContainer";
 import { useSearchParams } from "next/navigation";
 import { PublicKey } from "@solana/web3.js";
-import { EpNFT, TokenMetadata } from "../../../client/types/epNFT";
+import {TokenMetadata} from  "@solana/spl-token-metadata";
 
 export function MyEpNFTs() {
     const [isFetching, setIsFetching] = useState<boolean>(true);
@@ -32,7 +31,7 @@ export function MyEpNFTs() {
                 throw new Error("No publickey");
             }
 
-            const tokens = await getEpNFTs(program.connection, pubkey);
+            const tokens = await myGetTokenMetadata(program.connection, pubkey);
             setTokens(tokens);
         } catch (e) {
             console.log("Failed getting NFTs", e);
@@ -56,11 +55,9 @@ export function MyEpNFTs() {
             alignSelf={"start"}
             width={{ sm: "300px", md: "400px" }}
         >
-            {/*<div className="absolute top-0 w-full">*/}
             <div className={"w-full"}>
                 <TextDivider>My epNFTs</TextDivider>
             </div>
-            {/*</div>*/}
 
             <div className="flex justify-center self-center items-center w-full flex-col">
                 {isFetching ? <CircularProgress sx={{color: "secondary.main"}} /> :

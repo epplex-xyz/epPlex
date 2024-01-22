@@ -298,6 +298,53 @@ export type EpplexBurger = {
       ]
     },
     {
+      "name": "tokenBurn",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBurnParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -772,6 +819,53 @@ export const IDL: EpplexBurger = {
           "name": "params",
           "type": {
             "defined": "TokenSellParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenBurn",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "programDelegate",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenBurnParams"
           }
         }
       ]

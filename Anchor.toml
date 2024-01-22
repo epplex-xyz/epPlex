@@ -28,11 +28,12 @@ epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "https://api.devnet.solana.com"
-cluster = "Localnet"
+cluster = "https://api.devnet.solana.com"
+#cluster = "Localnet"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
+setupenv = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/testSetup.ts"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.spec.ts"
 
 copy-burger = "mkdir -p client/idl && cp target/idl/epplex_burger.json app/client/idl/epplex_burger.json && cp target/types/epplex_burger.ts app/client/idl/epplexBurgerTypes.ts"
