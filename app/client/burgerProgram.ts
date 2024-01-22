@@ -1,36 +1,30 @@
 import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { createProgram, EpplexBurgerProgram } from "./types/programTypes";
-import { AnchorProvider, BN, Wallet } from "@coral-xyz/anchor";
+import { createBurgerProgram, EpplexBurgerProgram,  } from "./types/programTypes";
+import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
-import {
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    getAssociatedTokenAddressSync,
-    TOKEN_2022_PROGRAM_ID,
-} from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 
-export class Program2 {
+export class BurgerProgram {
     connection: Connection;
     program: EpplexBurgerProgram;
     wallet: Wallet;
-    constructor(
-        wallet: AnchorWallet,
-        connection: Connection,
-    ) {
+
+    constructor(wallet: AnchorWallet, connection: Connection) {
         const provider = new AnchorProvider(connection, wallet, CONFIRM_OPTIONS);
-        this.program = createProgram(provider);
+        this.program = createBurgerProgram(provider);
         this.connection = connection;
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
     async createWhitelistMint(
-        destroyTimestampOffset: number = 60 * 5,
+        destroyTimestamp: string,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
-        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
+        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
     ) {
-        const programDelegate = this.getProgramDelegate();
+        const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
         const mint = Keypair.generate();
         const ata = getAssociatedTokenAddressSync(
@@ -46,13 +40,13 @@ export class Program2 {
                 name: name,
                 symbol: symbol,
                 uri: uri,
-                destroyTimestamp: "1705952387"
+                destroyTimestamp: destroyTimestamp,
             })
             .accounts({
                 mint: mint.publicKey,
                 ata,
                 // tokenMetadata: tm,
-                permanentDelegate: programDelegate,
+                permanentDelegate: permanentDelegate,
                 payer: payer,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
@@ -63,13 +57,7 @@ export class Program2 {
 
         let id;
         try {
-            id = await sendAndConfirmRawTransaction(
-                this.connection,
-                tokenCreateTx,
-                payer,
-                this.wallet,
-                [mint]
-            );
+            id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
             console.log("tx", id);
         } catch (e) {
             console.log("Failed to send tx", e);
@@ -77,17 +65,10 @@ export class Program2 {
         return id;
     }
 
-    async burnToken(
-        mint: PublicKey,
-    ) {
+    async burnToken(mint: PublicKey) {
         const programDelegate = this.getProgramDelegate();
         const mintOwner = await getMintOwner(this.connection, mint);
-        const ata = getAssociatedTokenAddressSync(
-            mint,
-            mintOwner,
-            undefined,
-            TOKEN_2022_PROGRAM_ID
-        );
+        const ata = getAssociatedTokenAddressSync(mint, mintOwner, undefined, TOKEN_2022_PROGRAM_ID);
 
         const tokenBurnTx = await this.program.methods
             .tokenBurn({})
@@ -123,26 +104,18 @@ export class Program2 {
             })
             .transaction();
 
-        const id = await sendAndConfirmRawTransaction(
-            this.connection, tx, this.wallet.publicKey, this.wallet, []
-        );
+        const id = await sendAndConfirmRawTransaction(this.connection, tx, this.wallet.publicKey, this.wallet, []);
         console.log("tx", id);
 
         return id;
     }
 
-    async renewToken() {
-        const mint = new PublicKey("DRa4aV8SMbcM9g9aDiiWnHgmwNcNNcxvTHh1Bfg1z1zJ");
-        const ata = getAssociatedTokenAddressSync(
-            mint,
-            this.wallet.publicKey,
-            undefined,
-            TOKEN_2022_PROGRAM_ID
-        );
+    async renewToken(mint: PublicKey) {
+        const ata = getAssociatedTokenAddressSync(mint, this.wallet.publicKey, undefined, TOKEN_2022_PROGRAM_ID);
         const programDelegate = this.getProgramDelegate();
 
         const tx = await this.program.methods
-            .tokenRenew({renewTerms: 1})
+            .tokenRenew({ renewTerms: 1 })
             .accounts({
                 mint,
                 tokenAccount: ata,
@@ -152,9 +125,7 @@ export class Program2 {
             })
             .transaction();
 
-        const id = await sendAndConfirmRawTransaction(
-            this.connection, tx, this.wallet.publicKey, this.wallet, []
-        );
+        const id = await sendAndConfirmRawTransaction(this.connection, tx, this.wallet.publicKey, this.wallet, []);
         console.log("tx", id);
 
         return id;
@@ -167,5 +138,4 @@ export class Program2 {
         );
         return programDelegate;
     }
-
 }
