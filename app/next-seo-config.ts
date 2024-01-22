@@ -1,33 +1,33 @@
 const defaultSEOConfig = {
     title: "epPlex",
-    description: "epPlex | Home for ephemeral NFTs (epNFTs)",
-    cannonical: "https://silk-street-frontend.vercel.app/",
+    description: "epPlex | A novel Solana NFT protocol",
+    cannonical: "https://www.epplex.xyz/",
     openGraph: {
         type: "website",
-        url: "https://silk-street-frontend.vercel.app/",
+        url: "https://www.epplex.xyz/",
         // This is the first line of discord link
         site_name: "epPlex",
         // Second line, blue text
-        title: "epPlex | Home for ephemeral NFTs (epNFTs)",
-        description: "Silky Smooth Shopping",
+        title: "epPlex | A novel Solana NFT protocol",
+        description: "Home for ephemeral NFTs (epNFTs)",
         images: [
             {
-                url: "https://silk-street-frontend.vercel.app/logos/logo.png",
+                url: "https://epplex.xyz/logos/logo.png",
                 width: 630,
                 height: 630,
                 alt: "Website logo",
             },
         ],
         profile: {
-            firstName: "Silk",
-            lastName: "Street",
-            username: "silk_street",
+            firstName: "epPlex",
+            lastName: "xyz",
+            username: "epplex_xyz",
             gender: "unisex",
         },
     },
     twitter: {
-        handle: "@blessed_burgers",
-        site: "@blessed_burgers",
+        handle: "@epplex_xyz",
+        site: "@epplex_xyz",
         cardType: "summary_large_image",
     },
 };
