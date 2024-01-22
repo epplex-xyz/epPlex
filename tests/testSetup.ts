@@ -1,52 +1,72 @@
-import {loadOrGenerateKeypair, savePublicKeyToFile} from "./utils/helpers";
-import {
-    Connection,
-    Transaction,
-    SystemProgram,
-    sendAndConfirmTransaction, PublicKey,
-} from "@solana/web3.js";
-import {
-    ExtensionType,
-    createInitializeMintInstruction,
-    createInitializePermanentDelegateInstruction,
-    getMintLen,
-    TOKEN_2022_PROGRAM_ID,
-    createInitializeMintCloseAuthorityInstruction,
-} from "@solana/spl-token";
-import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
-import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
-import { Program } from "../app/client/program"
-import {mint} from "./instructions/generic";
+import { Connection } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
+import { BurgerProgram } from "../app/client/burgerProgram";
+import {Program2} from "../app/client/program2";
+import { BN } from "@coral-xyz/anchor";
+import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { sendAndConfirmRawTransaction } from "../app/utils/solana";
+import * as pda from './pda';
 
-const rpc = "https://api.devnet.solana.com";
-const connection = new Connection(rpc, "confirmed");
-const METADATAPOINTER_SIZE = 64 + 2 + 2;
+describe('Environment setup', () => {
+    // const {
+    //     coreProgram,
+    //     burgerProgram,
+    //     metadataProgram,
+    //     connection,
+    //     wallet
+    // } = testPrelude();
 
-
-async function mintTokens() {
     const provider = anchor.AnchorProvider.env();
     anchor.setProvider(provider);
+    const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
+    //
+    // const mainProgram = new Program2(wallet, connection);
+    // const burgerProgramDelegate = pda.burgerProgramDelegate(burgerProgram.programId);
+    // const mint = Keypair.generate();
+    // const payer = wallet.publicKey
+    // const ata = getAssociatedTokenAddressSync(
+    //     mint.publicKey,
+    //     payer,
+    //     undefined,
+    //     TOKEN_2022_PROGRAM_ID,
+    //     ASSOCIATED_TOKEN_PROGRAM_ID
+    // );
 
-}
-
-async function burnTokens() {
-    const payer = loadOrGenerateKeypair("payer");
-    const mintKeypair = loadOrGenerateKeypair("mint");
-    const program = new Program(payer, connection);
+    // const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
 
 
-    // await program.createToken(mintKeypair, payer);
-    await mint(connection, mintKeypair.publicKey, payer);
-    // await program.burnToken(mintKeypair.publicKey, payer);
-}
+    it("Create burger delegate ", async() => {
+        await burgerProgram.createProgramDelegate();
+    })
 
-async function burnTokens() {
-    try {
-        // await setup();
-        await test();
-    } catch (e) {
-        console.log("err", e);
-    }
-}
-// main();
+    it('Mint tokens', async () => {
+        // async function burnTokens() {
+        //
+        //     // 1706020091
+        //     // const payer = loadOrGenerateKeypair("payer");
+        //     // const mintKeypair = loadOrGenerateKeypair("mint");
+        //     // const program = new Program(payer, connection);
+        //
+        //
+        //     // await program.createToken(mintKeypair, payer);
+        //     // await mint(connection, mintKeypair.publicKey, payer);
+        //     // await program.burnToken(mintKeypair.publicKey, payer);
+        // }
+    });
+
+    it('Burn tokens', async () => {
+        // async function burnTokens() {
+        //
+        //     // 1706020091
+        //     // const payer = loadOrGenerateKeypair("payer");
+        //     // const mintKeypair = loadOrGenerateKeypair("mint");
+        //     // const program = new Program(payer, connection);
+        //
+        //
+        //     // await program.createToken(mintKeypair, payer);
+        //     // await mint(connection, mintKeypair.publicKey, payer);
+        //     // await program.burnToken(mintKeypair.publicKey, payer);
+        // }
+    });
+});
