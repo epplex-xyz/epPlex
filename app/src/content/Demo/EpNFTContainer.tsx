@@ -1,56 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Text } from "@components/Text/TextComponent";
-import { Token22 } from "../../../client/types/token22";
 import style from "../../styles/style.module.scss";
 import Image from "next/image";
 import { Timer } from "@components/Text/Timer";
 import { ContainedContainer } from "@components/Container/ContainedContainer";
-import { CopyTooltip } from "@components/Tooltip/MyTooltip";
 import Button from "@mui/material/Button";
 import BombIcon from "../../../public/icons/bomb.svg";
 import { useProgramApis } from "../../providers/ProgramApisProvider";
 import CircularProgress from "@mui/material/CircularProgress";
 import toast from "react-hot-toast";
 import { ToastText } from "@components/Text/ToastText";
-import { EpNFT, TokenMetadata } from "../../../client/types/epNFT";
+import {TokenMetadata} from  "@solana/spl-token-metadata";
+import { TraitContainer } from "./TraitContainer";
 
-function TraitContainer({trait, value}: {trait: string, value: string}) {
-    return (
-        <Box
-            component="div"
-            position="relative"
-            display={"flex"}
-            flexDirection={"column"}
-            alignSelf={"center"}
-            color={"primary.main"}
-            sx={{
-                borderRadius: style.borderRadiusMd,
-                boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
-            }}
-            padding={"8px 16px"}
-        >
-            <Text.Body2 fontSize={"10px"} className="whitespace-nowrap">
-                {trait}:
-            </Text.Body2>
-            <Text.Body2 fontSize={"10px"} className="whitespace-nowrap">
-                {value}
-            </Text.Body2>
-        </Box>
-    );
-}
-
-// function AddressCopy({ address }: { address: string}) {
-//     return (
-//         <div className="flex gap-x-1 items-center">
-//             <Text.Body2>
-//                 {spliceAddress(address)}
-//             </Text.Body2>
-//
-//             <CopyTooltip copyText={address} />
-//         </div>
-//     );
-// }
 
 export function EpNFTContainer({item}: {item: TokenMetadata}) {
     const [image, setImage] = useState<string>("");
@@ -61,8 +24,8 @@ export function EpNFTContainer({item}: {item: TokenMetadata}) {
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
     const [loading, setLoading] = React.useState(false);
 
-    const destroyTimestamp = Number(item.destroyTimestampValue);
-    const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
+    // const destroyTimestamp = Number(item.expirationDateValue);
+    // const canDestroy = Math.floor(Date.now() / 1000) > destroyTimestamp;
 
     const fetchImage = useCallback(async () => {
         try {
@@ -141,9 +104,9 @@ export function EpNFTContainer({item}: {item: TokenMetadata}) {
                 boxShadow: (theme) => `inset 0 0 0 1px ${theme.palette.text.primary}`,
             }}
         >
-            <ContainedContainer>
-                <Timer endTimestamp={destroyTimestamp}/>
-            </ContainedContainer>
+            {/*<ContainedContainer>*/}
+            {/*    <Timer endTimestamp={destroyTimestamp}/>*/}
+            {/*</ContainedContainer>*/}
 
             { image &&
                 <Image
@@ -189,7 +152,7 @@ export function EpNFTContainer({item}: {item: TokenMetadata}) {
                         marginTop: "16px",
                         columnGap: "8px"
                     }}
-                    disabled={!canDestroy}
+                    // disabled={!canDestroy}
                     onClick={destroyNFT}
                 >
                     {loading ?
