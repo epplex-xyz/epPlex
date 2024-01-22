@@ -1,4 +1,12 @@
-import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import {
+    ComputeBudgetProgram,
+    Connection,
+    Keypair,
+    PublicKey,
+    SystemProgram,
+    SYSVAR_RENT_PUBKEY,
+    Transaction,
+} from "@solana/web3.js";
 import { CORE_PROGRAM_ID, createBurgerProgram, EpplexBurgerProgram } from "./types/programTypes";
 import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
@@ -35,7 +43,7 @@ export class BurgerProgram {
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
 
-        const tokenCreateTx = await this.program.methods
+        const tokenCreateIx = await this.program.methods
             .whitelistMint({
                 name: name,
                 symbol: symbol,
@@ -54,8 +62,15 @@ export class BurgerProgram {
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
                 epplexCore: CORE_PROGRAM_ID,
             })
-            .transaction();
+            .instruction();
 
+        const ixs = [
+            // prolly could tweak this further down
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 250_000 }),
+            tokenCreateIx
+        ];
+
+        const tokenCreateTx = new Transaction().add(...ixs);
         let id;
         try {
             id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
