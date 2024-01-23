@@ -10,12 +10,10 @@ describe('epplex Basic API', () => {
     const {
         coreProgram,
         burgerProgram,
-        metadataProgram,
         connection,
         wallet
     } = testPrelude();
 
-    const mainProgram = new Program2(wallet, connection);
     const burgerProgramDelegate = pda.burgerProgramDelegate(burgerProgram.programId);
     const mint = Keypair.generate();
     const payer = wallet.publicKey
@@ -27,59 +25,63 @@ describe('epplex Basic API', () => {
         ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
+    const destroyTimestamp: string = "1706020091"
+
     // const tm = tokenMetadata(mint.publicKey, metadataProgram.programId)
 
 
-    it("Create burger ", async() => {
-        try {
-            const tx = await burgerProgram.methods.programDelegateCreate({})
-                .accounts({
-                    programDelegate: burgerProgramDelegate,
-                    payer: payer,
-                    systemProgram: SystemProgram.programId
-                })
-                .rpc({skipPreflight: true})
+    // it("Create burger delegate", async() => {
+    //     try {
+    //         const tx = await burgerProgram.methods.programDelegateCreate({})
+    //             .accounts({
+    //                 programDelegate: burgerProgramDelegate,
+    //                 payer: payer,
+    //                 systemProgram: SystemProgram.programId
+    //             })
+    //             .rpc({skipPreflight: true})
+    //
+    //         console.log("tx", tx)
+    //     } catch (e) {
+    //         console.log("error", e)
+    //     }
+    //
+    //     console.log("\n")
+    // })
 
-            console.log("tx", tx)
-        } catch (e) {
-            console.log("error", e)
-        }
-
-        console.log("\n")
-    })
-
-    it('Mint epNFT', async () => {
-        const tokenCreateTx = await burgerProgram.methods
-            .whitelistMint({
-                name: "hello",
-                symbol: "sm",
-                uri: "",
-                destroyTimestamp: "1705952387"
-            })
-            .accounts({
-                mint: mint.publicKey,
-                ata,
-                // tokenMetadata: tm,
-                permanentDelegate: burgerProgramDelegate,
-                payer,
-                systemProgram: SystemProgram.programId,
-                token22Program: TOKEN_2022_PROGRAM_ID,
-                rent: SYSVAR_RENT_PUBKEY,
-                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-                epplexCore: coreProgram.programId
-                // metadataProgram: metadataProgram.programId
-            })
-            .transaction()
-
-        const id = await sendAndConfirmRawTransaction(
-            connection,
-            tokenCreateTx,
-            payer,
-            wallet,
-            [mint]
-        );
-
-        console.log("TX Mint epNFT", id)
-        console.log("\n")
-    });
+    // it('Mint whitelist epNFT', async () => {
+    //     // await burgerProgram.createWhitelistMint(destroyTimestamp)
+    //
+    //     const tokenCreateTx = await burgerProgram.methods
+    //         .whitelistMint({
+    //             name: "hello",
+    //             symbol: "sm",
+    //             uri: "",
+    //             destroyTimestamp: "1705952387"
+    //         })
+    //         .accounts({
+    //             mint: mint.publicKey,
+    //             ata,
+    //             // tokenMetadata: tm,
+    //             permanentDelegate: burgerProgramDelegate,
+    //             payer,
+    //             systemProgram: SystemProgram.programId,
+    //             token22Program: TOKEN_2022_PROGRAM_ID,
+    //             rent: SYSVAR_RENT_PUBKEY,
+    //             associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+    //             epplexCore: coreProgram.programId
+    //             // metadataProgram: metadataProgram.programId
+    //         })
+    //         .transaction()
+    //
+    //     const id = await sendAndConfirmRawTransaction(
+    //         connection,
+    //         tokenCreateTx,
+    //         payer,
+    //         wallet,
+    //         [mint]
+    //     );
+    //
+    //     console.log("TX Mint epNFT", id)
+    //     console.log("\n")
+    // });
 });

@@ -25,19 +25,27 @@ describe('Environment setup', () => {
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
 
-    const burgerDelegate = burgerProgram.getProgramDelegate();
-    const destroyTimestamp: string = "1706020091"
+
+    const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
+    console.log("destroy", destroyTimestamp);
+    const mint = Keypair.generate();
 
     // it("Create burger delegate ", async() => {
     //     await burgerProgram.createProgramDelegate();
     // })
 
     it('Mint tokens', async () => {
-        await burgerProgram.createWhitelistMint(destroyTimestamp)
+        await burgerProgram.createWhitelistMint(destroyTimestamp, mint)
+    });
+
+
+    it('Renew token', async () => {
+        await burgerProgram.renewToken(mint.publicKey)
     });
 
     // TODO uncomment if you want to burn your tokens
     // it('Burn tokens', async () => {
+    //      const burgerDelegate = burgerProgram.getProgramDelegate();
     //     const allTokens = await getToken22(
     //         provider.connection,
     //         provider.publicKey
