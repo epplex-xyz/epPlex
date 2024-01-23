@@ -24,6 +24,7 @@ export const createCoreProgram= (provider: AnchorProvider) => new Program(CoreId
 
 
 
+export const VAULT = new PublicKey("BuHRzpGi4t9ho8rtBNCKCRrPE26EG2CGsq3YiVCkhXr7");
 
 
 
