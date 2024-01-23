@@ -13,7 +13,6 @@ pub struct TokenRenew<'info> {
     )]
     pub mint_payment: Account<'info, Mint>,
 
-    // TOOD add other checks here
     #[account(
         mut,
         mint::token_program = token22_program.key(),
