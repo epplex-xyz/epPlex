@@ -23,7 +23,6 @@ pub struct WhitelistMint<'info> {
         space = BurgerMetadata::LEN,
         bump,
     )]
-    /// CHECK
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     #[account(

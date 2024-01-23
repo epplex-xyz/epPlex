@@ -10,11 +10,12 @@ pub use actions::*;
 pub mod id;
 pub use id::ID;
 
-pub mod token_utils;
-pub use token_utils::*;
+pub mod utils;
+pub use utils::*;
+
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    token::{Mint, TokenAccount},
+    token::{Mint, TokenAccount, Token},
     token_2022::{self},
     token_interface::{
         Mint as MintInterface,
