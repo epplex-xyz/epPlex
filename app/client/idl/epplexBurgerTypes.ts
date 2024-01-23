@@ -22,6 +22,11 @@ export type EpplexBurger = {
           ]
         },
         {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "permanentDelegate",
           "isMut": false,
           "isSigner": false,
@@ -156,32 +161,24 @@ export type EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "proceedsTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "buyerTokenAccount",
+          "name": "payerTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "tokenAccount",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "buyer",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
         },
         {
           "name": "authority",
@@ -190,6 +187,11 @@ export type EpplexBurger = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -309,7 +311,7 @@ export type EpplexBurger = {
           ]
         },
         {
-          "name": "programDelegate",
+          "name": "permamentDelegate",
           "isMut": false,
           "isSigner": false,
           "docs": [
@@ -397,6 +399,21 @@ export type EpplexBurger = {
     }
   ],
   "accounts": [
+    {
+      "name": "burgerMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "programDelegate",
       "type": {
@@ -520,6 +537,11 @@ export type EpplexBurger = {
       "code": 6002,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
+    },
+    {
+      "code": 6003,
+      "name": "FieldDoesNotExist",
+      "msg": "Field does not exist"
     }
   ]
 };
@@ -548,6 +570,11 @@ export const IDL: EpplexBurger = {
           ]
         },
         {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "permanentDelegate",
           "isMut": false,
           "isSigner": false,
@@ -682,32 +709,24 @@ export const IDL: EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "proceedsTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "buyerTokenAccount",
+          "name": "payerTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "tokenAccount",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "buyer",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "programDelegate",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
         },
         {
           "name": "authority",
@@ -716,6 +735,11 @@ export const IDL: EpplexBurger = {
         },
         {
           "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -835,7 +859,7 @@ export const IDL: EpplexBurger = {
           ]
         },
         {
-          "name": "programDelegate",
+          "name": "permamentDelegate",
           "isMut": false,
           "isSigner": false,
           "docs": [
@@ -923,6 +947,21 @@ export const IDL: EpplexBurger = {
     }
   ],
   "accounts": [
+    {
+      "name": "burgerMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "programDelegate",
       "type": {
@@ -1046,6 +1085,11 @@ export const IDL: EpplexBurger = {
       "code": 6002,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
+    },
+    {
+      "code": 6003,
+      "name": "FieldDoesNotExist",
+      "msg": "Field does not exist"
     }
   ]
 };

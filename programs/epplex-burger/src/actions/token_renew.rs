@@ -1,12 +1,9 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 use crate::*;
-use spl_token_2022::extension::BaseStateWithExtensions;
 
 #[derive(Accounts)]
 #[instruction(params: TokenRenewParams)]
 pub struct TokenRenew<'info> {
-
-    // TODO: add normal token program constraint
     #[account(
         constraint = mint.decimals == 0,
         constraint = mint.supply == 1,
@@ -16,7 +13,6 @@ pub struct TokenRenew<'info> {
     )]
     pub mint_payment: Account<'info, Mint>,
 
-    // TOOD add other checks here
     #[account(
         mut,
         mint::token_program = token22_program.key(),
@@ -25,52 +21,50 @@ pub struct TokenRenew<'info> {
     )]
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // TODO need to modify authority
+    #[account(
+        seeds = [
+            SEED_BURGER_METADATA,
+            mint.key().as_ref()
+        ],
+        bump = token_metadata.bump
+    )]
+    pub token_metadata: Account<'info, BurgerMetadata>,
+
     #[account(
         mut,
         associated_token::mint = mint_payment,
-        associated_token::authority = buyer,
+        associated_token::authority = VAULT_PUBKEY,
     )]
     pub proceeds_token_account: Account<'info, TokenAccount>, // Deposit in here
 
     #[account(
         mut,
         associated_token::mint = proceeds_token_account.mint,
-        associated_token::authority = buyer,
+        associated_token::authority = payer,
     )]
-    pub buyer_token_account: Account<'info, TokenAccount>, // Deduct from here
+    pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
 
-    #[account(
-        token::mint = mint,
-        token::authority = authority,
-        token::token_program = token22_program.key(),
-    )]
-    pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
-
-    #[account(mut)]
-    pub buyer: Signer<'info>, // Auth of buyer_token_account, mut for being payer
 
     // #[account(
-    //     mut,
-    //     seeds = [SEED_PROGRAM_DELEGATE],
-    //     bump = program_delegate.bump,
+    //     token::mint = mint,
+    //     token::authority = authority,
+    //     token::token_program = token22_program.key(),
     // )]
-    // pub program_delegate: Account<'info, ProgramDelegate>,
-    #[account()]
-    /// CHECK
-    pub program_delegate: AccountInfo<'info>,
+    // pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
 
     // TODO: test in case not authority
     #[account(mut)]
     pub authority: Signer<'info>,
 
     pub token22_program: Program<'info, Token2022>,
+    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenRenewParams {
-    renew_terms: u16,
-}
+pub struct TokenRenewParams {}
 
 impl TokenRenew<'_> {
     pub fn validate(
@@ -78,101 +72,54 @@ impl TokenRenew<'_> {
         _ctx: &Context<Self>,
         _params: &TokenRenewParams,
     ) -> Result<()> {
-        // TODO prolly need to match on some update auth
-
-        // from metaplex Metadata.rs
-
-        // // Only the Update Authority can update this section.
-        // match &args {
-        //     UpdateArgs::V1 {
-        //         new_update_authority,
-        //         uses,
-        //         collection_details,
-        //         ..
-        //     }
-        //     | UpdateArgs::AsUpdateAuthorityV2 {
-        //         new_update_authority,
-        //         uses,
-        //         collection_details,
-        //         ..
-        //     } => {
-        //         if let Some(authority) = new_update_authority {
-        //             self.update_authority = *authority;
-        //         }
-        //
-        //         if uses.is_some() {
-        //             let uses_option = uses.clone().to_option();
-        //             // If already None leave it as None.
-        //             assert_valid_use(&uses_option, &self.uses)?;
-        //             self.uses = uses_option;
-        //         }
-        //
-        //         if let CollectionDetailsToggle::Set(collection_details) = collection_details {
-        //             // only unsized collections can have the size set, and only once.
-        //             if self.collection_details.is_some() {
-        //                 return Err(MetadataError::SizedCollection.into());
-        //             }
-        //
-        //             self.collection_details = Some(collection_details.clone());
-        //         }
-        //     }
-        //     _ => (),
-        // }
-
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenRenewParams) -> Result<()> {
         // Currently just SOL
-        // Take payment 1 BONK
+        // TODO Take payment 1 BONK
         let amount = u64::pow(10, ctx.accounts.mint_payment.decimals as u32);
         token_2022::transfer_checked(
             CpiContext::new(
-                ctx.accounts.token22_program.to_account_info(),
+                ctx.accounts.token_program.to_account_info(),
                 token_2022::TransferChecked {
-                    from: ctx.accounts.buyer_token_account.to_account_info(),
+                    from: ctx.accounts.payer_token_account.to_account_info(),
                     to: ctx.accounts.proceeds_token_account.to_account_info(),
                     mint: ctx.accounts.mint_payment.to_account_info(),
-                    authority: ctx.accounts.buyer.to_account_info(),
+                    authority: ctx.accounts.payer.to_account_info(),
                 },
             ),
             amount,
             ctx.accounts.mint_payment.decimals
         )?;
 
-        // TODO need to turn this into a helper function
-        let buffer = ctx.accounts.mint.to_account_info();
-        let expiry_date;
+        // TODO Check update auth
+        // fetched_metadata.update_authority
 
-        // Fetch the expiry date
-        {
-            // Scoping because borrowing later
-            let mint_data = buffer.try_borrow_data()?;
-            let state = spl_token_2022::extension::StateWithExtensions::<spl_token_2022::state::Mint>::unpack(&mint_data)?;
-            let metadata_bytes = state.get_extension_bytes::<TokenMetadata>().unwrap();
-            let fetched_metadata = TokenMetadata::try_from_slice(metadata_bytes).unwrap();
+        let expiry_date_string = fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
+        let expiry_date =  expiry_date_string.parse::<i64>().unwrap();
+        msg!("Destroy timestamp: {}", expiry_date);
 
-            // TODO Check update auth
-            // fetched_metadata.update_authority
-
-            // TODO This is hardcoded, better to index on string
-            let temp = fetched_metadata.additional_metadata[0].1.clone();
-            expiry_date = temp.parse::<i64>().unwrap();
-            msg!("Destroy timestamp: {}", temp);
-        }
-
+        // Cannot exceed expiry
         let now = Clock::get().unwrap().unix_timestamp;
         if now > expiry_date {
-            msg!("ExpiryDate already exceeded");
+            return err!(BurgerError::DestroyTimestampHasBeenExceeded);
         }
 
-        let new_expiry_date = expiry_date.add(ONE_WEEK).to_string();
+        // Needs to be within 1 day of expiry date
+        let threshold = expiry_date.sub(ONE_DAY);
+        if !(threshold < now) {
+            return err!(BurgerError::RenewThreshold);
+        }
+
+        let new_expiry_date = expiry_date.add(ONE_DAY).to_string();
         msg!("new timestamp: {}", new_expiry_date);
+        // otherwise needs to do invoke signed, if authority is not the payer.
         update_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO rethink this
-            &ctx.accounts.authority.to_account_info(), // who is allowed to make changes here? Changes have to go through program?
+            // TODO rethink this, who is allowed - prolly the update auth upon mint creation, needs to test with a PDA
+            &ctx.accounts.authority.to_account_info(),
             spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
             new_expiry_date
         )?;

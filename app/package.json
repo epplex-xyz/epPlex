@@ -28,6 +28,7 @@
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.22",
     "@solana/web3.js": "^1.78.5",
+    "@switchboard-xyz/solana.js": "^3.2.3",
     "@vercel/analytics": "^1.0.2",
     "axios": "^1.5.0",
     "clsx": "^2.0.0",

@@ -1,8 +1,7 @@
 use crate::*;
-// use epplex_metadata::program::EpplexMetadata;
 use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
-use epplex_shared::{Token2022,};
+use epplex_shared::{Token2022};
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
@@ -15,11 +14,11 @@ pub struct TokenMint<'info> {
     /// CHECK
     pub ata: UncheckedAccount<'info>,
 
-    // #[account(mut)]
-    // /// CHECK
+    // TODO Gate this endpoint to burger
+    // #[account()]
+    // /// CHECK in CPI
     // pub token_metadata: UncheckedAccount<'info>,
 
-    // TODO: is unchecked account correct?
     #[account()]
     /// CHECK
     pub permanent_delegate: UncheckedAccount<'info>,
@@ -31,7 +30,6 @@ pub struct TokenMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    // pub metadata_program: Program<'info, EpplexMetadata>
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -51,6 +49,7 @@ impl TokenMint<'_> {
     // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
         // TODO set to permanent delegate for now
+        //
         let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
             Some(ctx.accounts.payer.key())
         ).expect("Bad update auth");
@@ -99,16 +98,8 @@ impl TokenMint<'_> {
 
         // TODO Need to create a separate PDA that simply has a bump - can do this later
         // Could also simply check for the permanent delegate address
+        // Prolly easier to create metadata in the burger program
 
-        // Create metadata account
-        // create_metadata_account(
-        //     ctx.accounts.metadata_program.to_account_info().clone(),
-        //     ctx.accounts.payer.to_account_info().clone(),
-        //     ctx.accounts.mint.to_account_info().clone(),
-        //     ctx.accounts.token_metadata.to_account_info().clone(),
-        //     ctx.accounts.system_program.to_account_info().clone(),
-        //     params
-        // )?;
 
         // Add metadata pointer
         add_metadata_pointer(
@@ -187,7 +178,36 @@ impl TokenMint<'_> {
             1
         )?;
 
-        // TODO after minting should prolly burn the mint auth
+        // TODO in his case the authority is a PDA
+        // TODO prolly need to do the same
+
+        // Remove freeze auth
+        anchor_spl::token_interface::set_authority(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::SetAuthority {
+                    current_authority:  ctx.accounts.payer.to_account_info().clone(),
+                    account_or_mint: ctx.accounts.mint.to_account_info().clone(),
+                },
+                // &[deployment_seeds]
+            ),
+            anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::FreezeAccount,
+            None, // Set authority to be None
+        )?;
+
+        // Removing mint authority
+        anchor_spl::token_interface::set_authority(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::SetAuthority {
+                    current_authority: ctx.accounts.payer.to_account_info().clone(),
+                    account_or_mint: ctx.accounts.mint.to_account_info().clone(),
+                },
+                // &[deployment_seeds]
+            ),
+            anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::MintTokens,
+            None, // Set mint authority to be None
+        )?;
 
         Ok(())
     }

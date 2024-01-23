@@ -1,6 +1,15 @@
-import { Connection, Keypair, ParsedAccountData, PublicKey, Transaction, TransactionSignature } from "@solana/web3.js";
+import {
+    Connection,
+    Keypair,
+    ParsedAccountData,
+    PublicKey,
+    Transaction,
+    TransactionInstruction,
+    TransactionSignature,
+} from "@solana/web3.js";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { COMMITMENT, CONFIRM_OPTIONS } from "../client/constants";
+import { createAssociatedTokenAccountInstruction } from "@solana/spl-token";
 
 // https://solana.stackexchange.com/questions/107/how-can-i-get-the-owner-wallet-of-an-nft-mint-using-web3-js
 export async function getMintOwner(connection: Connection, mint: PublicKey): Promise<PublicKey> {
@@ -65,6 +74,21 @@ export async function sendAndConfirmRawTransaction(
     }
 
     return txId;
+}
+
+export async function tryCreateATAIx(
+    connection: Connection,
+    payer: PublicKey,
+    ata: PublicKey,
+    owner: PublicKey,
+    mint: PublicKey
+): Promise<TransactionInstruction[]> {
+    const acc = await connection.getAccountInfo(ata);
+    if (acc === null) {
+        return [createAssociatedTokenAccountInstruction(payer, ata, owner, mint)];
+    } else {
+        return [];
+    }
 }
 
 
