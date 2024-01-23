@@ -31,7 +31,6 @@ pub struct WhitelistMint<'info> {
         ],
         bump = permanent_delegate.bump
     )]
-    /// CHECK
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
     // TODO should gate this to specific admin
