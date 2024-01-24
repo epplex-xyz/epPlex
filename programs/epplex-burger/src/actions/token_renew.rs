@@ -5,15 +5,6 @@ use crate::*;
 #[instruction(params: TokenRenewParams)]
 pub struct TokenRenew<'info> {
     #[account(
-        constraint = mint.decimals == 0,
-        constraint = mint.supply == 1,
-        constraint = SUPPORTED_TOKENS.contains(
-            &mint_payment.key()
-        ) @ BurgerError::TokenNotSupported
-    )]
-    pub mint_payment: Account<'info, Mint>,
-
-    #[account(
         mut,
         mint::token_program = token22_program.key(),
         constraint = mint.decimals == 0,
@@ -30,6 +21,15 @@ pub struct TokenRenew<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
+    #[account(
+        constraint = mint.decimals == 0,
+        constraint = mint.supply == 1,
+        constraint = SUPPORTED_TOKENS.contains(
+            &mint_payment.key()
+        ) @ BurgerError::TokenNotSupported
+    )]
+    pub mint_payment: Account<'info, Mint>,
+    
     #[account(
         mut,
         associated_token::mint = mint_payment,
@@ -93,9 +93,10 @@ impl TokenRenew<'_> {
         msg!("Destroy timestamp: {}", expiry_date);
 
         // Cannot exceed expiry
+        // Disall
         let now = Clock::get().unwrap().unix_timestamp;
         if now > expiry_date {
-            return err!(BurgerError::DestroyTimestampHasBeenExceeded);
+            return err!(BurgerError::ExpiryDateHasBeenExceeded);
         }
 
         // Needs to be within 1 day of expiry date
