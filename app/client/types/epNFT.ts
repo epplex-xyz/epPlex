@@ -1,6 +1,7 @@
 import {PublicKey} from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-import { RawMint } from "@solana/spl-token/src/state/mint";
+import { Mint } from "@solana/spl-token";
+// import { RawMint } from "@solana/spl-token/src/state/mint";
 
 type FixedLengthArray<T, L extends number> = L extends L
     ? number[] extends ((
@@ -10,7 +11,7 @@ type FixedLengthArray<T, L extends number> = L extends L
         : [...Array<L>]
     : never;
 
-export interface EpNFT extends RawMint, EpNFTExtensions {}
+export interface EpNFT extends Mint, EpNFTExtensions {}
 
 export interface EpNFTExtensions extends CloseAuthExtension, PermanentDelegateExtension, MetadataPointerExtension {}
 
