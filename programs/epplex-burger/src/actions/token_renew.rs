@@ -44,14 +44,6 @@ pub struct TokenRenew<'info> {
     )]
     pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
 
-
-    // #[account(
-    //     token::mint = mint,
-    //     token::authority = authority,
-    //     token::token_program = token22_program.key(),
-    // )]
-    // pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
-
     #[account(mut)]
     pub payer: Signer<'info>,
 
