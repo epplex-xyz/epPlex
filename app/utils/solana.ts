@@ -81,11 +81,12 @@ export async function tryCreateATAIx(
     payer: PublicKey,
     ata: PublicKey,
     owner: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
+    tokenProgramId: PublicKey,
 ): Promise<TransactionInstruction[]> {
     const acc = await connection.getAccountInfo(ata);
     if (acc === null) {
-        return [createAssociatedTokenAccountInstruction(payer, ata, owner, mint)];
+        return [createAssociatedTokenAccountInstruction(payer, ata, owner, mint, tokenProgramId)];
     } else {
         return [];
     }

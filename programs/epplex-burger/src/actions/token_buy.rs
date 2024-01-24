@@ -26,7 +26,7 @@ pub struct TokenBuy<'info> {
         bump = permanent_delegate.bump
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
-    
+
 
     #[account(mut)]
     pub buyer: Signer<'info>,
@@ -57,11 +57,8 @@ pub struct TokenBuy<'info> {
     pub token22_program: Program<'info, Token2022>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenBuyParams {
-
-}
+pub struct TokenBuyParams {}
 
 impl TokenBuy<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenBuyParams) -> Result<()> {
