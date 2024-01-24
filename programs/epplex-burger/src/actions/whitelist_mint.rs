@@ -11,7 +11,7 @@ pub struct WhitelistMint<'info> {
 
     #[account(mut)]
     /// CHECK
-    pub ata: UncheckedAccount<'info>,
+    pub token_account: UncheckedAccount<'info>,
 
     #[account(
         init,
@@ -48,19 +48,22 @@ pub struct WhitelistMint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WhitelistMintParams {
-    pub destroy_timestamp: String,
+    pub expiry_date: String,
     pub name: String,
     pub symbol: String,
     pub uri: String
 }
 
 impl WhitelistMint<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &WhitelistMintParams) -> Result<()> {
-        // prolly need to setup some collection configs
+    pub fn validate(&self, _ctx: &Context<Self>, params: &WhitelistMintParams) -> Result<()> {
+        let expiry_date =  params.expiry_date.parse::<i64>().unwrap();
+        let now = Clock::get().unwrap().unix_timestamp;
+        if !(now < expiry_date) {
+            return err!(BurgerError::DateMustBeInTheFuture);
+        }
 
-        // TODO need to check for destroy timestamp
-        //  need to do some validations
-        // let now = Clock::get().unwrap().unix_timestamp;
+        // Maybe need to check for link in URI
+
         Ok(())
     }
 
@@ -72,7 +75,7 @@ impl WhitelistMint<'_> {
         );
 
         let additional_metadata = vec![
-            [EXPIRY_FIELD.to_string(), params.destroy_timestamp],
+            [EXPIRY_FIELD.to_string(), params.expiry_date],
             [RENEWAL_FIELD.to_string(), "0".to_string()],
             [FOR_SALE_FIELD.to_string(), "0".to_string()],
             [PRICE_FIELD.to_string(), "9999".to_string()],
@@ -85,7 +88,7 @@ impl WhitelistMint<'_> {
                 ctx.accounts.epplex_core.to_account_info(),
                 epplex_core::cpi::accounts::TokenMint {
                     mint: ctx.accounts.mint.to_account_info(),
-                    ata: ctx.accounts.ata.to_account_info(),
+                    ata: ctx.accounts.token_account.to_account_info(),
                     permanent_delegate: ctx.accounts.permanent_delegate.to_account_info(),
                     payer: ctx.accounts.payer.to_account_info(),
                     rent: ctx.accounts.rent.to_account_info(),
