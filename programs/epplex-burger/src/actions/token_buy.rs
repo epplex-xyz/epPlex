@@ -1,49 +1,64 @@
 use crate::*;
 
-
 #[derive(Accounts)]
 pub struct TokenBuy<'info> {
+    #[account(
+        mut,
+        mint::token_program = token22_program.key(),
+        constraint = mint.decimals == 0,
+        constraint = mint.supply == 1,
+    )]
+    pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    #[account(mut)]
-    /// CHECK
-    pub mint: UncheckedAccount<'info>,
+    #[account(
+        seeds = [
+            SEED_BURGER_METADATA,
+            mint.key().as_ref()
+        ],
+        bump = token_metadata.bump
+    )]
+    pub token_metadata: Account<'info, BurgerMetadata>,
 
-    // #[account(
-    //     seeds = [SEED_PROGRAM_DELEGATE],
-    //     bump = program_delegate.bump,
-    // )]
-    // pub program_delegate: Account<'info, ProgramDelegate>,
-    #[account()]
-    /// CHECK
-    pub program_delegate: AccountInfo<'info>,
+    #[account(
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
+        bump = permanent_delegate.bump
+    )]
+    pub permanent_delegate: Account<'info, ProgramDelegate>,
 
 
     #[account(mut)]
     pub buyer: Signer<'info>,
 
+    #[account(
+        mut,
+        associated_token::mint = buyer_token_account.mint,
+        associated_token::authority = buyer,
+    )]
+    pub buyer_token_account: Account<'info, TokenAccount>,
 
+
+    // TODO needs to be a different type
     #[account(mut)]
     /// CHECK
-    pub ata_buyer: UncheckedAccount<'info>,
-
-    /// CHECK
-    #[account(mut)]
     pub seller: UncheckedAccount<'info>,
 
-    #[account(mut)]
-    /// CHECK
-    pub ata_seller: UncheckedAccount<'info>,
+    #[account(
+        mut,
+        associated_token::mint = seller_token_account.mint,
+        associated_token::authority = seller,
+    )]
+    pub seller_token_account: Account<'info, TokenAccount>,
 
     pub rent: Sysvar<'info, Rent>,
+    // TODO is systemprogram required?
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenBuyParams {
-
-}
+pub struct TokenBuyParams {}
 
 impl TokenBuy<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenBuyParams) -> Result<()> {
@@ -92,12 +107,12 @@ impl TokenBuy<'_> {
             1,
             0,
             &ctx.accounts.token22_program,
-            &ctx.accounts.ata_seller,
-            &ctx.accounts.mint,
-            &ctx.accounts.ata_buyer,
-            &ctx.accounts.program_delegate,
+            &ctx.accounts.seller_token_account.to_account_info(),
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.buyer_token_account.to_account_info(),
+            &ctx.accounts.permanent_delegate.to_account_info(),
             &[
-                &ctx.accounts.program_delegate.key()
+                &ctx.accounts.permanent_delegate.key()
             ]
         )?;
 

@@ -1,9 +1,17 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { AccountLayout, MINT_SIZE, MintLayout, TOKEN_2022_PROGRAM_ID, getTokenMetadata } from "@solana/spl-token";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {
+    AccountLayout,
+    MINT_SIZE,
+    MintLayout,
+    TOKEN_2022_PROGRAM_ID,
+    getTokenMetadata,
+    getAssociatedTokenAddressSync, createTransferCheckedInstruction,
+} from "@solana/spl-token";
 import { Token2022Interface, Token22Layout } from "../client/types/token2022Interface";
 import { EpNFT, EpNFTLayout, TokenMetadataLayout } from "../client/types/epNFT";
 import { Program2 } from "../client/program2";
 import {TokenMetadata} from  "@solana/spl-token-metadata";
+import { tryCreateATAIx } from "./solana";
 
 // Old decoding method
 export async function getToken22WithInterface(
@@ -91,51 +99,104 @@ async function getEpNFTaccountInfo(connection: Connection, mint: PublicKey): Pro
     return { ...tokenBase, ...mintDetails};
 }
 
-// Using metadataPointer address
-export async function getEpNFTs(
-    connection: Connection,
-    publicKey: PublicKey
-) {
-    // Get all Token2022s of owner
-    const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
 
-    const epNFTs: TokenMetadata[] = [];
-    for (const [_, e] of allTokenAccounts.value.entries()) {
-        // Get raw data
-        const data = AccountLayout.decode(e.account.data);
 
-        try {
-            // Get metadata pointer address
-            const mintInfo = await getEpNFTaccountInfo(connection, data.mint);
-            const metadata = mintInfo.metadataAddress;
+type BuildNftTransferTxInputs = {
+    connection: Connection;
+    mint: PublicKey;
+    source: PublicKey;
+    destination: PublicKey;
+    payer: PublicKey
 
-            // Fetch the pda
-            // const pda = Program2.staticGetTokenMetadata(data.mint).toString();
-            const pda = PublicKey.default.toString();
+};
+export async function buildNFTTransferTx(inputs: BuildNftTransferTxInputs) {
+    // Doesn't need to create the ATA
+    const sourceAta = getAssociatedTokenAddressSync(
+        inputs.mint, // mint
+        inputs.source,
+        false,
+        TOKEN_2022_PROGRAM_ID
+    );
 
-            // Check if they equal - means it is from our program
-            const isEpNFT = metadata.toString() === pda;
-            if (!isEpNFT) {
-                throw Error(`1 Not epNFT ${data.mint.toString()}`);
-            }
+    const destinationAta = getAssociatedTokenAddressSync(
+        inputs.mint, // mint
+        inputs.destination,
+        false,
+        TOKEN_2022_PROGRAM_ID
+    );
 
-            // Decode the data on the metadata account
-            const info = await connection.getAccountInfo(metadata);
-            if (info === null) {
-                throw Error(`2 Not epNFT ${data.mint.toString()}`);
-            }
+    // Try create destination ata ix
+    const ix = await tryCreateATAIx(
+        inputs.connection,
+        inputs.payer, // payer
+        destinationAta,
+        inputs.destination, // owner
+        inputs.mint, // mint
+        TOKEN_2022_PROGRAM_ID
+    );
 
-            const pdaData = info!.data;
-            const discriminant = pdaData.slice(8);
-            const decoded = TokenMetadataLayout.decode(discriminant);
-            console.log("decoded", decoded);
+    const nftTransferTx = new Transaction().add(...[
+        ...ix,
+        createTransferCheckedInstruction(
+            sourceAta,
+            inputs.mint,
+            destinationAta,
+            inputs.source,
+            1,
+            0,
+            [],
+            TOKEN_2022_PROGRAM_ID
+        )
+    ]);
 
-            epNFTs.push(decoded);
-        } catch (e) {
-            console.log("Failed to decode", e);
-        }
-    }
-    console.log();
-
-    return epNFTs;
+    return nftTransferTx;
 }
+
+// Using metadataPointer address
+// export async function getEpNFTs(
+//     connection: Connection,
+//     publicKey: PublicKey
+// ) {
+//     // Get all Token2022s of owner
+//     const allTokenAccounts = await connection.getTokenAccountsByOwner(publicKey, { programId: TOKEN_2022_PROGRAM_ID });
+//
+//     const epNFTs: TokenMetadata[] = [];
+//     for (const [_, e] of allTokenAccounts.value.entries()) {
+//         // Get raw data
+//         const data = AccountLayout.decode(e.account.data);
+//
+//         try {
+//             // Get metadata pointer address
+//             const mintInfo = await getEpNFTaccountInfo(connection, data.mint);
+//             const metadata = mintInfo.metadataAddress;
+//
+//             // Fetch the pda
+//             // const pda = Program2.staticGetTokenMetadata(data.mint).toString();
+//             const pda = PublicKey.default.toString();
+//
+//             // Check if they equal - means it is from our program
+//             const isEpNFT = metadata.toString() === pda;
+//             if (!isEpNFT) {
+//                 throw Error(`1 Not epNFT ${data.mint.toString()}`);
+//             }
+//
+//             // Decode the data on the metadata account
+//             const info = await connection.getAccountInfo(metadata);
+//             if (info === null) {
+//                 throw Error(`2 Not epNFT ${data.mint.toString()}`);
+//             }
+//
+//             const pdaData = info!.data;
+//             const discriminant = pdaData.slice(8);
+//             const decoded = TokenMetadataLayout.decode(discriminant);
+//             console.log("decoded", decoded);
+//
+//             epNFTs.push(decoded);
+//         } catch (e) {
+//             console.log("Failed to decode", e);
+//         }
+//     }
+//     console.log();
+//
+//     return epNFTs;
+// }
