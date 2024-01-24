@@ -25,7 +25,7 @@ export function LandingPage({...props}: BoxProps){
                 <LandingText/>
 
                 <div className={"flex gap-x-6"}>
-                    <ButtonLink {...ButtonConfig.demo}/>
+                    {/*<ButtonLink {...ButtonConfig.demo}/>*/}
                     <ButtonLink {...ButtonConfig.docs}/>
                 </div>
 

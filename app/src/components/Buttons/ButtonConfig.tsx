@@ -12,7 +12,8 @@ export const ButtonConfig: Record<ButtonConfigKeys, ButtonLinkProps> = {
         </Text.Body1>,
         sx: {
             paddingX: '32px',
-        }
+        },
+        disabled: true
     },
     docs: {
         variant: "outlined",
