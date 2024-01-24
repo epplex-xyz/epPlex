@@ -68,6 +68,8 @@ impl WhitelistMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: WhitelistMintParams) -> Result<()> {
+        // TODO might need to keep track of some counter
+
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(
@@ -82,27 +84,30 @@ impl WhitelistMint<'_> {
             [GAME_STATE.to_string(), "0".to_string()]
         ];
 
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
         // CPI into token_mint
         epplex_core::cpi::token_mint(
-            CpiContext::new(
+            CpiContext::new_with_signer(
                 ctx.accounts.epplex_core.to_account_info(),
                 epplex_core::cpi::accounts::TokenMint {
                     mint: ctx.accounts.mint.to_account_info(),
-                    ata: ctx.accounts.token_account.to_account_info(),
+                    token_account: ctx.accounts.token_account.to_account_info(),
                     permanent_delegate: ctx.accounts.permanent_delegate.to_account_info(),
+                    update_authority: ctx.accounts.permanent_delegate.to_account_info(), // update_auth = perm_delegate
                     payer: ctx.accounts.payer.to_account_info(),
                     rent: ctx.accounts.rent.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token22_program: ctx.accounts.token22_program.to_account_info(),
                     associated_token: ctx.accounts.associated_token.to_account_info()
-                }
+                },
+                &[&seeds[..]]
             ),
             epplex_core::TokenCreateParams {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
                 additional_metadata: additional_metadata
-            }
+            },
         )
     }
 }
