@@ -165,7 +165,7 @@ export class BurgerProgram {
         // );
 
         const proceedsIx = await tryCreateATAIx(
-            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address
+            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address, TOKEN_2022_PROGRAM_ID
         );
         ixs.push(...proceedsIx);
 
