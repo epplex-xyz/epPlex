@@ -65,9 +65,9 @@ describe('Environment setup', () => {
     //         );
     // });
     //
-    // it('Renew token', async () => {
-    //     await burgerProgram.renewToken(mint.publicKey)
-    // });
+    it('Renew token', async () => {
+        await burgerProgram.renewToken(mint.publicKey)
+    });
 
     // TODO uncomment if you want to burn your tokens
     // it('Burn tokens', async () => {
