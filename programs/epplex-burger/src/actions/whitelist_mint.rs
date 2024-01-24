@@ -33,8 +33,10 @@ pub struct WhitelistMint<'info> {
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
-    // TODO should gate this to specific admin
-    #[account(mut)]
+    #[account(
+        mut,
+        address = VAULT_PUBKEY
+    )]
     pub payer: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
