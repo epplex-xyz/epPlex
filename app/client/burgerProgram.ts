@@ -32,7 +32,6 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
-
     async createWhitelistMint(
         destroyTimestamp: string,
         mint: Keypair = Keypair.generate(),
@@ -50,24 +49,23 @@ export class BurgerProgram {
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
 
-        const tm = this.getTokenBurgerMetadata(mint.publicKey);
-
         const tokenCreateIx = await this.program.methods
             .whitelistMint({
                 name: name,
                 symbol: symbol,
                 uri: uri,
-                destroyTimestamp: destroyTimestamp,
+                expiryDate: destroyTimestamp,
             })
             .accounts({
                 mint: mint.publicKey,
-                ata,
-                tokenMetadata: tm,
+                tokenAccount: ata,
+                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
                 permanentDelegate: permanentDelegate,
                 payer: payer,
+
+                rent: SYSVAR_RENT_PUBKEY,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
-                rent: SYSVAR_RENT_PUBKEY,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
                 epplexCore: CORE_PROGRAM_ID,
             })

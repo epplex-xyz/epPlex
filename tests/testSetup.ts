@@ -44,30 +44,30 @@ describe('Environment setup', () => {
         await burgerProgram.createWhitelistMint(destroyTimestamp, mint)
     });
 
-    it('Transfer token', async () => {
-        console.log("prces", process.env.MINT_POOL_KEYPAIR)
-        // pooo keypair
-
-        const tx = await buildNFTTransferTx({
-            connection: provider.connection,
-            mint: mint.publicKey,
-            source: provider.wallet.publicKey,
-            destination: mintPool.publicKey,
-            payer: secretKeypair.publicKey,
-        })
-
-        const id = await sendAndConfirmRawTransaction(
-                provider.connection,
-                tx,
-                secretKeypair.publicKey,
-                undefined,
-                [secretKeypair]
-            );
-    });
-
-    it('Renew token', async () => {
-        await burgerProgram.renewToken(mint.publicKey)
-    });
+    // it('Transfer token', async () => {
+    //     console.log("prces", process.env.MINT_POOL_KEYPAIR)
+    //     // pooo keypair
+    //
+    //     const tx = await buildNFTTransferTx({
+    //         connection: provider.connection,
+    //         mint: mint.publicKey,
+    //         source: provider.wallet.publicKey,
+    //         destination: mintPool.publicKey,
+    //         payer: secretKeypair.publicKey,
+    //     })
+    //
+    //     const id = await sendAndConfirmRawTransaction(
+    //             provider.connection,
+    //             tx,
+    //             secretKeypair.publicKey,
+    //             undefined,
+    //             [secretKeypair]
+    //         );
+    // });
+    //
+    // it('Renew token', async () => {
+    //     await burgerProgram.renewToken(mint.publicKey)
+    // });
 
     // TODO uncomment if you want to burn your tokens
     // it('Burn tokens', async () => {

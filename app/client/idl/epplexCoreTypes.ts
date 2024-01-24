@@ -14,7 +14,7 @@ export type EpplexCore = {
           ]
         },
         {
-          "name": "ata",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false,
           "docs": [
@@ -28,6 +28,11 @@ export type EpplexCore = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
         },
         {
           "name": "payer",
@@ -312,7 +317,7 @@ export const IDL: EpplexCore = {
           ]
         },
         {
-          "name": "ata",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false,
           "docs": [
@@ -326,6 +331,11 @@ export const IDL: EpplexCore = {
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
         },
         {
           "name": "payer",

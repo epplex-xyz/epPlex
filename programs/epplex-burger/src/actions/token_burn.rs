@@ -71,7 +71,6 @@ impl TokenBurn<'_> {
     pub fn actuate(ctx: Context<Self>, _params: TokenBurnParams) -> Result<()> {
         // Close the metadata account
 
-
         burn_token(
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.token_account.to_account_info(),
