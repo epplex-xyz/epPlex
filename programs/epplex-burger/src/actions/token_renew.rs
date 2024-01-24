@@ -29,7 +29,7 @@ pub struct TokenRenew<'info> {
         ) @ BurgerError::TokenNotSupported
     )]
     pub mint_payment: Account<'info, Mint>,
-    
+
     #[account(
         mut,
         associated_token::mint = mint_payment,
@@ -44,12 +44,13 @@ pub struct TokenRenew<'info> {
     )]
     pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
 
+    // Why do we have two signers here
     #[account(mut)]
     pub payer: Signer<'info>,
 
     // TODO: test in case not authority
     #[account(mut)]
-    pub authority: Signer<'info>,
+    pub update_authority: Signer<'info>,
 
     pub token22_program: Program<'info, Token2022>,
     pub token_program: Program<'info, Token>,
@@ -108,11 +109,11 @@ impl TokenRenew<'_> {
         let new_expiry_date = expiry_date.add(ONE_DAY).to_string();
         msg!("new timestamp: {}", new_expiry_date);
         // otherwise needs to do invoke signed, if authority is not the payer.
-        update_token_metadata(
+        epplex_shared::update_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             // TODO rethink this, who is allowed - prolly the update auth upon mint creation, needs to test with a PDA
-            &ctx.accounts.authority.to_account_info(),
+            &ctx.accounts.update_authority.to_account_info(),
             spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
             new_expiry_date
         )?;
