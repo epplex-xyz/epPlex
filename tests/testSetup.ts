@@ -1,4 +1,4 @@
-import { Connection, Transaction } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
 import {Program2} from "../app/client/program2";
@@ -7,11 +7,17 @@ import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import * as pda from './pda';
-import { getToken22 } from "../app/utils/token2022";
+import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
 import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
-import { loadKeypairFromFile } from "../script/utils/helpers";
+import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
+
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({path: path.resolve(__dirname, "../.env.local")})
+console.log("asd", )
 
 const secretKeypair = loadKeypairFromFile("/Users/Mac/.config/solana/test.json")
+const mintPool = loadKeypairFromFile("/Users/Mac/Desktop/keypairs/pooPXJECKuyeahBbCat384tAhePkECTPwqs47z9eEQE.json")
 
 describe('Environment setup', () => {
     const tempProvider = anchor.AnchorProvider.env();
@@ -34,10 +40,30 @@ describe('Environment setup', () => {
     //     await burgerProgram.createProgramDelegate();
     // })
 
-    it('Mint tokens', async () => {
+    it('Mint token', async () => {
         await burgerProgram.createWhitelistMint(destroyTimestamp, mint)
     });
 
+    it('Transfer token', async () => {
+        console.log("prces", process.env.MINT_POOL_KEYPAIR)
+        // pooo keypair
+
+        const tx = await buildNFTTransferTx({
+            connection: provider.connection,
+            mint: mint.publicKey,
+            source: provider.wallet.publicKey,
+            destination: mintPool.publicKey,
+            payer: secretKeypair.publicKey,
+        })
+
+        const id = await sendAndConfirmRawTransaction(
+                provider.connection,
+                tx,
+                secretKeypair.publicKey,
+                undefined,
+                [secretKeypair]
+            );
+    });
 
     it('Renew token', async () => {
         await burgerProgram.renewToken(mint.publicKey)
