@@ -172,8 +172,8 @@ export type EpplexBurger = {
         },
         {
           "name": "updateAuthority",
-          "isMut": true,
-          "isSigner": true
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "token22Program",
@@ -716,8 +716,8 @@ export const IDL: EpplexBurger = {
         },
         {
           "name": "updateAuthority",
-          "isMut": true,
-          "isSigner": true
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "token22Program",

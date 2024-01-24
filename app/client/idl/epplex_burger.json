@@ -172,8 +172,8 @@
         },
         {
           "name": "updateAuthority",
-          "isMut": true,
-          "isSigner": true
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "token22Program",

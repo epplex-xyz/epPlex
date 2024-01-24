@@ -170,13 +170,13 @@ export class BurgerProgram {
         const renewIx = await this.program.methods
             .tokenRenew({ renewTerms: 1 })
             .accounts({
-                mintPayment: NativeMint.address,
                 mint,
                 tokenMetadata: this.getTokenBurgerMetadata(mint),
+                mintPayment: NativeMint.address,
                 proceedsTokenAccount: proceedsAta,
                 payerTokenAccount: payerAta,
                 payer: this.wallet.publicKey,
-                authority: this.wallet.publicKey,
+                updateAuthority: this.getProgramDelegate(),
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 tokenProgram: TOKEN_PROGRAM_ID
             })
