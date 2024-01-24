@@ -101,12 +101,13 @@ export function Creation() {
                 throw new Error("Failed to upload metadata");
             }
 
-            const txId = await program.createToken(
-                offset,
-                nameInput.input,
-                symbolInput.input,
-                metadataRes.message, //metadata uri
-            );
+            // const txId = await program.createToken(
+            //     offset,
+            //     nameInput.input,
+            //     symbolInput.input,
+            //     metadataRes.message, //metadata uri
+            // );
+            const txId = "";
 
             if (txId === "") {
                 throw new Error("Failed to create epNFT");
