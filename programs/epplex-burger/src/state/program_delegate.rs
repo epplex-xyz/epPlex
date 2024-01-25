@@ -2,6 +2,7 @@ use epplex_shared::{DISCRIMINATOR_LENGTH, BITS_8};
 
 use crate::*;
 
+#[constant]
 pub const SEED_PROGRAM_DELEGATE: &[u8] = b"BURGER_DELEGATE";
 
 #[account]

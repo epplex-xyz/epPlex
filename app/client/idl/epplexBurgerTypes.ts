@@ -1,6 +1,18 @@
 export type EpplexBurger = {
   "version": "0.1.0",
   "name": "epplex_burger",
+  "constants": [
+    {
+      "name": "SEED_BURGER_METADATA",
+      "type": "bytes",
+      "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
+    },
+    {
+      "name": "SEED_PROGRAM_DELEGATE",
+      "type": "bytes",
+      "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
+    }
+  ],
   "instructions": [
     {
       "name": "whitelistMint",
@@ -545,6 +557,18 @@ export type EpplexBurger = {
 export const IDL: EpplexBurger = {
   "version": "0.1.0",
   "name": "epplex_burger",
+  "constants": [
+    {
+      "name": "SEED_BURGER_METADATA",
+      "type": "bytes",
+      "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
+    },
+    {
+      "name": "SEED_PROGRAM_DELEGATE",
+      "type": "bytes",
+      "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
+    }
+  ],
   "instructions": [
     {
       "name": "whitelistMint",

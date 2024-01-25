@@ -199,13 +199,14 @@ export class BurgerProgram {
     }
 
     getTokenBurgerMetadata(mint: PublicKey): PublicKey {
-        const [programDelegate] = PublicKey.findProgramAddressSync(
+        const [metadata] = PublicKey.findProgramAddressSync(
             [
                 Buffer.from("burgermetadata"),
                 mint.toBuffer()
             ],
             this.program.programId
         );
-        return programDelegate;
+        return metadata;
     }
+
 }
