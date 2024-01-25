@@ -111,7 +111,7 @@ impl TokenRenew<'_> {
 
         let new_expiry_date = expiry_date.add(ONE_DAY).to_string();
         msg!("new timestamp: {}", new_expiry_date);
-        
+
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),

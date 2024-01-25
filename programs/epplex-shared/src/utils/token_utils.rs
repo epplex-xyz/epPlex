@@ -50,20 +50,10 @@ pub fn update_token_metadata_signed<'info>(
         update_authority.to_account_info(),
     ];
 
-    // TODO not ideal
-    // let (_, bump) = Pubkey::find_program_address(
-    //     &[
-    //         seeds
-    //     ],
-    //     &ID,
-    // );
-    // let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
-
     solana_program::program::invoke_signed(
         &ix,
         &account_infos[..],
         signer_seeds
-        // &[&seeds[..]]
     )?;
 
     Ok(())

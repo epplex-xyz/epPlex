@@ -1,7 +1,7 @@
 use crate::*;
 use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
-use epplex_shared::{Token2022, update_token_metadata, update_token_metadata_signed};
+use epplex_shared::{Token2022, update_token_metadata};
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
