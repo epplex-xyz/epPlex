@@ -8,10 +8,10 @@ import {
     getAssociatedTokenAddressSync, createTransferCheckedInstruction,
 } from "@solana/spl-token";
 import { Token2022Interface, Token22Layout } from "../client/types/token2022Interface";
-import { EpNFT, EpNFTLayout, TokenMetadataLayout } from "../client/types/epNFT";
-import { Program2 } from "../client/program2";
+import { EpNFT, EpNFTLayout } from "../client/types/epNFT";
 import {TokenMetadata} from  "@solana/spl-token-metadata";
 import { tryCreateATAIx } from "./solana";
+import { BURGER_PROGRAM_ID, SEED_BURGER_METADATA } from "../client/types/programTypes";
 
 // Old decoding method
 export async function getToken22WithInterface(
@@ -69,10 +69,23 @@ export async function myGetTokenMetadata(
         // Get raw data
         const data = AccountLayout.decode(e.account.data);
 
-        try {
-            const metadata = await getTokenMetadata(connection, data.mint);
+        // Get burger program metadata address
+        const [metadataPda] = PublicKey.findProgramAddressSync(
+            [
+                SEED_BURGER_METADATA, // Alternatively: Buffer.from("burgermetadata")
+                data.mint.toBuffer()
+            ], BURGER_PROGRAM_ID
+        );
 
-            console.log("metadata", metadata);
+        try {
+            // Check if metadata exists - if not, it is not an epNFT
+            const account = await connection.getAccountInfo(metadataPda);
+            if (account === null) {
+                throw Error(`Not an epNFT from the burger program ${data.mint.toString()}`);
+            }
+
+            const metadata = await getTokenMetadata(connection, data.mint);
+            console.log("OK", metadata);
             if (metadata !== null) {
                 tokenMetadata.push(metadata);
             }
