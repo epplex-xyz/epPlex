@@ -1,4 +1,4 @@
-import { Connection, Keypair, LAMPORTS_PER_SOL, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Connection, Keypair, LAMPORTS_PER_SOL, Transaction } from "@solana/web3.js";
 import {  loadOrGenerateKeypair } from "../script/utils/helpers";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import { BurgerProgram } from "../app/client/burgerProgram";
@@ -6,8 +6,10 @@ import * as anchor from "@coral-xyz/anchor";
 import { Wallet } from "@coral-xyz/anchor";
 
 // REAADME
+// 0 Modify nMints
 // 1 Creates a local keypair in .local_keys
 // 2 Uses that to mint
+// 2a - might need to uncomment code that does airdrop
 // 3 Copy the keypair into Solflare and use for wallet checking
 
 const connection = new Connection(
@@ -17,7 +19,7 @@ const connection = new Connection(
 
 const mintPool = loadOrGenerateKeypair("mintPool");
 const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
-const nMints = 1;
+const nMints = 3;
 
 async function main() {
     // const mintPool = loadKeypairFromFile("/Users/Mac/Desktop/keypairs/pooPXJECKuyeahBbCat384tAhePkECTPwqs47z9eEQE.json")
@@ -35,10 +37,10 @@ async function main() {
         new Wallet(mintPool),
         {skipPreflight: true}
     )
-    console.log("here", provider.wallet.publicKey.toString())
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
-    let txs: Transaction[] = []
-    let signers: Keypair[] = []
+    // Could batch txes but 1 tx is too large
+    // let txs: Transaction[] = []
+    // let signers: Keypair[] = []
     for (let i = 0; i < nMints; i++) {
         const mint = Keypair.generate();
         console.log("Item ", i, mint.publicKey.toString());
@@ -46,17 +48,19 @@ async function main() {
             destroyTimestamp,
             mint
         )
-        txs.push(tx)
-        signers.push(mint)
+        // txs.push(tx)
+        // signers.push(mint)
+
+        await sendAndConfirmRawTransaction(
+            provider.connection,
+            tx,
+            provider.publicKey,
+            provider.wallet,
+            [mint]
+        );
     }
 
-    await sendAndConfirmRawTransaction(
-        provider.connection,
-        new Transaction().add(...txs),
-        provider.publicKey,
-        provider.wallet,
-        signers
-    );
+
 }
 
 main();
