@@ -35,7 +35,7 @@ pub struct WhitelistMint<'info> {
 
     #[account(
         mut,
-        address = VAULT_PUBKEY
+        // address = VAULT_PUBKEY
     )]
     pub payer: Signer<'info>,
 

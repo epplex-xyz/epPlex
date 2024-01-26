@@ -11,10 +11,11 @@ import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
 import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
 import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
 
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({path: path.resolve(__dirname, "../.env.local")})
-console.log("asd", )
+// This works
+// import dotenv from "dotenv";
+// import path from "path";
+// dotenv.config({path: path.resolve(__dirname, "../.env.local")})
+// console.log("prces", process.env.MINT_POOL_KEYPAIR)
 
 const secretKeypair = loadKeypairFromFile("/Users/Mac/.config/solana/test.json")
 const mintPool = loadKeypairFromFile("/Users/Mac/Desktop/keypairs/pooPXJECKuyeahBbCat384tAhePkECTPwqs47z9eEQE.json")
@@ -41,30 +42,38 @@ describe('Environment setup', () => {
     // })
 
     it('Mint token', async () => {
-        await burgerProgram.createWhitelistMint(destroyTimestamp, mint)
+        const tx = await burgerProgram.createWhitelistMintTx(
+            destroyTimestamp,
+            mint
+        )
+
+        await sendAndConfirmRawTransaction(
+            provider.connection,
+            tx,
+            provider.publicKey,
+            provider.wallet,
+            [mint]
+        );
     });
 
-    // it('Transfer token', async () => {
-    //     console.log("prces", process.env.MINT_POOL_KEYPAIR)
-    //     // pooo keypair
-    //
-    //     const tx = await buildNFTTransferTx({
-    //         connection: provider.connection,
-    //         mint: mint.publicKey,
-    //         source: provider.wallet.publicKey,
-    //         destination: mintPool.publicKey,
-    //         payer: secretKeypair.publicKey,
-    //     })
-    //
-    //     const id = await sendAndConfirmRawTransaction(
-    //             provider.connection,
-    //             tx,
-    //             secretKeypair.publicKey,
-    //             undefined,
-    //             [secretKeypair]
-    //         );
-    // });
-    //
+    it('Transfer token', async () => {
+        const tx = await buildNFTTransferTx({
+            connection: provider.connection,
+            mint: mint.publicKey,
+            source: provider.wallet.publicKey,
+            destination: mintPool.publicKey,
+            payer: secretKeypair.publicKey,
+        })
+
+        await sendAndConfirmRawTransaction(
+                provider.connection,
+                tx,
+                secretKeypair.publicKey,
+                undefined,
+                [secretKeypair]
+            );
+    });
+
     it('Renew token', async () => {
         await burgerProgram.renewToken(mint.publicKey)
     });
