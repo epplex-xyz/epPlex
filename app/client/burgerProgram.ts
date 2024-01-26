@@ -34,7 +34,7 @@ export class BurgerProgram {
 
 
     async createWhitelistMintTx(
-        destroyTimestamp: string,
+        expiryDate: string,
         mint: Keypair = Keypair.generate(),
         name: string = "Ephemeral burger",
         symbol: string = "EP",
@@ -42,7 +42,6 @@ export class BurgerProgram {
     ) {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
-        console.log("payer", payer.toString());
         const ata = getAssociatedTokenAddressSync(
             mint.publicKey,
             payer,
@@ -56,7 +55,7 @@ export class BurgerProgram {
                 name: name,
                 symbol: symbol,
                 uri: uri,
-                expiryDate: destroyTimestamp,
+                expiryDate: expiryDate,
             })
             .accounts({
                 mint: mint.publicKey,
