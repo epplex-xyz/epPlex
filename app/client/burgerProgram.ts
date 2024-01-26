@@ -32,7 +32,8 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
-    async createWhitelistMint(
+
+    async createWhitelistMintTx(
         destroyTimestamp: string,
         mint: Keypair = Keypair.generate(),
         name: string = "Ephemeral burger",
@@ -41,6 +42,7 @@ export class BurgerProgram {
     ) {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
+        console.log("payer", payer.toString());
         const ata = getAssociatedTokenAddressSync(
             mint.publicKey,
             payer,
@@ -77,16 +79,24 @@ export class BurgerProgram {
             tokenCreateIx
         ];
 
-        const tokenCreateTx = new Transaction().add(...ixs);
-        let id;
-        try {
-            id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
-            console.log("tx", id);
-        } catch (e) {
-            console.log("Failed to send tx", e);
-        }
-        return id;
+        return  new Transaction().add(...ixs);
     }
+
+    // async createWhitelistMint(
+    //     destroyTimestamp: string,
+    //     mint: Keypair = Keypair.generate(),
+    //     name: string = "Ephemeral burger",
+    //     symbol: string = "EP",
+    //     uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
+    // ) {
+    //
+    //     let id;
+    //         id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
+    //
+    //     }
+    //
+    //     return id;
+    // }
 
     // async burnToken(mint: PublicKey) {
     //     const programDelegate = this.getProgramDelegate();
@@ -154,7 +164,7 @@ export class BurgerProgram {
             NativeMint.address, VAULT, undefined, TOKEN_PROGRAM_ID
         );
 
-        // Payer Ata
+        // Payer Ata - already created with switchboard stuff
         // const payerAta = getAssociatedTokenAddressSync(
         //     NativeMint.address, this.wallet.publicKey, undefined, TOKEN_PROGRAM_ID
         // );
