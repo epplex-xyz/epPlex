@@ -1,6 +1,18 @@
 export type EpplexBurger = {
   "version": "0.1.0",
   "name": "epplex_burger",
+  "constants": [
+    {
+      "name": "SEED_BURGER_METADATA",
+      "type": "bytes",
+      "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
+    },
+    {
+      "name": "SEED_PROGRAM_DELEGATE",
+      "type": "bytes",
+      "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
+    }
+  ],
   "instructions": [
     {
       "name": "whitelistMint",
@@ -14,7 +26,7 @@ export type EpplexBurger = {
           ]
         },
         {
-          "name": "ata",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false,
           "docs": [
@@ -29,10 +41,7 @@ export type EpplexBurger = {
         {
           "name": "permanentDelegate",
           "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -80,18 +89,17 @@ export type EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
-          "name": "programDelegate",
+          "name": "tokenMetadata",
           "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "buyer",
@@ -99,12 +107,9 @@ export type EpplexBurger = {
           "isSigner": true
         },
         {
-          "name": "ataBuyer",
+          "name": "buyerTokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "seller",
@@ -115,12 +120,9 @@ export type EpplexBurger = {
           ]
         },
         {
-          "name": "ataSeller",
+          "name": "sellerTokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "rent",
@@ -151,17 +153,17 @@ export type EpplexBurger = {
       "name": "tokenRenew",
       "accounts": [
         {
-          "name": "mintPayment",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "mint",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintPayment",
           "isMut": false,
           "isSigner": false
         },
@@ -181,9 +183,9 @@ export type EpplexBurger = {
           "isSigner": true
         },
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "token22Program",
@@ -305,26 +307,22 @@ export type EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "permamentDelegate",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "tokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -470,12 +468,7 @@ export type EpplexBurger = {
       "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
-        "fields": [
-          {
-            "name": "renewTerms",
-            "type": "u16"
-          }
-        ]
+        "fields": []
       }
     },
     {
@@ -503,7 +496,7 @@ export type EpplexBurger = {
         "kind": "struct",
         "fields": [
           {
-            "name": "destroyTimestamp",
+            "name": "expiryDate",
             "type": "string"
           },
           {
@@ -525,21 +518,36 @@ export type EpplexBurger = {
   "errors": [
     {
       "code": 6000,
-      "name": "DestroyTimestampHasBeenExceeded",
-      "msg": "Destroy timestamp has been exceeded"
+      "name": "ExpiryDateHasBeenExceeded",
+      "msg": "Expiry date has been exceeded"
     },
     {
       "code": 6001,
+      "name": "NotYetExpired",
+      "msg": "Has not yet expired"
+    },
+    {
+      "code": 6002,
+      "name": "DateMustBeInTheFuture",
+      "msg": "Date must be in the future"
+    },
+    {
+      "code": 6003,
+      "name": "RenewThreshold",
+      "msg": "Need to renew within 1 day timeframe"
+    },
+    {
+      "code": 6004,
       "name": "InvalidCalculation",
       "msg": "Invalid calculation"
     },
     {
-      "code": 6002,
+      "code": 6005,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
     },
     {
-      "code": 6003,
+      "code": 6006,
       "name": "FieldDoesNotExist",
       "msg": "Field does not exist"
     }
@@ -549,6 +557,18 @@ export type EpplexBurger = {
 export const IDL: EpplexBurger = {
   "version": "0.1.0",
   "name": "epplex_burger",
+  "constants": [
+    {
+      "name": "SEED_BURGER_METADATA",
+      "type": "bytes",
+      "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
+    },
+    {
+      "name": "SEED_PROGRAM_DELEGATE",
+      "type": "bytes",
+      "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
+    }
+  ],
   "instructions": [
     {
       "name": "whitelistMint",
@@ -562,7 +582,7 @@ export const IDL: EpplexBurger = {
           ]
         },
         {
-          "name": "ata",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false,
           "docs": [
@@ -577,10 +597,7 @@ export const IDL: EpplexBurger = {
         {
           "name": "permanentDelegate",
           "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -628,18 +645,17 @@ export const IDL: EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
-          "name": "programDelegate",
+          "name": "tokenMetadata",
           "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "buyer",
@@ -647,12 +663,9 @@ export const IDL: EpplexBurger = {
           "isSigner": true
         },
         {
-          "name": "ataBuyer",
+          "name": "buyerTokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "seller",
@@ -663,12 +676,9 @@ export const IDL: EpplexBurger = {
           ]
         },
         {
-          "name": "ataSeller",
+          "name": "sellerTokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "rent",
@@ -699,17 +709,17 @@ export const IDL: EpplexBurger = {
       "name": "tokenRenew",
       "accounts": [
         {
-          "name": "mintPayment",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "mint",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintPayment",
           "isMut": false,
           "isSigner": false
         },
@@ -729,9 +739,9 @@ export const IDL: EpplexBurger = {
           "isSigner": true
         },
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "token22Program",
@@ -853,26 +863,22 @@ export const IDL: EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
-        },
-        {
-          "name": "permamentDelegate",
-          "isMut": false,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
         },
         {
           "name": "tokenAccount",
           "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK"
-          ]
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -1018,12 +1024,7 @@ export const IDL: EpplexBurger = {
       "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
-        "fields": [
-          {
-            "name": "renewTerms",
-            "type": "u16"
-          }
-        ]
+        "fields": []
       }
     },
     {
@@ -1051,7 +1052,7 @@ export const IDL: EpplexBurger = {
         "kind": "struct",
         "fields": [
           {
-            "name": "destroyTimestamp",
+            "name": "expiryDate",
             "type": "string"
           },
           {
@@ -1073,21 +1074,36 @@ export const IDL: EpplexBurger = {
   "errors": [
     {
       "code": 6000,
-      "name": "DestroyTimestampHasBeenExceeded",
-      "msg": "Destroy timestamp has been exceeded"
+      "name": "ExpiryDateHasBeenExceeded",
+      "msg": "Expiry date has been exceeded"
     },
     {
       "code": 6001,
+      "name": "NotYetExpired",
+      "msg": "Has not yet expired"
+    },
+    {
+      "code": 6002,
+      "name": "DateMustBeInTheFuture",
+      "msg": "Date must be in the future"
+    },
+    {
+      "code": 6003,
+      "name": "RenewThreshold",
+      "msg": "Need to renew within 1 day timeframe"
+    },
+    {
+      "code": 6004,
       "name": "InvalidCalculation",
       "msg": "Invalid calculation"
     },
     {
-      "code": 6002,
+      "code": 6005,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
     },
     {
-      "code": 6003,
+      "code": 6006,
       "name": "FieldDoesNotExist",
       "msg": "Field does not exist"
     }

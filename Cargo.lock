@@ -963,7 +963,9 @@ name = "epplex-shared"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
+ "solana-program",
  "spl-token-2022 1.0.0",
+ "spl-token-metadata-interface",
 ]
 
 [[package]]

@@ -11,7 +11,7 @@ pub struct WhitelistMint<'info> {
 
     #[account(mut)]
     /// CHECK
-    pub ata: UncheckedAccount<'info>,
+    pub token_account: UncheckedAccount<'info>,
 
     #[account(
         init,
@@ -33,8 +33,10 @@ pub struct WhitelistMint<'info> {
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
-    // TODO should gate this to specific admin
-    #[account(mut)]
+    #[account(
+        mut,
+        address = VAULT_PUBKEY
+    )]
     pub payer: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
@@ -46,23 +48,28 @@ pub struct WhitelistMint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WhitelistMintParams {
-    pub destroy_timestamp: String,
+    pub expiry_date: String,
     pub name: String,
     pub symbol: String,
     pub uri: String
 }
 
 impl WhitelistMint<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &WhitelistMintParams) -> Result<()> {
-        // prolly need to setup some collection configs
+    pub fn validate(&self, _ctx: &Context<Self>, params: &WhitelistMintParams) -> Result<()> {
+        let expiry_date =  params.expiry_date.parse::<i64>().unwrap();
+        let now = Clock::get().unwrap().unix_timestamp;
+        if !(now < expiry_date) {
+            return err!(BurgerError::DateMustBeInTheFuture);
+        }
 
-        // TODO need to check for destroy timestamp
-        //  need to do some validations
-        // let now = Clock::get().unwrap().unix_timestamp;
+        // Maybe need to check for link in URI
+
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, params: WhitelistMintParams) -> Result<()> {
+        // TODO might need to keep track of some counter
+
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(
@@ -70,34 +77,37 @@ impl WhitelistMint<'_> {
         );
 
         let additional_metadata = vec![
-            [EXPIRY_FIELD.to_string(), params.destroy_timestamp],
+            [EXPIRY_FIELD.to_string(), params.expiry_date],
             [RENEWAL_FIELD.to_string(), "0".to_string()],
             [FOR_SALE_FIELD.to_string(), "0".to_string()],
             [PRICE_FIELD.to_string(), "9999".to_string()],
             [GAME_STATE.to_string(), "0".to_string()]
         ];
 
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
         // CPI into token_mint
         epplex_core::cpi::token_mint(
-            CpiContext::new(
+            CpiContext::new_with_signer(
                 ctx.accounts.epplex_core.to_account_info(),
                 epplex_core::cpi::accounts::TokenMint {
                     mint: ctx.accounts.mint.to_account_info(),
-                    ata: ctx.accounts.ata.to_account_info(),
+                    token_account: ctx.accounts.token_account.to_account_info(),
                     permanent_delegate: ctx.accounts.permanent_delegate.to_account_info(),
+                    update_authority: ctx.accounts.permanent_delegate.to_account_info(), // update_auth = perm_delegate
                     payer: ctx.accounts.payer.to_account_info(),
                     rent: ctx.accounts.rent.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token22_program: ctx.accounts.token22_program.to_account_info(),
                     associated_token: ctx.accounts.associated_token.to_account_info()
-                }
+                },
+                &[&seeds[..]]
             ),
             epplex_core::TokenCreateParams {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
                 additional_metadata: additional_metadata
-            }
+            },
         )
     }
 }

@@ -7,30 +7,39 @@ use epplex_shared::Token2022;
 pub struct TokenBurn<'info> {
     #[account(
         mut,
-        owner = token22_program.key(),
+        mint::token_program = token22_program.key(),
+        constraint = mint.decimals == 0,
+        constraint = mint.supply == 1,
     )]
-    /// CHECK
-    pub mint: AccountInfo<'info>,
+    pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // TODO fix
-    // #[account(
-    //     mut,
-    //     seeds = [SEED_PROGRAM_DELEGATE],
-    //     bump = program_delegate.bump,
-    // )]
-    // pub program_delegate: Account<'info, ProgramDelegate>,
-    #[account()]
-    /// CHECK
-    pub permament_delegate: AccountInfo<'info>,
-
-    // TODO check that this is in fact a token account for the mint
     #[account(
-        mut
+        mut,
+        token::mint = mint.key(),
+        token::token_program = token22_program.key(),
     )]
-    /// CHECK
-    pub token_account: AccountInfo<'info>,
+    pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
 
-    // TODO put constraint on payer
+    #[account(
+        mut,
+        close = payer,
+        seeds = [
+            SEED_BURGER_METADATA,
+            mint.key().as_ref()
+        ],
+        bump = token_metadata.bump
+    )]
+    pub token_metadata: Account<'info, BurgerMetadata>,
+
+    #[account(
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
+        bump = permanent_delegate.bump
+    )]
+    pub permanent_delegate: Account<'info, ProgramDelegate>,
+
+    // TODO put constraint on payer - to limit to ourselves
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -43,28 +52,30 @@ pub struct TokenBurnParams {}
 impl TokenBurn<'_> {
     pub fn validate(
         &self,
-        _ctx: &Context<Self>,
+        ctx: &Context<Self>,
         _params: &TokenBurnParams,
     ) -> Result<()> {
-        // let data_bytes = ctx.accounts.mint.try_borrow_data()?;
-        // let (_, metadata_bytes) = data_bytes.split_at(METADATA_OFFSET);
-        // let metadata: Metadata = Metadata::try_from_slice(metadata_bytes)?;
-        // let destroy_timestamp = metadata.destroy_timestamp_value.parse::<i64>().unwrap();
-        //
-        // let now = Clock::get().unwrap().unix_timestamp;
-        // if now < destroy_timestamp {
-        //     return err!(EphemeralityError::DestroyTimestampNotExceeded);
-        // }
+        let expiry_date_string = fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
+        let expiry_date =  expiry_date_string.parse::<i64>().unwrap();
+
+        // Cannot exceed expiry
+        let now = Clock::get().unwrap().unix_timestamp;
+        msg!("Destroy timestamp: {:?}, now {:?}", expiry_date, now);
+        if now < expiry_date {
+            return err!(BurgerError::NotYetExpired);
+        }
 
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenBurnParams) -> Result<()> {
+        // Close the metadata account
+
         burn_token(
             &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.token_account,
+            &ctx.accounts.token_account.to_account_info(),
             ctx.accounts.token22_program.key(),
-            &ctx.accounts.permament_delegate,
+            &ctx.accounts.permanent_delegate.to_account_info(),
         )?;
 
         close_mint(
@@ -73,10 +84,11 @@ impl TokenBurn<'_> {
             // Currently rent collector is hardcoded to be the Program Delegaate
             &ctx.accounts.payer.to_account_info(),
             // Authority to close the mint
-            &ctx.accounts.permament_delegate,
+            &ctx.accounts.permanent_delegate.to_account_info(),
         )?;
 
-        // TODO prolly would still need to close the token account
+        // Would be good to close their token account as well
+        // Although not possible since we don't own the associated token account
 
         Ok(())
     }

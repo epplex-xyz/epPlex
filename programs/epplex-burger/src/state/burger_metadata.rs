@@ -1,6 +1,7 @@
 use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
 use crate::*;
 
+#[constant]
 pub const SEED_BURGER_METADATA: &[u8] = b"burgermetadata";
 
 #[account]

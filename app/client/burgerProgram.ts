@@ -32,7 +32,6 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
-
     async createWhitelistMint(
         destroyTimestamp: string,
         mint: Keypair = Keypair.generate(),
@@ -50,24 +49,23 @@ export class BurgerProgram {
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
 
-        const tm = this.getTokenBurgerMetadata(mint.publicKey);
-
         const tokenCreateIx = await this.program.methods
             .whitelistMint({
                 name: name,
                 symbol: symbol,
                 uri: uri,
-                destroyTimestamp: destroyTimestamp,
+                expiryDate: destroyTimestamp,
             })
             .accounts({
                 mint: mint.publicKey,
-                ata,
-                tokenMetadata: tm,
+                tokenAccount: ata,
+                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
                 permanentDelegate: permanentDelegate,
                 payer: payer,
+
+                rent: SYSVAR_RENT_PUBKEY,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
-                rent: SYSVAR_RENT_PUBKEY,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
                 epplexCore: CORE_PROGRAM_ID,
             })
@@ -172,13 +170,13 @@ export class BurgerProgram {
         const renewIx = await this.program.methods
             .tokenRenew({ renewTerms: 1 })
             .accounts({
-                mintPayment: NativeMint.address,
                 mint,
                 tokenMetadata: this.getTokenBurgerMetadata(mint),
+                mintPayment: NativeMint.address,
                 proceedsTokenAccount: proceedsAta,
                 payerTokenAccount: payerAta,
                 payer: this.wallet.publicKey,
-                authority: this.wallet.publicKey,
+                updateAuthority: this.getProgramDelegate(),
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 tokenProgram: TOKEN_PROGRAM_ID
             })
@@ -201,13 +199,14 @@ export class BurgerProgram {
     }
 
     getTokenBurgerMetadata(mint: PublicKey): PublicKey {
-        const [programDelegate] = PublicKey.findProgramAddressSync(
+        const [metadata] = PublicKey.findProgramAddressSync(
             [
                 Buffer.from("burgermetadata"),
                 mint.toBuffer()
             ],
             this.program.programId
         );
-        return programDelegate;
+        return metadata;
     }
+
 }

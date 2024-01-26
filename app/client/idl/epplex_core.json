@@ -14,7 +14,7 @@
           ]
         },
         {
-          "name": "ata",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false,
           "docs": [
@@ -28,6 +28,11 @@
           "docs": [
             "CHECK"
           ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
         },
         {
           "name": "payer",
