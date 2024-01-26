@@ -33,15 +33,15 @@ export async function sendAndConfirmRawTransaction(
     tx: Transaction,
     feePayer: PublicKey,
     wallet?: AnchorWallet,
-    partialSigners: Keypair[] = [],
+    signers: Keypair[] = [],
 ): Promise<TransactionSignature> {
     const latestBlockhash = await connection.getLatestBlockhash(COMMITMENT);
     tx.recentBlockhash = latestBlockhash.blockhash;
     tx.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
     tx.feePayer = feePayer;
 
-    if (partialSigners) {
-        partialSigners.forEach((s) => tx.sign(s));
+    if (signers) {
+        signers.forEach((s) => tx.sign(s));
     }
 
     let txId = "";
