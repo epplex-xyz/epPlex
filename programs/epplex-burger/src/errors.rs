@@ -21,6 +21,15 @@ pub enum BurgerError {
     #[msg("Invalid calculation")]
     InvalidCalculation,
 
+    #[msg("String must not be empty")]
+    EmptyString,
+
+    #[msg("Game state must be empty")]
+    GameStateMustBeEmpty,
+
+    #[msg("Game state must not be empty")]
+    GameStateMustNotBeEmpty,
+
     #[msg("Token not supported")]
     TokenNotSupported,
 

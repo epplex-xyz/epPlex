@@ -72,6 +72,8 @@ impl TokenRenew<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenRenewParams) -> Result<()> {
+        // TODO technically you don't actually have to own the NFT since we don't check for token account owner
+
         // Currently just SOL
         // TODO Take payment 1 BONK
         let amount = u64::pow(10, ctx.accounts.mint_payment.decimals as u32);
@@ -97,7 +99,7 @@ impl TokenRenew<'_> {
         msg!("Destroy timestamp: {}", expiry_date);
 
         // Cannot exceed expiry
-        // Disall
+        // Disallow renewal if time has surpassed
         let now = Clock::get().unwrap().unix_timestamp;
         if now > expiry_date {
             return err!(BurgerError::ExpiryDateHasBeenExceeded);

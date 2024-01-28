@@ -32,7 +32,6 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
-
     async createWhitelistMintTx(
         expiryDate: string,
         mint: Keypair = Keypair.generate(),
