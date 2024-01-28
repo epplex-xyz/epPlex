@@ -16,6 +16,7 @@ pub use utils::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token::{Mint, TokenAccount, Token},
+    // ID as TOKEN_2022_PROGRAM_ID alternatively
     token_2022::{self},
     token_interface::{
         Mint as MintInterface,
@@ -59,11 +60,15 @@ pub mod epplex_burger {
         TokenBurn::actuate(ctx, params)
     }
 
-    // // Todo this should simply be updating the metadata field
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn vote_cast(ctx: Context<VoteCast>, params: VoteCastParams) -> Result<()> {
-    //     VoteCast::actuate(ctx, params)
-    // }
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_vote(ctx: Context<TokenGameVote>, params: TokenGameVoteParams) -> Result<()> {
+        TokenGameVote::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_reset(ctx: Context<TokenGameReset>, params: TokenGameResetParams) -> Result<()> {
+        TokenGameReset::actuate(ctx, params)
+    }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
