@@ -25,7 +25,6 @@ export async function getMintOwner(connection: Connection, mint: PublicKey): Pro
     const owner = (largestAccountInfo.value.data as ParsedAccountData).parsed.info.owner;
 
     return new PublicKey(owner);
-
 }
 
 export async function sendAndConfirmRawTransaction(
