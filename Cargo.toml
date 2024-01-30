@@ -2,3 +2,9 @@
 members = [
     "programs/*"
 ]
+
+exclude = [
+    "programs/epplex-shared",
+    "programs/epplex-metadata",
+    "programs/epplex-mint",
+]
