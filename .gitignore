@@ -30,6 +30,7 @@ yarn-debug.log*
 .vscode/*
 
 target/*
+**/target/*
 
 # env
 .env*
