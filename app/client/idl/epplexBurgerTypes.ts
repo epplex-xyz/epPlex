@@ -345,6 +345,92 @@ export type EpplexBurger = {
       ]
     },
     {
+      "name": "tokenGameVote",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenGameVoteParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenGameReset",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenGameResetParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -465,6 +551,25 @@ export type EpplexBurger = {
       }
     },
     {
+      "name": "TokenGameResetParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenGameVoteParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
@@ -476,18 +581,6 @@ export type EpplexBurger = {
       "type": {
         "kind": "struct",
         "fields": []
-      }
-    },
-    {
-      "name": "VoteCastParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "message",
-            "type": "string"
-          }
-        ]
       }
     },
     {
@@ -543,11 +636,26 @@ export type EpplexBurger = {
     },
     {
       "code": 6005,
+      "name": "EmptyString",
+      "msg": "String must not be empty"
+    },
+    {
+      "code": 6006,
+      "name": "GameStateMustBeEmpty",
+      "msg": "Game state must be empty"
+    },
+    {
+      "code": 6007,
+      "name": "GameStateMustNotBeEmpty",
+      "msg": "Game state must not be empty"
+    },
+    {
+      "code": 6008,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
     },
     {
-      "code": 6006,
+      "code": 6009,
       "name": "FieldDoesNotExist",
       "msg": "Field does not exist"
     }
@@ -901,6 +1009,92 @@ export const IDL: EpplexBurger = {
       ]
     },
     {
+      "name": "tokenGameVote",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenGameVoteParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tokenGameReset",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenGameResetParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "programDelegateCreate",
       "accounts": [
         {
@@ -1021,6 +1215,25 @@ export const IDL: EpplexBurger = {
       }
     },
     {
+      "name": "TokenGameResetParams",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
+      "name": "TokenGameVoteParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "TokenRenewParams",
       "type": {
         "kind": "struct",
@@ -1032,18 +1245,6 @@ export const IDL: EpplexBurger = {
       "type": {
         "kind": "struct",
         "fields": []
-      }
-    },
-    {
-      "name": "VoteCastParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "message",
-            "type": "string"
-          }
-        ]
       }
     },
     {
@@ -1099,11 +1300,26 @@ export const IDL: EpplexBurger = {
     },
     {
       "code": 6005,
+      "name": "EmptyString",
+      "msg": "String must not be empty"
+    },
+    {
+      "code": 6006,
+      "name": "GameStateMustBeEmpty",
+      "msg": "Game state must be empty"
+    },
+    {
+      "code": 6007,
+      "name": "GameStateMustNotBeEmpty",
+      "msg": "Game state must not be empty"
+    },
+    {
+      "code": 6008,
       "name": "TokenNotSupported",
       "msg": "Token not supported"
     },
     {
-      "code": 6006,
+      "code": 6009,
       "name": "FieldDoesNotExist",
       "msg": "Field does not exist"
     }

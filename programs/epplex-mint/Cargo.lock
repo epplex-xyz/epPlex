@@ -927,20 +927,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "epplex-burger"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "epplex-core",
- "epplex-metadata",
- "epplex-shared",
- "solana-program",
- "spl-token-2022 1.0.0",
- "spl-token-metadata-interface",
-]
-
-[[package]]
 name = "epplex-core"
 version = "0.1.0"
 dependencies = [
@@ -968,6 +954,18 @@ dependencies = [
  "spl-pod",
  "spl-token-metadata-interface",
  "spl-type-length-value",
+]
+
+[[package]]
+name = "epplex-mint"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "epplex-core",
+ "epplex-metadata",
+ "epplex-shared",
+ "spl-token-2022 1.0.0",
 ]
 
 [[package]]
