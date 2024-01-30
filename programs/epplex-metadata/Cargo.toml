@@ -19,6 +19,6 @@ default = []
 anchor-lang = "0.29.0"
 epplex-shared = { path = "../epplex-shared", features=["no-entrypoint"] }
 spl-pod = "0.1.0"
-solana-program = "1.16.24"
+solana-program = "1.17.16"
 spl-token-metadata-interface = "0.2.0"
 spl-type-length-value = "0.3.0"
