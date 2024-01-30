@@ -22,5 +22,5 @@ spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 epplex-core = { path = "../epplex-core", features = ["cpi"] }
 epplex-metadata = { path = "../epplex-metadata", features = ["cpi"] }
 epplex-shared = { path = "../epplex-shared", features=["no-entrypoint"] }
-solana-program = "1.17.16"
+solana-program = "1.16.24"
 spl-token-metadata-interface = "0.2.0"
