@@ -14,23 +14,23 @@ epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
 [programs.devnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-#epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
-#epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
-#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
+epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
+epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
+epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.localnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-#epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
-#epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
-#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
+epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
+epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
+epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "https://api.devnet.solana.com"
-#cluster = "Localnet"
+#cluster = "https://api.devnet.solana.com"
+cluster = "Localnet"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]
@@ -50,5 +50,9 @@ copy-metadata = "cp target/idl/epplex_metadata.json app/client/idl/epplex_metada
 copy-core = "cp target/idl/epplex_core.json app/client/idl/epplex_core.json && cp target/types/epplex_core.ts app/client/idl/epplexCoreTypes.ts"
 copy-to-app = "anchor run copy-core && anchor run copy-metadata && anchor run copy-mint && anchor run copy-burger"
 
-bd = "anchor build && anchor deploy && anchor run copy-to-app"
+#bd = "anchor build && anchor deploy && anchor run copy-to-app"
+build-burger = "anchor build -p epplex_burger && anchor deploy -p epplex_burger && anchor run copy-burger"
+build-core = "anchor build -p epplex_core && anchor deploy -p epplex_core && anchor run copy-core"
+bd = "anchor run build-burger && anchor run build-core"
+
 depl = "anchor deploy && anchor run copy-to-app"
