@@ -25,6 +25,7 @@ use anchor_spl::{
 };
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::Token2022;
+use epplex_shared;
 
 #[program]
 pub mod epplex_burger {
@@ -35,6 +36,10 @@ pub mod epplex_burger {
         WhitelistMint::actuate(ctx, params)
     }
 
+
+    /*
+     * Token actions
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_buy(ctx: Context<TokenBuy>, params: TokenBuyParams) -> Result<()> {
         TokenBuy::actuate(ctx, params)
@@ -70,19 +75,24 @@ pub mod epplex_burger {
         TokenGameReset::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn game_create(ctx: Context<GameCreate>, params: GameCreateParams) -> Result<()> {
-        GameCreate::actuate(ctx, &params)
-    }
 
+    /*
+     * Game create
+     */
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn game_create(ctx: Context<GameCreate>, params: GameCreateParams) -> Result<()> {
+    //     GameCreate::actuate(ctx, params)
+    // }
+
+
+    /*
+     * Program Delegate
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
         ProgramDelegateCreate::actuate(ctx, &params)
     }
 
-    /*
-     * @dev callable by operator
-     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
         ProgramDelegateClose::actuate(ctx, &params)

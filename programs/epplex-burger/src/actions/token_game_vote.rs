@@ -27,6 +27,15 @@ pub struct TokenGameVote<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
+
+    #[account(
+        seeds = [
+            SEED_GAME_CONFIG
+        ],
+        bump = game_config.bump
+    )]
+    pub game_config: Account<'info, GameConfig>,
+
     #[account()]
     pub payer: Signer<'info>,
 
@@ -48,7 +57,13 @@ pub struct TokenGameVoteParams {
 
 impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
-        // TODO need to validate on game state
+        // Do we also need number of votes?
+
+        if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
+            // TOOD return error
+        }
+
+
         if params.message.is_empty() {
             return err!(BurgerError::EmptyString);
         }
