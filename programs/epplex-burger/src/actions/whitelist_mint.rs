@@ -81,7 +81,7 @@ impl WhitelistMint<'_> {
             [RENEWAL_FIELD.to_string(), "0".to_string()],
             [FOR_SALE_FIELD.to_string(), "0".to_string()],
             [PRICE_FIELD.to_string(), "9999".to_string()],
-            [GAME_STATE.to_string(), "".to_string()]
+            [GAME_STATE.to_string(), GAME_STATE_PLACEHOLDER.to_string()]
         ];
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
