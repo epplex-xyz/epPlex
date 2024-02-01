@@ -66,7 +66,7 @@ async function mint(numMints) {
         const tx = await epplex.createWhitelistMintTx({
             expiryDate: metadata.expiryDate,
             mint: mint,
-            name: metadata.name,
+            name: `${metadata.name} ${i}`,
             symbol: metadata.symbol,
             uri: metadata.uri
         })
@@ -90,13 +90,12 @@ async function mintAndTransfer() {
         {signature: airdropSignature, ...(await connection.getLatestBlockhash())}
     );
 
-    // const content = await readTextFileFromEndpoint(fileUrl);
-    // if (!content) {
-    //     console.log("Couldn't fetch")
-    //     return null;
-    // }
-
-    const content = ["Czdbq7j1UfDRvLUFtyhKexQcoAdQSomh1RJEAcJ66iuD"]
+    const content = await readTextFileFromEndpoint(fileUrl);
+    if (!content) {
+        console.log("Couldn't fetch")
+        return null;
+    }
+    // const content = ["Czdbq7j1UfDRvLUFtyhKexQcoAdQSomh1RJEAcJ66iuD"]
 
     let i = 0;
     for (const key of content) {
@@ -106,7 +105,7 @@ async function mintAndTransfer() {
         const txCreate = await epplex.createWhitelistMintTx({
             expiryDate: metadata.expiryDate,
             mint: mint,
-            name: metadata.name,
+            name: `${metadata.name} ${i}`,
             symbol: metadata.symbol,
             uri: metadata.uri
         })
@@ -142,7 +141,8 @@ async function mintAndTransfer() {
 
 
 async function main() {
-    await mintAndTransfer()
+    // await mintAndTransfer()
+    // await mint(3)
 }
 
 main()

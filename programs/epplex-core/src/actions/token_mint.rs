@@ -85,7 +85,8 @@ impl TokenMint<'_> {
             &[
                 ExtensionType::MintCloseAuthority,
                 ExtensionType::PermanentDelegate,
-                ExtensionType::MetadataPointer
+                ExtensionType::MetadataPointer,
+                // ExtensionType::TransferHook
             ],
             tm
         )?;
