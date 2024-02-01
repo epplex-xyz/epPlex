@@ -13,7 +13,7 @@ import { EpplexProvider } from "@epplex-xyz/sdk";
 
 
 // REAADME
-// npx ts-node airdrop.ts needs to be executed within the script folder
+// npx ts-node scripts.ts needs to be executed within the script folder
 // 0 Modify nMints
 // 1 Creates a local keypair in .local_keys
 // 2 Uses that to mint

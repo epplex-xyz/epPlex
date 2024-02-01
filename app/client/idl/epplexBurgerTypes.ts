@@ -8,6 +8,11 @@ export type EpplexBurger = {
       "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
     },
     {
+      "name": "SEED_GAME_CONFIG",
+      "type": "bytes",
+      "value": "[71, 65, 77, 69, 95, 67, 79, 78, 70, 73, 71]"
+    },
+    {
       "name": "SEED_PROGRAM_DELEGATE",
       "type": "bytes",
       "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
@@ -499,6 +504,58 @@ export type EpplexBurger = {
       }
     },
     {
+      "name": "gameConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "gameState",
+            "docs": [
+              "The game number"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "gamePhase",
+            "docs": [
+              "The game phase"
+            ],
+            "type": {
+              "defined": "GamePhase"
+            }
+          },
+          {
+            "name": "phaseStart",
+            "docs": [
+              "Phase start"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "phaseEnd",
+            "docs": [
+              "Phase end"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "gameMaster",
+            "docs": [
+              "Game master"
+            ],
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -515,6 +572,32 @@ export type EpplexBurger = {
     }
   ],
   "types": [
+    {
+      "name": "GameCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "gameState",
+            "type": "u8"
+          },
+          {
+            "name": "gamePhase",
+            "type": {
+              "defined": "GamePhase"
+            }
+          },
+          {
+            "name": "phaseStart",
+            "type": "i64"
+          },
+          {
+            "name": "endTimestampOffset",
+            "type": "i64"
+          }
+        ]
+      }
+    },
     {
       "name": "ProgramDelegateCloseParams",
       "type": {
@@ -603,6 +686,29 @@ export type EpplexBurger = {
           {
             "name": "uri",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GamePhase",
+      "docs": [
+        "Represents each state in the lifecycle of a lotto in sequential order."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Announcement"
+          },
+          {
+            "name": "Voting"
+          },
+          {
+            "name": "Elimination"
           }
         ]
       }
@@ -672,6 +778,11 @@ export const IDL: EpplexBurger = {
       "value": "[98, 117, 114, 103, 101, 114, 109, 101, 116, 97, 100, 97, 116, 97]"
     },
     {
+      "name": "SEED_GAME_CONFIG",
+      "type": "bytes",
+      "value": "[71, 65, 77, 69, 95, 67, 79, 78, 70, 73, 71]"
+    },
+    {
       "name": "SEED_PROGRAM_DELEGATE",
       "type": "bytes",
       "value": "[66, 85, 82, 71, 69, 82, 95, 68, 69, 76, 69, 71, 65, 84, 69]"
@@ -1163,6 +1274,58 @@ export const IDL: EpplexBurger = {
       }
     },
     {
+      "name": "gameConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "The bump, used for PDA validation."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "gameState",
+            "docs": [
+              "The game number"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "gamePhase",
+            "docs": [
+              "The game phase"
+            ],
+            "type": {
+              "defined": "GamePhase"
+            }
+          },
+          {
+            "name": "phaseStart",
+            "docs": [
+              "Phase start"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "phaseEnd",
+            "docs": [
+              "Phase end"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "gameMaster",
+            "docs": [
+              "Game master"
+            ],
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "programDelegate",
       "type": {
         "kind": "struct",
@@ -1179,6 +1342,32 @@ export const IDL: EpplexBurger = {
     }
   ],
   "types": [
+    {
+      "name": "GameCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "gameState",
+            "type": "u8"
+          },
+          {
+            "name": "gamePhase",
+            "type": {
+              "defined": "GamePhase"
+            }
+          },
+          {
+            "name": "phaseStart",
+            "type": "i64"
+          },
+          {
+            "name": "endTimestampOffset",
+            "type": "i64"
+          }
+        ]
+      }
+    },
     {
       "name": "ProgramDelegateCloseParams",
       "type": {
@@ -1267,6 +1456,29 @@ export const IDL: EpplexBurger = {
           {
             "name": "uri",
             "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GamePhase",
+      "docs": [
+        "Represents each state in the lifecycle of a lotto in sequential order."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Announcement"
+          },
+          {
+            "name": "Voting"
+          },
+          {
+            "name": "Elimination"
           }
         ]
       }

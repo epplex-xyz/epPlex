@@ -3,7 +3,7 @@ members = [
     "programs/*"
 ]
 
-#resolver = "2"
+resolver = "2"
 
 exclude = [
     "programs/epplex-shared",
