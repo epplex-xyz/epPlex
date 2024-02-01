@@ -28,8 +28,13 @@ pub struct TokenMint<'info> {
     #[account()]
     pub update_authority: Signer<'info>,
 
+    //
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
+
+    // #[account()]
+    // /// CHECK
+    // pub transfer_hook_program: UncheckedAccount<'info>,
 
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
@@ -85,21 +90,29 @@ impl TokenMint<'_> {
             tm
         )?;
 
-        // Add closing auth
+        // Add ClosingAuth Extension
         add_closing_authority(
             &ctx.accounts.mint,
             ctx.accounts.token22_program.key(),
             ctx.accounts.permanent_delegate.key(),
         )?;
 
-        // Add permanent delegate
+        // Add PermanentDelegate Extension
         add_permanent_delegate(
             &ctx.accounts.mint,
             ctx.accounts.token22_program.key(),
             ctx.accounts.permanent_delegate.key(),
         )?;
 
-        // Add metadata pointer
+        // Add TransferHook Extension
+        // add_transfer_hook(
+        //     &ctx.accounts.mint,
+        //     ctx.accounts.token22_program.key(),
+        //     ctx.accounts.permanent_delegate.key(),
+        //     ctx.accounts.transfer_hook_program.key(),
+        // )?;
+
+        // Add MetadataPointer Extension
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),

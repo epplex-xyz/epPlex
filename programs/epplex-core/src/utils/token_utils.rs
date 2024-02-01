@@ -1,3 +1,6 @@
+use spl_token_2022::check_program_account;
+use spl_token_2022::extension::transfer_hook::instruction::{InitializeInstructionData, TransferHookInstruction};
+use spl_token_2022::instruction::TokenInstruction;
 use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
 // use epplex_metadata::MetadataCreateParams;
@@ -266,6 +269,31 @@ pub fn add_closing_authority(
         &program,
         &mint_account.key(),
         Some(&program_delegate),
+    )?;
+
+    let account_infos: Vec<AccountInfo> = vec![
+        mint_account.to_account_info(),
+    ];
+
+    solana_program::program::invoke(
+        &ix,
+        &account_infos[..],
+    )?;
+
+    Ok(())
+}
+
+pub fn add_transfer_hook(
+    mint_account: &AccountInfo,
+    program: Pubkey,
+    authority: Pubkey,
+    transfer_hook_program: Pubkey,
+) -> Result<()> {
+    let ix = spl_token_2022::extension::transfer_hook::instruction::initialize(
+        &program,
+        &mint_account.key(),
+        Some(authority),
+        Some(transfer_hook_program)
     )?;
 
     let account_infos: Vec<AccountInfo> = vec![
