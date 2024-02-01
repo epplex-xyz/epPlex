@@ -1,5 +1,6 @@
 use crate::*;
 
+
 #[derive(Accounts)]
 #[instruction(params: TokenGameVoteParams)]
 pub struct TokenGameVote<'info> {
@@ -28,13 +29,13 @@ pub struct TokenGameVote<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
 
-    #[account(
-        seeds = [
-            SEED_GAME_CONFIG
-        ],
-        bump = game_config.bump
-    )]
-    pub game_config: Account<'info, GameConfig>,
+    // #[account(
+    //     seeds = [
+    //         SEED_GAME_CONFIG
+    //     ],
+    //     bump = game_config.bump
+    // )]
+    // pub game_config: Account<'info, GameConfig>,
 
     #[account()]
     pub payer: Signer<'info>,
@@ -59,24 +60,24 @@ impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
         // Do we also need number of votes?
 
-        if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
-            // TOOD return error
-        }
-
-
-        if params.message.is_empty() {
-            return err!(BurgerError::EmptyString);
-        }
-
-        // Game states: empty, voted
-        let game_state = fetch_metadata_field(
-            GAME_STATE,
-            &ctx.accounts.mint.to_account_info()
-        )?;
-
-        if !game_state.is_empty() {
-            return err!(BurgerError::GameStateMustBeEmpty);
-        }
+        // if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
+        //     // TOOD return error
+        // }
+        //
+        //
+        // if params.message.is_empty() {
+        //     return err!(BurgerError::EmptyString);
+        // }
+        //
+        // // Game states: empty, voted
+        // let game_state = fetch_metadata_field(
+        //     GAME_STATE,
+        //     &ctx.accounts.mint.to_account_info()
+        // )?;
+        //
+        // if !game_state.is_empty() {
+        //     return err!(BurgerError::GameStateMustBeEmpty);
+        // }
 
         Ok(())
     }
