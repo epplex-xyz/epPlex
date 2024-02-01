@@ -85,6 +85,11 @@ impl WhitelistMint<'_> {
         ];
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
+
+        // 0 global colloection config
+        // 1 mint guard init first
+        // 2 need to call collection mint from
+
         // CPI into token_mint
         epplex_core::cpi::token_mint(
             CpiContext::new_with_signer(

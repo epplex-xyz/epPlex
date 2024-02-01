@@ -70,76 +70,8 @@ impl CollectionMint<'_> {
         //     &ctx.accounts.treasury,
         //     ctx.accounts.collection_config.mint_price
         // )?;
-        //
-        // // TODO This one is probably missing the permanent delegate extension
-        // // TODO Probably need to clearly define what this does
-        // // Create the ephemeral token
-        // token_create_basic(
-        //     ctx.accounts.mint.to_account_info().clone(),
-        //     ctx.accounts.program_delegate.to_account_info().clone(),
-        //     ctx.accounts.payer.to_account_info().clone(),
-        //     ctx.accounts.rent.to_account_info().clone(),
-        //     ctx.accounts.token22_program.to_account_info().clone(),
-        //     &[ExtensionType::MetadataPointer]
-        // )?;
-        //
-        //
-        // // Create token metadata account
-        // create_metadata_account(
-        //     ctx.accounts.metadata_program.to_account_info().clone(),
-        //     ctx.accounts.payer.to_account_info().clone(),
-        //     ctx.accounts.mint.to_account_info().clone(),
-        //     ctx.accounts.token_metadata.to_account_info().clone(),
-        //     ctx.accounts.system_program.to_account_info().clone(),
-        //     params
-        // )?;
-        //
-        // // Point to created the metadata account
-        // add_metadata_pointer(
-        //     ctx.accounts.token22_program.key(),
-        //     &ctx.accounts.mint.to_account_info(),
-        //     ctx.accounts.program_delegate.key(),
-        //     ctx.accounts.token_metadata.key()
-        // )?;
-        //
-        // // Initialize the actual mint data
-        // initialize_mint(
-        //     &ctx.accounts.mint.to_account_info(),
-        //     &ctx.accounts.rent.to_account_info(),
-        //     &ctx.accounts.token22_program.key(),
-        //     // TODO incorrect
-        //     &ctx.accounts.payer.key(),
-        //     // TODO incorrect
-        //     &ctx.accounts.payer.key(),
-        // )?;
-        //
-        // // Create ATA
-        // anchor_spl::associated_token::create(
-        //     CpiContext::new(
-        //         ctx.accounts.token22_program.to_account_info(),
-        //         anchor_spl::associated_token::Create {
-        //             payer: ctx.accounts.payer.to_account_info(), // payer
-        //             associated_token: ctx.accounts.ata.to_account_info(),
-        //             authority: ctx.accounts.payer.to_account_info(), // owner
-        //             mint: ctx.accounts.mint.to_account_info(),
-        //             system_program: ctx.accounts.system_program.to_account_info(),
-        //             token_program: ctx.accounts.token22_program.to_account_info(),
-        //         }
-        //     ),
-        // )?;
-        //
-        // // Mint to ATA
-        // anchor_spl::token_interface::mint_to(
-        //     CpiContext::new(
-        //         ctx.accounts.token22_program.to_account_info(),
-        //         MintTo {
-        //             mint: ctx.accounts.mint.to_account_info().clone(),
-        //             to: ctx.accounts.ata.to_account_info().clone(),
-        //             authority: ctx.accounts.payer.to_account_info(),
-        //         }
-        //     ),
-        //     1
-        // )?;
+
+        // TODO call tokenMint here
 
         Ok(())
     }

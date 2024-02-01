@@ -46,6 +46,7 @@ impl FundsWithdraw<'_> {
         let mint_guard = ctx.accounts.mint_guard.to_account_info();
         let authority = ctx.accounts.authority.to_account_info();
 
+        // TODO this should be an option - params amount
         mint_guard.sub_lamports(params.amount)?;
         authority.add_lamports(params.amount)?;
 
