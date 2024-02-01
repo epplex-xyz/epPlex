@@ -1,3 +1,4 @@
+
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
@@ -10,6 +11,7 @@ import * as pda from './pda';
 import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
 import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
 import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
+import {EpplexProvider} from "@epplex-xyz/sdk";
 
 // This works
 // import dotenv from "dotenv";
@@ -30,26 +32,31 @@ describe('Environment setup', () => {
         {skipPreflight: true}
     )
     anchor.setProvider(provider);
+    const epplex = new EpplexProvider(provider.wallet, provider.connection);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
 
 
-    const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
-    console.log("destroy", destroyTimestamp);
     const mint = Keypair.generate();
+    const expiryDate = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
+    const metadata = {
+        expiryDate: expiryDate,
+        name: "(SDK tests) Ephemeral burger",
+        symbol: "EP",
+        uri: "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
+        mint: mint
+    }
+
 
     // it("Create burger delegate ", async() => {
     //     await burgerProgram.createProgramDelegate();
     // })
 
     it('Mint token', async () => {
-        const tx = await burgerProgram.createWhitelistMintTx(
-            destroyTimestamp,
-            mint
-        )
+        const txCreate = await epplex.createWhitelistMintTx(metadata)
 
         await sendAndConfirmRawTransaction(
             provider.connection,
-            tx,
+            txCreate,
             provider.publicKey,
             provider.wallet,
             [mint]
