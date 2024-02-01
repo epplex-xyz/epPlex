@@ -45,7 +45,7 @@ const epplex = new EpplexProvider(new Wallet(mintPool), connection);
 const expiryDate = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
 const metadata = {
     expiryDate: expiryDate,
-    name: "(SDK tests) Ephemeral burger",
+    name: "(DL test) Ephemeral burger",
     symbol: "EP",
     uri: "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
 }
@@ -90,13 +90,13 @@ async function mintAndTransfer() {
         {signature: airdropSignature, ...(await connection.getLatestBlockhash())}
     );
 
-    // const content = await readTextFileFromEndpoint(fileUrl);
-    // if (!content) {
-    //     console.log("Couldn't fetch")
-    //     return null;
-    // }
+    const content = await readTextFileFromEndpoint(fileUrl);
+    if (!content) {
+        console.log("Couldn't fetch")
+        return null;
+    }
 
-    const content = ["Czdbq7j1UfDRvLUFtyhKexQcoAdQSomh1RJEAcJ66iuD"]
+    // const content = ["Czdbq7j1UfDRvLUFtyhKexQcoAdQSomh1RJEAcJ66iuD"]
 
     let i = 0;
     for (const key of content) {
@@ -106,7 +106,7 @@ async function mintAndTransfer() {
         const txCreate = await epplex.createWhitelistMintTx({
             expiryDate: metadata.expiryDate,
             mint: mint,
-            name: metadata.name,
+            name: `${metadata.name} ${i}`,
             symbol: metadata.symbol,
             uri: metadata.uri
         })
