@@ -15,7 +15,6 @@ import {
 } from "@solana/spl-token";
 import {createMetadataInstruction, updateMetadataInstruction} from "./instructions/tokenMetadataInstructions";
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
-import { Program } from "../app/client/program"
 import {mint} from "./instructions/generic";
 
 const rpc = "https://api.devnet.solana.com";
@@ -78,7 +77,7 @@ async function setup() {
 async function test() {
     const payer = loadOrGenerateKeypair("payer");
     const mintKeypair = loadOrGenerateKeypair("mint");
-    const program = new Program(payer, connection);
+    // const program = new Program(payer, connection);
 
 
     // await program.createToken(mintKeypair, payer);
