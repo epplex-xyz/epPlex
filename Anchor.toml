@@ -29,8 +29,8 @@ epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "https://api.devnet.solana.com"
-cluster = "Localnet"
+cluster = "https://api.devnet.solana.com"
+#cluster = "Localnet"
 wallet = "/Users/Mac/.config/solana/test.json"
 
 [scripts]

@@ -84,6 +84,7 @@ impl TokenGameVote<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: TokenGameVoteParams) -> Result<()> {
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
+        // Update game state
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
@@ -91,6 +92,17 @@ impl TokenGameVote<'_> {
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
             params.message
+        )?;
+
+        // Record voting timestamp
+        let now = Clock::get().unwrap().unix_timestamp;
+        epplex_shared::update_token_metadata_signed(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
+            &[&seeds[..]],
+            spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
+            now.to_string()
         )?;
 
         Ok(())

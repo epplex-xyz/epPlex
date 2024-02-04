@@ -18,6 +18,7 @@ pub const RENEWAL_FIELD: &str = "renewalAmount";
 pub const FOR_SALE_FIELD: &str = "forSale";
 pub const PRICE_FIELD: &str = "price";
 pub const GAME_STATE: &str = "gameState";
+pub const VOTING_TIMESTAMP: &str = "votingTimestamp";
 
 
 
