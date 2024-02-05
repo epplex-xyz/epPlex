@@ -69,8 +69,9 @@ async function mint(numMints) {
             name: `${metadata.name} ${i}`,
             symbol: metadata.symbol,
             uri: metadata.uri
-        })
+        });
 
+        console.log("tryting to generate mint")
         await sendAndConfirmRawTransaction(
             epplex.provider.connection,
             tx,
@@ -109,6 +110,7 @@ async function mintAndTransfer() {
             symbol: metadata.symbol,
             uri: metadata.uri
         })
+        console.log("creating whitelist")
         await sendAndConfirmRawTransaction(
             epplex.provider.connection,
             txCreate,
@@ -126,6 +128,7 @@ async function mintAndTransfer() {
             destination: destination,
             payer: mintPool.publicKey,
         })
+
         await sendAndConfirmRawTransaction(
             epplex.provider.connection,
             txTransfer,

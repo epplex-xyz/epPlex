@@ -40,6 +40,16 @@ export type EpplexCore = {
           "isSigner": true
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -257,6 +267,10 @@ export type EpplexCore = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
             "name": "additionalMetadata",
@@ -343,6 +357,16 @@ export const IDL: EpplexCore = {
           "isSigner": true
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -560,6 +584,10 @@ export const IDL: EpplexCore = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
             "name": "additionalMetadata",

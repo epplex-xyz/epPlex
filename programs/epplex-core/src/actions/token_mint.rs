@@ -3,6 +3,8 @@ use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::{Token2022, update_token_metadata};
 
+const COLLECTION_COUNTER: &str = "collection_counter";
+
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
@@ -32,6 +34,16 @@ pub struct TokenMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
 
+    #[account(has_one = authority,
+    seeds = [SEED_COLLECTION_CONFIG, &params.collection_counter.to_le_bytes()],
+    bump
+    )]
+    pub collection_config: Account<'info, CollectionConfig>,
+
+    /// CHECK This is the admin account assigned when the collection is created.
+    #[account(signer)]
+    pub authority: UncheckedAccount<'info>,
+
     // #[account()]
     // /// CHECK
     // pub transfer_hook_program: UncheckedAccount<'info>,
@@ -47,6 +59,7 @@ pub struct TokenCreateParams {
     pub name: String,
     pub symbol: String,
     pub uri: String,
+    pub collection_counter: u64,
     pub additional_metadata: Vec<[String;2]>,
 }
 
@@ -62,11 +75,15 @@ impl TokenMint<'_> {
             Some(ctx.accounts.update_authority.key())
         ).expect("Bad update auth");
 
+
+
         // Convert from Vec<[String;2]> to Vec<(String, String)>
-        let converted_metadata: Vec<(String, String)> = params.additional_metadata
+        let mut converted_metadata: Vec<(String, String)> = params.additional_metadata
             .iter()
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
+
+        converted_metadata.push((COLLECTION_COUNTER.to_string(), params.collection_counter.to_string()));
 
         let tm = TokenMetadata {
             update_authority,
@@ -146,7 +163,6 @@ impl TokenMint<'_> {
             params.symbol.clone(),
             params.uri.clone(),
         )?;
-
 
         // Might need ot put into separate instruction
         // Add all the metadata

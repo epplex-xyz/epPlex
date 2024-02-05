@@ -44,6 +44,14 @@ export type EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "TODO: set the seeds constraint"
+          ]
+        },
+        {
           "name": "permanentDelegate",
           "isMut": false,
           "isSigner": false
@@ -686,6 +694,10 @@ export type EpplexBurger = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           }
         ]
       }
@@ -814,6 +826,14 @@ export const IDL: EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "TODO: set the seeds constraint"
+          ]
+        },
+        {
           "name": "permanentDelegate",
           "isMut": false,
           "isSigner": false
@@ -1456,6 +1476,10 @@ export const IDL: EpplexBurger = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           }
         ]
       }

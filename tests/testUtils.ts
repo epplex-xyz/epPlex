@@ -8,9 +8,11 @@ import { EpplexBurger } from "../target/types/epplex_burger";
 
 export function testPrelude() {
     const provider = anchor.AnchorProvider.env();
+    console.log("provider", provider);
     anchor.setProvider(provider);
 
     const coreProgram = anchor.workspace.EpplexCore as Program<EpplexCore>
+    console.log("coreProgram", anchor.workspace)
     const metadataProgram = anchor.workspace.EpplexMetadata as Program<EpplexMetadata>
     const mintProgram = anchor.workspace.EpplexMint as Program<EpplexMint>
     const burgerProgram = anchor.workspace.EpplexBurger as Program<EpplexBurger>

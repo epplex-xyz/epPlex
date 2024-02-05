@@ -1,4 +1,5 @@
 use anchor_spl::associated_token::AssociatedToken;
+use epplex_core::CollectionConfig;
 use epplex_core::program::EpplexCore;
 use crate::*;
 
@@ -24,6 +25,9 @@ pub struct WhitelistMint<'info> {
         bump,
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
+
+    /// TODO: set the seeds constraint
+    pub collection_config: Account<'info, CollectionConfig>,
 
     #[account(
         seeds = [
@@ -51,7 +55,8 @@ pub struct WhitelistMintParams {
     pub expiry_date: String,
     pub name: String,
     pub symbol: String,
-    pub uri: String
+    pub uri: String,
+    pub collection_counter: u64
 }
 
 impl WhitelistMint<'_> {
@@ -99,7 +104,9 @@ impl WhitelistMint<'_> {
                     rent: ctx.accounts.rent.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token22_program: ctx.accounts.token22_program.to_account_info(),
-                    associated_token: ctx.accounts.associated_token.to_account_info()
+                    associated_token: ctx.accounts.associated_token.to_account_info(),
+                    authority: ctx.accounts.permanent_delegate.to_account_info(),
+                    collection_config: ctx.accounts.collection_config.to_account_info(),
                 },
                 &[&seeds[..]]
             ),
@@ -107,7 +114,8 @@ impl WhitelistMint<'_> {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
-                additional_metadata: additional_metadata
+                additional_metadata: additional_metadata,
+                collection_counter: params.collection_counter,
             },
         )
     }

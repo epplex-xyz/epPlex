@@ -107,6 +107,7 @@ export function savePublicKeyToFile(
 */
 export function loadKeypairFromFile(absPath: string) {
     if (!absPath) throw Error("No path provided");
+    console.log("looking for this", absPath);
     if (!fs.existsSync(absPath)) throw Error("File does not exist.");
 
     // load the keypair from the file

@@ -17,7 +17,7 @@ import {createMetadataInstruction, updateMetadataInstruction} from "./instructio
 import {createInitializeMetadataPointerInstruction} from "./instructions/createInitializeMetadataPointerInstruction";
 import {mint} from "./instructions/generic";
 
-const rpc = "https://api.devnet.solana.com";
+const rpc =  "http://127.0.0.1:8899";
 const connection = new Connection(rpc, "confirmed");
 const METADATAPOINTER_SIZE = 64 + 2 + 2;
 

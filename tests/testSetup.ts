@@ -4,7 +4,12 @@ import { BurgerProgram } from "../app/client/burgerProgram";
 import {Program2} from "../app/client/program2";
 import { BN, Wallet } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    getAssociatedTokenAddressSync,
+    getTokenMetadata,
+    TOKEN_2022_PROGRAM_ID
+} from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import * as pda from './pda';
 import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
@@ -17,36 +22,56 @@ import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/help
 // dotenv.config({path: path.resolve(__dirname, "../.env.local")})
 // console.log("prces", process.env.MINT_POOL_KEYPAIR)
 
-const secretKeypair = loadKeypairFromFile("/Users/Mac/.config/solana/test.json")
-const mintPool = loadKeypairFromFile("/Users/Mac/Desktop/keypairs/pooPXJECKuyeahBbCat384tAhePkECTPwqs47z9eEQE.json")
+const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
+const mintPool = loadKeypairFromFile("/home/fzzyyti/.config/solana/mint.json")
 
 describe('Environment setup', () => {
     const tempProvider = anchor.AnchorProvider.env();
     anchor.setProvider(tempProvider);
 
+    console.log("secret", secretKeypair.publicKey.toString());
     const provider = new anchor.AnchorProvider(
         tempProvider.connection,
         new Wallet(secretKeypair),
         {skipPreflight: true}
     )
+    console.log("provider", provider.wallet.publicKey.toString())
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
+    const coreProgram = new Program2(provider.wallet, provider.connection);
 
+    console.log("mint", mintPool.publicKey.toString());
 
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
     console.log("destroy", destroyTimestamp);
     const mint = Keypair.generate();
 
-    // it("Create burger delegate ", async() => {
-    //     await burgerProgram.createProgramDelegate();
-    // })
+    it("Create burger delegate ", async() => {
+        await burgerProgram.createProgramDelegate();
+    })
 
     it('Mint token', async () => {
-        const tx = await burgerProgram.createWhitelistMintTx(
-            destroyTimestamp,
-            mint
+        coreProgram.createGlobalCollectionConfig();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const globalCollectionAddress = coreProgram.getGlobalCollectionConfigAddress();
+        console.log("globalCollectionAddress", globalCollectionAddress.toString());
+        const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
+            coreProgram.getGlobalCollectionConfigAddress());
+        const [collectionConfigAddress] = PublicKey.findProgramAddressSync(
+            [Buffer.from("CONFIG"),
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            coreProgram.program.programId
         )
 
+        await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
+
+        const collection = await coreProgram.program.account.collectionConfig.fetch(collectionConfigAddress);
+        const tx = await burgerProgram.createWhitelistMintTx(
+            destroyTimestamp,
+            collectionConfigAddress,
+            globalCollectionData.collectionCounter,
+            mint,
+        )
         await sendAndConfirmRawTransaction(
             provider.connection,
             tx,
@@ -54,6 +79,12 @@ describe('Environment setup', () => {
             provider.wallet,
             [mint]
         );
+        console.log("confirm mint")
+        const metadata = await getTokenMetadata(
+            provider.connection,
+            mint.publicKey
+        )
+        console.log("metadata", metadata);
     });
 
     it('Transfer token', async () => {

@@ -44,6 +44,14 @@
           "isSigner": false
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "TODO: set the seeds constraint"
+          ]
+        },
+        {
           "name": "permanentDelegate",
           "isMut": false,
           "isSigner": false
@@ -686,6 +694,10 @@
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           }
         ]
       }

@@ -34,10 +34,12 @@ export class BurgerProgram {
 
     async createWhitelistMintTx(
         expiryDate: string,
+        collectionConfig: PublicKey,
+        collectionCounter: number,
         mint: Keypair = Keypair.generate(),
         name: string = "Ephemeral burger",
         symbol: string = "EP",
-        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
+        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
     ) {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
@@ -55,6 +57,7 @@ export class BurgerProgram {
                 symbol: symbol,
                 uri: uri,
                 expiryDate: expiryDate,
+                collectionCounter: collectionCounter,
             })
             .accounts({
                 mint: mint.publicKey,
@@ -68,12 +71,13 @@ export class BurgerProgram {
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
                 epplexCore: CORE_PROGRAM_ID,
+                collectionConfig
             })
             .instruction();
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 250_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }),
             tokenCreateIx
         ];
 

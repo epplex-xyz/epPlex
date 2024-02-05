@@ -40,6 +40,16 @@
           "isSigner": true
         },
         {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -257,6 +267,10 @@
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
           },
           {
             "name": "additionalMetadata",
