@@ -8,6 +8,7 @@
         "@project-serum/borsh": "^0.2.5",
         "@solana/spl-token": "^0.3.7",
         "@solana/web3.js": "^1.75.0",
+        "@switchboard-xyz/solana.js": "^3.2.4",
         "dotenv": "^16.0.3"
     },
     "devDependencies": {
