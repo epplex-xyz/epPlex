@@ -89,6 +89,83 @@ export type EpplexBurger = {
       ]
     },
     {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "TODO: set the seeds constraint"
+          ]
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "epplexCore",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionMintParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "tokenBuy",
       "accounts": [
         {
@@ -572,6 +649,34 @@ export type EpplexBurger = {
     }
   ],
   "types": [
+    {
+      "name": "CollectionMintParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "expiryDate",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "GameCreateParams",
       "type": {
@@ -859,6 +964,83 @@ export const IDL: EpplexBurger = {
       ]
     },
     {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "TODO: set the seeds constraint"
+          ]
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "epplexCore",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "CollectionMintParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "tokenBuy",
       "accounts": [
         {
@@ -1342,6 +1524,34 @@ export const IDL: EpplexBurger = {
     }
   ],
   "types": [
+    {
+      "name": "CollectionMintParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "expiryDate",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "collectionCounter",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "GameCreateParams",
       "type": {

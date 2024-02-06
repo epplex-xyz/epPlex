@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import { Program2 } from "../../client/program2";
+import { CoreProgram } from "../../client/coreProgram";
 
 export const useProgramApis = (): ProgramInterface => {
     const context = useContext(ProgramApisContext);
@@ -11,7 +11,7 @@ export const useProgramApis = (): ProgramInterface => {
 };
 
 interface ProgramInterface {
-    program: Program2;
+    program: CoreProgram;
 
     // TODO not the right place to put this
     hasCreatedtState: {
@@ -29,7 +29,7 @@ const ProgramApisProvider = ({ children }) => {
     const [hasCreated, setHasCreated] = React.useState<boolean>(false);
 
     const { program } = useMemo(() => {
-        const program = new Program2(anchorWallet!, connection);
+        const program = new CoreProgram(anchorWallet!, connection);
 
         return { program };
     }, [connection, anchorWallet]);

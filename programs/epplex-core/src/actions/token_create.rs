@@ -1,5 +1,6 @@
 use epplex_shared::Token2022;
 use crate::*;
+use crate::mint::TokenCreateParams;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]

@@ -8,7 +8,7 @@ import {
     Transaction, TransactionInstruction,
 } from "@solana/web3.js";
 import { CORE_PROGRAM_ID, createBurgerProgram, EpplexBurgerProgram, VAULT } from "./types/programTypes";
-import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
+import {AnchorProvider, BN, Wallet} from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction, tryCreateATAIx } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import {
@@ -32,6 +32,61 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
+    async createCollectionMintTx(
+        expiryDate: string,
+        collectionId: BN,
+        mint: Keypair = Keypair.generate(),
+        name: string = "Ephemeral burger",
+        symbol: string = "EP",
+        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
+    ) {
+        const permanentDelegate = this.getProgramDelegate();
+        const payer = this.wallet.publicKey;
+        const ata = getAssociatedTokenAddressSync(
+            mint.publicKey,
+            payer,
+            undefined,
+            TOKEN_2022_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+
+        const [collectionConfig,_] = PublicKey.findProgramAddressSync(
+            [Buffer.from("CONFIG"), collectionId.toArrayLike(Buffer, "le", 8)],
+            CORE_PROGRAM_ID
+        )
+
+        const tokenCreateIx = await this.program.methods
+            .collectionMint({
+                name: name,
+                symbol: symbol,
+                uri: uri,
+                expiryDate: expiryDate,
+                /// TODO: get this from somewhere more solid
+                collectionCounter: collectionId,
+            })
+            .accounts({
+                mint: mint.publicKey,
+                tokenAccount: ata,
+                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
+                permanentDelegate,
+                payer: payer,
+                collectionConfig,
+                rent: SYSVAR_RENT_PUBKEY,
+                systemProgram: SystemProgram.programId,
+                token22Program: TOKEN_2022_PROGRAM_ID,
+                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+                epplexCore: CORE_PROGRAM_ID,
+            })
+            .instruction();
+
+        const ixs = [
+            // prolly could tweak this further down
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }),
+            tokenCreateIx
+        ];
+
+        return  new Transaction().add(...ixs);
+    }
     async createWhitelistMintTx(
         expiryDate: string,
         mint: Keypair = Keypair.generate(),
