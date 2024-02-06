@@ -17,8 +17,8 @@ import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/help
 // dotenv.config({path: path.resolve(__dirname, "../.env.local")})
 // console.log("prces", process.env.MINT_POOL_KEYPAIR)
 
-const secretKeypair = loadKeypairFromFile("/Users/Mac/.config/solana/test.json")
-const mintPool = loadKeypairFromFile("/Users/Mac/Desktop/keypairs/pooPXJECKuyeahBbCat384tAhePkECTPwqs47z9eEQE.json")
+const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
+const mintPool = loadKeypairFromFile("/home/fzzyyti/.config/solana/mint.json")
 
 describe('Environment setup', () => {
     const tempProvider = anchor.AnchorProvider.env();
@@ -47,6 +47,8 @@ describe('Environment setup', () => {
             mint
         )
 
+
+        console.log("rpc", provider.connection.rpcEndpoint);
         await sendAndConfirmRawTransaction(
             provider.connection,
             tx,
