@@ -1,11 +1,19 @@
-import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import {
+    ComputeBudgetProgram,
+    Connection,
+    Keypair,
+    PublicKey,
+    SystemProgram,
+    SYSVAR_RENT_PUBKEY,
+    Transaction
+} from "@solana/web3.js";
 import { createCoreProgram, EpplexCoreProgram } from "./types/programTypes";
 import { AnchorProvider, BN, Wallet } from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import {
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    getAssociatedTokenAddressSync,
+    getAssociatedTokenAddressSync, getTokenMetadata,
     TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
@@ -52,8 +60,29 @@ export class CoreProgram {
 
     async createCollection(collectionConfigAddress: PublicKey, authority: PublicKey) {
 
-        const builder = this.program.methods
+        const globalCollectionConfigAddress = this.getGlobalCollectionConfigAddress();
+        const globalCollectionConfig = await this.program.account.globalCollectionConfig.fetch(globalCollectionConfigAddress);
+
+        const [mint, _bump] = PublicKey.findProgramAddressSync(
+            [Buffer.from("COLLECTION_MINT"),
+                globalCollectionConfig.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            this.program.programId
+        );
+
+        console.log("mint", mint.toString());
+
+        const tokenAccount = getAssociatedTokenAddressSync(
+            mint,
+            this.wallet.publicKey,
+            undefined,
+            TOKEN_2022_PROGRAM_ID
+        );
+
+        const collectionCreateIx = await this.program.methods
             .collectionCreate({
+                name: "Test",
+                symbol: "TEST",
+                uri: "https://example.com",
                 renewalPrice: new BN(1000000000),
                 mintPrice: new BN(1000000000),
                 standardDuration: 10000,
@@ -68,17 +97,48 @@ export class CoreProgram {
                 collectionConfig: collectionConfigAddress,
                 globalCollectionConfig: this.getGlobalCollectionConfigAddress(),
                 payer: this.wallet.publicKey,
+                mint,
+                tokenAccount,
+                updateAuthority: this.program.provider.publicKey,
+                rent: SYSVAR_RENT_PUBKEY,
+                token22Program: TOKEN_2022_PROGRAM_ID,
                 systemProgram: SystemProgram.programId,
-            });
+                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+            }).instruction();
 
-        const tx = await builder.transaction();
-
+        const ixs= [
+            // prolly could tweak this further down
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 }),
+            collectionCreateIx
+        ];
+        const tx = new Transaction().add(...ixs);
         const id = await sendAndConfirmRawTransaction(
             this.connection, tx, this.wallet.publicKey, this.wallet, []
         );
         console.log("creating collection tx", id);
 
         return id;
+    }
+
+    public async verifyInCollection(connection: Connection, mint: PublicKey) {
+        try {
+            const metadata = await getTokenMetadata(connection, mint);
+            const collectionIdString = metadata!.additionalMetadata.find((m) => m[0] == "collection_id")![1];
+            const mintCountString = metadata!.additionalMetadata.find((m) => m[0] == "mint_count")![1];
+            const collectionId = new BN(collectionIdString);
+            const mintCount = new BN(mintCountString);
+            const [mintAddress, _] = PublicKey.findProgramAddressSync(
+                [Buffer.from("MINT"),
+                    collectionId.toArrayLike(Buffer, "le", 8),
+                    mintCount.toArrayLike(Buffer, "le", 8)
+                ],
+                this.program.programId
+            )
+            return mintAddress.toString() === mint.toString();
+
+        } catch {
+            return false;
+        }
     }
     // async createToken(
     //     destroyTimestampOffset: number = 60 * 5,
