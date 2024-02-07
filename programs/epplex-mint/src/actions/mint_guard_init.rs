@@ -34,10 +34,22 @@ pub struct MintGuardInit<'info> {
     /// CHECK
     pub global_collection_config: Account<'info, GlobalCollectionConfig>,
 
+    /// CHECK
+    pub mint: UncheckedAccount<'info>,
+
+    /// CHECK improve constraints
+    #[account(mut)]
+    pub token_account: UncheckedAccount<'info>,
+
+    pub update_authority: Signer<'info>,
+
+    pub rent: Sysvar<'info, Rent>,
+
     #[account(mut)]
     /// CHECK
     pub program_delegate: AccountInfo<'info>,
     pub token22_program: Program<'info, Token2022>,
+    pub associated_token: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
     pub epplex_program: Program<'info, EpplexCore>,
 }
@@ -75,12 +87,21 @@ impl MintGuardInit<'_> {
             collection_config: ctx.accounts.collection_config.to_account_info(),
             global_collection_config: ctx.accounts.global_collection_config.to_account_info(),
             system_program: ctx.accounts.system_program.to_account_info(),
-            payer: ctx.accounts.creator.to_account_info()
+            mint: ctx.accounts.collection_mint.to_account_info(),
+            rent: ctx.accounts.rent.to_account_info(),
+            token22_program: ctx.accounts.token22_program.to_account_info(),
+            payer: ctx.accounts.creator.to_account_info(),
+            token_account: ctx.accounts.token_account.to_account_info(),
+            update_authority: ctx.accounts.creator.to_account_info(),
+            associated_token: ctx.accounts.associated_token.to_account_info(),
         };
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
         // Create params
         let collection_create_params = CollectionCreateParams {
+            name: "TEST name".to_string(),
+            symbol: "TEST symbol".to_string(),
+            uri: "TEST uri".to_string(),
             authority: mint_guard.key(),
             renewal_price: params.collection_renewal_price,
             mint_price: params.collection_mint_price,

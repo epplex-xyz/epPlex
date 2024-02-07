@@ -81,7 +81,7 @@ export class BurgerProgram {
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 425_000 }),
             tokenCreateIx
         ];
 
