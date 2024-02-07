@@ -108,7 +108,7 @@ export type EpplexCore = {
         },
         {
           "name": "collectionConfig",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -255,6 +255,10 @@ export type EpplexCore = {
           {
             "name": "collectionSymbol",
             "type": "string"
+          },
+          {
+            "name": "mintCount",
+            "type": "u64"
           }
         ]
       }
@@ -526,7 +530,7 @@ export const IDL: EpplexCore = {
         },
         {
           "name": "collectionConfig",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -673,6 +677,10 @@ export const IDL: EpplexCore = {
           {
             "name": "collectionSymbol",
             "type": "string"
+          },
+          {
+            "name": "mintCount",
+            "type": "u64"
           }
         ]
       }

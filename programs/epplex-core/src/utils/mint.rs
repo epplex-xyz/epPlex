@@ -1,6 +1,7 @@
 use crate::*;
 
 pub const COLLECTION_ID_FIELD: &str = "collection_id";
+pub const MINT_COUNT_FIELD: &str = "mint_count";
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenCreateParams {
     pub name: String,

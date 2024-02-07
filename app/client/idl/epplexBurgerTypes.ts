@@ -114,7 +114,7 @@ export type EpplexBurger = {
         },
         {
           "name": "collectionConfig",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false,
           "docs": [
             "TODO: set the seeds constraint"
@@ -989,7 +989,7 @@ export const IDL: EpplexBurger = {
         },
         {
           "name": "collectionConfig",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false,
           "docs": [
             "TODO: set the seeds constraint"

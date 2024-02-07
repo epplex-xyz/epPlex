@@ -1,6 +1,7 @@
 use anchor_spl::associated_token::AssociatedToken;
 use epplex_core::CollectionConfig;
 use epplex_core::program::EpplexCore;
+use epplex_core::state::SEED_COLLECTION_CONFIG;
 use crate::*;
 
 #[derive(Accounts)]
@@ -27,6 +28,12 @@ pub struct CollectionMint<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     /// TODO: set the seeds constraint
+    #[account(
+        mut,
+        seeds = [SEED_COLLECTION_CONFIG, &params.collection_counter.to_le_bytes()],
+        seeds::program = epplex_core.key(),
+        bump,
+    )]
     pub collection_config: Account<'info, CollectionConfig>,
 
     #[account(
