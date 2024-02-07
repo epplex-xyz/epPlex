@@ -33,7 +33,7 @@ pub struct CollectionMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
 
-    #[account(has_one = authority,
+    #[account(mut, has_one = authority,
     seeds = [SEED_COLLECTION_CONFIG, &params.collection_id.to_le_bytes()],
     bump
     )]
@@ -71,7 +71,11 @@ impl CollectionMint<'_> {
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
 
+        // Increment the mint count to create a new mint ID
+        ctx.accounts.collection_config.mint_count += 1;
         converted_metadata.push((COLLECTION_ID_FIELD.to_string(), params.collection_id.to_string()));
+        converted_metadata.push((MINT_COUNT_FIELD.to_string(), ctx.accounts.collection_config.mint_count.to_string()));
+
 
         let tm = TokenMetadata {
             update_authority,

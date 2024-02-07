@@ -108,7 +108,7 @@
         },
         {
           "name": "collectionConfig",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -255,6 +255,10 @@
           {
             "name": "collectionSymbol",
             "type": "string"
+          },
+          {
+            "name": "mintCount",
+            "type": "u64"
           }
         ]
       }

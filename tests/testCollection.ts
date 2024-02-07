@@ -41,16 +41,23 @@ describe('Test Collection', () => {
         console.log("globalCollectionAddress", globalCollectionAddress.toString());
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
             coreProgram.getGlobalCollectionConfigAddress());
-        const [collectionConfigAddress] = PublicKey.findProgramAddressSync(
+        const [collectionConfigAddress, _bump] = PublicKey.findProgramAddressSync(
             [Buffer.from("CONFIG"),
                 globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
             coreProgram.program.programId
         )
+        console.log("collectionConfigAddress", collectionConfigAddress.toString());
+        const [wrongProgram, _bump2] = PublicKey.findProgramAddressSync(
+            [Buffer.from("CONFIG"),
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            burgerProgram.program.programId
+        )
+        console.log("wrongProgram", wrongProgram.toString());
 
         await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
         const tx = await burgerProgram.createCollectionMintTx(
             destroyTimestamp,
-            new BN(0),
+            globalCollectionData.collectionCounter,
             mint,
         )
         console.log("rpc", provider.connection.rpcEndpoint);
