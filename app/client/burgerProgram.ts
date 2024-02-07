@@ -35,7 +35,7 @@ export class BurgerProgram {
     async createCollectionMintTx(
         expiryDate: string,
         collectionId: BN,
-        mint: Keypair = Keypair.generate(),
+        mint: PublicKey,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
         uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
@@ -43,7 +43,7 @@ export class BurgerProgram {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
         const ata = getAssociatedTokenAddressSync(
-            mint.publicKey,
+            mint,
             payer,
             undefined,
             TOKEN_2022_PROGRAM_ID,
@@ -65,9 +65,9 @@ export class BurgerProgram {
                 collectionCounter: collectionId,
             })
             .accounts({
-                mint: mint.publicKey,
+                mint: mint,
                 tokenAccount: ata,
-                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
+                tokenMetadata: this.getTokenBurgerMetadata(mint),
                 permanentDelegate,
                 payer: payer,
                 collectionConfig,
@@ -81,7 +81,7 @@ export class BurgerProgram {
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 350_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 }),
             tokenCreateIx
         ];
 

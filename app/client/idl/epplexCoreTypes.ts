@@ -35,6 +35,11 @@ export type EpplexCore = {
           "isSigner": true
         },
         {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -75,7 +80,7 @@ export type EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -457,6 +462,11 @@ export const IDL: EpplexCore = {
           "isSigner": true
         },
         {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -497,7 +507,7 @@ export const IDL: EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]

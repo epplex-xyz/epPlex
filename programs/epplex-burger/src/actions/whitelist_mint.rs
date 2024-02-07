@@ -1,4 +1,5 @@
 use anchor_spl::associated_token::AssociatedToken;
+use epplex_core::GlobalCollectionConfig;
 use epplex_core::program::EpplexCore;
 use crate::*;
 
@@ -32,6 +33,9 @@ pub struct WhitelistMint<'info> {
         bump = permanent_delegate.bump
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
+
+    #[account(mut)]
+    pub global_collection_config: Account<'info, GlobalCollectionConfig>,
 
     #[account(
         mut,
@@ -99,7 +103,8 @@ impl WhitelistMint<'_> {
                     rent: ctx.accounts.rent.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token22_program: ctx.accounts.token22_program.to_account_info(),
-                    associated_token: ctx.accounts.associated_token.to_account_info()
+                    associated_token: ctx.accounts.associated_token.to_account_info(),
+                    global_collection_config: ctx.accounts.global_collection_config.to_account_info(),
                 },
                 &[&seeds[..]]
             ),
