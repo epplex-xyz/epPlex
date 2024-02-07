@@ -49,6 +49,11 @@ export type EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -94,7 +99,7 @@ export type EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -924,6 +929,11 @@ export const IDL: EpplexBurger = {
           "isSigner": false
         },
         {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -969,7 +979,7 @@ export const IDL: EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]

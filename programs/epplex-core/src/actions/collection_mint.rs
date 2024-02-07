@@ -8,7 +8,7 @@ use crate::mint::{COLLECTION_ID_FIELD, TokenCollectionCreateParams};
 #[instruction(params: TokenCollectionCreateParams)]
 pub struct CollectionMint<'info> {
     // TODO need to add checks
-    #[account(mut, signer)]
+    #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
@@ -72,7 +72,6 @@ impl CollectionMint<'_> {
             .collect();
 
         // Increment the mint count to create a new mint ID
-        ctx.accounts.collection_config.mint_count += 1;
         converted_metadata.push((COLLECTION_ID_FIELD.to_string(), params.collection_id.to_string()));
         converted_metadata.push((MINT_COUNT_FIELD.to_string(), ctx.accounts.collection_config.mint_count.to_string()));
 
@@ -97,7 +96,9 @@ impl CollectionMint<'_> {
                 ExtensionType::MetadataPointer,
                 // ExtensionType::TransferHook
             ],
-            tm
+            tm,
+            params.collection_id,
+            ctx.accounts.collection_config.mint_count,
         )?;
 
         // Add ClosingAuth Extension
@@ -227,6 +228,8 @@ impl CollectionMint<'_> {
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::MintTokens,
             None, // Set mint authority to be None
         )?;
+
+        ctx.accounts.collection_config.mint_count += 1;
 
         Ok(())
     }

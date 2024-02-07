@@ -29,6 +29,9 @@ pub struct TokenMint<'info> {
     #[account()]
     pub update_authority: Signer<'info>,
 
+    #[account(mut)]
+    pub global_collection_config: Account<'info, GlobalCollectionConfig>,
+
     //
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
@@ -82,8 +85,11 @@ impl TokenMint<'_> {
                 ExtensionType::MetadataPointer,
                 // ExtensionType::TransferHook
             ],
-            tm
+            tm,
+            ctx.accounts.global_collection_config.collection_counter,
+            0,
         )?;
+        ctx.accounts.global_collection_config.collection_counter = ctx.accounts.global_collection_config.collection_counter + 1;
 
         // Add ClosingAuth Extension
         add_closing_authority(

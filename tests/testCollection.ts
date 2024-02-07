@@ -1,4 +1,3 @@
-import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
 import {BN, Wallet} from "@coral-xyz/anchor";
 import {Keypair, PublicKey} from "@solana/web3.js";
@@ -7,6 +6,8 @@ import { buildNFTTransferTx } from "../app/utils/token2022";
 import { loadKeypairFromFile } from "../script/utils/helpers";
 import {CoreProgram} from "../app/client/coreProgram";
 import {getTokenMetadata} from "@solana/spl-token";
+import {mintTokenIntoCollection} from "./mintUtils";
+import * as anchor from "@coral-xyz/anchor";
 
 
 const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
@@ -28,7 +29,6 @@ describe('Test Collection', () => {
 
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
     console.log("destroy", destroyTimestamp);
-    const mint = Keypair.generate();
 
     it("Create burger delegate ", async() => {
         await burgerProgram.createProgramDelegate();
@@ -47,52 +47,43 @@ describe('Test Collection', () => {
             coreProgram.program.programId
         )
         console.log("collectionConfigAddress", collectionConfigAddress.toString());
-        const [wrongProgram, _bump2] = PublicKey.findProgramAddressSync(
-            [Buffer.from("CONFIG"),
-                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
-            burgerProgram.program.programId
-        )
-        console.log("wrongProgram", wrongProgram.toString());
 
         await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
-        const tx = await burgerProgram.createCollectionMintTx(
-            destroyTimestamp,
-            globalCollectionData.collectionCounter,
-            mint,
-        )
-        console.log("rpc", provider.connection.rpcEndpoint);
-        await sendAndConfirmRawTransaction(
-            provider.connection,
-            tx,
-            provider.publicKey,
-            provider.wallet,
-            [mint]
-        );
 
-        const metadata = await getTokenMetadata(provider.connection, mint.publicKey);
-        console.log("metadata", metadata);
+        // Mint 10 tokens into the collection
+        for (let i = 0; i < 10; i++) {
+            const mint = await mintTokenIntoCollection(
+                provider,
+                burgerProgram,
+                coreProgram,
+                globalCollectionData.collectionCounter,
+                destroyTimestamp);
+            const metadata = await getTokenMetadata(provider.connection, mint);
+            console.log("metadata", metadata);
+        }
+
     });
 
-    it('Transfer token', async () => {
-        const tx = await buildNFTTransferTx({
-            connection: provider.connection,
-            mint: mint.publicKey,
-            source: provider.wallet.publicKey,
-            destination: mintPool.publicKey,
-            payer: secretKeypair.publicKey,
-        })
-
-        await sendAndConfirmRawTransaction(
-            provider.connection,
-            tx,
-            secretKeypair.publicKey,
-            undefined,
-            [secretKeypair]
-        );
-    });
-
-    it('Renew token', async () => {
-        await burgerProgram.renewToken(mint.publicKey)
-    });
+    // it('Transfer token', async () => {
+    //     const tx = await buildNFTTransferTx({
+    //         connection: provider.connection,
+    //         mint: mint.publicKey,
+    //         source: provider.wallet.publicKey,
+    //         destination: mintPool.publicKey,
+    //         payer: secretKeypair.publicKey,
+    //     })
+    //
+    //     await sendAndConfirmRawTransaction(
+    //         provider.connection,
+    //         tx,
+    //         secretKeypair.publicKey,
+    //         undefined,
+    //         [secretKeypair]
+    //     );
+    // });
+    //
+    // it('Renew token', async () => {
+    //     await burgerProgram.renewToken(mint.publicKey)
+    // });
 
 });

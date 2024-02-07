@@ -7,7 +7,7 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: CollectionMintParams)]
 pub struct CollectionMint<'info> {
-    #[account(mut, signer)]
+    #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
@@ -40,7 +40,7 @@ pub struct CollectionMint<'info> {
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
-        bump = permanent_delegate.bump
+        bump = permanent_delegate.bump,
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
