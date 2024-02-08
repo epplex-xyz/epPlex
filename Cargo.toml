@@ -8,5 +8,4 @@ resolver = "2"
 exclude = [
     "programs/epplex-shared",
     "programs/epplex-metadata",
-    "programs/epplex-mint",
 ]

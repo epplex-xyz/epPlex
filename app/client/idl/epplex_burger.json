@@ -25,7 +25,7 @@
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -877,6 +877,6 @@
     }
   ],
   "metadata": {
-    "address": "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+    "address": "epbujysrkufmmwtwox6zkpz5wtzwb98mdqn1emvj84n"
   }
 }

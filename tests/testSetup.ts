@@ -10,6 +10,7 @@ import * as pda from './pda';
 import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
 import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
 import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
+import {globalCollectionConfig} from "./pda";
 
 // This works
 // import dotenv from "dotenv";
@@ -31,20 +32,39 @@ describe('Environment setup', () => {
     )
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
+    const coreProgram = new CoreProgram(provider.wallet, provider.connection);
 
 
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
     console.log("destroy", destroyTimestamp);
-    const mint = Keypair.generate();
+    let mint: PublicKey;
+    let globalCollectionConfigAddress: PublicKey;
+    before(async () => {
+        console.log("Creating program delegate");
+        await burgerProgram.createProgramDelegate();
+        console.log("Creating global collection config");
+        await coreProgram.createGlobalCollectionConfig();
+        globalCollectionConfigAddress = coreProgram.getGlobalCollectionConfigAddress();
+        console.log("globalCollectionAddress", globalCollectionConfigAddress.toString());
+        const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
+            globalCollectionConfigAddress);
+        mint = PublicKey.findProgramAddressSync(
+            ["COLLECTION_MINT",
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            coreProgram.program.programId)[0];
+        console.log("mint", mint.toString());
+    });
 
     // it("Create burger delegate ", async() => {
-    //     await burgerProgram.createProgramDelegate();
     // })
 
     it('Mint token', async () => {
+
+
         const tx = await burgerProgram.createWhitelistMintTx(
             destroyTimestamp,
-            mint
+            mint,
+            globalCollectionConfigAddress
         )
 
 
@@ -54,14 +74,14 @@ describe('Environment setup', () => {
             tx,
             provider.publicKey,
             provider.wallet,
-            [mint]
+            []
         );
     });
 
     it('Transfer token', async () => {
         const tx = await buildNFTTransferTx({
             connection: provider.connection,
-            mint: mint.publicKey,
+            mint: mint,
             source: provider.wallet.publicKey,
             destination: mintPool.publicKey,
             payer: secretKeypair.publicKey,
@@ -77,7 +97,7 @@ describe('Environment setup', () => {
     });
 
     it('Renew token', async () => {
-        await burgerProgram.renewToken(mint.publicKey)
+        await burgerProgram.renewToken(mint);
     });
 
     // TODO uncomment if you want to burn your tokens
