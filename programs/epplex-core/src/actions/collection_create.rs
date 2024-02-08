@@ -4,7 +4,11 @@ use epplex_shared::{Token2022, update_token_metadata};
 use spl_pod::optional_keys::OptionalNonZeroPubkey;
 use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
-
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    mint,
+    token::{TokenAccount, Mint, Token}
+};
 #[derive(Accounts)]
 #[instruction(params: CollectionCreateParams)]
 pub struct CollectionCreate<'info> {
@@ -31,12 +35,19 @@ pub struct CollectionCreate<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    /// CHECK improve constraints
-    #[account(mut)]
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    seeds = [SEED_COLLECTION_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref()],
+    bump
+    )]
     pub mint: UncheckedAccount<'info>,
 
-    /// CHECK improve constraints
-    #[account(mut)]
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+      seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
+      seeds::program = associated_token_program.key(),
+      bump
+    )]
     pub token_account: UncheckedAccount<'info>,
 
     pub update_authority: Signer<'info>,
@@ -45,7 +56,7 @@ pub struct CollectionCreate<'info> {
 
     pub token22_program: Program<'info, Token2022>,
 
-    pub associated_token: Program<'info, AssociatedToken>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
 
     pub system_program: Program<'info, System>,
 }
@@ -128,11 +139,9 @@ impl CollectionCreate<'_> {
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO update auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: mint auth
-            &ctx.accounts.payer,
+            &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),
             params.uri.clone(),
@@ -154,7 +163,7 @@ impl CollectionCreate<'_> {
                 anchor_spl::associated_token::Create {
                     payer: ctx.accounts.payer.to_account_info(), // payer
                     associated_token: ctx.accounts.token_account.to_account_info(),
-                    authority: ctx.accounts.payer.to_account_info(), // owner
+                    authority: ctx.accounts.update_authority.to_account_info(), // owner
                     mint: ctx.accounts.mint.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token_program: ctx.accounts.token22_program.to_account_info(),
@@ -169,7 +178,7 @@ impl CollectionCreate<'_> {
                 MintTo {
                     mint: ctx.accounts.mint.to_account_info().clone(),
                     to: ctx.accounts.token_account.to_account_info().clone(),
-                    authority: ctx.accounts.payer.to_account_info(),
+                    authority: ctx.accounts.update_authority.to_account_info(),
                 }
             ),
             1
@@ -183,7 +192,7 @@ impl CollectionCreate<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority:  ctx.accounts.payer.to_account_info().clone(),
+                    current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
@@ -197,7 +206,7 @@ impl CollectionCreate<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority: ctx.accounts.payer.to_account_info().clone(),
+                    current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
