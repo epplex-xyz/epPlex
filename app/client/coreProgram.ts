@@ -140,60 +140,7 @@ export class CoreProgram {
             return false;
         }
     }
-    // async createToken(
-    //     destroyTimestampOffset: number = 60 * 5,
-    //     name: string = "Ephemeral burger",
-    //     symbol: string = "EP",
-    //     uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo",
-    // ) {
-    //     const programDelegate = this.getProgramDelegate();
-    //     const payer = this.wallet.publicKey;
-    //     const mint = Keypair.generate();
-    //     const ata = getAssociatedTokenAddressSync(
-    //         mint.publicKey,
-    //         payer,
-    //         undefined,
-    //         TOKEN_2022_PROGRAM_ID,
-    //         ASSOCIATED_TOKEN_PROGRAM_ID
-    //     );
-    //     const tm = this.getTokenMetadata(mint.publicKey);
-    //
-    //     // const tokenCreateTx = await this.program.methods
-    //     //     .tokenMint({
-    //     //         destroyTimestampOffset: new BN(destroyTimestampOffset),
-    //     //         name: name,
-    //     //         symbol: symbol,
-    //     //         uri: uri,
-    //     //     })
-    //     //     .accounts({
-    //     //         mint: mint.publicKey,
-    //     //         ata,
-    //     //         tokenMetadata: tm,
-    //     //         programDelegate: programDelegate,
-    //     //         payer: payer,
-    //     //         systemProgram: SystemProgram.programId,
-    //     //         token22Program: TOKEN_2022_PROGRAM_ID,
-    //     //         rent: SYSVAR_RENT_PUBKEY,
-    //     //         associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-    //     //     })
-    //     //     .transaction();
-    //     //
-    //     // let id;
-    //     // try {
-    //     //     id = await sendAndConfirmRawTransaction(
-    //     //         this.connection,
-    //     //         tokenCreateTx,
-    //     //         payer,
-    //     //         this.wallet,
-    //     //         [mint]
-    //     //     );
-    //     //     console.log("tx", id);
-    //     // } catch (e) {
-    //     //     console.log("Failed to send tx", e);
-    //     // }
-    //     // return id;
-    // }
-    //
+
     // async burnToken(
     //     mint: PublicKey,
     // ) {

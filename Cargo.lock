@@ -928,19 +928,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "epplex-metadata"
-version = "0.1.0"
-dependencies = [
- "ahash 0.8.6",
- "anchor-lang",
- "epplex-shared",
- "solana-program",
- "spl-pod",
- "spl-token-metadata-interface",
- "spl-type-length-value",
-]
-
-[[package]]
 name = "epplex-shared"
 version = "0.1.0"
 dependencies = [
