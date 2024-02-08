@@ -60,10 +60,12 @@ impl TokenMint<'_> {
         ).expect("Bad update auth");
 
         // Convert from Vec<[String;2]> to Vec<(String, String)>
-        let converted_metadata: Vec<(String, String)> = params.additional_metadata
+        let mut converted_metadata: Vec<(String, String)> = params.additional_metadata
             .iter()
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
+
+        converted_metadata.push((COLLECTION_ID_FIELD.to_string(), ctx.accounts.global_collection_config.collection_counter.to_string()));
 
         let tm = TokenMetadata {
             update_authority,
@@ -89,7 +91,7 @@ impl TokenMint<'_> {
             ctx.accounts.global_collection_config.collection_counter,
             0,
         )?;
-        ctx.accounts.global_collection_config.collection_counter = ctx.accounts.global_collection_config.collection_counter + 1;
+        ctx.accounts.global_collection_config.collection_counter += 1;
 
         // Add ClosingAuth Extension
         add_closing_authority(

@@ -7,21 +7,18 @@ skip-lint = false
 #[programs.mainnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-#epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
 #epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
 #epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.devnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
 epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
 epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.localnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-epplex_metadata = "epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb"
 epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
 epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
@@ -40,16 +37,14 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.spec.ts"
 
 copy-burger-sdk   = "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts"
 copy-mint-sdk     = "cp target/idl/epplex_mint.json      ../sdk/src/idl/epplex_mint.json         && cp target/types/epplex_mint.ts      ../sdk/src/types/epplexMintTypes.ts"
-copy-metadata-sdk = "cp target/idl/epplex_metadata.json  ../sdk/src/idl/epplex_metadata.json     && cp target/types/epplex_metadata.ts  ../sdk/src/types/epplexMetadataTypes.ts"
 copy-core-sdk     = "cp target/idl/epplex_core.json      ../sdk/src/idl/epplex_core.json         && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts"
-copy-to-sdk = "anchor run copy-core-sdk && anchor run copy-metadata-sdk && anchor run copy-mint-sdk && anchor run copy-burger-sdk"
+copy-to-sdk = "anchor run copy-core-sdk && anchor run copy-mint-sdk && anchor run copy-burger-sdk"
 
 
 copy-burger = "cp target/idl/epplex_burger.json app/client/idl/epplex_burger.json && cp target/types/epplex_burger.ts app/client/idl/epplexBurgerTypes.ts"
 copy-mint = "cp target/idl/epplex_mint.json app/client/idl/epplex_mint.json && cp target/types/epplex_mint.ts app/client/idl/epplexMintTypes.ts"
-copy-metadata = "cp target/idl/epplex_metadata.json app/client/idl/epplex_metadata.json && cp target/types/epplex_metadata.ts app/client/idl/epplexMetadataTypes.ts"
 copy-core = "cp target/idl/epplex_core.json app/client/idl/epplex_core.json && cp target/types/epplex_core.ts app/client/idl/epplexCoreTypes.ts"
-copy-to-app = "anchor run copy-core && anchor run copy-metadata && anchor run copy-mint && anchor run copy-burger"
+copy-to-app = "anchor run copy-core && anchor run copy-mint && anchor run copy-burger"
 
 #bd = "anchor build && anchor deploy && anchor run copy-to-app"
 build-burger = "anchor build -p epplex_burger && anchor deploy -p epplex_burger && anchor run copy-burger"

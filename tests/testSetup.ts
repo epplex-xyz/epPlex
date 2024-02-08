@@ -4,7 +4,12 @@ import { BurgerProgram } from "../app/client/burgerProgram";
 import {CoreProgram} from "../app/client/coreProgram";
 import { BN, Wallet } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    getAssociatedTokenAddressSync,
+    getTokenMetadata,
+    TOKEN_2022_PROGRAM_ID
+} from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import * as pda from './pda';
 import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
@@ -49,8 +54,9 @@ describe('Environment setup', () => {
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
             globalCollectionConfigAddress);
         mint = PublicKey.findProgramAddressSync(
-            ["COLLECTION_MINT",
-                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            ["MINT",
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8),
+                new BN(0).toArrayLike(Buffer, "le", 8)],
             coreProgram.program.programId)[0];
         console.log("mint", mint.toString());
     });
@@ -76,6 +82,9 @@ describe('Environment setup', () => {
             provider.wallet,
             []
         );
+
+        const metadata = await getTokenMetadata(provider.connection, mint);
+        console.log("Individual Mint Metadata", metadata);
     });
 
     it('Transfer token', async () => {
