@@ -7,29 +7,29 @@ use crate::mint::{COLLECTION_ID_FIELD, TokenCollectionCreateParams};
 #[derive(Accounts)]
 #[instruction(params: TokenCollectionCreateParams)]
 pub struct CollectionMint<'info> {
-    // TODO need to add checks
-    #[account(mut)]
-    /// CHECK
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [SEED_MINT, params.collection_id.to_le_bytes().as_ref(), collection_config.mint_count.to_le_bytes().as_ref()],
+    bump
+    )]
     pub mint: UncheckedAccount<'info>,
 
-    // TODO need to add checks
-    #[account(mut)]
-    /// CHECK
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
+    seeds::program = associated_token.key(),
+    bump
+    )]
     pub token_account: UncheckedAccount<'info>,
 
-    // TODO Gate this endpoint to burger??? Prolly no need since we have our own PDA
-    // #[account()]
-    // /// CHECK in CPI
-    // pub token_metadata: UncheckedAccount<'info>,
-
     #[account()]
-    /// CHECK
+    /// CHECK gives the option to set the permanent delegate to any keypair or PDA
     pub permanent_delegate: UncheckedAccount<'info>, // No need to sign, simply assigning
 
-    #[account()]
     pub update_authority: Signer<'info>,
 
-    //
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
 
@@ -137,21 +137,17 @@ impl CollectionMint<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent.to_account_info(),
             &ctx.accounts.token22_program.key(),
-            // TODO incorrect mint auth
-            &ctx.accounts.payer.key(),
-            // TODO incorrect freeze auth
-            &ctx.accounts.payer.key(),
+            &ctx.accounts.update_authority.key(),
+            &ctx.accounts.update_authority.key(),
         )?;
 
         // Initialize token metadata
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO update auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: mint auth
-            &ctx.accounts.payer,
+            &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),
             params.uri.clone(),
@@ -192,7 +188,7 @@ impl CollectionMint<'_> {
                 MintTo {
                     mint: ctx.accounts.mint.to_account_info().clone(),
                     to: ctx.accounts.token_account.to_account_info().clone(),
-                    authority: ctx.accounts.payer.to_account_info(),
+                    authority: ctx.accounts.update_authority.to_account_info(),
                 }
             ),
             1
@@ -206,7 +202,7 @@ impl CollectionMint<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority:  ctx.accounts.payer.to_account_info().clone(),
+                    current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
@@ -220,7 +216,7 @@ impl CollectionMint<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority: ctx.accounts.payer.to_account_info().clone(),
+                    current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]

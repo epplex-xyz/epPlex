@@ -7,26 +7,27 @@ use crate::mint::TokenCreateParams;
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
-    // TODO need to add checks
-    #[account(mut)]
-    /// CHECK
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [SEED_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref(), (0 as u64).to_le_bytes().as_ref()],
+    bump
+    )]
     pub mint: UncheckedAccount<'info>,
 
-    // TODO need to add checks
-    #[account(mut)]
-    /// CHECK
+
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
+    seeds::program = associated_token.key(),
+    bump
+    )]
     pub token_account: UncheckedAccount<'info>,
 
-    // TODO Gate this endpoint to burger??? Prolly no need since we have our own PDA
-    // #[account()]
-    // /// CHECK in CPI
-    // pub token_metadata: UncheckedAccount<'info>,
-
-    #[account()]
-    /// CHECK
+    /// CHECK gives the option to set the permanent delegate to any keypair or PDA
     pub permanent_delegate: UncheckedAccount<'info>, // No need to sign, simply assigning
 
-    #[account()]
     pub update_authority: Signer<'info>,
 
     #[account(mut)]

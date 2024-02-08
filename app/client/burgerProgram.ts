@@ -131,7 +131,7 @@ export class BurgerProgram {
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 500_000 }),
             tokenCreateIx
         ];
 
@@ -217,7 +217,7 @@ export class BurgerProgram {
 
         // VAULT Ata
         const proceedsAta = getAssociatedTokenAddressSync(
-            NativeMint.address, VAULT, undefined, TOKEN_PROGRAM_ID
+            NativeMint.address, VAULT, undefined,TOKEN_PROGRAM_ID
         );
 
         // Payer Ata - already created with switchboard stuff
@@ -229,7 +229,7 @@ export class BurgerProgram {
         // );
 
         const proceedsIx = await tryCreateATAIx(
-            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address, TOKEN_2022_PROGRAM_ID
+            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address, TOKEN_PROGRAM_ID
         );
         ixs.push(...proceedsIx);
 

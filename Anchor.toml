@@ -31,8 +31,8 @@ cluster = "http://127.0.0.1:8899"
 wallet = "/home/fzzyyti/.config/solana/test.json"
 
 [scripts]
-setupenv = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/testSetup.ts"
-test-collection = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/testCollection.ts"
+test-individual = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/testIndividualMint.ts"
+test-collection = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/testCollectionMint.ts"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.spec.ts"
 
 copy-burger-sdk   = "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts"
