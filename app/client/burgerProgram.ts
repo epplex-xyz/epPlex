@@ -131,28 +131,12 @@ export class BurgerProgram {
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 500_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 550_000 }),
             tokenCreateIx
         ];
 
         return  new Transaction().add(...ixs);
     }
-
-    // async createWhitelistMint(
-    //     destroyTimestamp: string,
-    //     mint: Keypair = Keypair.generate(),
-    //     name: string = "Ephemeral burger",
-    //     symbol: string = "EP",
-    //     uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
-    // ) {
-    //
-    //     let id;
-    //         id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
-    //
-    //     }
-    //
-    //     return id;
-    // }
 
     // async burnToken(mint: PublicKey) {
     //     const programDelegate = this.getProgramDelegate();
