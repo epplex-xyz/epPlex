@@ -8,7 +8,7 @@ use crate::mint::TokenCreateParams;
 #[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
     // TODO need to add checks
-    #[account(mut, signer)]
+    #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 

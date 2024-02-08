@@ -25,7 +25,7 @@ export type EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -905,7 +905,7 @@ export const IDL: EpplexBurger = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]

@@ -6,7 +6,7 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: WhitelistMintParams)]
 pub struct WhitelistMint<'info> {
-    #[account(mut, signer)]
+    #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 

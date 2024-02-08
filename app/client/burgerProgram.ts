@@ -89,7 +89,8 @@ export class BurgerProgram {
     }
     async createWhitelistMintTx(
         expiryDate: string,
-        mint: Keypair = Keypair.generate(),
+        mint: PublicKey,
+        globalCollectionConfig: PublicKey,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
         uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
@@ -97,12 +98,13 @@ export class BurgerProgram {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
         const ata = getAssociatedTokenAddressSync(
-            mint.publicKey,
+            mint,
             payer,
             undefined,
             TOKEN_2022_PROGRAM_ID,
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
+
 
         const tokenCreateIx = await this.program.methods
             .whitelistMint({
@@ -112,9 +114,9 @@ export class BurgerProgram {
                 expiryDate: expiryDate,
             })
             .accounts({
-                mint: mint.publicKey,
+                mint: mint,
                 tokenAccount: ata,
-                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
+                tokenMetadata: this.getTokenBurgerMetadata(mint),
                 permanentDelegate: permanentDelegate,
                 payer: payer,
 
@@ -122,6 +124,7 @@ export class BurgerProgram {
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+                globalCollectionConfig,
                 epplexCore: CORE_PROGRAM_ID,
             })
             .instruction();

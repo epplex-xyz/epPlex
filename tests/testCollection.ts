@@ -32,8 +32,7 @@ describe('Test Collection', () => {
     })
 
     it('Mint token', async () => {
-        coreProgram.createGlobalCollectionConfig();
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await coreProgram.createGlobalCollectionConfig();
         const globalCollectionAddress = coreProgram.getGlobalCollectionConfigAddress();
         console.log("globalCollectionAddress", globalCollectionAddress.toString());
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
