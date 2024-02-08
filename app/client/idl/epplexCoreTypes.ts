@@ -8,7 +8,7 @@ export type EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -483,7 +483,7 @@ export const IDL: EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]

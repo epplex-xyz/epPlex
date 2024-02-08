@@ -8,7 +8,7 @@
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]

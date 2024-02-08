@@ -28,6 +28,9 @@ describe('Test Collection', () => {
     console.log("destroy", destroyTimestamp);
 
     it("Create burger delegate ", async() => {
+        console.log("Getting airDrop");
+        await provider.connection.requestAirdrop(new PublicKey("8Df9mQfYfVj3uMjdhxMfF41PwbxC5xZofsHHdgyvG5Gr"), 1000000000);
+        console.log("Creating program delegate");
         await burgerProgram.createProgramDelegate();
     })
 

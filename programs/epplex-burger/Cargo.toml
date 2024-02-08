@@ -20,7 +20,6 @@ anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
 spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 epplex-core = { path = "../epplex-core", features = ["cpi"] }
-epplex-metadata = { path = "../epplex-metadata", features = ["cpi"] }
 epplex-shared = { path = "../epplex-shared", features=["no-entrypoint"] }
 ahash = "=0.8.6"
 spl-token-metadata-interface = "0.2.0"
