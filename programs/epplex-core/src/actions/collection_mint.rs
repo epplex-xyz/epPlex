@@ -39,9 +39,8 @@ pub struct CollectionMint<'info> {
     )]
     pub collection_config: Account<'info, CollectionConfig>,
 
-    /// CHECK This is the admin account assigned when the collection is created.
-    #[account(signer)]
-    pub authority: UncheckedAccount<'info>,
+    /// This is the admin account assigned when the collection is created.
+    pub authority: Signer<'info>,
 
     // #[account()]
     // /// CHECK
