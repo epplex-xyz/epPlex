@@ -18,7 +18,7 @@ pub struct CollectionConfig {
     pub collection_size: u32,
     pub collection_name: String,
     pub collection_symbol: String,
-
+    pub mint_count: u64,
 }
 
 impl CollectionConfig {
@@ -45,7 +45,8 @@ impl CollectionConfig {
             treasury: params.treasury,
             collection_size: params.collection_size,
             collection_name: params.collection_name,
-            collection_symbol: params.collection_symbol
+            collection_symbol: params.collection_symbol,
+            mint_count: 0
         }
     }
 

@@ -904,7 +904,6 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "epplex-core",
- "epplex-metadata",
  "epplex-shared",
  "solana-program",
  "spl-token-2022 1.0.0",
@@ -919,7 +918,6 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "bytemuck",
- "epplex-metadata",
  "epplex-shared",
  "solana-program",
  "solana-security-txt",
@@ -927,19 +925,6 @@ dependencies = [
  "spl-pod",
  "spl-token-2022 1.0.0",
  "spl-token-metadata-interface",
-]
-
-[[package]]
-name = "epplex-metadata"
-version = "0.1.0"
-dependencies = [
- "ahash 0.8.6",
- "anchor-lang",
- "epplex-shared",
- "solana-program",
- "spl-pod",
- "spl-token-metadata-interface",
- "spl-type-length-value",
 ]
 
 [[package]]

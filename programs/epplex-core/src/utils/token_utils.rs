@@ -1,3 +1,4 @@
+use std::io::Read;
 use spl_token_2022::check_program_account;
 use spl_token_2022::extension::transfer_hook::instruction::{InitializeInstructionData, TransferHookInstruction};
 use spl_token_2022::instruction::TokenInstruction;
@@ -66,11 +67,12 @@ pub fn initialize_mint<'info>(
         rent_account.to_account_info()
     ];
 
+    msg!("Accounts: {:?}", account_infos);
+
     solana_program::program::invoke(
         &ix,
         &account_infos[..],
     )?;
-
     Ok(())
 
 }
@@ -137,6 +139,7 @@ pub fn add_metadata_pointer(
 //
 //     Ok(())
 // }
+
 
 // actually does anchor spl_token have the src/extension/metadatapointer?
 pub fn initialize_token_metadata<'info>(
@@ -231,7 +234,9 @@ pub fn init_mint_account<'info> (
     mint: AccountInfo<'info>,
     rent_account: AccountInfo<'info>,
     extensions: &[ExtensionType],
-    token_metadata: TokenMetadata
+    token_metadata: TokenMetadata,
+    collection_id: u64,
+    mint_count: u64
 ) -> Result<()> {
     // Calculate extension sizes
     let base_size = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
@@ -249,12 +254,65 @@ pub fn init_mint_account<'info> (
 
     let account_infos: Vec<AccountInfo> = vec![
         payer,
-        mint
+        mint.clone()
     ];
+    let (expected_mint_account, bump) = Pubkey::find_program_address(
+        &[SEED_MINT,
+            collection_id.to_le_bytes().as_ref(),
+            mint_count.to_le_bytes().as_ref()],
+        &ID);
+    require_keys_eq!(expected_mint_account, mint.key());
 
-    solana_program::program::invoke(
+    solana_program::program::invoke_signed(
         &ix,
         &account_infos[..],
+        &[&[SEED_MINT,
+        collection_id.to_le_bytes().as_ref(),
+        mint_count.to_le_bytes().as_ref(),
+        &[bump]]],
+    )?;
+
+    Ok(())
+}
+
+pub fn init_collection_mint_account<'info> (
+    payer: AccountInfo<'info>,
+    mint: AccountInfo<'info>,
+    rent_account: AccountInfo<'info>,
+    extensions: &[ExtensionType],
+    token_metadata: TokenMetadata,
+    collection_id: u64,
+) -> Result<()> {
+    // Calculate extension sizes
+    let base_size = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&extensions).unwrap();
+    let extension_extra_space = token_metadata.tlv_size_of().unwrap();
+
+    let rent = &Rent::from_account_info(&rent_account)?;
+    let lamports = rent.minimum_balance(base_size + extension_extra_space);
+    let ix = solana_program::system_instruction::create_account(
+        &payer.key(),
+        &mint.key(),
+        lamports,
+        (base_size).try_into().unwrap(),
+        &spl_token_2022::id(),
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        payer,
+        mint.clone()
+    ];
+    let (expected_mint_account, bump) = Pubkey::find_program_address(
+        &[SEED_COLLECTION_MINT,
+            collection_id.to_le_bytes().as_ref()],
+        &ID);
+    require_keys_eq!(expected_mint_account, mint.key());
+
+    solana_program::program::invoke_signed(
+        &ix,
+        &account_infos[..],
+        &[&[SEED_COLLECTION_MINT,
+            collection_id.to_le_bytes().as_ref(),
+            &[bump]]],
     )?;
 
     Ok(())

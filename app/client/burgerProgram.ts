@@ -8,7 +8,7 @@ import {
     Transaction, TransactionInstruction,
 } from "@solana/web3.js";
 import { CORE_PROGRAM_ID, createBurgerProgram, EpplexBurgerProgram, VAULT } from "./types/programTypes";
-import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
+import {AnchorProvider, BN, Wallet} from "@coral-xyz/anchor";
 import { getMintOwner, sendAndConfirmRawTransaction, tryCreateATAIx } from "../utils/solana";
 import { CONFIRM_OPTIONS } from "./constants";
 import {
@@ -32,9 +32,10 @@ export class BurgerProgram {
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
     }
 
-    async createWhitelistMintTx(
+    async createCollectionMintTx(
         expiryDate: string,
-        mint: Keypair = Keypair.generate(),
+        collectionId: BN,
+        mint: PublicKey,
         name: string = "Ephemeral burger",
         symbol: string = "EP",
         uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
@@ -42,27 +43,34 @@ export class BurgerProgram {
         const permanentDelegate = this.getProgramDelegate();
         const payer = this.wallet.publicKey;
         const ata = getAssociatedTokenAddressSync(
-            mint.publicKey,
+            mint,
             payer,
             undefined,
             TOKEN_2022_PROGRAM_ID,
             ASSOCIATED_TOKEN_PROGRAM_ID
         );
 
+        const [collectionConfig,_] = PublicKey.findProgramAddressSync(
+            [Buffer.from("CONFIG"), collectionId.toArrayLike(Buffer, "le", 8)],
+            CORE_PROGRAM_ID
+        )
+
         const tokenCreateIx = await this.program.methods
-            .whitelistMint({
+            .collectionMint({
                 name: name,
                 symbol: symbol,
                 uri: uri,
                 expiryDate: expiryDate,
+                /// TODO: get this from somewhere more solid
+                collectionCounter: collectionId,
             })
             .accounts({
-                mint: mint.publicKey,
+                mint: mint,
                 tokenAccount: ata,
-                tokenMetadata: this.getTokenBurgerMetadata(mint.publicKey),
-                permanentDelegate: permanentDelegate,
+                tokenMetadata: this.getTokenBurgerMetadata(mint),
+                permanentDelegate,
                 payer: payer,
-
+                collectionConfig,
                 rent: SYSVAR_RENT_PUBKEY,
                 systemProgram: SystemProgram.programId,
                 token22Program: TOKEN_2022_PROGRAM_ID,
@@ -73,28 +81,62 @@ export class BurgerProgram {
 
         const ixs = [
             // prolly could tweak this further down
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 250_000 }),
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 450_000 }),
             tokenCreateIx
         ];
 
         return  new Transaction().add(...ixs);
     }
+    async createWhitelistMintTx(
+        expiryDate: string,
+        mint: PublicKey,
+        globalCollectionConfig: PublicKey,
+        name: string = "Ephemeral burger",
+        symbol: string = "EP",
+        uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
+    ) {
+        const permanentDelegate = this.getProgramDelegate();
+        const payer = this.wallet.publicKey;
+        const ata = getAssociatedTokenAddressSync(
+            mint,
+            payer,
+            undefined,
+            TOKEN_2022_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID
+        );
 
-    // async createWhitelistMint(
-    //     destroyTimestamp: string,
-    //     mint: Keypair = Keypair.generate(),
-    //     name: string = "Ephemeral burger",
-    //     symbol: string = "EP",
-    //     uri: string = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo"
-    // ) {
-    //
-    //     let id;
-    //         id = await sendAndConfirmRawTransaction(this.connection, tokenCreateTx, payer, this.wallet, [mint]);
-    //
-    //     }
-    //
-    //     return id;
-    // }
+
+        const tokenCreateIx = await this.program.methods
+            .whitelistMint({
+                name: name,
+                symbol: symbol,
+                uri: uri,
+                expiryDate: expiryDate,
+            })
+            .accounts({
+                mint: mint,
+                tokenAccount: ata,
+                tokenMetadata: this.getTokenBurgerMetadata(mint),
+                permanentDelegate: permanentDelegate,
+                payer: payer,
+
+                rent: SYSVAR_RENT_PUBKEY,
+                systemProgram: SystemProgram.programId,
+                token22Program: TOKEN_2022_PROGRAM_ID,
+                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+                globalCollectionConfig,
+                epplexCore: CORE_PROGRAM_ID,
+            })
+            .instruction();
+
+        const ixs = [
+            // prolly could tweak this further down
+            ComputeBudgetProgram.setComputeUnitLimit({ units: 450_000 }),
+            tokenCreateIx
+        ];
+
+        return  new Transaction().add(...ixs);
+    }
 
     // async burnToken(mint: PublicKey) {
     //     const programDelegate = this.getProgramDelegate();
@@ -159,7 +201,7 @@ export class BurgerProgram {
 
         // VAULT Ata
         const proceedsAta = getAssociatedTokenAddressSync(
-            NativeMint.address, VAULT, undefined, TOKEN_PROGRAM_ID
+            NativeMint.address, VAULT, undefined,TOKEN_PROGRAM_ID
         );
 
         // Payer Ata - already created with switchboard stuff
@@ -171,7 +213,7 @@ export class BurgerProgram {
         // );
 
         const proceedsIx = await tryCreateATAIx(
-            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address, TOKEN_2022_PROGRAM_ID
+            this.connection, this.wallet.publicKey, proceedsAta, VAULT, NativeMint.address, TOKEN_PROGRAM_ID
         );
         ixs.push(...proceedsIx);
 

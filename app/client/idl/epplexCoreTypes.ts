@@ -8,7 +8,7 @@ export type EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -33,6 +33,11 @@ export type EpplexCore = {
           "name": "updateAuthority",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -70,6 +75,86 @@ export type EpplexCore = {
       ]
     },
     {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true,
+          "docs": [
+            "CHECK This is the admin account assigned when the collection is created."
+          ]
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCollectionCreateParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "collectionCreate",
       "accounts": [
         {
@@ -89,6 +174,42 @@ export type EpplexCore = {
           "name": "payer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK improve constraints"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK improve constraints"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -175,6 +296,10 @@ export type EpplexCore = {
           {
             "name": "collectionSymbol",
             "type": "string"
+          },
+          {
+            "name": "mintCount",
+            "type": "u64"
           }
         ]
       }
@@ -202,6 +327,18 @@ export type EpplexCore = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
           {
             "name": "authority",
             "type": "publicKey"
@@ -273,6 +410,41 @@ export type EpplexCore = {
       }
     },
     {
+      "name": "TokenCollectionCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "collectionId",
+            "type": "u64"
+          },
+          {
+            "name": "additionalMetadata",
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "MintError",
       "type": {
         "kind": "enum",
@@ -311,7 +483,7 @@ export const IDL: EpplexCore = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true,
+          "isSigner": false,
           "docs": [
             "CHECK"
           ]
@@ -336,6 +508,11 @@ export const IDL: EpplexCore = {
           "name": "updateAuthority",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "globalCollectionConfig",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "payer",
@@ -373,6 +550,86 @@ export const IDL: EpplexCore = {
       ]
     },
     {
+      "name": "collectionMint",
+      "accounts": [
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "permanentDelegate",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "collectionConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true,
+          "docs": [
+            "CHECK This is the admin account assigned when the collection is created."
+          ]
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "TokenCollectionCreateParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "collectionCreate",
       "accounts": [
         {
@@ -392,6 +649,42 @@ export const IDL: EpplexCore = {
           "name": "payer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK improve constraints"
+          ]
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK improve constraints"
+          ]
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "token22Program",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedToken",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -478,6 +771,10 @@ export const IDL: EpplexCore = {
           {
             "name": "collectionSymbol",
             "type": "string"
+          },
+          {
+            "name": "mintCount",
+            "type": "u64"
           }
         ]
       }
@@ -505,6 +802,18 @@ export const IDL: EpplexCore = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
           {
             "name": "authority",
             "type": "publicKey"
@@ -560,6 +869,41 @@ export const IDL: EpplexCore = {
           {
             "name": "uri",
             "type": "string"
+          },
+          {
+            "name": "additionalMetadata",
+            "type": {
+              "vec": {
+                "array": [
+                  "string",
+                  2
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenCollectionCreateParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "collectionId",
+            "type": "u64"
           },
           {
             "name": "additionalMetadata",

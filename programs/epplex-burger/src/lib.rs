@@ -36,6 +36,10 @@ pub mod epplex_burger {
         WhitelistMint::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_mint(ctx: Context<CollectionMint>, params: CollectionMintParams) -> Result<()> {
+        CollectionMint::actuate(ctx, params)
+    }
 
     /*
      * Token actions

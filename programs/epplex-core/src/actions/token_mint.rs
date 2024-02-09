@@ -2,31 +2,36 @@ use crate::*;
 use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::{Token2022, update_token_metadata};
+use crate::mint::TokenCreateParams;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
-    // TODO need to add checks
-    #[account(mut, signer)]
-    /// CHECK
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [SEED_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref(), (0 as u64).to_le_bytes().as_ref()],
+    bump
+    )]
     pub mint: UncheckedAccount<'info>,
 
-    // TODO need to add checks
-    #[account(mut)]
-    /// CHECK
+
+    /// CHECK this account is created in the instruction body, so no need to check data layout
+    #[account(
+    mut,
+    seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
+    seeds::program = associated_token.key(),
+    bump
+    )]
     pub token_account: UncheckedAccount<'info>,
 
-    // TODO Gate this endpoint to burger??? Prolly no need since we have our own PDA
-    // #[account()]
-    // /// CHECK in CPI
-    // pub token_metadata: UncheckedAccount<'info>,
-
-    #[account()]
-    /// CHECK
+    /// CHECK gives the option to set the permanent delegate to any keypair or PDA
     pub permanent_delegate: UncheckedAccount<'info>, // No need to sign, simply assigning
 
-    #[account()]
     pub update_authority: Signer<'info>,
+
+    #[account(mut)]
+    pub global_collection_config: Account<'info, GlobalCollectionConfig>,
 
     //
     #[account(mut)]
@@ -42,13 +47,6 @@ pub struct TokenMint<'info> {
     pub associated_token: Program<'info, AssociatedToken>,
 }
 
-#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenCreateParams {
-    pub name: String,
-    pub symbol: String,
-    pub uri: String,
-    pub additional_metadata: Vec<[String;2]>,
-}
 
 impl TokenMint<'_> {
 
@@ -63,10 +61,12 @@ impl TokenMint<'_> {
         ).expect("Bad update auth");
 
         // Convert from Vec<[String;2]> to Vec<(String, String)>
-        let converted_metadata: Vec<(String, String)> = params.additional_metadata
+        let mut converted_metadata: Vec<(String, String)> = params.additional_metadata
             .iter()
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
+
+        converted_metadata.push((COLLECTION_ID_FIELD.to_string(), ctx.accounts.global_collection_config.collection_counter.to_string()));
 
         let tm = TokenMetadata {
             update_authority,
@@ -88,8 +88,11 @@ impl TokenMint<'_> {
                 ExtensionType::MetadataPointer,
                 // ExtensionType::TransferHook
             ],
-            tm
+            tm,
+            ctx.accounts.global_collection_config.collection_counter,
+            0,
         )?;
+        ctx.accounts.global_collection_config.collection_counter += 1;
 
         // Add ClosingAuth Extension
         add_closing_authority(
