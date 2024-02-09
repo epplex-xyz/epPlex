@@ -2,6 +2,7 @@ use crate::*;
 use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::{Token2022, update_token_metadata};
+use crate::mint::TokenCreateParams;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
@@ -42,13 +43,6 @@ pub struct TokenMint<'info> {
     pub associated_token: Program<'info, AssociatedToken>,
 }
 
-#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenCreateParams {
-    pub name: String,
-    pub symbol: String,
-    pub uri: String,
-    pub additional_metadata: Vec<[String;2]>,
-}
 
 impl TokenMint<'_> {
 

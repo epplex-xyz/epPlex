@@ -1,6 +1,6 @@
 use crate::*;
 
-use epplex_core::{TokenCreateParams};
+use epplex_core::mint::TokenCreateParams;
 use epplex_metadata::program::EpplexMetadata;
 use epplex_shared::Token2022;
 

@@ -1,7 +1,7 @@
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
-import {Program2} from "../app/client/program2";
+import {CoreProgram} from "../app/client/coreProgram";
 import { BN, Wallet } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";

@@ -1,5 +1,5 @@
 import { testPrelude } from './testUtils';
-import {Program2} from "../app/client/program2";
+import {CoreProgram} from "../app/client/coreProgram";
 import { BN } from "@coral-xyz/anchor";
 import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";

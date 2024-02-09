@@ -1,10 +1,12 @@
 import * as anchor from "@coral-xyz/anchor";
 import { BurgerProgram } from "../app/client/burgerProgram";
-import { Wallet } from "@coral-xyz/anchor";
-import { Keypair } from "@solana/web3.js";
+import {BN, Wallet} from "@coral-xyz/anchor";
+import {Keypair, PublicKey} from "@solana/web3.js";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
 import { buildNFTTransferTx } from "../app/utils/token2022";
 import { loadKeypairFromFile } from "../script/utils/helpers";
+import {CoreProgram} from "../app/client/coreProgram";
+import {getTokenMetadata} from "@solana/spl-token";
 
 
 const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
@@ -21,6 +23,7 @@ describe('Test Collection', () => {
     )
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
+    const coreProgram = new CoreProgram(provider.wallet, provider.connection);
 
 
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
@@ -32,9 +35,23 @@ describe('Test Collection', () => {
     })
 
     it('Mint token', async () => {
-        const tx = await burgerProgram.createWhitelistMintTx(
+        coreProgram.createGlobalCollectionConfig();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const globalCollectionAddress = coreProgram.getGlobalCollectionConfigAddress();
+        console.log("globalCollectionAddress", globalCollectionAddress.toString());
+        const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
+            coreProgram.getGlobalCollectionConfigAddress());
+        const [collectionConfigAddress] = PublicKey.findProgramAddressSync(
+            [Buffer.from("CONFIG"),
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            coreProgram.program.programId
+        )
+
+        await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
+        const tx = await burgerProgram.createCollectionMintTx(
             destroyTimestamp,
-            mint
+            new BN(0),
+            mint,
         )
         console.log("rpc", provider.connection.rpcEndpoint);
         await sendAndConfirmRawTransaction(
@@ -44,6 +61,9 @@ describe('Test Collection', () => {
             provider.wallet,
             [mint]
         );
+
+        const metadata = await getTokenMetadata(provider.connection, mint.publicKey);
+        console.log("metadata", metadata);
     });
 
     it('Transfer token', async () => {

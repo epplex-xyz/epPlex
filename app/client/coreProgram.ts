@@ -10,7 +10,7 @@ import {
 } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 
-export class Program2 {
+export class CoreProgram {
     connection: Connection;
     program: EpplexCoreProgram;
     wallet: Wallet;
@@ -22,6 +22,63 @@ export class Program2 {
         this.program = createCoreProgram(provider);
         this.connection = connection;
         this.wallet = (this.program.provider as AnchorProvider).wallet as Wallet;
+    }
+    public getGlobalCollectionConfigAddress(): PublicKey {
+        const [globalCollectionConfig] = PublicKey.findProgramAddressSync(
+            [Buffer.from("GLOBAL_COLLECTION")],
+            this.program.programId
+        );
+        return globalCollectionConfig;
+    }
+
+    async createGlobalCollectionConfig() {
+        const globalCollectionConfig = this.getGlobalCollectionConfigAddress();
+        const tx = await this.program.methods
+            .globalCollectionConfigCreate()
+            .accounts({
+                globalCollectionConfig,
+                payer: this.wallet.publicKey,
+                systemProgram: SystemProgram.programId,
+            })
+            .transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("Create global config tx", id);
+
+        return id;
+    }
+
+    async createCollection(collectionConfigAddress: PublicKey, authority: PublicKey) {
+
+        const builder = this.program.methods
+            .collectionCreate({
+                renewalPrice: new BN(1000000000),
+                mintPrice: new BN(1000000000),
+                standardDuration: 10000,
+                gracePeriod: new BN(10000),
+                treasury: this.wallet.publicKey,
+                collectionSize: 100,
+                collectionName: "Epplex",
+                collectionSymbol: "EPX",
+                authority,
+            })
+            .accounts({
+                collectionConfig: collectionConfigAddress,
+                globalCollectionConfig: this.getGlobalCollectionConfigAddress(),
+                payer: this.wallet.publicKey,
+                systemProgram: SystemProgram.programId,
+            });
+
+        const tx = await builder.transaction();
+
+        const id = await sendAndConfirmRawTransaction(
+            this.connection, tx, this.wallet.publicKey, this.wallet, []
+        );
+        console.log("creating collection tx", id);
+
+        return id;
     }
     // async createToken(
     //     destroyTimestampOffset: number = 60 * 5,
