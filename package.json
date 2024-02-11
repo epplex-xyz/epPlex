@@ -1,7 +1,22 @@
 {
     "scripts": {
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-        "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+        "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+
+        "validator": "solana-test-validator",
+        "reset-validator": "rm -rf test-ledger",
+
+        "build-burger": "anchor build -p epplex_burger",
+        "build-core": "anchor build -p epplex_core",
+        "build-all": "yarn build-burger && yarn build-core",
+
+        "deploy-burger": "RPC=$RPC && anchor deploy -p epplex_burger --provider.cluster $RPC --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-core": "RPC=$RPC && anchor deploy -p epplex_core --provider.cluster $RPC --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-all": "yarn deploy-burger && yarn deploy-core",
+
+        "mainnet-deploy": "MAINNET_RPC=$MAINNET_RPC && anchor build && anchor deploy --provider.cluster $MAINNET_RPC --provider.wallet /Users/Mac/.config/solana/id.json",
+
+        "test": "RPC=$RPC anchor test --provider.cluster $RPC --skip-deploy --skip-build --provider.wallet target/deploy/program-epplex_deploy_auth.json"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.27.0",

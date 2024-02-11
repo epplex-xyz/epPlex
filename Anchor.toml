@@ -4,22 +4,14 @@
 seeds = false
 skip-lint = false
 
-#[programs.mainnet]
-epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
-epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-#epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
-#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
-
 [programs.devnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
 epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.localnet]
 epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
 epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-epplex_mint = "epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4"
 epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [registry]
