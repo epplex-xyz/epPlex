@@ -11,11 +11,11 @@ import {
     TOKEN_2022_PROGRAM_ID
 } from "@solana/spl-token";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
-import * as pda from './pda';
+import * as pda from './utils/pda';
 import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
 import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
 import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
-import {globalCollectionConfig} from "./pda";
+import {globalCollectionConfig} from "./utils/pda";
 
 // This works
 // import dotenv from "dotenv";

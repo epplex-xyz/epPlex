@@ -4,7 +4,7 @@ import {PublicKey} from "@solana/web3.js";
 import { loadKeypairFromFile } from "../script/utils/helpers";
 import {CoreProgram} from "../app/client/coreProgram";
 import {getTokenMetadata} from "@solana/spl-token";
-import {mintTokenIntoCollection} from "./mintUtils";
+import {mintTokenIntoCollection} from "./utils/mintUtils";
 import * as anchor from "@coral-xyz/anchor";
 import {expect} from "chai";
 
