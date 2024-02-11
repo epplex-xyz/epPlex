@@ -15,8 +15,6 @@ pub enum BurgerError {
     #[msg("Need to renew within 1 day timeframe")]
     RenewThreshold,
 
-
-
     // Others
     #[msg("Invalid calculation")]
     InvalidCalculation,
@@ -34,6 +32,8 @@ pub enum BurgerError {
     TokenNotSupported,
 
     #[msg("Field does not exist")]
-    FieldDoesNotExist
-}
+    FieldDoesNotExist,
 
+    #[msg("Already in the Last gamge phase")]
+    GamePhaseLastStage,
+}
