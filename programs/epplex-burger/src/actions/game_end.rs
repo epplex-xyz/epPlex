@@ -1,9 +1,10 @@
 use anchor_lang::prelude::*;
 
-use crate::{ BurgerError, GameConfig, GamePhase };
+use crate::{ BurgerError, GameConfig, GamePhase, ADMIN_PUBKEY };
 
 #[derive(Accounts)]
 pub struct GameEnd<'info> {
+    #[account(address = ADMIN_PUBKEY)]
     pub payer: Signer<'info>,
 
     // we expect this to be already initialized
