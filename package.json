@@ -2,6 +2,9 @@
     "scripts": {
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+        "setup-rpc-win": "set RPC=http://127.0.0.1:8899",
+        "setup-rpc-mac": "export RPC=http://127.0.0.1:8899 && echo $RPC",
+        "setup-test": "cross-env HELLO_RPC=http://127.0.0.1:8899",
 
         "validator": "solana-test-validator",
         "reset-validator": "rm -rf test-ledger",
@@ -10,13 +13,13 @@
         "build-core": "anchor build -p epplex_core",
         "build-all": "yarn build-burger && yarn build-core",
 
-        "deploy-burger": "RPC=$RPC && anchor deploy -p epplex_burger --provider.cluster $RPC --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
-        "deploy-core": "RPC=$RPC && anchor deploy -p epplex_core --provider.cluster $RPC --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-burger": "yarn build-burger && anchor deploy -p epplex_burger --provider.cluster localnet --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-core": "yarn build-core && anchor deploy -p epplex_core --provider.cluster localnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-all": "yarn deploy-burger && yarn deploy-core",
 
-        "mainnet-deploy": "MAINNET_RPC=$MAINNET_RPC && anchor build && anchor deploy --provider.cluster $MAINNET_RPC --provider.wallet /Users/Mac/.config/solana/id.json",
+        "build-deploy-all": "yarn build-all && yarn deploy-all",
 
-        "test": "RPC=$RPC anchor test --provider.cluster $RPC --skip-deploy --skip-build --provider.wallet target/deploy/program-epplex_deploy_auth.json"
+        "test": "anchor test --provider.cluster localnet --skip-deploy --skip-build --skip-local-validator --provider.wallet target/deploy/epplex_deploy_auth.json"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.27.0",

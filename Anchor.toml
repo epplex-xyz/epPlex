@@ -38,9 +38,9 @@ copy-mint = "cp target/idl/epplex_mint.json app/client/idl/epplex_mint.json && c
 copy-core = "cp target/idl/epplex_core.json app/client/idl/epplex_core.json && cp target/types/epplex_core.ts app/client/idl/epplexCoreTypes.ts"
 copy-to-app = "anchor run copy-core && anchor run copy-mint && anchor run copy-burger"
 
-#bd = "anchor build && anchor deploy && anchor run copy-to-app"
+# THIS SECTION IS MOST LIKELY DEPRECATED
 build-burger = "anchor build -p epplex_burger && anchor deploy -p epplex_burger && anchor run copy-burger"
 build-core = "anchor build -p epplex_core && anchor deploy -p epplex_core && anchor run copy-core"
+#bd = "anchor build && anchor deploy && anchor run copy-to-app"
 bd = "anchor run build-burger && anchor run build-core"
-
 depl = "anchor deploy && anchor run copy-to-app"
