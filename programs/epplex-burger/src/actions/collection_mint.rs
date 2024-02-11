@@ -80,8 +80,6 @@ impl CollectionMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: CollectionMintParams) -> Result<()> {
-        // TODO might need to keep track of some counter
-
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(

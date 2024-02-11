@@ -144,8 +144,10 @@ impl CollectionMint<'_> {
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
+            // Mint auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
+            // Freeze auth
             &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),

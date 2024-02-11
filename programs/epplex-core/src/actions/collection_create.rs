@@ -139,8 +139,10 @@ impl CollectionCreate<'_> {
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
+            // Update auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
+            // mint auth
             &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),
@@ -156,6 +158,7 @@ impl CollectionCreate<'_> {
                 value,
             )?;
         }
+
         // Create ATA
         anchor_spl::associated_token::create(
             CpiContext::new(
@@ -184,9 +187,6 @@ impl CollectionCreate<'_> {
             1
         )?;
 
-        // TODO in LibrePlex case the authority is a PDA
-        // TODO prolly need to do the same
-
         // Remove freeze auth
         anchor_spl::token_interface::set_authority(
             CpiContext::new(
@@ -195,7 +195,6 @@ impl CollectionCreate<'_> {
                     current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
-                // &[deployment_seeds]
             ),
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::FreezeAccount,
             None, // Set authority to be None
@@ -209,7 +208,6 @@ impl CollectionCreate<'_> {
                     current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
-                // &[deployment_seeds]
             ),
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::MintTokens,
             None, // Set mint authority to be None

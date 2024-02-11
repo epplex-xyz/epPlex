@@ -1,5 +1,5 @@
 import { BurgerProgram } from "../app/client/burgerProgram";
-import {BN, Wallet} from "@coral-xyz/anchor";
+import {Wallet} from "@coral-xyz/anchor";
 import {PublicKey} from "@solana/web3.js";
 import { loadKeypairFromFile } from "../script/utils/helpers";
 import {CoreProgram} from "../app/client/coreProgram";
@@ -22,7 +22,6 @@ describe('Test Collection', () => {
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
     const coreProgram = new CoreProgram(provider.wallet, provider.connection);
-
 
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
     console.log("destroy", destroyTimestamp);
