@@ -3,6 +3,3 @@ use anchor_lang::prelude::*;
 
 // Hardcode the burn auth for now
 pub const ADMIN_PUBKEY: Pubkey = pubkey!("BuHRzpGi4t9ho8rtBNCKCRrPE26EG2CGsq3YiVCkhXr7");
-
-
-pub const VAULT_PUBKEY: Pubkey = pubkey!("BuHRzpGi4t9ho8rtBNCKCRrPE26EG2CGsq3YiVCkhXr7");
