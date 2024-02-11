@@ -61,12 +61,7 @@ describe('Environment setup', () => {
         console.log("mint", mint.toString());
     });
 
-    // it("Create burger delegate ", async() => {
-    // })
-
     it('Mint token', async () => {
-
-
         const tx = await burgerProgram.createWhitelistMintTx(
             destroyTimestamp,
             mint,
