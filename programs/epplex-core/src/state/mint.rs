@@ -1,14 +1,15 @@
 use crate::*;
 
-#[constant]
 pub const COLLECTION_ID_FIELD: &str = "collection_id";
 
-#[constant]
 pub const MINT_COUNT_FIELD: &str = "mint_count";
 
+
+// MINT, collection_id, mint_counter
 #[constant]
 pub const SEED_MINT: &[u8] = b"MINT";
 
+// COLLECTION_MINT, collection_id
 #[constant]
 pub const SEED_COLLECTION_MINT: &[u8] = b"COLLECTION_MINT";
 

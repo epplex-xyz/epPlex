@@ -27,7 +27,9 @@ pub struct CollectionCreate<'info> {
 
     #[account(
         mut,
-        seeds = [SEED_GLOBAL_COLLECTION_CONFIG],
+        seeds = [
+            SEED_GLOBAL_COLLECTION_CONFIG
+        ],
         bump = global_collection_config.bump
     )]
     pub global_collection_config: Account<'info, GlobalCollectionConfig>,
