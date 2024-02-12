@@ -39,8 +39,10 @@ pub struct TokenBurn<'info> {
     )]
     pub permanent_delegate: Account<'info, ProgramDelegate>,
 
-    // TODO put constraint on payer - to limit to ourselves
-    #[account(mut)]
+    #[account(
+        mut,
+        address = ADMIN_PUBKEY
+    )]
     pub payer: Signer<'info>,
 
     pub token22_program: Program<'info, Token2022>,

@@ -1,11 +1,12 @@
 import {AnchorProvider, BN} from "@coral-xyz/anchor";
-import {sendAndConfirmRawTransaction} from "../app/utils/solana";
-import {BurgerProgram} from "../app/client/burgerProgram";
+import {sendAndConfirmRawTransaction} from "../../app/utils/solana";
+import {BurgerProgram} from "../../app/client/burgerProgram";
 import {Keypair, PublicKey} from "@solana/web3.js";
-import {CoreProgram} from "../app/client/coreProgram";
-import {collectionConfig} from "./pda";
+import {CoreProgram} from "../../app/client/coreProgram";
 
-export const mintTokenIntoCollection = async (provider: AnchorProvider, burgerProgram: BurgerProgram,coreProgram: CoreProgram, collectionId: BN, destroyTimestamp: string) => {
+export const mintTokenIntoCollection = async (
+    provider: AnchorProvider, burgerProgram: BurgerProgram, coreProgram: CoreProgram, collectionId: BN, destroyTimestamp: string
+) => {
 
     const [collectionConfigAddress, _bump] = PublicKey.findProgramAddressSync(
         [Buffer.from("CONFIG"),

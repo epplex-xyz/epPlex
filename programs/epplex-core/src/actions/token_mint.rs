@@ -9,19 +9,27 @@ use crate::mint::TokenCreateParams;
 pub struct TokenMint<'info> {
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    mut,
-    seeds = [SEED_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref(), (0 as u64).to_le_bytes().as_ref()],
-    bump
+        mut,
+        seeds = [
+            SEED_MINT,
+            global_collection_config.collection_counter.to_le_bytes().as_ref(),
+            (0 as u64).to_le_bytes().as_ref()
+        ],
+        bump
     )]
     pub mint: UncheckedAccount<'info>,
 
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    mut,
-    seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
-    seeds::program = associated_token.key(),
-    bump
+        mut,
+        seeds = [
+            payer.key().as_ref(),
+            token22_program.key().as_ref(),
+            mint.key().as_ref()
+        ],
+        seeds::program = associated_token.key(),
+        bump
     )]
     pub token_account: UncheckedAccount<'info>,
 
@@ -36,10 +44,6 @@ pub struct TokenMint<'info> {
     //
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
-
-    // #[account()]
-    // /// CHECK
-    // pub transfer_hook_program: UncheckedAccount<'info>,
 
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
@@ -86,7 +90,6 @@ impl TokenMint<'_> {
                 ExtensionType::MintCloseAuthority,
                 ExtensionType::PermanentDelegate,
                 ExtensionType::MetadataPointer,
-                // ExtensionType::TransferHook
             ],
             tm,
             ctx.accounts.global_collection_config.collection_counter,
@@ -107,14 +110,6 @@ impl TokenMint<'_> {
             ctx.accounts.token22_program.key(),
             ctx.accounts.permanent_delegate.key(),
         )?;
-
-        // Add TransferHook Extension
-        // add_transfer_hook(
-        //     &ctx.accounts.mint,
-        //     ctx.accounts.token22_program.key(),
-        //     ctx.accounts.permanent_delegate.key(),
-        //     ctx.accounts.transfer_hook_program.key(),
-        // )?;
 
         // Add MetadataPointer Extension
         add_metadata_pointer(

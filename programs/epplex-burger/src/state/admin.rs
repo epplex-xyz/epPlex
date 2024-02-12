@@ -1,8 +1,5 @@
 use anchor_lang::solana_program::pubkey;
 use anchor_lang::prelude::*;
 
-// Hardcode the burn auth for now
-pub const ADMIN_PUBKEY: Pubkey = pubkey!("BuHRzpGi4t9ho8rtBNCKCRrPE26EG2CGsq3YiVCkhXr7");
-
-
-pub const VAULT_PUBKEY: Pubkey = pubkey!("BuHRzpGi4t9ho8rtBNCKCRrPE26EG2CGsq3YiVCkhXr7");
+// Payer keypair has to sign everything
+pub const ADMIN_PUBKEY: Pubkey = pubkey!("epADzKVW5kb3hjUhKuxdmyASNKYt4Cb1ccLGvr5cuzh");

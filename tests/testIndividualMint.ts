@@ -1,21 +1,12 @@
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {PublicKey} from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
-import { BurgerProgram } from "../app/client/burgerProgram";
+import {BN, Wallet} from "@coral-xyz/anchor";
+import {BurgerProgram} from "../app/client/burgerProgram";
 import {CoreProgram} from "../app/client/coreProgram";
-import { BN, Wallet } from "@coral-xyz/anchor";
-import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import {
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    getAssociatedTokenAddressSync,
-    getTokenMetadata,
-    TOKEN_2022_PROGRAM_ID
-} from "@solana/spl-token";
-import { sendAndConfirmRawTransaction } from "../app/utils/solana";
-import * as pda from './pda';
-import { buildNFTTransferTx, getToken22 } from "../app/utils/token2022";
-import { createBurnAndCloseIx, createTokenCloseAndBurnIx } from "../script/instructions/generic";
-import { loadKeypairFromFile, printConsoleSeparator } from "../script/utils/helpers";
-import {globalCollectionConfig} from "./pda";
+import {getTokenMetadata} from "@solana/spl-token";
+import {sendAndConfirmRawTransaction} from "../app/utils/solana";
+import {buildNFTTransferTx} from "../app/utils/token2022";
+import {loadKeypairFromFile} from "../script/utils/helpers";
 
 // This works
 // import dotenv from "dotenv";
@@ -23,8 +14,8 @@ import {globalCollectionConfig} from "./pda";
 // dotenv.config({path: path.resolve(__dirname, "../.env.local")})
 // console.log("prces", process.env.MINT_POOL_KEYPAIR)
 
-const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
-const mintPool = loadKeypairFromFile("/home/fzzyyti/.config/solana/mint.json")
+const payer = loadKeypairFromFile("../target/deploy/epplex_PAYER_ADMIN.json")
+const destination = new PublicKey("2N6aJDX1TNs6RKkPsuufbAe4JjRAZPs1iLPcEUL4DX4z")
 
 describe('Environment setup', () => {
     const tempProvider = anchor.AnchorProvider.env();
@@ -32,18 +23,18 @@ describe('Environment setup', () => {
 
     const provider = new anchor.AnchorProvider(
         tempProvider.connection,
-        new Wallet(secretKeypair),
+        new Wallet(payer),
         {skipPreflight: true}
     )
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
     const coreProgram = new CoreProgram(provider.wallet, provider.connection);
 
-
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
     console.log("destroy", destroyTimestamp);
     let mint: PublicKey;
     let globalCollectionConfigAddress: PublicKey;
+
     before(async () => {
         console.log("Creating program delegate");
         await burgerProgram.createProgramDelegate();
@@ -54,27 +45,20 @@ describe('Environment setup', () => {
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
             globalCollectionConfigAddress);
         mint = PublicKey.findProgramAddressSync(
-            ["MINT",
+            [Buffer.from("MINT"),
                 globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8),
                 new BN(0).toArrayLike(Buffer, "le", 8)],
             coreProgram.program.programId)[0];
         console.log("mint", mint.toString());
     });
 
-    // it("Create burger delegate ", async() => {
-    // })
-
     it('Mint token', async () => {
-
-
         const tx = await burgerProgram.createWhitelistMintTx(
             destroyTimestamp,
             mint,
             globalCollectionConfigAddress
         )
 
-
-        console.log("rpc", provider.connection.rpcEndpoint);
         await sendAndConfirmRawTransaction(
             provider.connection,
             tx,
@@ -92,16 +76,16 @@ describe('Environment setup', () => {
             connection: provider.connection,
             mint: mint,
             source: provider.wallet.publicKey,
-            destination: mintPool.publicKey,
-            payer: secretKeypair.publicKey,
+            destination: destination,
+            payer: payer.publicKey,
         })
 
         await sendAndConfirmRawTransaction(
                 provider.connection,
                 tx,
-                secretKeypair.publicKey,
+                payer.publicKey,
                 undefined,
-                [secretKeypair]
+                [payer]
             );
     });
 

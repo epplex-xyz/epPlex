@@ -9,18 +9,26 @@ use crate::mint::{COLLECTION_ID_FIELD, TokenCollectionCreateParams};
 pub struct CollectionMint<'info> {
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    mut,
-    seeds = [SEED_MINT, params.collection_id.to_le_bytes().as_ref(), collection_config.mint_count.to_le_bytes().as_ref()],
-    bump
+        mut,
+        seeds = [
+            SEED_MINT,
+            params.collection_id.to_le_bytes().as_ref(),
+            collection_config.mint_count.to_le_bytes().as_ref()
+        ],
+        bump
     )]
     pub mint: UncheckedAccount<'info>,
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    mut,
-    seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
-    seeds::program = associated_token.key(),
-    bump
+        mut,
+        seeds = [
+            payer.key().as_ref(),
+            token22_program.key().as_ref(),
+            mint.key().as_ref()
+        ],
+        seeds::program = associated_token.key(),
+        bump
     )]
     pub token_account: UncheckedAccount<'info>,
 
@@ -33,18 +41,19 @@ pub struct CollectionMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
 
-    #[account(mut, has_one = authority,
-    seeds = [SEED_COLLECTION_CONFIG, &params.collection_id.to_le_bytes()],
-    bump
+    #[account(
+        mut,
+        has_one = authority,
+        seeds = [
+            SEED_COLLECTION_CONFIG,
+            &params.collection_id.to_le_bytes()
+        ],
+        bump
     )]
     pub collection_config: Account<'info, CollectionConfig>,
 
     /// This is the admin account assigned when the collection is created.
     pub authority: Signer<'info>,
-
-    // #[account()]
-    // /// CHECK
-    // pub transfer_hook_program: UncheckedAccount<'info>,
 
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
@@ -93,7 +102,6 @@ impl CollectionMint<'_> {
                 ExtensionType::MintCloseAuthority,
                 ExtensionType::PermanentDelegate,
                 ExtensionType::MetadataPointer,
-                // ExtensionType::TransferHook
             ],
             tm,
             params.collection_id,
@@ -113,14 +121,6 @@ impl CollectionMint<'_> {
             ctx.accounts.token22_program.key(),
             ctx.accounts.permanent_delegate.key(),
         )?;
-
-        // Add TransferHook Extension
-        // add_transfer_hook(
-        //     &ctx.accounts.mint,
-        //     ctx.accounts.token22_program.key(),
-        //     ctx.accounts.permanent_delegate.key(),
-        //     ctx.accounts.transfer_hook_program.key(),
-        // )?;
 
         // Add MetadataPointer Extension
         add_metadata_pointer(
@@ -144,8 +144,10 @@ impl CollectionMint<'_> {
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
+            // Mint auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
+            // Freeze auth
             &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),

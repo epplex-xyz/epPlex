@@ -30,10 +30,11 @@ pub struct TokenRenew<'info> {
     )]
     pub mint_payment: Account<'info, Mint>,
 
+    // This needs to always be ADMIN_PUBKEY account
     #[account(
         mut,
         associated_token::mint = mint_payment,
-        associated_token::authority = VAULT_PUBKEY,
+        associated_token::authority = ADMIN_PUBKEY,
     )]
     pub proceeds_token_account: Account<'info, TokenAccount>, // Deposit in here
 
