@@ -8,7 +8,7 @@ import {mintTokenIntoCollection} from "./utils/mintUtils";
 import * as anchor from "@coral-xyz/anchor";
 import {expect} from "chai";
 
-const payer = loadKeypairFromFile("../target/deploy/epplex_PAYER_ADMIN.json")
+const payer = loadKeypairFromFile("target/deploy/epplex_PAYER_ADMIN.json")
 
 describe('Test Collection', () => {
     const tempProvider = anchor.AnchorProvider.env();
@@ -27,15 +27,16 @@ describe('Test Collection', () => {
     // In 1 hour
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
 
-    it("Create burger delegate ", async() => {
-        console.log("Getting airDrop");
-        await provider.connection.requestAirdrop(new PublicKey("8Df9mQfYfVj3uMjdhxMfF41PwbxC5xZofsHHdgyvG5Gr"), 1000000000);
-        console.log("Creating program delegate");
-        await burgerProgram.createProgramDelegate();
-    })
+    // it("Create burger delegate ", async() => {
+    //     console.log("Getting airDrop");
+    //     await provider.connection.requestAirdrop(new PublicKey("8Df9mQfYfVj3uMjdhxMfF41PwbxC5xZofsHHdgyvG5Gr"), 1000000000);
+    //     console.log("Creating program delegate");
+    //     await burgerProgram.createProgramDelegate();
+    // })
 
     it('Mint token', async () => {
-        await coreProgram.createGlobalCollectionConfig();
+        // await coreProgram.createGlobalCollectionConfig();
+
         const globalCollectionAddress = coreProgram.getGlobalCollectionConfigAddress();
         console.log("globalCollectionAddress", globalCollectionAddress.toString());
 
@@ -50,16 +51,7 @@ describe('Test Collection', () => {
         )
 
         await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
-        const [mint, _] = PublicKey.findProgramAddressSync(
-            [
-                Buffer.from("COLLECTION_MINT"),
-                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)
-            ],
-            coreProgram.program.programId
-        );
-        console.log("mint", mint.toString());
-        const metadata = await getTokenMetadata(provider.connection, mint);
-        console.log("Collection Mint Metadata", metadata);
+        console.log("here")
 
         // Mint 10 tokens into the collection
         for (let i = 0; i < nTokens; i++) {
