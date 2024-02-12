@@ -17,7 +17,14 @@
         "deploy-core": "yarn build-core && anchor deploy -p epplex_core --provider.cluster localnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-all": "yarn deploy-burger && yarn deploy-core",
 
-        "build-deploy-all": "yarn build-all && yarn deploy-all",
+        "build-deploy-all": "yarn deploy-all",
+
+        "close-buffers-mainnet": "solana program close --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+        "show-buffers-mainnet": "solana program show --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+        "show-programs-mainnet": "solana program show --programs -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+        "solana-balance": "solana balance -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+
+        "transfer-sol": "olana transfer --from <KEYPAIR_PATH> <DESTINATION_PUBKEY> AMOUNT --fee-payer <KEYPAIR_PATH> --allow-unfunded-recipient",
 
         "test": "anchor test --provider.cluster localnet --skip-deploy --skip-build --skip-local-validator --provider.wallet target/deploy/epplex_deploy_auth.json"
     },
