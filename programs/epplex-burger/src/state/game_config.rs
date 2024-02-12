@@ -88,9 +88,9 @@ impl GameConfig {
         Ok(())
     }
 
-    /// make sure that `phase_end > current timestamp` 
+    /// make sure that `phase_end > current timestamp`
     pub fn check_phase_end_ts(&self) -> Result<()> {
-        let now =Clock::get().unwrap().unix_timestamp;
+        let now = Clock::get().unwrap().unix_timestamp;
 
         if self.phase_end < now {
             return err!(BurgerError::InvalidGameDuration);
@@ -104,12 +104,6 @@ impl GameConfig {
         if self.game_phase.eq(&GamePhase::Elimination) {
             return err!(BurgerError::GamePhaseLastStage);
         }
-
-        Ok(())
-    }
-
-    pub fn check_timestamp(&self) -> Result<()> {
-        //
 
         Ok(())
     }
