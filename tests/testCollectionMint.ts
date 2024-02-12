@@ -22,9 +22,10 @@ describe('Test Collection', () => {
     anchor.setProvider(provider);
     const burgerProgram = new BurgerProgram(provider.wallet, provider.connection);
     const coreProgram = new CoreProgram(provider.wallet, provider.connection);
+    const nTokens = 2
 
+    // In 1 hour
     const destroyTimestamp: string = (Math.floor((new Date()).getTime() / 1000) + 3600).toString()
-    console.log("destroy", destroyTimestamp);
 
     it("Create burger delegate ", async() => {
         console.log("Getting airDrop");
@@ -61,13 +62,14 @@ describe('Test Collection', () => {
         console.log("Collection Mint Metadata", metadata);
 
         // Mint 10 tokens into the collection
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < nTokens; i++) {
             const mint = await mintTokenIntoCollection(
                 provider,
                 burgerProgram,
                 coreProgram,
                 globalCollectionData.collectionCounter,
-                destroyTimestamp);
+                destroyTimestamp
+            );
             const metadata = await getTokenMetadata(provider.connection, mint);
             expect(metadata.additionalMetadata.find(md => md[0] == "collection_id")[1]).to.equal(globalCollectionData.collectionCounter.toString());
             expect(metadata.additionalMetadata.find(md => md[0] == "mint_count")[1]).to.equal(i.toString());
