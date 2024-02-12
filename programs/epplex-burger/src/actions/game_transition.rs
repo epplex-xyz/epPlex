@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
 
-use crate::{ BurgerError, GameConfig, GamePhase, ADMIN_PUBKEY };
+use crate::{ GameConfig, GamePhase };
 
 #[derive(Accounts)]
 pub struct GameTransition<'info> {
-    #[account(address = ADMIN_PUBKEY)]
+    #[account(address = game_config.game_master)]
     pub payer: Signer<'info>,
 
     // we expect this acc to already be initialized
@@ -15,36 +15,54 @@ pub struct GameTransition<'info> {
 
 impl GameTransition<'_> {
     pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
-        // ? if in last stage err
-        let phase = self.game_config.game_phase;
+        // make sure that the game hasn't ended
+        self.game_config.check_game_ended()?;
 
-        // ? assuming you cannot transition in the last phase
-        if phase == GamePhase::Elimination {
-            return err!(BurgerError::GamePhaseLastStage);
-        }
+        // make sure that invalid timestamps aren't passed in
+        self.game_config.check_duration()?;
+
+        self.game_config.check_phase_end_ts()?;
 
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, phase_end: i64) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
 
-        // ? when we change phase, do we also reset the timestamps
+        let now = Clock::get().unwrap().unix_timestamp;
 
-        // move to the next phase
+        // let duration = game_config.phase_end - game_config.phase_start;
+
+        // todo (Jimii): create a `reset_ts` associated helper function
         match game_config.game_phase {
             GamePhase::None => {
                 game_config.game_phase = GamePhase::Announcement;
+
+                // reset timestamps
+                game_config.phase_start = now;
+                game_config.phase_end = phase_end;
             }
             GamePhase::Announcement => {
                 game_config.game_phase = GamePhase::Voting;
+
+                // reset timestamps
+                game_config.phase_start = now;
+                game_config.phase_end = phase_end;
             }
             GamePhase::Voting => {
                 game_config.game_phase = GamePhase::Elimination;
+
+                // reset timestamps
+                game_config.phase_start = now;
+                game_config.phase_end = phase_end;
             }
             // checked in validate so this arm won't ever run
             GamePhase::Elimination => {
                 game_config.game_phase = GamePhase::Elimination;
+
+                // reset timestamps
+                game_config.phase_start = now;
+                game_config.phase_end = phase_end;
             }
         }
 

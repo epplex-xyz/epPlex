@@ -1,4 +1,3 @@
-
 use crate::*;
 
 #[constant]
@@ -23,7 +22,6 @@ impl Default for GamePhase {
     }
 }
 
-
 #[account]
 #[derive(Default, Debug)]
 pub struct GameConfig {
@@ -41,15 +39,15 @@ pub struct GameConfig {
     pub game_master: Pubkey,
 }
 
-
 impl GameConfig {
-    pub const LEN: usize = epplex_shared::DISCRIMINATOR_LENGTH
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_64
-        + epplex_shared::BITS_64
-        + epplex_shared::PUBLIC_KEY_LENGTH;
+    pub const LEN: usize =
+        epplex_shared::DISCRIMINATOR_LENGTH +
+        epplex_shared::BITS_8 +
+        epplex_shared::BITS_8 +
+        epplex_shared::BITS_8 +
+        epplex_shared::BITS_64 +
+        epplex_shared::BITS_64 +
+        epplex_shared::PUBLIC_KEY_LENGTH;
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
         // TODO need to add this
@@ -65,21 +63,53 @@ impl GameConfig {
         }
     }
 
-
     /// Check that a ticket is claimable
     pub fn check_voting(&self) -> Result<()> {
-
         // if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
         //     // TOOD return error
         // }
         Ok(())
-
     }
 
     pub fn check_phase_ended(&self) -> Result<()> {
         // if !(Clock::get().unwrap().unix_timestamp > ctx.accounts.game_config.game_phase) {
         //     return err!(LottoError::LottoTimedOut);
         // }
+
+        Ok(())
+    }
+
+    /// make sure that `phase_end > phase_start`
+    pub fn check_duration(&self) -> Result<()> {
+        if self.phase_end < self.phase_start {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        Ok(())
+    }
+
+    /// make sure that `phase_end > current timestamp` 
+    pub fn check_phase_end_ts(&self) -> Result<()> {
+        let now =Clock::get().unwrap().unix_timestamp;
+
+        if self.phase_end < now {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        Ok(())
+    }
+
+    /// disallows transition in the last phase `ELIMINATION` of the game
+    pub fn check_game_ended(&self) -> Result<()> {
+        if self.game_phase.eq(&GamePhase::Elimination) {
+            return err!(BurgerError::GamePhaseLastStage);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_timestamp(&self) -> Result<()> {
+        //
 
         Ok(())
     }

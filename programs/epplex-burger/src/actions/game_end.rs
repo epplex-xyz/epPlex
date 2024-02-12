@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
 
-use crate::{ BurgerError, GameConfig, GamePhase, ADMIN_PUBKEY };
+use crate::{  GameConfig, GamePhase };
 
 #[derive(Accounts)]
 pub struct GameEnd<'info> {
-    #[account(address = ADMIN_PUBKEY)]
+    #[account(address = game_config.game_master)]
     pub payer: Signer<'info>,
 
     // we expect this to be already initialized
@@ -15,15 +15,7 @@ pub struct GameEnd<'info> {
 
 impl GameEnd<'_> {
     pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
-        // ? if in last stage err
-        let phase = self.game_config.game_phase;
-
-        // ? assuming you cannot change game phase when in the last stage
-        if phase == GamePhase::Elimination {
-            return err!(BurgerError::GamePhaseLastStage);
-        }
-
-        Ok(())
+        self.game_config.check_game_ended()
     }
 
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
