@@ -16,7 +16,7 @@ pub struct CollectionCreate<'info> {
         init,
         seeds = [
             SEED_COLLECTION_CONFIG,
-            &global_collection_config.collection_counter.to_le_bytes()
+            global_collection_config.collection_counter.to_le_bytes().as_ref()
         ],
         bump,
         payer = payer,
@@ -39,6 +39,7 @@ pub struct CollectionCreate<'info> {
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
+        mut,
         seeds = [
             SEED_COLLECTION_MINT,
             global_collection_config.collection_counter.to_le_bytes().as_ref()
@@ -49,6 +50,7 @@ pub struct CollectionCreate<'info> {
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
+        mut,
         seeds = [
             payer.key().as_ref(),
             token22_program.key().as_ref(),
@@ -62,11 +64,8 @@ pub struct CollectionCreate<'info> {
     pub update_authority: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
-
     pub token22_program: Program<'info, Token2022>,
-
     pub associated_token_program: Program<'info, AssociatedToken>,
-
     pub system_program: Program<'info, System>,
 }
 

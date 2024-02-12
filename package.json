@@ -6,7 +6,7 @@
         "setup-rpc-mac": "export RPC=http://127.0.0.1:8899 && echo $RPC",
         "setup-test": "cross-env HELLO_RPC=http://127.0.0.1:8899",
 
-        "validator": "solana-test-validator",
+        "validator": "solana-test-validator -u localhost",
         "reset-validator": "rm -rf test-ledger",
 
         "build-burger": "anchor build -p epplex_burger",
