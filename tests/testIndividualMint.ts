@@ -54,7 +54,7 @@ describe('Environment setup', () => {
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
             globalCollectionConfigAddress);
         mint = PublicKey.findProgramAddressSync(
-            ["MINT",
+            [Buffer.from("MINT"),
                 globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8),
                 new BN(0).toArrayLike(Buffer, "le", 8)],
             coreProgram.program.programId)[0];
@@ -68,8 +68,6 @@ describe('Environment setup', () => {
             globalCollectionConfigAddress
         )
 
-
-        console.log("rpc", provider.connection.rpcEndpoint);
         await sendAndConfirmRawTransaction(
             provider.connection,
             tx,

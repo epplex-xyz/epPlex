@@ -37,19 +37,25 @@ describe('Test Collection', () => {
         await coreProgram.createGlobalCollectionConfig();
         const globalCollectionAddress = coreProgram.getGlobalCollectionConfigAddress();
         console.log("globalCollectionAddress", globalCollectionAddress.toString());
+
         const globalCollectionData = await coreProgram.program.account.globalCollectionConfig.fetch(
             coreProgram.getGlobalCollectionConfigAddress());
         const [collectionConfigAddress, _bump] = PublicKey.findProgramAddressSync(
-            [Buffer.from("CONFIG"),
-                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
+            [
+                Buffer.from("CONFIG"),
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)
+            ],
             coreProgram.program.programId
         )
 
         await coreProgram.createCollection(collectionConfigAddress, burgerProgram.getProgramDelegate());
         const [mint, _] = PublicKey.findProgramAddressSync(
-            ["COLLECTION_MINT",
-                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)],
-            coreProgram.program.programId);
+            [
+                Buffer.from("COLLECTION_MINT"),
+                globalCollectionData.collectionCounter.toArrayLike(Buffer, "le", 8)
+            ],
+            coreProgram.program.programId
+        );
         console.log("mint", mint.toString());
         const metadata = await getTokenMetadata(provider.connection, mint);
         console.log("Collection Mint Metadata", metadata);
