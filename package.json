@@ -19,6 +19,14 @@
 
         "build-deploy-all": "yarn deploy-all",
 
+        "copy-burger-sdk": "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
+        "copy-core-sdk":   "cp target/idl/epplex_core.json      ../sdk/src/idl/epplex_core.json         && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts",
+        "copy-to-sdk": "yarn copy-burger-sdk && yarn copy-core-sdk",
+
+        "mainnet-deploy-burger": "anchor build -p epplex_burger && anchor deploy -p epplex_burger --provider.cluster https://mainnet.helius-rpc.com/?api-key=7aef0354-9418-49de-9b4e-1da6ee2871c9 --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "mainnet-deploy-core": "anchor build -p epplex_core && anchor deploy -p epplex_core --provider.cluster https://mainnet.helius-rpc.com/?api-key=7aef0354-9418-49de-9b4e-1da6ee2871c9 --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "mainnet-deploy-all": "yarn mainnet-deploy-burger && yarn mainnet-deploy-core",
+
         "close-buffers-mainnet": "solana program close --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
         "show-buffers-mainnet": "solana program show --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
         "show-programs-mainnet": "solana program show --programs -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
