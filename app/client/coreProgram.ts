@@ -59,7 +59,6 @@ export class CoreProgram {
     }
 
     async createCollection(collectionConfigAddress: PublicKey, authority: PublicKey) {
-
         const globalCollectionConfigAddress = this.getGlobalCollectionConfigAddress();
         const globalCollectionConfig = await this.program.account.globalCollectionConfig.fetch(globalCollectionConfigAddress);
 
@@ -103,7 +102,7 @@ export class CoreProgram {
                 rent: SYSVAR_RENT_PUBKEY,
                 token22Program: TOKEN_2022_PROGRAM_ID,
                 systemProgram: SystemProgram.programId,
-                associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
+                associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
             }).instruction();
 
         const ixs= [

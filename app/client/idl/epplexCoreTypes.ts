@@ -1,6 +1,28 @@
 export type EpplexCore = {
   "version": "0.1.0",
   "name": "epplex_core",
+  "constants": [
+    {
+      "name": "SEED_COLLECTION_CONFIG",
+      "type": "bytes",
+      "value": "[67, 79, 78, 70, 73, 71]"
+    },
+    {
+      "name": "SEED_GLOBAL_COLLECTION_CONFIG",
+      "type": "bytes",
+      "value": "[71, 76, 79, 66, 65, 76, 95, 67, 79, 76, 76, 69, 67, 84, 73, 79, 78]"
+    },
+    {
+      "name": "SEED_MINT",
+      "type": "bytes",
+      "value": "[77, 73, 78, 84]"
+    },
+    {
+      "name": "SEED_COLLECTION_MINT",
+      "type": "bytes",
+      "value": "[67, 79, 76, 76, 69, 67, 84, 73, 79, 78, 95, 77, 73, 78, 84]"
+    }
+  ],
   "instructions": [
     {
       "name": "tokenMint",
@@ -10,7 +32,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -18,7 +40,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -26,7 +48,7 @@ export type EpplexCore = {
           "isMut": false,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK gives the option to set the permanent delegate to any keypair or PDA"
           ]
         },
         {
@@ -82,7 +104,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -90,7 +112,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -98,7 +120,7 @@ export type EpplexCore = {
           "isMut": false,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK gives the option to set the permanent delegate to any keypair or PDA"
           ]
         },
         {
@@ -121,7 +143,7 @@ export type EpplexCore = {
           "isMut": false,
           "isSigner": true,
           "docs": [
-            "CHECK This is the admin account assigned when the collection is created."
+            "This is the admin account assigned when the collection is created."
           ]
         },
         {
@@ -180,7 +202,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK improve constraints"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -188,7 +210,7 @@ export type EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK improve constraints"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -207,7 +229,7 @@ export type EpplexCore = {
           "isSigner": false
         },
         {
-          "name": "associatedToken",
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -476,6 +498,28 @@ export type EpplexCore = {
 export const IDL: EpplexCore = {
   "version": "0.1.0",
   "name": "epplex_core",
+  "constants": [
+    {
+      "name": "SEED_COLLECTION_CONFIG",
+      "type": "bytes",
+      "value": "[67, 79, 78, 70, 73, 71]"
+    },
+    {
+      "name": "SEED_GLOBAL_COLLECTION_CONFIG",
+      "type": "bytes",
+      "value": "[71, 76, 79, 66, 65, 76, 95, 67, 79, 76, 76, 69, 67, 84, 73, 79, 78]"
+    },
+    {
+      "name": "SEED_MINT",
+      "type": "bytes",
+      "value": "[77, 73, 78, 84]"
+    },
+    {
+      "name": "SEED_COLLECTION_MINT",
+      "type": "bytes",
+      "value": "[67, 79, 76, 76, 69, 67, 84, 73, 79, 78, 95, 77, 73, 78, 84]"
+    }
+  ],
   "instructions": [
     {
       "name": "tokenMint",
@@ -485,7 +529,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -493,7 +537,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -501,7 +545,7 @@ export const IDL: EpplexCore = {
           "isMut": false,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK gives the option to set the permanent delegate to any keypair or PDA"
           ]
         },
         {
@@ -557,7 +601,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -565,7 +609,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -573,7 +617,7 @@ export const IDL: EpplexCore = {
           "isMut": false,
           "isSigner": false,
           "docs": [
-            "CHECK"
+            "CHECK gives the option to set the permanent delegate to any keypair or PDA"
           ]
         },
         {
@@ -596,7 +640,7 @@ export const IDL: EpplexCore = {
           "isMut": false,
           "isSigner": true,
           "docs": [
-            "CHECK This is the admin account assigned when the collection is created."
+            "This is the admin account assigned when the collection is created."
           ]
         },
         {
@@ -655,7 +699,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK improve constraints"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -663,7 +707,7 @@ export const IDL: EpplexCore = {
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "CHECK improve constraints"
+            "CHECK this account is created in the instruction body, so no need to check data layout"
           ]
         },
         {
@@ -682,7 +726,7 @@ export const IDL: EpplexCore = {
           "isSigner": false
         },
         {
-          "name": "associatedToken",
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
