@@ -1,7 +1,6 @@
 import {Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, Transaction} from "@solana/web3.js";
 import {  loadOrGenerateKeypair } from "../script/utils/helpers";
 import { sendAndConfirmRawTransaction } from "../app/utils/solana";
-import { BurgerProgram } from "../app/client/burgerProgram";
 import * as anchor from "@coral-xyz/anchor";
 import { Wallet } from "@coral-xyz/anchor";
 

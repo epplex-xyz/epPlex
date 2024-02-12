@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import { makeJson } from "../../../utils/metadata";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ToastText } from "@components/Text/ToastText";
+import {useAnchorWallet} from "@solana/wallet-adapter-react";
 
 export function Creation() {
     const {dateComponent, date} = MyDatePicker({width: "150px"});
@@ -31,6 +32,7 @@ export function Creation() {
 
     const imageUpload = ImageUpload(null);
     const {program, hasCreatedtState: {setHasCreated}} = useProgramApis();
+    const wallet = useAnchorWallet();
     const combinedDate = combineDateAndTime(date!.toDate(), time!.toDate());
     const unixTime = Math.floor(combinedDate.getTime() / 1000);
     const [loading, setLoading] = React.useState(false);
@@ -84,7 +86,7 @@ export function Creation() {
             }
 
             const imageUrl = imageRes.message;
-            const metadata = makeJson(imageUrl, nameInput.input, symbolInput.input, program.wallet.publicKey, traitObjects);
+            const metadata = makeJson(imageUrl, nameInput.input, symbolInput.input, wallet!.publicKey, traitObjects);
             const metadataName = addExtension(fileName, "json");
 
             // Upload metadata
