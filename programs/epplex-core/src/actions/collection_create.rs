@@ -37,16 +37,23 @@ pub struct CollectionCreate<'info> {
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    seeds = [SEED_COLLECTION_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref()],
-    bump
+        seeds = [
+            SEED_COLLECTION_MINT,
+            global_collection_config.collection_counter.to_le_bytes().as_ref()
+        ],
+        bump
     )]
     pub mint: UncheckedAccount<'info>,
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-      seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
-      seeds::program = associated_token_program.key(),
-      bump
+        seeds = [
+            payer.key().as_ref(),
+            token22_program.key().as_ref(),
+            mint.key().as_ref()
+        ],
+        seeds::program = associated_token_program.key(),
+        bump
     )]
     pub token_account: UncheckedAccount<'info>,
 
