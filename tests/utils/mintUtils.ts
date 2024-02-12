@@ -3,7 +3,6 @@ import {sendAndConfirmRawTransaction} from "../../app/utils/solana";
 import {BurgerProgram} from "../../app/client/burgerProgram";
 import {Keypair, PublicKey} from "@solana/web3.js";
 import {CoreProgram} from "../../app/client/coreProgram";
-import {collectionConfig} from "./pda";
 
 export const mintTokenIntoCollection = async (provider: AnchorProvider, burgerProgram: BurgerProgram,coreProgram: CoreProgram, collectionId: BN, destroyTimestamp: string) => {
 

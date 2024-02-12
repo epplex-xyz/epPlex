@@ -8,7 +8,7 @@ import {mintTokenIntoCollection} from "./utils/mintUtils";
 import * as anchor from "@coral-xyz/anchor";
 import {expect} from "chai";
 
-const secretKeypair = loadKeypairFromFile("/home/fzzyyti/.config/solana/test.json")
+const payer = loadKeypairFromFile("../target/deploy/epplex_PAYER_ADMIN.json")
 
 describe('Test Collection', () => {
     const tempProvider = anchor.AnchorProvider.env();
@@ -16,7 +16,7 @@ describe('Test Collection', () => {
 
     const provider = new anchor.AnchorProvider(
         tempProvider.connection,
-        new Wallet(secretKeypair),
+        new Wallet(payer),
         {skipPreflight: true}
     )
     anchor.setProvider(provider);
