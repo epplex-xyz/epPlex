@@ -2,6 +2,7 @@ use epplex_shared::{DISCRIMINATOR_LENGTH, BITS_64, BITS_8};
 
 use crate::*;
 
+#[constant]
 pub const SEED_GLOBAL_COLLECTION_CONFIG: &[u8] = b"GLOBAL_COLLECTION";
 
 #[account]
