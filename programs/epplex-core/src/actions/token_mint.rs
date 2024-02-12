@@ -45,10 +45,6 @@ pub struct TokenMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
 
-    // #[account()]
-    // /// CHECK
-    // pub transfer_hook_program: UncheckedAccount<'info>,
-
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
