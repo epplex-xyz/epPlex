@@ -131,24 +131,29 @@ It would be cool to have Open-Clockwork power this on-chain.
     ├── programs                            # epPlex Solana program, probably should have moved this into its own repo
     └── scripts                             # Scripts for testing purposes, although I probably should have kept a test-suite
 
-### Setup App
+### Development
 
-1. Go to `app` folder and Install dependencies:
+- clone this repo and the [SDK repo](https://github.com/epplex-xyz/sdk) into a co-located directory.
+- copy all keypairs into the `target/deploy` directory.
+- install the dependencies here and in the SDK using `yarn install`
+- To get the dev environment set up.
 ```bash
-    yarn install
-```
-2. Start developing
+yarn validator # in a new terminal window start the local validator
+
+yarn airdrop # airdrop to both admin and deploy auth
+
+yarn deploy-all # build and deploy the program
+
+yarn copy-to-sdk # to copy the idl and types to the sdk
+``` 
+- change directory into the SDK repo.
+- create the `.local_keys` directory and copy the `epplex_PAYER_ADMIN.json` keypair here.
+- confirm that everything is running correctly by running the `test-individual` test case.
 ```bash
-    yarn dev
+yarn test-individual
 ```
 
-
-### Deploy Solana program
-```bash
-    anchor run bd
-```
-
-
+Still not set up? Check out [DEVELOPMENT.md](./DEVELOPMENT.md)
 
 ## Code quality
 Please do not expect high code-quality since majority of the code is hacked together. For the sake of achieving a working MVP, code quality has been neglected.
