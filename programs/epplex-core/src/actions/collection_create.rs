@@ -1,13 +1,13 @@
 use anchor_lang::prelude::borsh::BorshDeserialize;
 use anchor_spl::token_2022::MintTo;
 use epplex_shared::{Token2022, update_token_metadata};
-use spl_pod::optional_keys::OptionalNonZeroPubkey;
+// use spl_pod::optional_keys::OptionalNonZeroPubkey;
 use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
-    mint,
-    token::{TokenAccount, Mint, Token}
+    // mint,
+    // token::{TokenAccount, Mint, Token}
 };
 #[derive(Accounts)]
 #[instruction(params: CollectionCreateParams)]
@@ -16,7 +16,7 @@ pub struct CollectionCreate<'info> {
         init,
         seeds = [
             SEED_COLLECTION_CONFIG,
-            &global_collection_config.collection_counter.to_le_bytes()
+            global_collection_config.collection_counter.to_le_bytes().as_ref()
         ],
         bump,
         payer = payer,
@@ -27,7 +27,9 @@ pub struct CollectionCreate<'info> {
 
     #[account(
         mut,
-        seeds = [SEED_GLOBAL_COLLECTION_CONFIG],
+        seeds = [
+            SEED_GLOBAL_COLLECTION_CONFIG
+        ],
         bump = global_collection_config.bump
     )]
     pub global_collection_config: Account<'info, GlobalCollectionConfig>,
@@ -37,27 +39,33 @@ pub struct CollectionCreate<'info> {
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-    seeds = [SEED_COLLECTION_MINT, global_collection_config.collection_counter.to_le_bytes().as_ref()],
-    bump
+        mut,
+        seeds = [
+            SEED_COLLECTION_MINT,
+            global_collection_config.collection_counter.to_le_bytes().as_ref()
+        ],
+        bump
     )]
     pub mint: UncheckedAccount<'info>,
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
-      seeds = [payer.key().as_ref(), token22_program.key().as_ref(), mint.key().as_ref()],
-      seeds::program = associated_token_program.key(),
-      bump
+        mut,
+        seeds = [
+            payer.key().as_ref(),
+            token22_program.key().as_ref(),
+            mint.key().as_ref()
+        ],
+        seeds::program = associated_token_program.key(),
+        bump
     )]
     pub token_account: UncheckedAccount<'info>,
 
     pub update_authority: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
-
     pub token22_program: Program<'info, Token2022>,
-
     pub associated_token_program: Program<'info, AssociatedToken>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -139,8 +147,10 @@ impl CollectionCreate<'_> {
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
+            // Update auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
+            // mint auth
             &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),
@@ -156,6 +166,7 @@ impl CollectionCreate<'_> {
                 value,
             )?;
         }
+
         // Create ATA
         anchor_spl::associated_token::create(
             CpiContext::new(
@@ -184,9 +195,6 @@ impl CollectionCreate<'_> {
             1
         )?;
 
-        // TODO in LibrePlex case the authority is a PDA
-        // TODO prolly need to do the same
-
         // Remove freeze auth
         anchor_spl::token_interface::set_authority(
             CpiContext::new(
@@ -195,7 +203,6 @@ impl CollectionCreate<'_> {
                     current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
-                // &[deployment_seeds]
             ),
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::FreezeAccount,
             None, // Set authority to be None
@@ -209,7 +216,6 @@ impl CollectionCreate<'_> {
                     current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
-                // &[deployment_seeds]
             ),
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::MintTokens,
             None, // Set mint authority to be None

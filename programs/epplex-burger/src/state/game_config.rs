@@ -50,9 +50,6 @@ impl GameConfig {
         epplex_shared::PUBLIC_KEY_LENGTH;
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
-        // TODO need to add this
-        let default_time = 12;
-
         Self {
             bump,
             game_state: params.game_state,

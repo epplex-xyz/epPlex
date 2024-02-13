@@ -46,7 +46,7 @@ pub struct CollectionMint<'info> {
 
     #[account(
         mut,
-        // address = VAULT_PUBKEY
+        address = ADMIN_PUBKEY
     )]
     pub payer: Signer<'info>,
 
@@ -80,8 +80,6 @@ impl CollectionMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: CollectionMintParams) -> Result<()> {
-        // TODO might need to keep track of some counter
-
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(

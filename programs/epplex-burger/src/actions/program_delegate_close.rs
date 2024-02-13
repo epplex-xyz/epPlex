@@ -14,7 +14,7 @@ pub struct ProgramDelegateClose<'info> {
     #[account(
         mut,
         signer,
-        constraint = ADMIN_PUBKEY == payer.key()
+        address = ADMIN_PUBKEY
     )]
     pub payer: SystemAccount<'info>,
 }
