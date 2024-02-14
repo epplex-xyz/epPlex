@@ -2,7 +2,7 @@ use crate::*;
 use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::{Token2022, update_token_metadata};
-use crate::mint::TokenCreateParams;
+use crate::mint::{COLLECTION_ID_FIELD,  TokenCreateParams};
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
@@ -12,13 +12,12 @@ pub struct TokenMint<'info> {
         mut,
         seeds = [
             SEED_MINT,
-            global_collection_config.collection_counter.to_le_bytes().as_ref(),
-            (0 as u64).to_le_bytes().as_ref()
+            params.collection_id.to_le_bytes().as_ref(),
+            collection_config.mint_count.to_le_bytes().as_ref()
         ],
         bump
     )]
     pub mint: UncheckedAccount<'info>,
-
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
@@ -33,24 +32,34 @@ pub struct TokenMint<'info> {
     )]
     pub token_account: UncheckedAccount<'info>,
 
+    #[account()]
     /// CHECK gives the option to set the permanent delegate to any keypair or PDA
     pub permanent_delegate: UncheckedAccount<'info>, // No need to sign, simply assigning
 
     pub update_authority: Signer<'info>,
 
     #[account(mut)]
-    pub global_collection_config: Account<'info, GlobalCollectionConfig>,
-
-    //
-    #[account(mut)]
     pub payer: Signer<'info>, // Payer for all the stuff
+
+    #[account(
+        mut,
+        has_one = authority,
+        seeds = [
+            SEED_COLLECTION_CONFIG,
+            &params.collection_id.to_le_bytes()
+        ],
+        bump
+    )]
+    pub collection_config: Account<'info, CollectionConfig>,
+
+    /// This is the admin account assigned when the collection is created.
+    pub authority: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
 }
-
 
 impl TokenMint<'_> {
 
@@ -70,7 +79,10 @@ impl TokenMint<'_> {
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
 
-        converted_metadata.push((COLLECTION_ID_FIELD.to_string(), ctx.accounts.global_collection_config.collection_counter.to_string()));
+        // Increment the mint count to create a new mint ID
+        converted_metadata.push((COLLECTION_ID_FIELD.to_string(), params.collection_id.to_string()));
+        converted_metadata.push((MINT_COUNT_FIELD.to_string(), ctx.accounts.collection_config.mint_count.to_string()));
+
 
         let tm = TokenMetadata {
             update_authority,
@@ -92,10 +104,9 @@ impl TokenMint<'_> {
                 ExtensionType::MetadataPointer,
             ],
             tm,
-            ctx.accounts.global_collection_config.collection_counter,
-            0,
+            params.collection_id,
+            ctx.accounts.collection_config.mint_count,
         )?;
-        ctx.accounts.global_collection_config.collection_counter += 1;
 
         // Add ClosingAuth Extension
         add_closing_authority(
@@ -125,21 +136,19 @@ impl TokenMint<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.rent.to_account_info(),
             &ctx.accounts.token22_program.key(),
-            // TODO incorrect mint auth
-            &ctx.accounts.payer.key(),
-            // TODO incorrect freeze auth
-            &ctx.accounts.payer.key(),
+            &ctx.accounts.update_authority.key(),
+            &ctx.accounts.update_authority.key(),
         )?;
 
         // Initialize token metadata
         initialize_token_metadata(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO update auth
+            // Mint auth
             &ctx.accounts.update_authority.to_account_info(),
             &ctx.accounts.mint.to_account_info(),
-            // TODO: mint auth
-            &ctx.accounts.payer,
+            // Freeze auth
+            &ctx.accounts.update_authority.to_account_info(),
             params.name.clone(),
             params.symbol.clone(),
             params.uri.clone(),
@@ -180,7 +189,7 @@ impl TokenMint<'_> {
                 MintTo {
                     mint: ctx.accounts.mint.to_account_info().clone(),
                     to: ctx.accounts.token_account.to_account_info().clone(),
-                    authority: ctx.accounts.payer.to_account_info(),
+                    authority: ctx.accounts.update_authority.to_account_info(),
                 }
             ),
             1
@@ -194,7 +203,7 @@ impl TokenMint<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority:  ctx.accounts.payer.to_account_info().clone(),
+                    current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
@@ -208,7 +217,7 @@ impl TokenMint<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority: ctx.accounts.payer.to_account_info().clone(),
+                    current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
@@ -216,6 +225,8 @@ impl TokenMint<'_> {
             anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::MintTokens,
             None, // Set mint authority to be None
         )?;
+
+        ctx.accounts.collection_config.mint_count += 1;
 
         Ok(())
     }

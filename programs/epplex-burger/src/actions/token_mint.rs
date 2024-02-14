@@ -5,8 +5,8 @@ use epplex_core::state::SEED_COLLECTION_CONFIG;
 use crate::*;
 
 #[derive(Accounts)]
-#[instruction(params: CollectionMintParams)]
-pub struct CollectionMint<'info> {
+#[instruction(params: TokenMintParams)]
+pub struct TokenMint<'info> {
     #[account(mut)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
@@ -58,7 +58,7 @@ pub struct CollectionMint<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct CollectionMintParams {
+pub struct TokenMintParams {
     pub expiry_date: String,
     pub name: String,
     pub symbol: String,
@@ -66,8 +66,8 @@ pub struct CollectionMintParams {
     pub collection_counter: u64,
 }
 
-impl CollectionMint<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, params: &CollectionMintParams) -> Result<()> {
+impl TokenMint<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, params: &TokenMintParams) -> Result<()> {
         let expiry_date =  params.expiry_date.parse::<i64>().unwrap();
         let now = Clock::get().unwrap().unix_timestamp;
         if !(now < expiry_date) {
@@ -79,7 +79,7 @@ impl CollectionMint<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: CollectionMintParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: TokenMintParams) -> Result<()> {
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(
@@ -97,10 +97,10 @@ impl CollectionMint<'_> {
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
         // CPI into token_mint
-        epplex_core::cpi::collection_mint(
+        epplex_core::cpi::token_mint(
             CpiContext::new_with_signer(
                 ctx.accounts.epplex_core.to_account_info(),
-                epplex_core::cpi::accounts::CollectionMint {
+                epplex_core::cpi::accounts::TokenMint {
                     mint: ctx.accounts.mint.to_account_info(),
                     token_account: ctx.accounts.token_account.to_account_info(),
                     permanent_delegate: ctx.accounts.permanent_delegate.to_account_info(),
@@ -115,7 +115,7 @@ impl CollectionMint<'_> {
                 },
                 &[&seeds[..]]
             ),
-            epplex_core::mint::TokenCollectionCreateParams {
+            epplex_core::mint::TokenCreateParams {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,

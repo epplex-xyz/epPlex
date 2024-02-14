@@ -19,20 +19,16 @@ use anchor_spl::{
 
 #[program]
 pub mod epplex_core {
-    use crate::collection_mint::CollectionMint;
+    use crate::token_mint::TokenMint;
     use super::*;
 
     /*
      * Does the mint account creation and mints it
      */
+
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_mint(ctx: Context<TokenMint>, params: TokenCreateParams) -> Result<()> {
         TokenMint::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCollectionCreateParams) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
     }
     // #[access_control(ctx.accounts.validate(&ctx, &params))]
     // pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
