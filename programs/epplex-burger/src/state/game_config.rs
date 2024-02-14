@@ -4,9 +4,9 @@ use crate::*;
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
 /// Represents each state in the lifecycle of a lotto in sequential order.
-#[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum GamePhase {
-    ///
+    #[default]
     None,
     /// Paradiso
     Announcement,
@@ -16,10 +16,20 @@ pub enum GamePhase {
     Elimination,
 }
 
-impl Default for GamePhase {
-    fn default() -> GamePhase {
-        GamePhase::None
-    }
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
+pub enum VoteType {
+    #[default]
+    VoteMany,
+    VoteOnce {
+        address: Pubkey, // ! record the public key that votes so as to disallow it in the future
+    },
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone,)]
+pub enum VoteOption {
+    YES,
+    NO,
+    MAYBE,
 }
 
 #[account]
