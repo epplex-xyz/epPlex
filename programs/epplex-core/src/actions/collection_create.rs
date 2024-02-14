@@ -121,10 +121,26 @@ impl CollectionCreate<'_> {
             ctx.accounts.mint.to_account_info(),
             ctx.accounts.rent.to_account_info(),
             &[
+                ExtensionType::MintCloseAuthority,
+                ExtensionType::PermanentDelegate,
                 ExtensionType::MetadataPointer,
             ],
             tm,
             global_config.collection_counter)?;
+
+
+        add_closing_authority(
+            &ctx.accounts.mint,
+            ctx.accounts.token22_program.key(),
+            ctx.accounts.collection_config.key(),
+        )?;
+
+        // Add PermanentDelegate Extension
+        add_permanent_delegate(
+            &ctx.accounts.mint,
+            ctx.accounts.token22_program.key(),
+            ctx.accounts.collection_config.key(),
+        )?;
 
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
