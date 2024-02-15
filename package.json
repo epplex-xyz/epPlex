@@ -2,9 +2,7 @@
     "scripts": {
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-        "setup-rpc-win": "set RPC=http://127.0.0.1:8899",
-        "setup-rpc-mac": "export RPC=http://127.0.0.1:8899 && echo $RPC",
-        "setup-test": "cross-env HELLO_RPC=http://127.0.0.1:8899",
+        "start": "sh start.sh",
 
         "validator": "solana-test-validator -u localhost",
         "reset-validator": "rm -rf test-ledger",
@@ -27,6 +25,7 @@
 
         "copy-burger-sdk": "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
         "copy-core-sdk":   "cp target/idl/epplex_core.json      ../sdk/src/idl/epplex_core.json         && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts",
+        "copy-admin-sdk":  "cp target/deploy/epplex_PAYER_ADMIN.json      ../sdk/.local_keys/epplex_PAYER_ADMIN.json",
         "copy-to-sdk": "yarn copy-burger-sdk && yarn copy-core-sdk",
 
         "close-buffers-mainnet": "solana program close --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
