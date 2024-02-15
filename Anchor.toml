@@ -20,5 +20,4 @@ url = "https://api.apr.dev"
 [provider]
 #cluster = "https://api.devnet.solana.com"
 cluster = "http://127.0.0.1:8899"
-wallet = "target/deploy/epplex_PAYER_ADMIN.json"
-
+wallet = "target/deploy/epplex_deploy_auth.json"
