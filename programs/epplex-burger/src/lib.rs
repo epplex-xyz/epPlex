@@ -31,14 +31,10 @@ use epplex_shared;
 pub mod epplex_burger {
     use super::*;
     
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn whitelist_mint(ctx: Context<WhitelistMint>, params: WhitelistMintParams) -> Result<()> {
-        WhitelistMint::actuate(ctx, params)
-    }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(ctx: Context<CollectionMint>, params: CollectionMintParams) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
+    pub fn token_mint(ctx: Context<TokenMint>, params: TokenMintParams) -> Result<()> {
+        TokenMint::actuate(ctx, params)
     }
 
     /*

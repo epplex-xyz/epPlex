@@ -30,11 +30,13 @@ impl CollectionConfig {
         + PUBLIC_KEY_LENGTH
         + BITS_64
         + BITS_64
-        + BITS_64
         + BITS_32
+        + BITS_64
         + PUBLIC_KEY_LENGTH
+        + BITS_32
         + (VEC_PREFIX + BITS_8 * COLLECTION_NAME_LENGTH)
-        + (VEC_PREFIX + BITS_8 * COLLECTION_SYMBOL_LENGTH);
+        + (VEC_PREFIX + BITS_8 * COLLECTION_SYMBOL_LENGTH)
+        + BITS_64;
 
     // TODO need to account for dynamic length in collection name
     pub fn new(bump: u8, params: CollectionCreateParams) -> Self {
