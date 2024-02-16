@@ -23,6 +23,11 @@
         "deploy-core": "anchor deploy -p epplex_core --provider.cluster localnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-all": "anchor build && yarn deploy-burger && yarn deploy-core",
 
+        "deploy-burger-devnet": "anchor deploy -p epplex_burger --provider.cluster devnet --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-core-devnet": "anchor deploy -p epplex_core --provider.cluster devnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-all-devnet": "anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet",
+        "solana-balance-devnet": "solana balance -u devnet -k target/deploy/epplex_deploy_auth.json",
+
         "copy-burger-sdk": "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
         "copy-core-sdk":   "cp target/idl/epplex_core.json      ../sdk/src/idl/epplex_core.json         && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts",
         "copy-admin-sdk":  "cp target/deploy/epplex_PAYER_ADMIN.json      ../sdk/.local_keys/epplex_PAYER_ADMIN.json",
@@ -31,9 +36,10 @@
         "close-buffers-mainnet": "solana program close --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
         "show-buffers-mainnet": "solana program show --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
         "show-programs-mainnet": "solana program show --programs -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
-        "solana-balance": "solana balance -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+        "solana-balance-mainnet": "solana balance -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
+        "set-program-auth": "solana program set-upgrade-authority  <PROGRAM_ID> --upgrade-authority <CURRENT_AUTH_KEYPAIR> --new-upgrade-authority target/deploy/epplex_deploy_auth.json -u devnet",
 
-        "transfer-sol": "solana transfer --from <KEYPAIR_PATH> <DESTINATION_PUBKEY> AMOUNT --fee-payer <KEYPAIR_PATH> --allow-unfunded-recipient",
+        "transfer-sol": "solana transfer --from /users/mac/.config/solana/test.json epAuYW4ybHrx7Rx7K3tYg8U3U426jCasVu41wFs6YVT 40 --fee-payer /users/mac/.config/solana/test.json --allow-unfunded-recipient -u devnet",
 
         "test": "anchor test --provider.cluster localnet --skip-deploy --skip-build --skip-local-validator --provider.wallet target/deploy/epplex_deploy_auth.json"
     },

@@ -4,10 +4,15 @@
 seeds = false
 skip-lint = false
 
-#[programs.mainnet]
-#epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
-#epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
-#epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
+[programs.mainnet]
+epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
+epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
+
+[programs.devnet]
+epplex_burger = "epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n"
+epplex_core = "epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg"
+epplex_shared = "epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ"
 
 [programs.localnet]
 epplex_burger = "LepByYNXCXLAQicahdRvvxBD45SMNHJgoNsAUDLyG1N"
@@ -18,6 +23,5 @@ epplex_shared = "LepS8gH3rVDRdAy5X9xGE8VcnGnFKmkpfm21Paiqq3i"
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "https://api.devnet.solana.com"
 cluster = "http://127.0.0.1:8899"
 wallet = "target/deploy/epplex_deploy_auth.json"
