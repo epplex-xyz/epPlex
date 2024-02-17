@@ -44,6 +44,9 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
+        // when to reset their states
+
+
         // TODO need to validate on game state
         let game_state = fetch_metadata_field(
             GAME_STATE,

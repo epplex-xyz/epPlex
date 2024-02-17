@@ -8,6 +8,7 @@ pub struct GameTransition<'info> {
     pub payer: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [SEED_GAME_CONFIG],
         bump = game_config.bump,
     )]
