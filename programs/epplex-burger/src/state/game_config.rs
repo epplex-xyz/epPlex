@@ -20,16 +20,7 @@ pub enum GamePhase {
 pub enum VoteType {
     #[default]
     VoteMany,
-    VoteOnce {
-        address: Pubkey, // ! record the public key that votes so as to disallow it in the future
-    },
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone,)]
-pub enum VoteOption {
-    YES,
-    NO,
-    MAYBE,
+    VoteOnce,
 }
 
 #[account]
@@ -47,17 +38,18 @@ pub struct GameConfig {
     pub phase_end: i64,
     /// Game master
     pub game_master: Pubkey,
+    /// Game vote type
+    pub vote_type: VoteType,
 }
 
 impl GameConfig {
-    pub const LEN: usize =
-        epplex_shared::DISCRIMINATOR_LENGTH +
-        epplex_shared::BITS_8 +
-        epplex_shared::BITS_8 +
-        epplex_shared::BITS_8 +
-        epplex_shared::BITS_64 +
-        epplex_shared::BITS_64 +
-        epplex_shared::PUBLIC_KEY_LENGTH;
+    pub const LEN: usize = epplex_shared::DISCRIMINATOR_LENGTH
+        + epplex_shared::BITS_8
+        + epplex_shared::BITS_8
+        + epplex_shared::BITS_8
+        + epplex_shared::BITS_64
+        + epplex_shared::BITS_64
+        + epplex_shared::PUBLIC_KEY_LENGTH;
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
         Self {
@@ -66,22 +58,17 @@ impl GameConfig {
             game_phase: params.game_phase,
             phase_start: params.end_timestamp_offset,
             phase_end: params.end_timestamp_offset,
+            vote_type: params.vote_type,
             game_master,
         }
     }
 
     /// Check that a ticket is claimable
     pub fn check_voting(&self) -> Result<()> {
-        // if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
-        //     // TOOD return error
-        // }
-        Ok(())
-    }
+        if !(self.game_phase == GamePhase::None) && self.vote_type == VoteType::VoteOnce {
+            return err!(BurgerError::InvalidVoteMany);
 
-    pub fn check_phase_ended(&self) -> Result<()> {
-        // if !(Clock::get().unwrap().unix_timestamp > ctx.accounts.game_config.game_phase) {
-        //     return err!(LottoError::LottoTimedOut);
-        // }
+        }
 
         Ok(())
     }

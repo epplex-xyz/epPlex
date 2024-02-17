@@ -3,7 +3,13 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: GameCreateParams)]
 pub struct GameCreate<'info> {
-    #[account(init, seeds = [SEED_GAME_CONFIG], bump, payer = payer, space = GameConfig::LEN)]
+    #[account(
+        init, 
+        seeds = [SEED_GAME_CONFIG],
+        bump, 
+        payer = payer,
+        space = GameConfig::LEN,
+    )]
     pub game_config: Account<'info, GameConfig>,
 
     #[account(
@@ -22,6 +28,7 @@ pub struct GameCreateParams {
     pub game_phase: GamePhase,
     pub phase_start: i64,
     pub end_timestamp_offset: i64,
+    pub vote_type: VoteType,
 }
 
 impl GameCreate<'_> {
@@ -37,7 +44,11 @@ impl GameCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: GameCreateParams) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
-        **game_config = GameConfig::new(ctx.bumps.game_config, params, ctx.accounts.payer.key());
+        **game_config = GameConfig::new(
+            ctx.bumps.game_config,
+            params,
+            ctx.accounts.payer.key(),
+        );
 
         Ok(())
     }

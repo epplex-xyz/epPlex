@@ -41,4 +41,6 @@ pub enum BurgerError {
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
     InvalidPhaseEndTS,
+    #[msg("Only VoteOnce is allowed")]
+    InvalidVoteMany
 }

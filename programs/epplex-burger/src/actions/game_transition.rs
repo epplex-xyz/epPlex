@@ -1,13 +1,16 @@
 use anchor_lang::prelude::*;
 
-use crate::{ GameConfig, GamePhase };
+use crate::{GameConfig, GamePhase, SEED_GAME_CONFIG};
 
 #[derive(Accounts)]
 pub struct GameTransition<'info> {
     #[account(address = game_config.game_master)]
     pub payer: Signer<'info>,
 
-    // we expect this acc to already be initialized
+    #[account(
+        seeds = [SEED_GAME_CONFIG],
+        bump = game_config.bump,
+    )]
     pub game_config: Account<'info, GameConfig>,
 
     pub system_program: Program<'info, System>,
