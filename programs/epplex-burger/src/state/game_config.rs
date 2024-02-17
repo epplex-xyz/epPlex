@@ -1,5 +1,3 @@
-use epplex_shared::{UTF_SIZE, VEC_PREFIX};
-
 use crate::*;
 
 #[constant]
@@ -23,8 +21,8 @@ pub enum GamePhase {
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum VoteType {
     #[default]
-    VoteMany,
     VoteOnce,
+    VoteMany
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -55,8 +53,10 @@ pub struct GameConfig {
     pub vote_type: VoteType,
     /// Game input type
     pub input_type: InputType,
-    /// Game question
+    /// Game question of 150 characters
     pub game_prompt: String,
+    /// Is answer encrypted
+    pub is_encrypted: bool,
     /// Amount of burgers who perished
     pub burn_amount: u16,
 }
@@ -71,7 +71,9 @@ impl GameConfig {
         + epplex_shared::PUBLIC_KEY_LENGTH
         + epplex_shared::BITS_8
         + epplex_shared::BITS_8
-        + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE);
+        + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE)
+        + epplex_shared::BITS_8
+        + epplex_shared::BITS_16;
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
         Self {
@@ -84,7 +86,8 @@ impl GameConfig {
             input_type: params.input_type,
             game_prompt: params.game_prompt,
             game_master,
-            burn_amount: 0
+            is_encrypted: params.is_encrypted,
+            burn_amount: 0,
         }
     }
 
