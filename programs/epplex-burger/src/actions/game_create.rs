@@ -4,11 +4,9 @@ use crate::*;
 #[instruction(params: GameCreateParams)]
 pub struct GameCreate<'info> {
     #[account(
-        init,
-        seeds = [
-            SEED_GAME_CONFIG
-        ],
-        bump,
+        init, 
+        seeds = [SEED_GAME_CONFIG],
+        bump, 
         payer = payer,
         space = GameConfig::LEN,
     )]
@@ -29,16 +27,17 @@ pub struct GameCreateParams {
     pub game_state: u8,
     pub game_phase: GamePhase,
     pub phase_start: i64,
-    pub end_timestamp_offset: i64
+    pub end_timestamp_offset: i64,
+    pub vote_type: VoteType,
 }
 
 impl GameCreate<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &GameCreateParams,
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &GameCreateParams) -> Result<()> {
         // check that phases are in between each other
+
+        self.game_config.check_phase_end_ts()?;
+
+        self.game_config.check_duration()?;
 
         Ok(())
     }

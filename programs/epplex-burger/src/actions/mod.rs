@@ -33,3 +33,9 @@ pub use program_delegate_close::*;
 
 pub mod game_create;
 pub use game_create::*;
+
+pub mod game_transition;
+pub use game_transition::*;
+
+pub mod game_end;
+pub use game_end::*;
