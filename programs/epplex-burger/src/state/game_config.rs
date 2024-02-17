@@ -42,7 +42,7 @@ pub struct GameConfig {
     /// The bump, used for PDA validation.
     pub bump: u8,
     /// The game number
-    pub game_state: u8,
+    pub game_round: u8,
     /// The game phase
     pub game_phase: GamePhase,
     /// Phase start
@@ -57,6 +57,8 @@ pub struct GameConfig {
     pub input_type: InputType,
     /// Game question
     pub game_prompt: String,
+    /// Amount of burgers who perished
+    pub burn_amount: u16,
 }
 
 impl GameConfig {
@@ -74,7 +76,7 @@ impl GameConfig {
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
         Self {
             bump,
-            game_state: params.game_state,
+            game_round: params.game_round,
             game_phase: params.game_phase,
             phase_start: params.end_timestamp_offset,
             phase_end: params.end_timestamp_offset,
@@ -82,6 +84,7 @@ impl GameConfig {
             input_type: params.input_type,
             game_prompt: params.game_prompt,
             game_master,
+            burn_amount: 0
         }
     }
 
@@ -123,4 +126,14 @@ impl GameConfig {
 
         Ok(())
     }
+
+    /// Bump burn amount
+    pub fn bump_burn_amount(&mut self) -> Result<()> {
+        self.burn_amount = self.burn_amount
+            .checked_add(1)
+            .ok_or(BurgerError::InvalidCalculation)?;
+
+        Ok(())
+    }
+
 }

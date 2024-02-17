@@ -32,6 +32,13 @@ pub struct TokenBurn<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     #[account(
+        mut,
+        seeds = [SEED_GAME_CONFIG],
+        bump = game_config.bump,
+    )]
+    pub game_config: Account<'info, GameConfig>,
+
+    #[account(
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -91,6 +98,8 @@ impl TokenBurn<'_> {
 
         // Would be good to close their token account as well
         // Although not possible since we don't own the associated token account
+
+        ctx.accounts.game_config.bump_burn_amount()?;
 
         Ok(())
     }
