@@ -4,9 +4,9 @@ use crate::*;
 #[instruction(params: GameCreateParams)]
 pub struct GameCreate<'info> {
     #[account(
-        init, 
+        init,
         seeds = [SEED_GAME_CONFIG],
-        bump, 
+        bump,
         payer = payer,
         space = GameConfig::LEN,
     )]
@@ -29,6 +29,8 @@ pub struct GameCreateParams {
     pub phase_start: i64,
     pub end_timestamp_offset: i64,
     pub vote_type: VoteType,
+    pub input_type: InputType,
+    pub game_prompt: String
 }
 
 impl GameCreate<'_> {

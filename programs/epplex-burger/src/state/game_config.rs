@@ -1,7 +1,11 @@
+use epplex_shared::{UTF_SIZE, VEC_PREFIX};
+
 use crate::*;
 
 #[constant]
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
+
+pub const GAME_QUESTION_LENGTH: usize = 150;
 
 /// Represents each state in the lifecycle of a lotto in sequential order.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -23,6 +27,15 @@ pub enum VoteType {
     VoteOnce,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
+pub enum InputType {
+    #[default]
+    Choice,
+    Text,
+    Number
+}
+
+
 #[account]
 #[derive(Default, Debug)]
 pub struct GameConfig {
@@ -40,6 +53,10 @@ pub struct GameConfig {
     pub game_master: Pubkey,
     /// Game vote type
     pub vote_type: VoteType,
+    /// Game input type
+    pub input_type: InputType,
+    /// Game question
+    pub game_prompt: String,
 }
 
 impl GameConfig {
@@ -49,7 +66,10 @@ impl GameConfig {
         + epplex_shared::BITS_8
         + epplex_shared::BITS_64
         + epplex_shared::BITS_64
-        + epplex_shared::PUBLIC_KEY_LENGTH;
+        + epplex_shared::PUBLIC_KEY_LENGTH
+        + epplex_shared::BITS_8
+        + epplex_shared::BITS_8
+        + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE);
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
         Self {
@@ -59,6 +79,8 @@ impl GameConfig {
             phase_start: params.end_timestamp_offset,
             phase_end: params.end_timestamp_offset,
             vote_type: params.vote_type,
+            input_type: params.input_type,
+            game_prompt: params.game_prompt,
             game_master,
         }
     }
