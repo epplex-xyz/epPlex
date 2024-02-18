@@ -96,9 +96,22 @@ impl TokenBurn<'_> {
             &ctx.accounts.permanent_delegate.to_account_info(),
         )?;
 
-        // Would be good to close their token account as well
-        // Although not possible since we don't own the associated token account
+        // Can only close the ATA if we are the owners
+        let ata_owner = ctx.accounts.token_account.to_account_info().owner;
+        if ata_owner == ctx.accounts.payer.owner {
+            anchor_spl::token_interface::close_account(
+                CpiContext::new(
+                    ctx.accounts.token22_program.to_account_info(),
+                    anchor_spl::token_interface::CloseAccount {
+                        account: ctx.accounts.token_account.to_account_info().clone(),
+                        destination: ctx.accounts.payer.to_account_info().clone(),
+                        authority: ctx.accounts.payer.to_account_info().clone(),
+                    },
+                ),
+            )?;
+        }
 
+        // Another one bites the dust
         ctx.accounts.game_config.bump_burn_amount()?;
 
         Ok(())

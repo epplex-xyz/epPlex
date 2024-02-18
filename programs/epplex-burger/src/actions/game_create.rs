@@ -30,7 +30,8 @@ pub struct GameCreateParams {
     pub end_timestamp_offset: i64,
     pub vote_type: VoteType,
     pub input_type: InputType,
-    pub game_prompt: String
+    pub game_prompt: String,
+    pub is_encrypted: bool
 }
 
 impl GameCreate<'_> {
