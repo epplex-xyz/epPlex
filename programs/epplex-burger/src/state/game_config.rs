@@ -136,25 +136,54 @@ impl GameConfig {
 
     pub fn check_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+        let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        let expiry_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+        if !game_state.is_empty() {
+            if game_state != GAME_STATE_PLACEHOLDER {
+                return err!(BurgerError::ExpectedEmptyField);
+            }
+        }
 
-        if !game_state.is_empty() && !expiry_ts.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
+        if !vote_ts.is_empty() {
+            if vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+                return err!(BurgerError::ExpectedEmptyField);
+            }
         }
 
         Ok(())
     }
 
+    /// check that the metadata fields are not empty or filled with initial default values
     pub fn check_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-        if game_state.is_empty() {
-            return err!(BurgerError::EmptyGameStatus);
+        if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
+            // default game state means user hasn't participated in the game
+            return err!(BurgerError::InvalidGameStatus);
         }
 
-        let expiry_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
         if expiry_ts.is_empty() {
-            return err!(BurgerError::EmptyGameStatus);
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+        if voting_ts.is_empty() || voting_ts == VOTING_TIMESTAMP_PLACEHOLDER {
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
+        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
+        let now = Clock::get().unwrap().unix_timestamp;
+        
+        if expiry_ts.is_empty() {
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        if now > expiry_ts.parse::<i64>().unwrap_or_default() {
+            return err!(BurgerError::InvalidExpiryTS);
         }
 
         Ok(())

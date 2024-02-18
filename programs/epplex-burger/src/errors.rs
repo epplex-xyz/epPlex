@@ -44,9 +44,9 @@ pub enum BurgerError {
     #[msg("Only VoteOnce is allowed")]
     InvalidVoteMany,
     #[msg("Empty expiry timestamp on metadata account")]
-    EmptyExpiryTS,
+    InvalidExpiryTS,
     #[msg("Empty game status field on metadata account")]
-    EmptyGameStatus,
+    InvalidGameStatus,
     #[msg("Expected additional metadata field to be empty")]
     ExpectedEmptyField,
 }

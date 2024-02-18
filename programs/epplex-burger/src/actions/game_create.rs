@@ -51,9 +51,9 @@ impl GameCreate<'_> {
 
         self.game_config.check_duration()?;
 
-        // ! make sure that the metadata fields are empty
-        self.game_config
-            .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
+        // // ! make sure that the metadata fields are empty
+        // self.game_config
+        //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }

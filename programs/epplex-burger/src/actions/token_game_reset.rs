@@ -28,6 +28,13 @@ pub struct TokenGameReset<'info> {
     pub payer: Signer<'info>,
 
     #[account(
+        mut,
+        seeds = [SEED_GAME_CONFIG],
+        bump = game_config.bump,
+    )]
+    pub game_config: Account<'info, GameConfig>,
+
+    #[account(
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -44,31 +51,35 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
-        // when to reset their states
+        self.game_config
+            .check_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
 
-
-        // TODO need to validate on game state
-        let game_state = fetch_metadata_field(
-            GAME_STATE,
-            &ctx.accounts.mint.to_account_info()
-        )?;
-
-        if !game_state.is_empty() {
-            return err!(BurgerError::GameStateMustNotBeEmpty);
-        }
+        // check expiry ts
+        self.game_config
+            .check_mint_expiry_ts(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameResetParams) -> Result<()> {
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
+
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
-            "".to_string()
+            "".to_string(),
+        )?;
+
+        epplex_shared::update_token_metadata_signed(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
+            &[&seeds[..]],
+            spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
+            "".to_string(),
         )?;
 
         Ok(())
