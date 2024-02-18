@@ -46,7 +46,9 @@ pub struct CollectionMint<'info> {
 
     #[account(
         mut,
-        address = ADMIN_PUBKEY
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
     )]
     pub payer: Signer<'info>,
 

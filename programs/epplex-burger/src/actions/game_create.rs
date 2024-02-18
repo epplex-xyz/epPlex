@@ -23,7 +23,9 @@ pub struct GameCreate<'info> {
     #[account(
         mut,
         signer,
-        address = ADMIN_PUBKEY
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
     )]
     pub payer: SystemAccount<'info>,
 

@@ -23,7 +23,9 @@ pub struct TokenGameReset<'info> {
     // prolly need a game state = that contains game-master as well
     // Only game master can handle this
     #[account(
-        address = ADMIN_PUBKEY
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
     )]
     pub payer: Signer<'info>,
 
