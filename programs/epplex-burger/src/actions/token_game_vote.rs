@@ -79,6 +79,8 @@ impl TokenGameVote<'_> {
         //     return err!(BurgerError::GameStateMustBeEmpty);
         // }
 
+
+
         Ok(())
     }
 
@@ -104,6 +106,8 @@ impl TokenGameVote<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string()
         )?;
+
+        // TODO we should only increase the submission amount if the NFT metadata is not in a default state
 
         Ok(())
     }
