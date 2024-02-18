@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{GameConfig, GamePhase, SEED_GAME_CONFIG};
+use crate::{GameConfig, GameStatus, SEED_GAME_CONFIG};
 
 #[derive(Accounts)]
 pub struct GameEnd<'info> {
@@ -25,7 +25,7 @@ impl GameEnd<'_> {
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
 
-        game_config.game_phase = GamePhase::Elimination;
+        game_config.game_status = GameStatus::Finished;
 
         Ok(())
     }

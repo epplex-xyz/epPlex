@@ -25,7 +25,7 @@ pub struct GameCreate<'info> {
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameCreateParams {
     pub game_round: u8,
-    pub game_phase: GamePhase,
+    pub game_status: GameStatus,
     pub phase_start: i64,
     pub end_timestamp_offset: i64,
     pub vote_type: VoteType,

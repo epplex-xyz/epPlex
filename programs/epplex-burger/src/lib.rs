@@ -15,14 +15,14 @@ pub use utils::*;
 
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    token::{ Mint, TokenAccount, Token },
+    token::{Mint, Token, TokenAccount},
     // ID as TOKEN_2022_PROGRAM_ID alternatively
-    token_2022::{ self },
-    token_interface::{ Mint as MintInterface, TokenAccount as TokenAccountInterface },
+    token_2022::{self},
+    token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
-use spl_token_metadata_interface::state::TokenMetadata;
-use epplex_shared::Token2022;
 use epplex_shared;
+use epplex_shared::Token2022;
+use spl_token_metadata_interface::state::TokenMetadata;
 
 #[program]
 pub mod epplex_burger {
@@ -36,7 +36,7 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn collection_mint(
         ctx: Context<CollectionMint>,
-        params: CollectionMintParams
+        params: CollectionMintParams,
     ) -> Result<()> {
         CollectionMint::actuate(ctx, params)
     }
@@ -77,7 +77,7 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_game_reset(
         ctx: Context<TokenGameReset>,
-        params: TokenGameResetParams
+        params: TokenGameResetParams,
     ) -> Result<()> {
         TokenGameReset::actuate(ctx, params)
     }
@@ -91,11 +91,6 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn game_transition(ctx: Context<GameTransition>) -> Result<()> {
-        game_transition(ctx)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx))]
     pub fn game_end(ctx: Context<GameEnd>) -> Result<()> {
         game_end(ctx)
     }
@@ -106,7 +101,7 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_create(
         ctx: Context<ProgramDelegateCreate>,
-        params: ProgramDelegateCreateParams
+        params: ProgramDelegateCreateParams,
     ) -> Result<()> {
         ProgramDelegateCreate::actuate(ctx, &params)
     }
@@ -114,7 +109,7 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn program_delegate_close(
         ctx: Context<ProgramDelegateClose>,
-        params: ProgramDelegateCloseParams
+        params: ProgramDelegateCloseParams,
     ) -> Result<()> {
         ProgramDelegateClose::actuate(ctx, &params)
     }

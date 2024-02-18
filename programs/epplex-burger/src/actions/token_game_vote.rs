@@ -1,6 +1,5 @@
 use crate::*;
 
-
 #[derive(Accounts)]
 #[instruction(params: TokenGameVoteParams)]
 pub struct TokenGameVote<'info> {
@@ -28,14 +27,11 @@ pub struct TokenGameVote<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
-
-    // #[account(
-    //     seeds = [
-    //         SEED_GAME_CONFIG
-    //     ],
-    //     bump = game_config.bump
-    // )]
-    // pub game_config: Account<'info, GameConfig>,
+    #[account(
+        seeds = [SEED_GAME_CONFIG],
+        bump = game_config.bump
+    )]
+    pub game_config: Account<'info, GameConfig>,
 
     #[account()]
     pub payer: Signer<'info>,
@@ -53,7 +49,7 @@ pub struct TokenGameVote<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameVoteParams {
-    pub message: String
+    pub message: String,
 }
 
 impl TokenGameVote<'_> {
@@ -91,7 +87,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
-            params.message
+            params.message,
         )?;
 
         // Record voting timestamp
@@ -102,7 +98,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
-            now.to_string()
+            now.to_string(),
         )?;
 
         Ok(())

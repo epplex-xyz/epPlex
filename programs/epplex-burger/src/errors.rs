@@ -35,12 +35,12 @@ pub enum BurgerError {
     FieldDoesNotExist,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Already in the Last game phase")]
-    GamePhaseLastStage,
+    #[msg("Tring to access a finished game")]
+    GameEnded,
     #[msg("Phase start greater than phase end")]
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
     InvalidPhaseEndTS,
     #[msg("Only VoteOnce is allowed")]
-    InvalidVoteMany
+    InvalidVoteMany,
 }
