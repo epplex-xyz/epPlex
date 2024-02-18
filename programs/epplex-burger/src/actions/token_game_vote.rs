@@ -1,6 +1,5 @@
 use crate::*;
 
-
 #[derive(Accounts)]
 #[instruction(params: TokenGameVoteParams)]
 pub struct TokenGameVote<'info> {
@@ -28,14 +27,11 @@ pub struct TokenGameVote<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
-
-    // #[account(
-    //     seeds = [
-    //         SEED_GAME_CONFIG
-    //     ],
-    //     bump = game_config.bump
-    // )]
-    // pub game_config: Account<'info, GameConfig>,
+    #[account(
+        seeds = [SEED_GAME_CONFIG],
+        bump = game_config.bump
+    )]
+    pub game_config: Account<'info, GameConfig>,
 
     #[account()]
     pub payer: Signer<'info>,
@@ -53,31 +49,18 @@ pub struct TokenGameVote<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameVoteParams {
-    pub message: String
+    pub message: String,
 }
 
 impl TokenGameVote<'_> {
-    pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
-        // Do we also need number of votes?
+    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+        // ! check that the game is in progress
+        self.game_config.check_game_in_progress()?;
 
-        // if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
-        //     // TOOD return error
-        // }
-        //
-        //
-        // if params.message.is_empty() {
-        //     return err!(BurgerError::EmptyString);
-        // }
-        //
-        // // Game states: empty, voted
-        // let game_state = fetch_metadata_field(
-        //     GAME_STATE,
-        //     &ctx.accounts.mint.to_account_info()
-        // )?;
-        //
-        // if !game_state.is_empty() {
-        //     return err!(BurgerError::GameStateMustBeEmpty);
-        // }
+        // ! check that the metadata fields are empty
+        // ? what if the user can cast multiple votes
+        self.game_config
+            .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
 
 
@@ -93,7 +76,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
-            params.message
+            params.message,
         )?;
 
         // Record voting timestamp
@@ -104,7 +87,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
-            now.to_string()
+            now.to_string(),
         )?;
 
         // TODO we should only increase the submission amount if the NFT metadata is not in a default state

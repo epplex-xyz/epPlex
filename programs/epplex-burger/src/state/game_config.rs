@@ -5,24 +5,19 @@ pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
 pub const GAME_QUESTION_LENGTH: usize = 150;
 
-/// Represents each state in the lifecycle of a lotto in sequential order.
+/// Represents game activity.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
-pub enum GamePhase {
+pub enum GameStatus {
     #[default]
-    None,
-    /// Paradiso
-    Announcement,
-    /// Purgatorio
-    Voting,
-    /// Inferno
-    Elimination,
+    InProgress, // active
+    Finished, // inactive
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum VoteType {
     #[default]
     VoteOnce,
-    VoteMany
+    VoteMany,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -30,9 +25,8 @@ pub enum InputType {
     #[default]
     Choice,
     Text,
-    Number
+    Number,
 }
-
 
 #[account]
 #[derive(Default, Debug)]
@@ -41,8 +35,8 @@ pub struct GameConfig {
     pub bump: u8,
     /// The game number
     pub game_round: u8,
-    /// The game phase
-    pub game_phase: GamePhase,
+    /// The game status
+    pub game_status: GameStatus,
     /// Phase start
     pub phase_start: i64,
     /// Phase end
@@ -82,7 +76,7 @@ impl GameConfig {
         Self {
             bump,
             game_round: params.game_round,
-            game_phase: params.game_phase,
+            game_status: params.game_status,
             phase_start: params.end_timestamp_offset,
             phase_end: params.end_timestamp_offset,
             vote_type: params.vote_type,
@@ -97,10 +91,12 @@ impl GameConfig {
 
     /// Check that a ticket is claimable
     pub fn check_voting(&self) -> Result<()> {
-        if !(self.game_phase == GamePhase::None) && self.vote_type == VoteType::VoteOnce {
-            return err!(BurgerError::InvalidVoteMany);
-
+        // ? should we check this
+        if self.game_status == GameStatus::Finished {
+            return err!(BurgerError::GameFinished);
         }
+
+        //
 
         Ok(())
     }
@@ -125,10 +121,73 @@ impl GameConfig {
         Ok(())
     }
 
-    /// disallows transition in the last phase `ELIMINATION` of the game
-    pub fn check_game_ended(&self) -> Result<()> {
-        if self.game_phase.eq(&GamePhase::Elimination) {
-            return err!(BurgerError::GamePhaseLastStage);
+    // /// disallows transition in the last phase `ELIMINATION` of the game
+    // pub fn check_game_ended(&self) -> Result<()> {
+    //     if self.game_status.eq(&GameStatus::Finished) {
+    //         return err!(BurgerError::GameEnded);
+    //     }
+
+    //     Ok(())
+    // }
+
+    pub fn check_game_in_progress(&self) -> Result<()> {
+        if self.game_status == GameStatus::Finished {
+            return err!(BurgerError::GameFinished);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
+        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+        let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+
+        if !game_state.is_empty() {
+            if game_state != GAME_STATE_PLACEHOLDER {
+                return err!(BurgerError::ExpectedEmptyField);
+            }
+        }
+
+        if !vote_ts.is_empty() {
+            if vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+                return err!(BurgerError::ExpectedEmptyField);
+            }
+        }
+
+        Ok(())
+    }
+
+    /// check that the metadata fields are not empty or filled with initial default values
+    pub fn check_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
+        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+        if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
+            // default game state means user hasn't participated in the game
+            return err!(BurgerError::InvalidGameStatus);
+        }
+
+        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
+        if expiry_ts.is_empty() {
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+        if voting_ts.is_empty() || voting_ts == VOTING_TIMESTAMP_PLACEHOLDER {
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
+        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
+        let now = Clock::get().unwrap().unix_timestamp;
+        
+        if expiry_ts.is_empty() {
+            return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        if now > expiry_ts.parse::<i64>().unwrap_or_default() {
+            return err!(BurgerError::InvalidExpiryTS);
         }
 
         Ok(())
@@ -136,11 +195,11 @@ impl GameConfig {
 
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {
-        self.burn_amount = self.burn_amount
+        self.burn_amount = self
+            .burn_amount
             .checked_add(1)
             .ok_or(BurgerError::InvalidCalculation)?;
 
         Ok(())
     }
-
 }

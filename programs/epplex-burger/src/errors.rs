@@ -35,12 +35,18 @@ pub enum BurgerError {
     FieldDoesNotExist,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Already in the Last game phase")]
-    GamePhaseLastStage,
+    #[msg("Tring to access a finished game")]
+    GameFinished,
     #[msg("Phase start greater than phase end")]
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
     InvalidPhaseEndTS,
     #[msg("Only VoteOnce is allowed")]
-    InvalidVoteMany
+    InvalidVoteMany,
+    #[msg("Empty expiry timestamp on metadata account")]
+    InvalidExpiryTS,
+    #[msg("Empty game status field on metadata account")]
+    InvalidGameStatus,
+    #[msg("Expected additional metadata field to be empty")]
+    ExpectedEmptyField,
 }
