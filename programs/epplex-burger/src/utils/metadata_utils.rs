@@ -13,32 +13,6 @@ pub fn get_value_by_key<'a>(key: &'a str, list: &'a Vec<(String, String)>) -> Op
     }
 }
 
-// pub fn get_value_by_key(key: &str, list: &Vec<(String, String)>) -> Option<&String> {
-//     // Use iter() to create an iterator over the vector
-//     // Use find() to search for the key-value pair where the key matches
-//     let result = list.iter().find(|&(k, _)| k == key);
-//
-//     // If a matching key-value pair is found, return the associated value
-//     match result {
-//         Some((_, v)) => Some(v),
-//         None => None,
-//     }
-// }
-
-
-
-// fn get_value_by_key<'a>(key: &str, list: &'a Vec<(String, String)>) -> Option<&'a String> {
-//     let result = list.iter().find(|&&(ref k, _)| k == key);
-//
-//     match result {
-//         Some(&(_,  v)) => Some(v),
-//         None => None,
-//     }
-// }
-// fn get_value_by_key(key: &str, list: &Vec<(String, String)>) -> Option<&String> {
-//     list.iter().find(|&&(ref k, _)| k == key).map(|&(_, ref v)| v)
-// }
-
 // Fetch a particular value
 pub fn fetch_metadata_field(field: &str, mint_account: &AccountInfo) -> Result<String> {
     // let buffer = mint_account.to_account_info();
