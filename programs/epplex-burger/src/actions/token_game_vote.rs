@@ -53,27 +53,14 @@ pub struct TokenGameVoteParams {
 }
 
 impl TokenGameVote<'_> {
-    pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
-        // Do we also need number of votes?
+    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+        // ! check that the game is in progress
+        self.game_config.check_game_in_progress()?;
 
-        // if !(ctx.accounts.game_config.game_phase == GamePhase::Voting) {
-        //     // TOOD return error
-        // }
-        //
-        //
-        // if params.message.is_empty() {
-        //     return err!(BurgerError::EmptyString);
-        // }
-        //
-        // // Game states: empty, voted
-        // let game_state = fetch_metadata_field(
-        //     GAME_STATE,
-        //     &ctx.accounts.mint.to_account_info()
-        // )?;
-        //
-        // if !game_state.is_empty() {
-        //     return err!(BurgerError::GameStateMustBeEmpty);
-        // }
+        // ! check that the metadata fields are empty
+        // ? what if the user can cast multiple votes
+        self.game_config
+            .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }

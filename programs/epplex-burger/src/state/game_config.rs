@@ -17,7 +17,7 @@ pub enum GameStatus {
 pub enum VoteType {
     #[default]
     VoteOnce,
-    VoteMany
+    VoteMany,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -89,7 +89,7 @@ impl GameConfig {
     pub fn check_voting(&self) -> Result<()> {
         // ? should we check this
         if self.game_status == GameStatus::Finished {
-            return err!(BurgerError::GameEnded);
+            return err!(BurgerError::GameFinished);
         }
 
         //
@@ -117,10 +117,44 @@ impl GameConfig {
         Ok(())
     }
 
-    /// disallows transition in the last phase `ELIMINATION` of the game
-    pub fn check_game_ended(&self) -> Result<()> {
-        if self.game_status.eq(&GameStatus::Finished) {
-            return err!(BurgerError::GameEnded);
+    // /// disallows transition in the last phase `ELIMINATION` of the game
+    // pub fn check_game_ended(&self) -> Result<()> {
+    //     if self.game_status.eq(&GameStatus::Finished) {
+    //         return err!(BurgerError::GameEnded);
+    //     }
+
+    //     Ok(())
+    // }
+
+    pub fn check_game_in_progress(&self) -> Result<()> {
+        if self.game_status == GameStatus::Finished {
+            return err!(BurgerError::GameFinished);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
+        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+
+        let expiry_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+
+        if !game_state.is_empty() && !expiry_ts.is_empty() {
+            return err!(BurgerError::ExpectedEmptyField);
+        }
+
+        Ok(())
+    }
+
+    pub fn check_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
+        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+        if game_state.is_empty() {
+            return err!(BurgerError::EmptyGameStatus);
+        }
+
+        let expiry_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
+        if expiry_ts.is_empty() {
+            return err!(BurgerError::EmptyGameStatus);
         }
 
         Ok(())

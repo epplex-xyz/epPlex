@@ -36,11 +36,17 @@ pub enum BurgerError {
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
     #[msg("Tring to access a finished game")]
-    GameEnded,
+    GameFinished,
     #[msg("Phase start greater than phase end")]
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
     InvalidPhaseEndTS,
     #[msg("Only VoteOnce is allowed")]
     InvalidVoteMany,
+    #[msg("Empty expiry timestamp on metadata account")]
+    EmptyExpiryTS,
+    #[msg("Empty game status field on metadata account")]
+    EmptyGameStatus,
+    #[msg("Expected additional metadata field to be empty")]
+    ExpectedEmptyField,
 }

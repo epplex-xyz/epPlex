@@ -69,7 +69,7 @@ pub mod epplex_burger {
         TokenBurn::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    #[access_control(ctx.accounts.validate(&ctx))]
     pub fn token_game_vote(ctx: Context<TokenGameVote>, params: TokenGameVoteParams) -> Result<()> {
         TokenGameVote::actuate(ctx, params)
     }

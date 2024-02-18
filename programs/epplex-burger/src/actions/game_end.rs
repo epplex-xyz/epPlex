@@ -19,7 +19,11 @@ pub struct GameEnd<'info> {
 
 impl GameEnd<'_> {
     pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
-        self.game_config.check_game_ended()
+        self.game_config.check_phase_end_ts()?;
+
+        // ! make sure that the metadata fields are populated 
+
+        Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
