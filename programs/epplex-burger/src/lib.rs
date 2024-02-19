@@ -92,7 +92,7 @@ pub mod epplex_burger {
 
     #[access_control(ctx.accounts.validate(&ctx))]
     pub fn game_end(ctx: Context<GameEnd>) -> Result<()> {
-        game_end(ctx)
+        GameEnd::actuate(ctx)
     }
 
     /*
