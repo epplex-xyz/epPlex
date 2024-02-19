@@ -53,6 +53,8 @@ pub struct GameConfig {
     pub is_encrypted: bool,
     /// Amount of burgers who perished
     pub burn_amount: u16,
+    /// Amount of burgers who submitted an answer
+    pub submission_amount: u16,
 }
 
 impl GameConfig {
@@ -67,6 +69,7 @@ impl GameConfig {
         + epplex_shared::BITS_8
         + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_8
+        + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
     pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
@@ -82,6 +85,7 @@ impl GameConfig {
             game_master,
             is_encrypted: params.is_encrypted,
             burn_amount: 0,
+            submission_amount: 0,
         }
     }
 
@@ -177,7 +181,7 @@ impl GameConfig {
     pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
         let now = Clock::get().unwrap().unix_timestamp;
-
+      
         if expiry_ts.is_empty() {
             return err!(BurgerError::InvalidExpiryTS);
         }

@@ -34,6 +34,10 @@ pub enum BurgerError {
     #[msg("Field does not exist")]
     FieldDoesNotExist,
 
+
+    #[msg("Non-operator attempts to use program")]
+    NonOperator,
+
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
     #[msg("Tring to access a finished game")]
     GameFinished,

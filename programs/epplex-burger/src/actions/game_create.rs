@@ -23,7 +23,9 @@ pub struct GameCreate<'info> {
     #[account(
         mut,
         signer,
-        address = ADMIN_PUBKEY
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
     )]
     pub payer: SystemAccount<'info>,
 
@@ -46,6 +48,10 @@ pub struct GameCreateParams {
 impl GameCreate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &GameCreateParams) -> Result<()> {
         GameConfig::validate_create_params(params.phase_start, params.end_timestamp_offset)?;
+
+        // // ! make sure that the metadata fields are empty
+        // self.game_config
+        //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
         // // ! make sure that the metadata fields are empty
         // self.game_config

@@ -88,6 +88,8 @@ impl TokenGameVote<'_> {
             now.to_string(),
         )?;
 
+        // TODO we should only increase the submission amount if the NFT metadata is not in a default state
+
         Ok(())
     }
 }
