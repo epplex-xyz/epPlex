@@ -3,6 +3,7 @@
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "start": "sh start.sh",
+        "replace": "npx ts-node script/replace_ids.ts",
 
         "validator": "solana-test-validator -u localhost",
         "reset-validator": "rm -rf test-ledger",
