@@ -44,12 +44,8 @@ pub struct GameCreateParams {
 }
 
 impl GameCreate<'_> {
-    pub fn validate(&self, ctx: &Context<Self>, _params: &GameCreateParams) -> Result<()> {
-        // check that phases are in between each other
-
-        self.game_config.check_phase_end_ts()?;
-
-        self.game_config.check_duration()?;
+    pub fn validate(&self, _ctx: &Context<Self>, params: &GameCreateParams) -> Result<()> {
+        GameConfig::validate_create_params(params.phase_start, params.end_timestamp_offset)?;
 
         // // ! make sure that the metadata fields are empty
         // self.game_config

@@ -51,6 +51,7 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
+
         self.game_config
             .check_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
 

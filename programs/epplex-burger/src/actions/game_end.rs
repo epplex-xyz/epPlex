@@ -44,7 +44,11 @@ impl GameEnd<'_> {
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
 
+        game_config.game_round += 1; // ? should we be doing this here
         game_config.game_status = GameStatus::Finished;
+        game_config.phase_start = 0;
+        game_config.phase_end = 0;
+        game_config.game_prompt = "".to_string();
 
         Ok(())
     }

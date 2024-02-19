@@ -74,7 +74,7 @@ impl GameConfig {
             bump,
             game_round: params.game_round,
             game_status: params.game_status,
-            phase_start: params.end_timestamp_offset,
+            phase_start: params.phase_start,
             phase_end: params.end_timestamp_offset,
             vote_type: params.vote_type,
             input_type: params.input_type,
@@ -177,13 +177,29 @@ impl GameConfig {
     pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
         let now = Clock::get().unwrap().unix_timestamp;
-        
+
         if expiry_ts.is_empty() {
             return err!(BurgerError::InvalidExpiryTS);
         }
 
         if now > expiry_ts.parse::<i64>().unwrap_or_default() {
             return err!(BurgerError::InvalidExpiryTS);
+        }
+
+        Ok(())
+    }
+
+    pub fn validate_create_params(phase_start: i64, phase_end: i64) -> Result<()> {
+        let now = Clock::get().unwrap().unix_timestamp;
+
+        // check the phase end
+        if phase_end < now {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        // check duration
+        if phase_end < phase_start {
+            return err!(BurgerError::InvalidGameDuration);
         }
 
         Ok(())
