@@ -53,9 +53,11 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
-
         self.game_config
             .assert_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
+
+        // make sure that a game finished before resetting it
+        self.game_config.assert_game_finished()?;
 
         // check expiry ts
         self.game_config
@@ -65,6 +67,7 @@ impl TokenGameReset<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameResetParams) -> Result<()> {
+        let game_config = &mut ctx.accounts.game_config;
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
 
         epplex_shared::update_token_metadata_signed(
@@ -84,6 +87,9 @@ impl TokenGameReset<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             "".to_string(),
         )?;
+
+        // update game config game status
+        game_config.game_status = GameStatus::None;
 
         Ok(())
     }

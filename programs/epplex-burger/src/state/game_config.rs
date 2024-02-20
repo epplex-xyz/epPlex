@@ -9,6 +9,7 @@ pub const GAME_QUESTION_LENGTH: usize = 150;
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum GameStatus {
     #[default]
+    None,
     InProgress, // active
     Finished, // inactive
 }
@@ -130,9 +131,18 @@ impl GameConfig {
     //     Ok(())
     // }
 
+    // make sure that the game config was reset before starting another game
+    pub fn assert_game_status_none(&self) -> Result<()> {
+        if self.game_status != GameStatus::None {
+            return err!(BurgerError::GameInProgress);
+        }
+
+        Ok(())
+    }
+
     // make sure that a game is not in progress when calling create IX
     pub fn assert_game_finished(&self) -> Result<()> {
-        if self.game_status == GameStatus::InProgress {
+        if self.game_status != GameStatus::Finished {
             return err!(BurgerError::GameInProgress);
         }
 
@@ -140,7 +150,7 @@ impl GameConfig {
     }
 
     pub fn assert_game_in_progress(&self) -> Result<()> {
-        if self.game_status == GameStatus::Finished {
+        if self.game_status != GameStatus::InProgress {
             return err!(BurgerError::GameFinished);
         }
 

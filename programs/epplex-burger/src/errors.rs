@@ -39,8 +39,6 @@ pub enum BurgerError {
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Tring to access a finished game")]
-    GameFinished,
     #[msg("Phase start greater than phase end")]
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
@@ -53,6 +51,8 @@ pub enum BurgerError {
     InvalidGameStatus,
     #[msg("Expected additional metadata field to be empty")]
     ExpectedEmptyField,
-    #[msg("Tried to call create game IX while another game was going on")]
+    #[msg("The game status is in progress")]
     GameInProgress,
+    #[msg("The game status is finished. ")]
+    GameFinished,
 }

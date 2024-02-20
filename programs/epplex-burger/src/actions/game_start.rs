@@ -47,7 +47,7 @@ impl GameStart<'_> {
         GameConfig::validate_create_params(params.phase_start, params.end_timestamp_offset)?;
 
         // make sure another game isn't on going
-        self.game_config.assert_game_finished()?;
+        self.game_config.assert_game_status_none()?;
 
         // // ! make sure that the metadata fields are empty
         // self.game_config
