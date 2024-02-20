@@ -49,6 +49,9 @@ impl GameCreate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &GameCreateParams) -> Result<()> {
         GameConfig::validate_create_params(params.phase_start, params.end_timestamp_offset)?;
 
+        // make sure another game isn't on going
+        self.game_config.assert_game_finished()?;
+
         // // ! make sure that the metadata fields are empty
         // self.game_config
         //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;

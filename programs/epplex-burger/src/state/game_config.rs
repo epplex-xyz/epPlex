@@ -102,7 +102,7 @@ impl GameConfig {
     }
 
     /// make sure that `phase_end > phase_start`
-    pub fn check_duration(&self) -> Result<()> {
+    pub fn assert_valid_duration(&self) -> Result<()> {
         if self.phase_end < self.phase_start {
             return err!(BurgerError::InvalidGameDuration);
         }
@@ -130,7 +130,16 @@ impl GameConfig {
     //     Ok(())
     // }
 
-    pub fn check_game_in_progress(&self) -> Result<()> {
+    // make sure that a game is not in progress when calling create IX
+    pub fn assert_game_finished(&self) -> Result<()> {
+        if self.game_status == GameStatus::InProgress {
+            return err!(BurgerError::GameInProgress);
+        }
+
+        Ok(())
+    }
+
+    pub fn assert_game_in_progress(&self) -> Result<()> {
         if self.game_status == GameStatus::Finished {
             return err!(BurgerError::GameFinished);
         }
@@ -138,7 +147,7 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn check_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
+    pub fn assert_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
@@ -158,7 +167,7 @@ impl GameConfig {
     }
 
     /// check that the metadata fields are not empty or filled with initial default values
-    pub fn check_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
+    pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
             // default game state means user hasn't participated in the game
@@ -181,7 +190,7 @@ impl GameConfig {
     pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
         let now = Clock::get().unwrap().unix_timestamp;
-      
+
         if expiry_ts.is_empty() {
             return err!(BurgerError::InvalidExpiryTS);
         }
@@ -208,6 +217,8 @@ impl GameConfig {
 
         Ok(())
     }
+
+    // first time initialization
 
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {

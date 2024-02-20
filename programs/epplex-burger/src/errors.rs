@@ -53,4 +53,6 @@ pub enum BurgerError {
     InvalidGameStatus,
     #[msg("Expected additional metadata field to be empty")]
     ExpectedEmptyField,
+    #[msg("Tried to call create game IX while another game was going on")]
+    GameInProgress,
 }

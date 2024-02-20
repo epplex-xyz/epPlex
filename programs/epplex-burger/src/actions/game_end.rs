@@ -36,7 +36,7 @@ impl GameEnd<'_> {
         // ! make sure that the metadata fields are populated.
         // ! meaning the account participated in the game
         self.game_config
-            .check_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
+            .assert_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }
