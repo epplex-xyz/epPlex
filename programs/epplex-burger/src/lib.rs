@@ -85,9 +85,14 @@ pub mod epplex_burger {
     /*
      * Game create
      */
+    #[access_control(ctx.accounts.validate(&ctx,))]
+    pub fn game_create(ctx: Context<GameCreate>) -> Result<()> {
+        GameCreate::actuate(ctx)
+    }
+
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn game_create(ctx: Context<GameCreate>, params: GameCreateParams) -> Result<()> {
-        GameCreate::actuate(ctx, params)
+    pub fn game_start(ctx: Context<GameStart>, params: GameStartParams) -> Result<()> {
+        GameStart::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx))]

@@ -72,7 +72,7 @@ impl GameConfig {
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
-    pub fn new(bump: u8, params: GameCreateParams, game_round: u8, game_master: Pubkey) -> Self {
+    pub fn new(bump: u8, params: GameStartParams, game_round: u8, game_master: Pubkey) -> Self {
         Self {
             bump,
             game_round,
