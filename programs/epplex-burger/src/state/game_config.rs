@@ -72,10 +72,10 @@ impl GameConfig {
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
-    pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
+    pub fn new(bump: u8, params: GameCreateParams, game_round: u8, game_master: Pubkey) -> Self {
         Self {
             bump,
-            game_round: params.game_round,
+            game_round,
             game_status: params.game_status,
             phase_start: params.phase_start,
             phase_end: params.end_timestamp_offset,

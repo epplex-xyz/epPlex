@@ -35,7 +35,7 @@ pub struct GameCreate<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameCreateParams {
-    pub game_round: u8,
+    // pub game_round: u8,
     pub game_status: GameStatus,
     pub phase_start: i64,
     pub end_timestamp_offset: i64,
@@ -65,7 +65,15 @@ impl GameCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: GameCreateParams) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
-        **game_config = GameConfig::new(ctx.bumps.game_config, params, ctx.accounts.payer.key());
+
+        let game_round: u8 = game_config.game_round + 1;
+
+        **game_config = GameConfig::new(
+            ctx.bumps.game_config,
+            params,
+            game_round,
+            ctx.accounts.payer.key(),
+        );
 
         Ok(())
     }
