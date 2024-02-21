@@ -53,4 +53,6 @@ pub enum BurgerError {
     InvalidGameStatus,
     #[msg("Expected additional metadata field to be empty")]
     ExpectedEmptyField,
+    #[msg("Message was not encrypted")]
+    RequiresEncryption,
 }

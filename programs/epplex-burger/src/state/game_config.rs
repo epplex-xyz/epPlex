@@ -181,7 +181,7 @@ impl GameConfig {
     pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
         let now = Clock::get().unwrap().unix_timestamp;
-        
+
         if expiry_ts.is_empty() {
             return err!(BurgerError::InvalidExpiryTS);
         }
@@ -199,6 +199,17 @@ impl GameConfig {
             .burn_amount
             .checked_add(1)
             .ok_or(BurgerError::InvalidCalculation)?;
+
+        Ok(())
+    }
+
+    /// check_encrypted
+    pub fn check_encrypted(&self, message: String) -> Result<()> {
+        if self.is_encrypted {
+            if message.len() != ENCRYPTED_LENTH {
+                return err!(BurgerError::RequiresEncryption);
+            }
+        }
 
         Ok(())
     }

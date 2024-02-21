@@ -53,16 +53,15 @@ pub struct TokenGameVoteParams {
 }
 
 impl TokenGameVote<'_> {
-    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+    pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
+        ctx.accounts.game_config.check_encrypted(params.message)?;
         // ! check that the game is in progress
-        self.game_config.check_game_in_progress()?;
+        // self.game_config.check_game_in_progress()?;
 
-        // ! check that the metadata fields are empty
-        // ? what if the user can cast multiple votes
-        self.game_config
-            .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
-
-
+        // // ! check that the metadata fields are empty
+        // // ? what if the user can cast multiple votes
+        // self.game_config
+        //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }
