@@ -45,16 +45,19 @@ pub struct TokenGameReset<'info> {
     pub update_authority: Account<'info, ProgramDelegate>,
 
     pub token22_program: Program<'info, Token2022>,
-    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
-    pub fn validate(&self, ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
-        // make sure that a game finished before resetting it
-        self.game_config.assert_game_finished()?;
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
+
+        // Bypass if None
+        if self.game_config.vote_type.ne(&VoteType::None) {
+            // make sure that a game finished before resetting it
+            self.game_config.assert_game_finished()?;
+        }
 
         Ok(())
     }

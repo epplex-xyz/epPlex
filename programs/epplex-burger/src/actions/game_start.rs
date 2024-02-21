@@ -17,8 +17,6 @@ pub struct GameStart<'info> {
         ) @ BurgerError::NonOperator
     )]
     pub payer: SystemAccount<'info>,
-
-    pub system_program: Program<'info, System>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -32,8 +30,8 @@ pub struct GameStartParams {
 
 impl GameStart<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &GameStartParams) -> Result<()> {
-        // Check end_timestamp is in the future
-        if Clock::get().unwrap().unix_timestamp < params.end_timestamp {
+        // Fail if timestamp is not in the future
+        if !(Clock::get().unwrap().unix_timestamp < params.end_timestamp) {
             return err!(BurgerError::InvalidGameDuration);
         };
 

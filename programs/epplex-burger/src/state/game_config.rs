@@ -127,8 +127,6 @@ impl GameConfig {
 
     /// Check for game end
     pub fn check_game_ended(&self) -> Result<()> {
-        let now = Clock::get().unwrap().unix_timestamp;
-
         if self.phase_end < Clock::get().unwrap().unix_timestamp {
             return err!(BurgerError::InvalidGameDuration);
         }

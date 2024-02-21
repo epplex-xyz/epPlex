@@ -2,7 +2,11 @@ use crate::*;
 
 #[derive(Accounts)]
 pub struct GameEnd<'info> {
-    #[account(address = game_config.game_master)]
+    #[account(
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
+    )]
     pub payer: Signer<'info>,
 
     #[account(
@@ -11,12 +15,10 @@ pub struct GameEnd<'info> {
         bump = game_config.bump,
     )]
     pub game_config: Account<'info, GameConfig>,
-
-    pub system_program: Program<'info, System>,
 }
 
 impl GameEnd<'_> {
-    pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
         self.game_config.check_game_ended()?;
 
         Ok(())
