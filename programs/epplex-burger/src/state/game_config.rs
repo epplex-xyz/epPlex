@@ -90,18 +90,6 @@ impl GameConfig {
         }
     }
 
-    /// Check that a ticket is claimable
-    pub fn check_voting(&self) -> Result<()> {
-        // ? should we check this
-        if self.game_status == GameStatus::Finished {
-            return err!(BurgerError::GameFinished);
-        }
-
-        //
-
-        Ok(())
-    }
-
     /// make sure that `phase_end > phase_start`
     pub fn assert_valid_duration(&self) -> Result<()> {
         if self.phase_end < self.phase_start {
@@ -122,36 +110,29 @@ impl GameConfig {
         Ok(())
     }
 
-    // /// disallows transition in the last phase `ELIMINATION` of the game
-    // pub fn check_game_ended(&self) -> Result<()> {
-    //     if self.game_status.eq(&GameStatus::Finished) {
-    //         return err!(BurgerError::GameEnded);
-    //     }
 
-    //     Ok(())
-    // }
-
-    // make sure that the game config was reset before starting another game
-    pub fn assert_game_status_none(&self) -> Result<()> {
-        if self.game_status != GameStatus::None {
-            return err!(BurgerError::GameInProgress);
+    /// Can only start game if NOT in progress
+    pub fn can_start_game(&self) -> Result<()> {
+        if self.game_status.eq(&GameStatus::InProgress) {
+            return err!(BurgerError::GameInProgress)
         }
 
         Ok(())
     }
 
-    // make sure that a game is not in progress when calling create IX
+    /// If is finished then continue
     pub fn assert_game_finished(&self) -> Result<()> {
-        if self.game_status != GameStatus::Finished {
-            return err!(BurgerError::GameInProgress);
+        if self.game_status.ne(&GameStatus::Finished) {
+            return err!(BurgerError::GameNotFinished);
         }
 
         Ok(())
     }
 
+    /// If in progress then continue
     pub fn assert_game_in_progress(&self) -> Result<()> {
-        if self.game_status != GameStatus::InProgress {
-            return err!(BurgerError::GameFinished);
+        if self.game_status.ne(&GameStatus::InProgress) {
+            return err!(BurgerError::GameNotInProgress);
         }
 
         Ok(())

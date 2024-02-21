@@ -59,10 +59,6 @@ impl TokenGameVote<'_> {
         // ! check that the game is in progress
         self.game_config.assert_game_in_progress()?;
 
-        // ! check that the metadata fields are empty
-        // ? what if the user can cast multiple votes
-        self.game_config
-            .assert_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }

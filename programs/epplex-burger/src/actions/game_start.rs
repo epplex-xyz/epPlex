@@ -12,14 +12,6 @@ pub struct GameStart<'info> {
 
     #[account(
         mut,
-        mint::token_program = token22_program.key(), // ? is this check necessary
-        constraint = mint.decimals == 0,
-        constraint = mint.supply == 1,
-    )]
-    pub mint: Box<InterfaceAccount<'info, MintInterface>>,
-
-    #[account(
-        mut,
         signer,
         constraint = ADMINS.contains(
             &payer.key()
@@ -46,16 +38,8 @@ impl GameStart<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &GameStartParams) -> Result<()> {
         GameConfig::validate_create_params(params.phase_start, params.end_timestamp_offset)?;
 
-        // make sure another game isn't on going
-        self.game_config.assert_game_status_none()?;
-
-        // // ! make sure that the metadata fields are empty
-        // self.game_config
-        //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
-
-        // // ! make sure that the metadata fields are empty
-        // self.game_config
-        //     .check_metadata_fields_empty(&ctx.accounts.mint.to_account_info())?;
+        // Make sure game is finished
+        self.game_config.can_start_game()?;
 
         Ok(())
     }
