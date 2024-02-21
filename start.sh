@@ -4,3 +4,4 @@ fi
 yarn airdrop
 yarn deploy-all
 yarn copy-to-sdk
+yarn copy-admin-sdk
