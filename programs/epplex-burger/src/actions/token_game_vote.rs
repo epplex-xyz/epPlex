@@ -54,7 +54,8 @@ pub struct TokenGameVoteParams {
 
 impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
-        ctx.accounts.game_config.check_encrypted(params.message)?;
+        ctx.accounts.game_config.check_encrypted(&params.message)?;
+
         // ! check that the game is in progress
         // self.game_config.check_game_in_progress()?;
 

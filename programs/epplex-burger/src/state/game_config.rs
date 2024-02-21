@@ -204,7 +204,7 @@ impl GameConfig {
     }
 
     /// check_encrypted
-    pub fn check_encrypted(&self, message: String) -> Result<()> {
+    pub fn check_encrypted(&self, message: &String) -> Result<()> {
         if self.is_encrypted {
             if message.len() != ENCRYPTED_LENTH {
                 return err!(BurgerError::RequiresEncryption);
