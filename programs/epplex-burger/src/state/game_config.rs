@@ -93,7 +93,11 @@ impl GameConfig {
     }
 
     pub fn start(&mut self, params: GameStartParams) -> Result<()> {
-        self.game_round = self.game_round + 1;
+        self.game_round = self
+            .game_round
+            .checked_add(1)
+            .ok_or(BurgerError::InvalidCalculation)?;
+
         self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
         self.game_status = GameStatus::InProgress;
         self.phase_end = params.end_timestamp;
@@ -167,12 +171,11 @@ impl GameConfig {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        if !game_state.is_empty() && game_state != GAME_STATE_PLACEHOLDER {
+        if !game_state.is_empty() {
             return err!(BurgerError::ExpectedEmptyField);
         }
 
-        if !vote_ts.is_empty() && vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
-            msg!("vote timestamp field {:?}", vote_ts);
+        if !vote_ts.is_empty() {
             return err!(BurgerError::ExpectedEmptyField);
         }
 
@@ -187,11 +190,6 @@ impl GameConfig {
             msg!("game status {:?}", game_state);
             // default game state means user hasn't participated in the game
             return err!(BurgerError::InvalidGameState);
-        }
-
-        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
-        if expiry_ts.is_empty() {
-            return err!(BurgerError::InvalidExpiryTS);
         }
 
         let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
@@ -227,12 +225,33 @@ impl GameConfig {
         Ok(())
     }
 
-    /// check_encrypted
+        /// Bump burn amount
+    pub fn bump_submission_amount(&mut self, game_state: String) -> Result<()> {
+        if game_state.is_empty() {
+            self.submission_amount = self
+                .submission_amount
+                .checked_add(1)
+                .ok_or(BurgerError::InvalidCalculation)?;
+        }
+
+        Ok(())
+    }
+
+    /// Check if vote type is encryption
     pub fn check_encrypted(&self, message: &String) -> Result<()> {
         if self.is_encrypted {
             if message.len() != ENCRYPTED_LENTH {
                 return err!(BurgerError::RequiresEncryption);
             }
+        }
+
+        Ok(())
+    }
+
+    /// Check for vote eligibility
+    pub fn check_vote_eligibility(&self, game_state: String ) -> Result<()> {
+        if self.vote_type.eq(&VoteType::VoteOnce) && !game_state.is_empty() {
+            return err!(BurgerError::AlreadySubmitted);
         }
 
         Ok(())

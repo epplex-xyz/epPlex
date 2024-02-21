@@ -28,7 +28,9 @@ pub struct TokenGameVote<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     #[account(
-        seeds = [SEED_GAME_CONFIG],
+        seeds = [
+            SEED_GAME_CONFIG
+        ],
         bump = game_config.bump
     )]
     pub game_config: Account<'info, GameConfig>,
@@ -54,9 +56,16 @@ pub struct TokenGameVoteParams {
 
 impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
-        ctx.accounts.game_config.check_encrypted(&params.message)?;
+        let game_state = fetch_metadata_field(
+            GAME_STATE,
+            &ctx.accounts.mint.to_account_info()
+        )?;
+        self.game_config.check_vote_eligibility(game_state)?;
 
-        // ! check that the game is in progress
+        // Check that it is indeed encrypted
+        self.game_config.check_encrypted(&params.message)?;
+
+        // Check that the game is in progress
         self.game_config.assert_game_in_progress()?;
 
 
@@ -64,6 +73,12 @@ impl TokenGameVote<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenGameVoteParams) -> Result<()> {
+        let game_state = fetch_metadata_field(
+            GAME_STATE,
+            &ctx.accounts.mint.to_account_info()
+        )?;
+        ctx.accounts.game_config.bump_submission_amount(game_state)?;
+
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
         // Update game state
         epplex_shared::update_token_metadata_signed(
@@ -85,8 +100,6 @@ impl TokenGameVote<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string(),
         )?;
-
-        // TODO we should only increase the submission amount if the NFT metadata is not in a default state
 
         Ok(())
     }

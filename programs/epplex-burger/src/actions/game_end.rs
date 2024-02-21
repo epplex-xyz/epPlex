@@ -1,10 +1,5 @@
 use crate::*;
 
-use anchor_lang::prelude::*;
-use epplex_shared::Token2022;
-
-use crate::{GameConfig, GameStatus, SEED_GAME_CONFIG};
-
 #[derive(Accounts)]
 pub struct GameEnd<'info> {
     #[account(address = game_config.game_master)]

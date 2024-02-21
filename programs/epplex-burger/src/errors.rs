@@ -58,4 +58,6 @@ pub enum BurgerError {
     GameNotInProgress,
     #[msg("Game is in progress")]
     GameInProgress,
+    #[msg("Mint already submitted an answer")]
+    AlreadySubmitted,
 }
