@@ -34,10 +34,6 @@ pub mod epplex_core {
     pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCollectionCreateParams) -> Result<()> {
         CollectionMint::actuate(ctx, params)
     }
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
-    //     TokenBurn::actuate(ctx, &params)
-    // }
 
     // #[access_control(ctx.accounts.validate(&ctx, &params))]
     // pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
