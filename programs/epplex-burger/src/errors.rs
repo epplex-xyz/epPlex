@@ -34,13 +34,10 @@ pub enum BurgerError {
     #[msg("Field does not exist")]
     FieldDoesNotExist,
 
-
     #[msg("Non-operator attempts to use program")]
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Tring to access a finished game")]
-    GameFinished,
     #[msg("Phase start greater than phase end")]
     InvalidGameDuration,
     #[msg("Phase end must be greater than current timestamp")]
@@ -49,8 +46,12 @@ pub enum BurgerError {
     InvalidVoteMany,
     #[msg("Empty expiry timestamp on metadata account")]
     InvalidExpiryTS,
-    #[msg("Empty game status field on metadata account")]
-    InvalidGameStatus,
+    #[msg("Empty game state field on metadata account")]
+    InvalidGameState,
     #[msg("Expected additional metadata field to be empty")]
-    ExpectedEmptyField,
+    ExpectedEmptyField, // NonEmptyField
+    #[msg("The game status is in progress")]
+    GameInProgress,
+    #[msg("The game status is finished. ")]
+    GameFinished,
 }
