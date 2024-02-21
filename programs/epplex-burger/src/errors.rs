@@ -52,8 +52,12 @@ pub enum BurgerError {
     ExpectedEmptyField,
     #[msg("Message was not encrypted")]
     RequiresEncryption,
-    #[msg("The game status is in progress")]
+    #[msg("Game must be finished")]
+    GameNotFinished,
+    #[msg("Game must be in progress")]
+    GameNotInProgress,
+    #[msg("Game is in progress")]
     GameInProgress,
-    #[msg("The game status is finished. ")]
-    GameFinished,
+    #[msg("Mint already submitted an answer")]
+    AlreadySubmitted,
 }

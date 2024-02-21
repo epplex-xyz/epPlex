@@ -17,6 +17,7 @@ pub enum GameStatus {
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum VoteType {
     #[default]
+    None,
     VoteOnce,
     VoteMany,
 }
@@ -24,6 +25,7 @@ pub enum VoteType {
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum InputType {
     #[default]
+    None,
     Choice,
     Text,
     Number,
@@ -39,7 +41,7 @@ pub struct GameConfig {
     /// The game status
     pub game_status: GameStatus,
     /// Phase start
-    pub phase_start: i64,
+    pub phase_start_timestamp: i64,
     /// Phase end
     pub phase_end: i64,
     /// Game master
@@ -73,85 +75,91 @@ impl GameConfig {
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
-    pub fn new(bump: u8, params: GameStartParams, game_round: u8, game_master: Pubkey) -> Self {
+    pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
             bump,
-            game_round,
-            game_status: params.game_status,
-            phase_start: params.phase_start,
-            phase_end: params.end_timestamp_offset,
-            vote_type: params.vote_type,
-            input_type: params.input_type,
-            game_prompt: params.game_prompt,
-            game_master,
-            is_encrypted: params.is_encrypted,
+            game_round: 0,
+            game_status: GameStatus::None,
+            phase_start_timestamp: 0,
+            phase_end: 0,
+            vote_type: VoteType::None,
+            input_type: InputType::Choice,
+            game_prompt: "".to_string(),
+            game_master: Pubkey::default(),
+            is_encrypted: false,
             burn_amount: 0,
             submission_amount: 0,
         }
     }
 
-    /// Check that a ticket is claimable
-    pub fn check_voting(&self) -> Result<()> {
-        // ? should we check this
-        if self.game_status == GameStatus::Finished {
-            return err!(BurgerError::GameFinished);
-        }
+    pub fn start(&mut self, params: GameStartParams) -> Result<()> {
+        self.game_round = self
+            .game_round
+            .checked_add(1)
+            .ok_or(BurgerError::InvalidCalculation)?;
 
-        //
+        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
+        self.game_status = GameStatus::InProgress;
+        self.phase_end = params.end_timestamp;
+        self.vote_type = params.vote_type;
+        self.input_type = params.input_type;
+        self.game_prompt = params.game_prompt;
+        self.is_encrypted = params.is_encrypted;
 
         Ok(())
     }
 
-    /// make sure that `phase_end > phase_start`
-    pub fn assert_valid_duration(&self) -> Result<()> {
-        if self.phase_end < self.phase_start {
+    pub fn end(&mut self) -> Result<()> {
+        self.phase_start_timestamp = 0;
+        self.game_status = GameStatus::Finished;
+        self.phase_start_timestamp = 0;
+        self.phase_end = 0;
+        self.vote_type = VoteType::None;
+        self.input_type = InputType::None;
+        self.game_prompt = "".to_string();
+        self.is_encrypted = false;
+        self.burn_amount = 0;
+        self.submission_amount = 0;
+
+        Ok(())
+    }
+
+
+    /// Check for game end
+    pub fn check_game_ended(&self) -> Result<()> {
+        if self.phase_end < Clock::get().unwrap().unix_timestamp {
             return err!(BurgerError::InvalidGameDuration);
         }
 
+        // Game must be in progress before we can end game
+        self.assert_game_in_progress()?;
+
         Ok(())
     }
 
-    /// make sure that `phase_end > current timestamp`
-    pub fn check_phase_end_ts(&self) -> Result<()> {
-        let now = Clock::get().unwrap().unix_timestamp;
 
-        if self.phase_end < now {
-            return err!(BurgerError::InvalidGameDuration);
+    /// Can only start game if NOT in progress
+    pub fn can_start_game(&self) -> Result<()> {
+        if self.game_status.eq(&GameStatus::InProgress) {
+            return err!(BurgerError::GameInProgress)
         }
 
         Ok(())
     }
 
-    // /// disallows transition in the last phase `ELIMINATION` of the game
-    // pub fn check_game_ended(&self) -> Result<()> {
-    //     if self.game_status.eq(&GameStatus::Finished) {
-    //         return err!(BurgerError::GameEnded);
-    //     }
-
-    //     Ok(())
-    // }
-
-    // make sure that the game config was reset before starting another game
-    pub fn assert_game_status_none(&self) -> Result<()> {
-        if self.game_status != GameStatus::None {
-            return err!(BurgerError::GameInProgress);
-        }
-
-        Ok(())
-    }
-
-    // make sure that a game is not in progress when calling create IX
+    /// If is finished then continue
     pub fn assert_game_finished(&self) -> Result<()> {
-        if self.game_status != GameStatus::Finished {
-            return err!(BurgerError::GameInProgress);
+        if self.game_status.ne(&GameStatus::Finished) {
+            return err!(BurgerError::GameNotFinished);
         }
 
         Ok(())
     }
 
+    /// If in progress then continue
     pub fn assert_game_in_progress(&self) -> Result<()> {
-        if self.game_status != GameStatus::InProgress {
-            return err!(BurgerError::GameFinished);
+        if self.game_status.ne(&GameStatus::InProgress) {
+            return err!(BurgerError::GameNotInProgress);
         }
 
         Ok(())
@@ -161,12 +169,11 @@ impl GameConfig {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        if !game_state.is_empty() && game_state != GAME_STATE_PLACEHOLDER {
+        if !game_state.is_empty() {
             return err!(BurgerError::ExpectedEmptyField);
         }
 
-        if !vote_ts.is_empty() && vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
-            msg!("vote timestamp field {:?}", vote_ts);
+        if !vote_ts.is_empty() {
             return err!(BurgerError::ExpectedEmptyField);
         }
 
@@ -181,11 +188,6 @@ impl GameConfig {
             msg!("game status {:?}", game_state);
             // default game state means user hasn't participated in the game
             return err!(BurgerError::InvalidGameState);
-        }
-
-        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
-        if expiry_ts.is_empty() {
-            return err!(BurgerError::InvalidExpiryTS);
         }
 
         let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
@@ -211,24 +213,6 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn validate_create_params(phase_start: i64, phase_end: i64) -> Result<()> {
-        let now = Clock::get().unwrap().unix_timestamp;
-
-        // check the phase end
-        if phase_end < now {
-            return err!(BurgerError::InvalidGameDuration);
-        }
-
-        // check duration
-        if phase_end < phase_start {
-            return err!(BurgerError::InvalidGameDuration);
-        }
-
-        Ok(())
-    }
-
-    // first time initialization
-
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {
         self.burn_amount = self
@@ -239,12 +223,33 @@ impl GameConfig {
         Ok(())
     }
 
-    /// check_encrypted
+        /// Bump burn amount
+    pub fn bump_submission_amount(&mut self, game_state: String) -> Result<()> {
+        if game_state.is_empty() {
+            self.submission_amount = self
+                .submission_amount
+                .checked_add(1)
+                .ok_or(BurgerError::InvalidCalculation)?;
+        }
+
+        Ok(())
+    }
+
+    /// Check if vote type is encryption
     pub fn check_encrypted(&self, message: &String) -> Result<()> {
         if self.is_encrypted {
             if message.len() != ENCRYPTED_LENTH {
                 return err!(BurgerError::RequiresEncryption);
             }
+        }
+
+        Ok(())
+    }
+
+    /// Check for vote eligibility
+    pub fn check_vote_eligibility(&self, game_state: String ) -> Result<()> {
+        if self.vote_type.eq(&VoteType::VoteOnce) && !game_state.is_empty() {
+            return err!(BurgerError::AlreadySubmitted);
         }
 
         Ok(())
