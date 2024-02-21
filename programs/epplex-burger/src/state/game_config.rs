@@ -11,7 +11,7 @@ pub enum GameStatus {
     #[default]
     None,
     InProgress, // active
-    Finished, // inactive
+    Finished,   // inactive
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -161,16 +161,12 @@ impl GameConfig {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        if !game_state.is_empty() {
-            if game_state != GAME_STATE_PLACEHOLDER {
-                return err!(BurgerError::ExpectedEmptyField);
-            }
+        if !game_state.is_empty() || game_state != GAME_STATE_PLACEHOLDER {
+            return err!(BurgerError::ExpectedEmptyField);
         }
 
-        if !vote_ts.is_empty() {
-            if vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
-                return err!(BurgerError::ExpectedEmptyField);
-            }
+        if !vote_ts.is_empty() || vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+            return err!(BurgerError::ExpectedEmptyField);
         }
 
         Ok(())
@@ -180,8 +176,9 @@ impl GameConfig {
     pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
+            msg!("game status {:?}", game_state);
             // default game state means user hasn't participated in the game
-            return err!(BurgerError::InvalidGameStatus);
+            return err!(BurgerError::InvalidGameState);
         }
 
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
