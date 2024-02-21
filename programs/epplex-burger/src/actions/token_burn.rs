@@ -1,6 +1,8 @@
 use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
+use anchor_spl::mint;
 use epplex_shared::Token2022;
+use solana_program::program_pack::Pack;
 
 #[derive(Accounts)]
 #[instruction(params: TokenBurnParams)]
@@ -35,7 +37,7 @@ pub struct TokenBurn<'info> {
         seeds = [SEED_GAME_CONFIG],
         bump = game_config.bump,
     )]
-    pub game_config: Account<'info, GameConfig>,
+    pub game_config: Option<Account<'info, GameConfig>>,
 
     #[account(
         seeds = [
@@ -65,16 +67,19 @@ impl TokenBurn<'_> {
         ctx: &Context<Self>,
         _params: &TokenBurnParams,
     ) -> Result<()> {
-        if self.game_config.game_status.ne(&GameStatus::Finished) {
-            check_has_expired(&ctx.accounts.mint.to_account_info())?;
+        match &self.game_config {
+            Some(game_config) => game_config.assert_game_finished()?,
+            None => check_has_expired(&ctx.accounts.mint.to_account_info())?,
         }
+
+        // if self.game_config.game_status.ne(&GameStatus::Finished) {
+        //     check_has_expired(&ctx.accounts.mint.to_account_info())?;
+        // }
 
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenBurnParams) -> Result<()> {
-        // Close the metadata account
-
         burn_token(
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.token_account.to_account_info(),
@@ -82,6 +87,7 @@ impl TokenBurn<'_> {
             &ctx.accounts.permanent_delegate.to_account_info(),
         )?;
 
+        // Close mint account
         close_mint(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
@@ -92,8 +98,11 @@ impl TokenBurn<'_> {
         )?;
 
         // Can only close the ATA if we are the owners
-        let ata_owner = ctx.accounts.token_account.to_account_info().owner;
-        if ata_owner == ctx.accounts.payer.owner {
+        let token_account = ctx.accounts.token_account.to_account_info();
+        let state = spl_token_2022::state::Account::unpack_from_slice(
+            &token_account.try_borrow_data()?
+        )?;
+        if state.owner == ctx.accounts.payer.key() {
             anchor_spl::token_interface::close_account(
                 CpiContext::new(
                     ctx.accounts.token22_program.to_account_info(),
@@ -107,7 +116,10 @@ impl TokenBurn<'_> {
         }
 
         // Another one bites the dust
-        ctx.accounts.game_config.bump_burn_amount()?;
+        match &mut ctx.accounts.game_config {
+            Some(game_config) => game_config.bump_burn_amount()?,
+            None => (),
+        };
 
         Ok(())
     }
