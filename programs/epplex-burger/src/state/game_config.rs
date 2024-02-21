@@ -161,11 +161,12 @@ impl GameConfig {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        if !game_state.is_empty() || game_state != GAME_STATE_PLACEHOLDER {
+        if !game_state.is_empty() && game_state != GAME_STATE_PLACEHOLDER {
             return err!(BurgerError::ExpectedEmptyField);
         }
 
-        if !vote_ts.is_empty() || vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+        if !vote_ts.is_empty() && vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+            msg!("vote timestamp field {:?}", vote_ts);
             return err!(BurgerError::ExpectedEmptyField);
         }
 
@@ -175,6 +176,7 @@ impl GameConfig {
     /// check that the metadata fields are not empty or filled with initial default values
     pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+
         if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
             msg!("game status {:?}", game_state);
             // default game state means user hasn't participated in the game
