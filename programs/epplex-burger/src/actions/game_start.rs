@@ -19,6 +19,20 @@ pub struct GameStart<'info> {
     pub payer: SystemAccount<'info>,
 }
 
+impl GameStart<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, params: &GameStartParams) -> Result<()> {
+        params.validate_params()?;
+
+        self.game_config.can_start_game()?;
+
+        Ok(())
+    }
+
+    pub fn actuate(ctx: Context<Self>, params: GameStartParams) -> Result<()> {
+        ctx.accounts.game_config.start(params)
+    }
+}
+
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameStartParams {
     pub end_timestamp: i64,
@@ -28,19 +42,21 @@ pub struct GameStartParams {
     pub is_encrypted: bool,
 }
 
-impl GameStart<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, params: &GameStartParams) -> Result<()> {
-        // Fail if timestamp is not in the future
-        if !(Clock::get().unwrap().unix_timestamp < params.end_timestamp) {
-            return err!(BurgerError::InvalidGameDuration);
-        };
+impl GameStartParams {
+    pub fn validate_params(&self) -> Result<()> {
+        let now = Clock::get().unwrap().unix_timestamp;
 
-        self.game_config.can_start_game()?;
+        if now < self.end_timestamp {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        if self.vote_type.eq(&VoteType::None)
+            || self.input_type.eq(&InputType::None)
+            || self.game_prompt.is_empty()
+        {
+            return err!(BurgerError::InvalidStartParams);
+        }
 
         Ok(())
-    }
-
-    pub fn actuate(ctx: Context<Self>, params: GameStartParams) -> Result<()> {
-        ctx.accounts.game_config.start(params)
     }
 }
