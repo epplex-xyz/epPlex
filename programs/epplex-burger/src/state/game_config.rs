@@ -9,8 +9,9 @@ pub const GAME_QUESTION_LENGTH: usize = 150;
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum GameStatus {
     #[default]
+    None,
     InProgress, // active
-    Finished, // inactive
+    Finished,   // inactive
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -72,12 +73,12 @@ impl GameConfig {
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
-    pub fn new(bump: u8, params: GameCreateParams, game_master: Pubkey) -> Self {
+    pub fn new(bump: u8, params: GameStartParams, game_round: u8, game_master: Pubkey) -> Self {
         Self {
             bump,
-            game_round: params.game_round,
+            game_round,
             game_status: params.game_status,
-            phase_start: params.end_timestamp_offset,
+            phase_start: params.phase_start,
             phase_end: params.end_timestamp_offset,
             vote_type: params.vote_type,
             input_type: params.input_type,
@@ -102,7 +103,7 @@ impl GameConfig {
     }
 
     /// make sure that `phase_end > phase_start`
-    pub fn check_duration(&self) -> Result<()> {
+    pub fn assert_valid_duration(&self) -> Result<()> {
         if self.phase_end < self.phase_start {
             return err!(BurgerError::InvalidGameDuration);
         }
@@ -130,39 +131,56 @@ impl GameConfig {
     //     Ok(())
     // }
 
-    pub fn check_game_in_progress(&self) -> Result<()> {
-        if self.game_status == GameStatus::Finished {
+    // make sure that the game config was reset before starting another game
+    pub fn assert_game_status_none(&self) -> Result<()> {
+        if self.game_status != GameStatus::None {
+            return err!(BurgerError::GameInProgress);
+        }
+
+        Ok(())
+    }
+
+    // make sure that a game is not in progress when calling create IX
+    pub fn assert_game_finished(&self) -> Result<()> {
+        if self.game_status != GameStatus::Finished {
+            return err!(BurgerError::GameInProgress);
+        }
+
+        Ok(())
+    }
+
+    pub fn assert_game_in_progress(&self) -> Result<()> {
+        if self.game_status != GameStatus::InProgress {
             return err!(BurgerError::GameFinished);
         }
 
         Ok(())
     }
 
-    pub fn check_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
+    pub fn assert_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
         let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
 
-        if !game_state.is_empty() {
-            if game_state != GAME_STATE_PLACEHOLDER {
-                return err!(BurgerError::ExpectedEmptyField);
-            }
+        if !game_state.is_empty() && game_state != GAME_STATE_PLACEHOLDER {
+            return err!(BurgerError::ExpectedEmptyField);
         }
 
-        if !vote_ts.is_empty() {
-            if vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
-                return err!(BurgerError::ExpectedEmptyField);
-            }
+        if !vote_ts.is_empty() && vote_ts != VOTING_TIMESTAMP_PLACEHOLDER {
+            msg!("vote timestamp field {:?}", vote_ts);
+            return err!(BurgerError::ExpectedEmptyField);
         }
 
         Ok(())
     }
 
     /// check that the metadata fields are not empty or filled with initial default values
-    pub fn check_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
+    pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
         let game_state = fetch_metadata_field(GAME_STATE, mint)?;
+
         if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
+            msg!("game status {:?}", game_state);
             // default game state means user hasn't participated in the game
-            return err!(BurgerError::InvalidGameStatus);
+            return err!(BurgerError::InvalidGameState);
         }
 
         let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
@@ -192,6 +210,24 @@ impl GameConfig {
 
         Ok(())
     }
+
+    pub fn validate_create_params(phase_start: i64, phase_end: i64) -> Result<()> {
+        let now = Clock::get().unwrap().unix_timestamp;
+
+        // check the phase end
+        if phase_end < now {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        // check duration
+        if phase_end < phase_start {
+            return err!(BurgerError::InvalidGameDuration);
+        }
+
+        Ok(())
+    }
+
+    // first time initialization
 
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {

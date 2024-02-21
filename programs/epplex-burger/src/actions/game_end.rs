@@ -31,12 +31,12 @@ pub struct GameEnd<'info> {
 
 impl GameEnd<'_> {
     pub fn validate(&self, ctx: &Context<Self>) -> Result<()> {
-        self.game_config.check_phase_end_ts()?;
+        // self.game_config.check_phase_end_ts()?;
 
         // ! make sure that the metadata fields are populated.
         // ! meaning the account participated in the game
         self.game_config
-            .check_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
+            .assert_metadata_fields_filled(&ctx.accounts.mint.to_account_info())?;
 
         Ok(())
     }
@@ -44,7 +44,11 @@ impl GameEnd<'_> {
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
 
+        game_config.game_round += 1; // ? should we be doing this here
         game_config.game_status = GameStatus::Finished;
+        game_config.phase_start = 0;
+        game_config.phase_end = 0;
+        game_config.game_prompt = "".to_string();
 
         Ok(())
     }
