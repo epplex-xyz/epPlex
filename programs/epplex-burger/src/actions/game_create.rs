@@ -30,9 +30,10 @@ impl GameCreate<'_> {
 
     pub fn actuate(ctx: Context<Self>) -> Result<()> {
         let game_config = &mut ctx.accounts.game_config;
-
-        game_config.bump = ctx.bumps.game_config;
-        game_config.game_master = ctx.accounts.payer.key();
+        **game_config = GameConfig::create(
+            ctx.bumps.game_config,
+            ctx.accounts.payer.key()
+        );
 
         Ok(())
     }

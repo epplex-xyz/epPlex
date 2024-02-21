@@ -17,6 +17,7 @@ pub enum GameStatus {
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum VoteType {
     #[default]
+    None,
     VoteOnce,
     VoteMany,
 }
@@ -24,6 +25,7 @@ pub enum VoteType {
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum InputType {
     #[default]
+    None,
     Choice,
     Text,
     Number,
@@ -39,7 +41,7 @@ pub struct GameConfig {
     /// The game status
     pub game_status: GameStatus,
     /// Phase start
-    pub phase_start: i64,
+    pub phase_start_timestamp: i64,
     /// Phase end
     pub phase_end: i64,
     /// Game master
@@ -73,39 +75,62 @@ impl GameConfig {
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
-    pub fn new(bump: u8, params: GameStartParams, game_round: u8, game_master: Pubkey) -> Self {
+    pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
             bump,
-            game_round,
-            game_status: params.game_status,
-            phase_start: params.phase_start,
-            phase_end: params.end_timestamp_offset,
-            vote_type: params.vote_type,
-            input_type: params.input_type,
-            game_prompt: params.game_prompt,
-            game_master,
-            is_encrypted: params.is_encrypted,
+            game_round: 0,
+            game_status: GameStatus::None,
+            phase_start_timestamp: 0,
+            phase_end: 0,
+            vote_type: VoteType::None,
+            input_type: InputType::Choice,
+            game_prompt: "".to_string(),
+            game_master: Pubkey::default(),
+            is_encrypted: false,
             burn_amount: 0,
             submission_amount: 0,
         }
     }
 
-    /// make sure that `phase_end > phase_start`
-    pub fn assert_valid_duration(&self) -> Result<()> {
-        if self.phase_end < self.phase_start {
-            return err!(BurgerError::InvalidGameDuration);
-        }
+    pub fn start(&mut self, params: GameStartParams) -> Result<()> {
+        self.game_round = self.game_round + 1;
+        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
+        self.game_status = GameStatus::InProgress;
+        self.phase_end = params.end_timestamp;
+        self.vote_type = params.vote_type;
+        self.input_type = params.input_type;
+        self.game_prompt = params.game_prompt;
+        self.is_encrypted = params.is_encrypted;
 
         Ok(())
     }
 
-    /// make sure that `phase_end > current timestamp`
-    pub fn check_phase_end_ts(&self) -> Result<()> {
+    pub fn end(&mut self) -> Result<()> {
+        self.phase_start_timestamp = 0;
+        self.game_status = GameStatus::Finished;
+        self.phase_start_timestamp = 0;
+        self.phase_end = 0;
+        self.vote_type = VoteType::None;
+        self.input_type = InputType::None;
+        self.game_prompt = "".to_string();
+        self.is_encrypted = false;
+        self.burn_amount = 0;
+        self.submission_amount = 0;
+
+        Ok(())
+    }
+
+
+    /// Check for game end
+    pub fn check_game_ended(&self) -> Result<()> {
         let now = Clock::get().unwrap().unix_timestamp;
 
-        if self.phase_end < now {
+        if self.phase_end < Clock::get().unwrap().unix_timestamp {
             return err!(BurgerError::InvalidGameDuration);
         }
+
+        // Game must be in progress before we can end game
+        self.assert_game_in_progress()?;
 
         Ok(())
     }
@@ -191,24 +216,6 @@ impl GameConfig {
 
         Ok(())
     }
-
-    pub fn validate_create_params(phase_start: i64, phase_end: i64) -> Result<()> {
-        let now = Clock::get().unwrap().unix_timestamp;
-
-        // check the phase end
-        if phase_end < now {
-            return err!(BurgerError::InvalidGameDuration);
-        }
-
-        // check duration
-        if phase_end < phase_start {
-            return err!(BurgerError::InvalidGameDuration);
-        }
-
-        Ok(())
-    }
-
-    // first time initialization
 
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {
