@@ -32,7 +32,6 @@ pub struct TokenBurn<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     #[account(
-        mut,
         seeds = [SEED_GAME_CONFIG],
         bump = game_config.bump,
     )]
@@ -66,14 +65,8 @@ impl TokenBurn<'_> {
         ctx: &Context<Self>,
         _params: &TokenBurnParams,
     ) -> Result<()> {
-        let expiry_date_string = fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
-        let expiry_date =  expiry_date_string.parse::<i64>().unwrap();
-
-        // Cannot exceed expiry
-        let now = Clock::get().unwrap().unix_timestamp;
-        msg!("Destroy timestamp: {:?}, now {:?}", expiry_date, now);
-        if now < expiry_date {
-            return err!(BurgerError::NotYetExpired);
+        if self.game_config.game_status.ne(&GameStatus::Finished) {
+            check_has_expired(&ctx.accounts.mint.to_account_info())?;
         }
 
         Ok(())
