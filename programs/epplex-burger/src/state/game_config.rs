@@ -124,7 +124,6 @@ impl GameConfig {
         Ok(())
     }
 
-
     /// Check for game end
     pub fn check_game_ended(&self) -> Result<()> {
         if self.phase_end < Clock::get().unwrap().unix_timestamp {
@@ -137,11 +136,10 @@ impl GameConfig {
         Ok(())
     }
 
-
     /// Can only start game if NOT in progress
     pub fn can_start_game(&self) -> Result<()> {
         if self.game_status.eq(&GameStatus::InProgress) {
-            return err!(BurgerError::GameInProgress)
+            return err!(BurgerError::GameInProgress);
         }
 
         Ok(())
@@ -165,21 +163,6 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn assert_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
-        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-        let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
-
-        if !game_state.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        if !vote_ts.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        Ok(())
-    }
-
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {
         self.burn_amount = self
@@ -190,7 +173,7 @@ impl GameConfig {
         Ok(())
     }
 
-        /// Bump burn amount
+    /// Bump burn amount
     pub fn bump_submission_amount(&mut self, game_state: String) -> Result<()> {
         if game_state.is_empty() {
             self.submission_amount = self
@@ -214,7 +197,7 @@ impl GameConfig {
     }
 
     /// Check for vote eligibility
-    pub fn check_vote_eligibility(&self, game_state: String ) -> Result<()> {
+    pub fn check_vote_eligibility(&self, game_state: String) -> Result<()> {
         if self.vote_type.eq(&VoteType::VoteOnce) && !game_state.is_empty() {
             return err!(BurgerError::AlreadySubmitted);
         }
