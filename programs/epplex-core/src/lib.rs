@@ -13,13 +13,10 @@ pub use errors::*;
 
 use anchor_lang::prelude::*;
 use spl_token_2022::extension::ExtensionType;
-use anchor_spl::{
-    associated_token::AssociatedToken,
-};
+use anchor_spl::associated_token::AssociatedToken;
 
 #[program]
 pub mod epplex_core {
-    use crate::collection_mint::CollectionMint;
     use super::*;
 
     /*
@@ -35,14 +32,15 @@ pub mod epplex_core {
         CollectionMint::actuate(ctx, params)
     }
 
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
-    //     TokenRenew::actuate(ctx, &params)
-    // }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn collection_create(ctx: Context<CollectionCreate>, params: CollectionCreateParams) -> Result<()> {
         CollectionCreate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_close(ctx: Context<CollectionClose>, params: CollectionCloseParams) -> Result<()> {
+        CollectionClose::actuate(ctx, params)
     }
 
     // #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -53,6 +51,11 @@ pub mod epplex_core {
     #[access_control(ctx.accounts.validate(&ctx))]
     pub fn global_collection_config_create(ctx: Context<GlobalCollectionConfigCreate>) -> Result<()> {
         GlobalCollectionConfigCreate::actuate(ctx)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn global_collection_config_close(ctx: Context<GlobalCollectionConfigClose>) -> Result<()> {
+        GlobalCollectionConfigClose::actuate(ctx)
     }
 
     // #[access_control(ctx.accounts.validate(&ctx, &params))]
