@@ -27,6 +27,7 @@ pub struct GameStartParams {
     pub input_type: InputType,
     pub game_prompt: String,
     pub is_encrypted: bool,
+    pub public_encrypt_key: String
 }
 
 impl GameStartParams {
@@ -35,6 +36,13 @@ impl GameStartParams {
         if !(Clock::get().unwrap().unix_timestamp < self.end_timestamp) {
             return err!(BurgerError::InvalidGameDuration);
         };
+
+        // Public encrypt key cannot be empty
+        if self.is_encrypted {
+            if self.public_encrypt_key.is_empty() {
+                return err!(BurgerError::RequiresEncryption)
+            }
+        }
 
 
         if self.vote_type.eq(&VoteType::None)

@@ -4,6 +4,7 @@ use crate::*;
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
 pub const GAME_QUESTION_LENGTH: usize = 150;
+pub const PUBLIC_ENCRYPT_KEY_LENGTH: usize = 250;
 
 /// Represents game activity.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -54,6 +55,8 @@ pub struct GameConfig {
     pub game_prompt: String,
     /// Is answer encrypted
     pub is_encrypted: bool,
+    /// Public encrypt key
+    pub public_encrypt_key: String,
     /// Amount of burgers who perished
     pub burn_amount: u16,
     /// Amount of burgers who submitted an answer
@@ -72,6 +75,7 @@ impl GameConfig {
         + epplex_shared::BITS_8
         + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_8
+        + (epplex_shared::VEC_PREFIX + PUBLIC_ENCRYPT_KEY_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
@@ -85,8 +89,9 @@ impl GameConfig {
             vote_type: VoteType::None,
             input_type: InputType::Choice,
             game_prompt: "".to_string(),
-            game_master: game_master,
+            game_master,
             is_encrypted: false,
+            public_encrypt_key: "".to_string(),
             burn_amount: 0,
             submission_amount: 0,
         }
@@ -105,6 +110,7 @@ impl GameConfig {
         self.input_type = params.input_type;
         self.game_prompt = params.game_prompt;
         self.is_encrypted = params.is_encrypted;
+        self.public_encrypt_key = params.public_encrypt_key;
 
         Ok(())
     }
@@ -118,8 +124,10 @@ impl GameConfig {
         self.input_type = InputType::None;
         self.game_prompt = "".to_string();
         self.is_encrypted = false;
+        self.public_encrypt_key = "".to_string();
         self.burn_amount = 0;
         self.submission_amount = 0;
+
 
         Ok(())
     }
