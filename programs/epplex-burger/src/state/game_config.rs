@@ -85,7 +85,7 @@ impl GameConfig {
             vote_type: VoteType::None,
             input_type: InputType::Choice,
             game_prompt: "".to_string(),
-            game_master: Pubkey::default(),
+            game_master: game_master,
             is_encrypted: false,
             burn_amount: 0,
             submission_amount: 0,
@@ -160,54 +160,6 @@ impl GameConfig {
     pub fn assert_game_in_progress(&self) -> Result<()> {
         if self.game_status.ne(&GameStatus::InProgress) {
             return err!(BurgerError::GameNotInProgress);
-        }
-
-        Ok(())
-    }
-
-    pub fn assert_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
-        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-        let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
-
-        if !game_state.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        if !vote_ts.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        Ok(())
-    }
-
-    /// check that the metadata fields are not empty or filled with initial default values
-    pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
-        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-
-        if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
-            msg!("game status {:?}", game_state);
-            // default game state means user hasn't participated in the game
-            return err!(BurgerError::InvalidGameState);
-        }
-
-        let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
-        if voting_ts.is_empty() || voting_ts == VOTING_TIMESTAMP_PLACEHOLDER {
-            return err!(BurgerError::InvalidExpiryTS);
-        }
-
-        Ok(())
-    }
-
-    pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
-        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
-        let now = Clock::get().unwrap().unix_timestamp;
-
-        if expiry_ts.is_empty() {
-            return err!(BurgerError::InvalidExpiryTS);
-        }
-
-        if now > expiry_ts.parse::<i64>().unwrap_or_default() {
-            return err!(BurgerError::InvalidExpiryTS);
         }
 
         Ok(())
