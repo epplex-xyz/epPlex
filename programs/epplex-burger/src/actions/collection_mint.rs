@@ -88,14 +88,7 @@ impl CollectionMint<'_> {
             ctx.bumps.token_metadata,
         );
 
-        let additional_metadata = vec![
-            [EXPIRY_FIELD.to_string(), params.expiry_date],
-            [RENEWAL_FIELD.to_string(), "0".to_string()],
-            [FOR_SALE_FIELD.to_string(), "0".to_string()],
-            [PRICE_FIELD.to_string(), "9999".to_string()],
-            [GAME_STATE.to_string(), GAME_STATE_PLACEHOLDER.to_string()],
-            [VOTING_TIMESTAMP.to_string(), VOTING_TIMESTAMP_PLACEHOLDER.to_string()]
-        ];
+        let additional_metadata = generate_metadata(params.expiry_date);
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
         // CPI into token_mint

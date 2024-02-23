@@ -4,6 +4,7 @@ use crate::*;
 #[derive(Accounts)]
 #[instruction(params: TokenRenewParams)]
 pub struct TokenRenew<'info> {
+    /// Technically anyone could pay to renew but why would they?
     #[account(
         mut,
         mint::token_program = token22_program.key(),
@@ -40,7 +41,7 @@ pub struct TokenRenew<'info> {
 
     #[account(
         mut,
-        associated_token::mint = proceeds_token_account.mint,
+        associated_token::mint = mint_payment,
         associated_token::authority = payer,
     )]
     pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
@@ -63,6 +64,7 @@ pub struct TokenRenew<'info> {
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenRenewParams {}
 
+
 impl TokenRenew<'_> {
     pub fn validate(
         &self,
@@ -73,8 +75,6 @@ impl TokenRenew<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenRenewParams) -> Result<()> {
-        // TODO technically you don't actually have to own the NFT since we don't check for token account owner
-
         // Currently just SOL
         // TODO Take payment 1 BONK
         let amount = u64::pow(10, ctx.accounts.mint_payment.decimals as u32);
@@ -91,9 +91,6 @@ impl TokenRenew<'_> {
             amount,
             ctx.accounts.mint_payment.decimals
         )?;
-
-        // TODO Check update auth - or just assume it is going to work
-        // fetched_metadata.update_authority
 
         let expiry_date_string = fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
         let expiry_date =  expiry_date_string.parse::<i64>().unwrap();

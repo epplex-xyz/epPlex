@@ -4,6 +4,7 @@ use crate::*;
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
 pub const GAME_QUESTION_LENGTH: usize = 150;
+pub const PUBLIC_ENCRYPT_KEY_LENGTH: usize = 250;
 
 /// Represents game activity.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -54,6 +55,8 @@ pub struct GameConfig {
     pub game_prompt: String,
     /// Is answer encrypted
     pub is_encrypted: bool,
+    /// Public encrypt key
+    pub public_encrypt_key: String,
     /// Amount of burgers who perished
     pub burn_amount: u16,
     /// Amount of burgers who submitted an answer
@@ -72,6 +75,7 @@ impl GameConfig {
         + epplex_shared::BITS_8
         + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_8
+        + (epplex_shared::VEC_PREFIX + PUBLIC_ENCRYPT_KEY_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_16
         + epplex_shared::BITS_16;
 
@@ -85,8 +89,9 @@ impl GameConfig {
             vote_type: VoteType::None,
             input_type: InputType::Choice,
             game_prompt: "".to_string(),
-            game_master: Pubkey::default(),
+            game_master,
             is_encrypted: false,
+            public_encrypt_key: "".to_string(),
             burn_amount: 0,
             submission_amount: 0,
         }
@@ -105,6 +110,7 @@ impl GameConfig {
         self.input_type = params.input_type;
         self.game_prompt = params.game_prompt;
         self.is_encrypted = params.is_encrypted;
+        self.public_encrypt_key = params.public_encrypt_key;
 
         Ok(())
     }
@@ -118,8 +124,10 @@ impl GameConfig {
         self.input_type = InputType::None;
         self.game_prompt = "".to_string();
         self.is_encrypted = false;
+        self.public_encrypt_key = "".to_string();
         self.burn_amount = 0;
         self.submission_amount = 0;
+
 
         Ok(())
     }
@@ -165,54 +173,6 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn assert_metadata_fields_empty(&self, mint: &AccountInfo) -> Result<()> {
-        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-        let vote_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
-
-        if !game_state.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        if !vote_ts.is_empty() {
-            return err!(BurgerError::ExpectedEmptyField);
-        }
-
-        Ok(())
-    }
-
-    /// check that the metadata fields are not empty or filled with initial default values
-    pub fn assert_metadata_fields_filled(&self, mint: &AccountInfo) -> Result<()> {
-        let game_state = fetch_metadata_field(GAME_STATE, mint)?;
-
-        if game_state.is_empty() || game_state == GAME_STATE_PLACEHOLDER {
-            msg!("game status {:?}", game_state);
-            // default game state means user hasn't participated in the game
-            return err!(BurgerError::InvalidGameState);
-        }
-
-        let voting_ts = fetch_metadata_field(VOTING_TIMESTAMP, mint)?;
-        if voting_ts.is_empty() || voting_ts == VOTING_TIMESTAMP_PLACEHOLDER {
-            return err!(BurgerError::InvalidExpiryTS);
-        }
-
-        Ok(())
-    }
-
-    pub fn check_mint_expiry_ts(&self, mint: &AccountInfo) -> Result<()> {
-        let expiry_ts = fetch_metadata_field(EXPIRY_FIELD, mint)?;
-        let now = Clock::get().unwrap().unix_timestamp;
-
-        if expiry_ts.is_empty() {
-            return err!(BurgerError::InvalidExpiryTS);
-        }
-
-        if now > expiry_ts.parse::<i64>().unwrap_or_default() {
-            return err!(BurgerError::InvalidExpiryTS);
-        }
-
-        Ok(())
-    }
-
     /// Bump burn amount
     pub fn bump_burn_amount(&mut self) -> Result<()> {
         self.burn_amount = self
@@ -242,6 +202,38 @@ impl GameConfig {
                 return err!(BurgerError::RequiresEncryption);
             }
         }
+
+        Ok(())
+    }
+
+    /// Check if vote type is encryption
+    pub fn validate_input(&self, message: &String) -> Result<()> {
+        self.check_encrypted(message)?;
+
+        if message.is_empty() {
+            return err!(BurgerError::InputIsEmpty);
+        }
+
+        match self.input_type {
+            InputType::Choice => {
+                let choice = message.parse::<u8>().unwrap();
+
+                // Max choice is 10
+                if choice > 10 {
+                    return err!(BurgerError::IncorrectInputType)
+                }
+            },
+            InputType::Number => {
+                // Panic if fails to convert
+                message.parse::<u64>().unwrap();
+
+            },
+            InputType::Text => {
+                // No checks for now
+            },
+            InputType::None => return err!(BurgerError::RequiresEncryption)
+        };
+
 
         Ok(())
     }

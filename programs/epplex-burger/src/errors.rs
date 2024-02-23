@@ -60,4 +60,10 @@ pub enum BurgerError {
     GameInProgress,
     #[msg("Mint already submitted an answer")]
     AlreadySubmitted,
+    #[msg("Invalid parameters supplied to game start instruction")]
+    InvalidStartParams,
+    #[msg("Incorrect input type")]
+    IncorrectInputType,
+    #[msg("Input cannot be empty")]
+    InputIsEmpty
 }
