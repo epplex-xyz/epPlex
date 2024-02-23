@@ -20,7 +20,8 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
     vec![
         [EXPIRY_FIELD.to_string(), expiry_data],
         [GAME_STATE.to_string(), GAME_STATE_PLACEHOLDER.to_string()],
-        [VOTING_TIMESTAMP.to_string(), VOTING_TIMESTAMP_PLACEHOLDER.to_string()]
+        [VOTING_TIMESTAMP.to_string(), VOTING_TIMESTAMP_PLACEHOLDER.to_string()],
+        [IMMUNITY.to_string(), "none".to_string()]
     ]
 }
 

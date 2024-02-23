@@ -1,7 +1,6 @@
 use crate::*;
 
 
-
 pub fn check_has_expired(mint: &AccountInfo) -> Result<()> {
     let expiry_date_string = fetch_metadata_field(
         EXPIRY_FIELD,

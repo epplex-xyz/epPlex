@@ -18,6 +18,8 @@ pub const SUPPORTED_TOKENS: [Pubkey; 4] = [
 pub const EXPIRY_FIELD: &str = "expirationDate"; // should just add onto this
 pub const GAME_STATE: &str = "gameState";
 pub const VOTING_TIMESTAMP: &str = "votingTimestamp";
+// none, yes, no
+pub const IMMUNITY: &str = "immunity";
 
 
 
