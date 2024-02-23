@@ -100,6 +100,16 @@ pub mod epplex_burger {
         GameEnd::actuate(ctx)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn game_close(ctx: Context<GameClose>) -> Result<()> {
+        GameClose::actuate(ctx)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn game_update(ctx: Context<GameUpdate>, params: GameUpdateParams) -> Result<()> {
+        GameUpdate::actuate(ctx, params)
+    }
+
     /*
      * Program Delegate
      */

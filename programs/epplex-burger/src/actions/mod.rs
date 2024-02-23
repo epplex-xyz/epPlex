@@ -39,3 +39,9 @@ pub use game_end::*;
 
 pub mod game_start;
 pub use game_start::*;
+
+pub mod game_close;
+pub use game_close::*;
+
+pub mod game_update;
+pub use game_update::*;
