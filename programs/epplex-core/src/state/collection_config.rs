@@ -19,8 +19,6 @@ pub struct CollectionConfig {
     pub grace_period: i64,
     pub treasury: Pubkey,
     pub collection_size: u32,
-    pub collection_name: String,
-    pub collection_symbol: String,
     pub mint_count: u64,
 }
 
@@ -47,8 +45,6 @@ impl CollectionConfig {
             grace_period: params.grace_period,
             treasury: params.treasury,
             collection_size: params.collection_size,
-            collection_name: params.collection_name,
-            collection_symbol: params.collection_symbol,
             mint_count: 0
         }
     }
