@@ -198,6 +198,38 @@ impl GameConfig {
         Ok(())
     }
 
+    /// Check if vote type is encryption
+    pub fn validate_input(&self, message: &String) -> Result<()> {
+        self.check_encrypted(message)?;
+
+        if message.is_empty() {
+            return err!(BurgerError::InputIsEmpty);
+        }
+
+        match self.input_type {
+            InputType::Choice => {
+                let choice = message.parse::<u8>().unwrap();
+
+                // Max choice is 10
+                if choice > 10 {
+                    return err!(BurgerError::IncorrectInputType)
+                }
+            },
+            InputType::Number => {
+                // Panic if fails to convert
+                message.parse::<u64>().unwrap();
+
+            },
+            InputType::Text => {
+                // No checks for now
+            },
+            InputType::None => return err!(BurgerError::RequiresEncryption)
+        };
+
+
+        Ok(())
+    }
+
     /// Check for vote eligibility
     pub fn check_vote_eligibility(&self, game_state: String ) -> Result<()> {
         if self.vote_type.eq(&VoteType::VoteOnce) && !game_state.is_empty() {
