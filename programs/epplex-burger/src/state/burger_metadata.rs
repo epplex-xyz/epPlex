@@ -16,6 +16,14 @@ pub const VOTING_TIMESTAMP_PLACEHOLDER: &str = "99999999999999999999";
 pub const ENCRYPTED_LENTH: usize = 172;
 
 
+pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
+    vec![
+        [EXPIRY_FIELD.to_string(), expiry_data],
+        [GAME_STATE.to_string(), GAME_STATE_PLACEHOLDER.to_string()],
+        [VOTING_TIMESTAMP.to_string(), VOTING_TIMESTAMP_PLACEHOLDER.to_string()]
+    ]
+}
+
 #[account]
 #[derive(Default, Debug)]
 pub struct BurgerMetadata {
