@@ -45,23 +45,8 @@ pub mod epplex_burger {
      * Token actions
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_buy(ctx: Context<TokenBuy>, params: TokenBuyParams) -> Result<()> {
-        TokenBuy::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
         TokenRenew::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_delist(ctx: Context<TokenDelist>, params: TokenDelistParams) -> Result<()> {
-        TokenDelist::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_sell(ctx: Context<TokenSell>, params: TokenSellParams) -> Result<()> {
-        TokenSell::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -69,6 +54,11 @@ pub mod epplex_burger {
         TokenBurn::actuate(ctx, params)
     }
 
+
+
+    /*
+     * Token Game Actions
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_game_vote(ctx: Context<TokenGameVote>, params: TokenGameVoteParams) -> Result<()> {
         TokenGameVote::actuate(ctx, params)
@@ -81,6 +71,23 @@ pub mod epplex_burger {
     ) -> Result<()> {
         TokenGameReset::actuate(ctx, params)
     }
+
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_buy(ctx: Context<TokenBuy>, params: TokenBuyParams) -> Result<()> {
+    //     TokenBuy::actuate(ctx, params)
+    // }
+
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_delist(ctx: Context<TokenDelist>, params: TokenDelistParams) -> Result<()> {
+    //     TokenDelist::actuate(ctx, params)
+    // }
+
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_sell(ctx: Context<TokenSell>, params: TokenSellParams) -> Result<()> {
+    //     TokenSell::actuate(ctx, params)
+    // }
+
+
 
     /*
      * Game create
