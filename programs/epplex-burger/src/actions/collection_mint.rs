@@ -76,8 +76,6 @@ impl CollectionMint<'_> {
             return err!(BurgerError::DateMustBeInTheFuture);
         }
 
-        // Maybe need to check for link in URI
-
         Ok(())
     }
 
