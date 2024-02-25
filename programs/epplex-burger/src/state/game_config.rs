@@ -57,9 +57,9 @@ pub struct GameConfig {
     pub is_encrypted: bool,
     /// Public encrypt key
     pub public_encrypt_key: String,
-    /// Amount of burgers who perished
+    /// Total amount of burgers who perished
     pub burn_amount: u16,
-    /// Amount of burgers who submitted an answer
+    /// Amount of burgers who submitted an answer within a round
     pub submission_amount: u16,
 }
 
@@ -125,13 +125,10 @@ impl GameConfig {
         self.game_prompt = "".to_string();
         self.is_encrypted = false;
         self.public_encrypt_key = "".to_string();
-        self.burn_amount = 0;
         self.submission_amount = 0;
-
 
         Ok(())
     }
-
 
     /// Check for game end
     pub fn check_game_ended(&self) -> Result<()> {
@@ -140,11 +137,10 @@ impl GameConfig {
         }
 
         // Game must be in progress before we can end game
-        self.assert_game_in_progress()?;
+        self.assert_game_status(GameStatus::InProgress)?;
 
         Ok(())
     }
-
 
     /// Can only start game if NOT in progress
     pub fn can_start_game(&self) -> Result<()> {
@@ -155,19 +151,24 @@ impl GameConfig {
         Ok(())
     }
 
-    /// If is finished then continue
-    pub fn assert_game_finished(&self) -> Result<()> {
-        if self.game_status.ne(&GameStatus::Finished) {
-            return err!(BurgerError::GameNotFinished);
-        }
-
-        Ok(())
-    }
-
-    /// If in progress then continue
-    pub fn assert_game_in_progress(&self) -> Result<()> {
-        if self.game_status.ne(&GameStatus::InProgress) {
-            return err!(BurgerError::GameNotInProgress);
+    // Fail if current game status does not match the specified state
+    pub fn assert_game_status(&self, status: GameStatus) -> Result<()> {
+        match status {
+            // If is finished then continue
+            GameStatus::Finished => {
+                if self.game_status.ne(&GameStatus::Finished) {
+                    return err!(BurgerError::GameNotFinished);
+                }
+            },
+            // If in progress then continue
+            GameStatus::InProgress => {
+                if self.game_status.ne(&GameStatus::InProgress) {
+                    return err!(BurgerError::GameNotInProgress);
+                }
+            }
+            _ => {
+                return err!(BurgerError::IncorrectGameStatus);
+            }
         }
 
         Ok(())

@@ -56,6 +56,8 @@ pub enum BurgerError {
     GameNotFinished,
     #[msg("Game must be in progress")]
     GameNotInProgress,
+    #[msg("Invalid game status assertion")]
+    IncorrectGameStatus,
     #[msg("Game is in progress")]
     GameInProgress,
     #[msg("Mint already submitted an answer")]
