@@ -29,6 +29,14 @@ pub struct TokenThaw<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
+    #[account(
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
+        bump = permanent_delegate.bump
+    )]
+    pub permanent_delegate: Account<'info, ProgramDelegate>,
+
     // Gate who can execute this
     #[account(
         constraint = ADMINS.contains(
@@ -53,6 +61,19 @@ impl TokenThaw<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenThawParams) -> Result<()> {
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
+        anchor_spl::token_interface::thaw_account(
+            CpiContext::new_with_signer(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::ThawAccount {
+                    mint: ctx.accounts.mint.to_account_info().clone(),
+                    account: ctx.accounts.token_account.to_account_info().clone(),
+                    authority: ctx.accounts.permanent_delegate.to_account_info().clone(),
+                },
+                &[&seeds[..]]
+            ),
+        )?;
+
         Ok(())
     }
 }
