@@ -116,6 +116,15 @@ impl GameConfig {
     }
 
     pub fn end(&mut self, game_status: GameStatus) -> Result<()> {
+        // if [GameS]game_status.ne(&GameStatus::Finished)
+        //     || game_status.ne(&GameStatus::Evaluate) {
+        //         return err!(BurgerError::IncorrectGameStatus);
+        // }
+
+        if ![GameStatus::Finished, GameStatus::Evaluate].contains(&game_status) {
+            return err!(BurgerError::IncorrectGameStatus);
+        }
+
         self.game_status = game_status;
         self.phase_start_timestamp = 0;
         self.phase_end = 0;
