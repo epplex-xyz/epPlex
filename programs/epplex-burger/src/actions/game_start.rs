@@ -19,7 +19,6 @@ pub struct GameStart<'info> {
     pub payer: SystemAccount<'info>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameStartParams {
     pub end_timestamp: i64,
@@ -34,7 +33,7 @@ impl GameStartParams {
     pub fn validate_params(&self) -> Result<()> {
         // Fail if timestamp is not in the future
         if !(Clock::get().unwrap().unix_timestamp < self.end_timestamp) {
-            return err!(BurgerError::InvalidGameDuration);
+            return err!(BurgerError::IncorrectEndtime);
         };
 
         // Public encrypt key cannot be empty
@@ -43,7 +42,6 @@ impl GameStartParams {
                 return err!(BurgerError::RequiresEncryption)
             }
         }
-
 
         if self.vote_type.eq(&VoteType::None)
             || self.input_type.eq(&InputType::None)
@@ -59,10 +57,7 @@ impl GameStartParams {
 impl GameStart<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &GameStartParams) -> Result<()> {
         params.validate_params()?;
-
-        self.game_config.can_start_game()?;
-
-        Ok(())
+        self.game_config.can_start_game()
     }
 
     pub fn actuate(ctx: Context<Self>, params: GameStartParams) -> Result<()> {
