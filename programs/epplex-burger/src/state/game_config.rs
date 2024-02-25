@@ -135,14 +135,11 @@ impl GameConfig {
         Ok(())
     }
 
-    /// Check for game end
-    pub fn check_game_ended(&self, game_status: GameStatus) -> Result<()> {
-        if self.phase_end < Clock::get().unwrap().unix_timestamp {
-            return err!(BurgerError::InvalidGameDuration);
+    /// Fail if phase end timestamp is greater than current time
+    pub fn assert_endtimestamp_passed(&self) -> Result<()> {
+        if self.phase_end > Clock::get().unwrap().unix_timestamp {
+            return err!(BurgerError::EndtimeNotPassed);
         }
-
-        // Game must be in progress before we can end game
-        self.assert_game_status(game_status)?;
 
         Ok(())
     }
@@ -156,7 +153,7 @@ impl GameConfig {
         Ok(())
     }
 
-    // Fail if current game status does not match the specified state
+    /// Fail if current game status does not match the specified state
     pub fn assert_game_status(&self, status: GameStatus) -> Result<()> {
         match status {
             // If is finished then continue
@@ -195,7 +192,7 @@ impl GameConfig {
         Ok(())
     }
 
-        /// Bump burn amount
+    /// Bump burn amount
     pub fn bump_submission_amount(&mut self, game_state: String) -> Result<()> {
         if game_state.is_empty() {
             self.submission_amount = self

@@ -24,10 +24,10 @@ pub struct GameEndParams {}
 
 impl GameEnd<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameEndParams) -> Result<()> {
-        // GameState must be EVALUATE before we can end game
-        self.game_config.check_game_ended(GameStatus::Evaluate)?;
+        self.game_config.assert_endtimestamp_passed()?;
 
-        Ok(())
+        // GameState must be EVALUATE before we can end game
+        self.game_config.assert_game_status(GameStatus::Evaluate)
     }
 
     pub fn actuate(ctx: Context<Self>, _params: GameEndParams) -> Result<()> {

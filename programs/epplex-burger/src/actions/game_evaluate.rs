@@ -24,10 +24,10 @@ pub struct GameEvaluateParams {}
 
 impl GameEvaluate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameEvaluateParams) -> Result<()> {
-        // Game must be INPROGRESS before we can evaluate
-        self.game_config.check_game_ended(GameStatus::InProgress)?;
+        self.game_config.assert_endtimestamp_passed()?;
 
-        Ok(())
+        // Game must be INPROGRESS before we can evaluate
+        self.game_config.assert_game_status(GameStatus::InProgress)
     }
 
     pub fn actuate(ctx: Context<Self>, _params: GameEvaluateParams) -> Result<()> {

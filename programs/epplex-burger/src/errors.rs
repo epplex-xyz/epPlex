@@ -38,10 +38,8 @@ pub enum BurgerError {
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Phase start greater than phase end")]
-    InvalidGameDuration,
-    #[msg("Phase end must be greater than current timestamp")]
-    InvalidPhaseEndTS,
+    #[msg("Game phase end timestamp not surpassed")]
+    EndtimeNotPassed,
     #[msg("Only VoteOnce is allowed")]
     InvalidVoteMany,
     #[msg("Empty expiry timestamp on metadata account")]
