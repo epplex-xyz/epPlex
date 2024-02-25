@@ -46,7 +46,7 @@ pub struct TokenRenew<'info> {
     )]
     pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
 
-    #[account(mut)]
+    #[account()]
     pub payer: Signer<'info>,
 
     #[account(
