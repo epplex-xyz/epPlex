@@ -113,6 +113,11 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn game_evaluate(ctx: Context<GameEvaluate>, params: GameEvaluateParams) -> Result<()> {
+        GameEvaluate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn game_end(ctx: Context<GameEnd>, params: GameEndParams) -> Result<()> {
         GameEnd::actuate(ctx, params)
     }
