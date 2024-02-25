@@ -12,6 +12,7 @@ pub enum GameStatus {
     #[default]
     None,
     InProgress, // active
+    Evaluate,   // evaluating game results
     Finished,   // inactive
 }
 
@@ -115,8 +116,7 @@ impl GameConfig {
     }
 
     pub fn end(&mut self, game_status: GameStatus) -> Result<()> {
-
-        self.game_status = GameStatus::Finished;
+        self.game_status = game_status;
         self.phase_start_timestamp = 0;
         self.phase_end = 0;
         self.vote_type = VoteType::None;
@@ -135,15 +135,14 @@ impl GameConfig {
         Ok(())
     }
 
-
     /// Check for game end
-    pub fn check_game_ended(&self) -> Result<()> {
+    pub fn check_game_ended(&self, game_status: GameStatus) -> Result<()> {
         if self.phase_end < Clock::get().unwrap().unix_timestamp {
             return err!(BurgerError::InvalidGameDuration);
         }
 
         // Game must be in progress before we can end game
-        self.assert_game_status(GameStatus::InProgress)?;
+        self.assert_game_status(game_status)?;
 
         Ok(())
     }
@@ -170,6 +169,12 @@ impl GameConfig {
             GameStatus::InProgress => {
                 if self.game_status.ne(&GameStatus::InProgress) {
                     return err!(BurgerError::GameNotInProgress);
+                }
+            },
+            // If evaluating then continue
+            GameStatus::Evaluate => {
+                if self.game_status.ne(&GameStatus::Evaluate) {
+                    return err!(BurgerError::GameNotEvaluate);
                 }
             }
             _ => {
@@ -224,7 +229,6 @@ impl GameConfig {
         match self.input_type {
             InputType::Choice => {
                 let choice = message.parse::<u8>().unwrap();
-
                 // Max choice is 10
                 if choice > 10 {
                     return err!(BurgerError::IncorrectInputType)
