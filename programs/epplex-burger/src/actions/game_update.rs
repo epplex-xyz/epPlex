@@ -21,19 +21,18 @@ pub struct GameUpdate<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameUpdateParams {
-    pub end_timestamp: i64,
-    pub vote_type: VoteType,
-    pub input_type: InputType,
-    pub game_prompt: String,
-    pub is_encrypted: bool,
+    pub new_start_timestamp: i64,
 }
 
 impl GameUpdate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameUpdateParams) -> Result<()> {
+        // Can only call this during gameFinished and gameInProgress
+        // How to pass in what to update?
+
         Ok(())
     }
 
-    pub fn actuate(_ctx: Context<Self>, _params: GameUpdateParams) -> Result<()> {
-        Ok(())
+    pub fn actuate(ctx: Context<Self>, params: GameUpdateParams) -> Result<()> {
+        ctx.accounts.game_config.update(params)
     }
 }

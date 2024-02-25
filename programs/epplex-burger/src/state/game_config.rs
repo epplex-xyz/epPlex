@@ -114,7 +114,8 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn end(&mut self) -> Result<()> {
+    pub fn end(&mut self, game_status: GameStatus) -> Result<()> {
+
         self.game_status = GameStatus::Finished;
         self.phase_start_timestamp = 0;
         self.phase_end = 0;
@@ -127,6 +128,13 @@ impl GameConfig {
 
         Ok(())
     }
+
+    pub fn update(&mut self, params: GameUpdateParams) -> Result<()> {
+        self.phase_start_timestamp = params.new_start_timestamp;
+
+        Ok(())
+    }
+
 
     /// Check for game end
     pub fn check_game_ended(&self) -> Result<()> {
