@@ -102,9 +102,8 @@ impl GameConfig {
             .game_round
             .checked_add(1)
             .ok_or(BurgerError::InvalidCalculation)?;
-
-        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
         self.game_status = GameStatus::InProgress;
+        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
         self.phase_end = params.end_timestamp;
         self.vote_type = params.vote_type;
         self.input_type = params.input_type;
@@ -116,7 +115,6 @@ impl GameConfig {
     }
 
     pub fn end(&mut self) -> Result<()> {
-        self.phase_start_timestamp = 0;
         self.game_status = GameStatus::Finished;
         self.phase_start_timestamp = 0;
         self.phase_end = 0;
