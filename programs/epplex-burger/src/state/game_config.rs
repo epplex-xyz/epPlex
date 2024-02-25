@@ -228,11 +228,14 @@ impl GameConfig {
 
         match self.input_type {
             InputType::Choice => {
-                let choice = message.parse::<u8>().unwrap();
-                // Max choice is 10
-                if choice > 10 {
-                    return err!(BurgerError::IncorrectInputType)
-                }
+                // No checks for now
+
+
+                // let choice = message.parse::<u8>().unwrap();
+                // // Max choice is 10
+                // if choice > 10 {
+                //     return err!(BurgerError::IncorrectInputType)
+                // }
             },
             InputType::Number => {
                 // Panic if fails to convert
