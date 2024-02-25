@@ -25,6 +25,9 @@ pub use token_game_vote::*;
 pub mod token_game_reset;
 pub use token_game_reset::*;
 
+pub mod token_game_immunity;
+pub use token_game_immunity::*;
+
 pub mod program_delegate_create;
 pub use program_delegate_create::*;
 
