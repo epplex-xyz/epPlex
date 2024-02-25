@@ -40,11 +40,14 @@ pub use program_delegate_close::*;
 pub mod game_create;
 pub use game_create::*;
 
-pub mod game_end;
-pub use game_end::*;
-
 pub mod game_start;
 pub use game_start::*;
+
+pub mod game_evaluate;
+pub use game_evaluate::*;
+
+pub mod game_end;
+pub use game_end::*;
 
 pub mod game_close;
 pub use game_close::*;

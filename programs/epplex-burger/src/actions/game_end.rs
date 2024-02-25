@@ -20,19 +20,17 @@ pub struct GameEnd<'info> {
 
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct GameEndParams {
-    pub game_state: GameStatus,
-}
+pub struct GameEndParams {}
 
 impl GameEnd<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameEndParams) -> Result<()> {
-        // TODO depending on current gameState and passed in game state
-        self.game_config.check_game_ended()?;
+        // GameState must be EVALUATE before we can end game
+        self.game_config.check_game_ended(GameStatus::Evaluate)?;
 
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: GameEndParams) -> Result<()> {
-        ctx.accounts.game_config.end()
+        ctx.accounts.game_config.end(GameStatus::Finished)
     }
 }
