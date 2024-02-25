@@ -74,6 +74,18 @@ impl TokenThaw<'_> {
             ),
         )?;
 
+        anchor_spl::token_interface::set_authority(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::SetAuthority {
+                    current_authority: ctx.accounts.permanent_delegate.to_account_info().clone(),
+                    account_or_mint: ctx.accounts.token_account.to_account_info().clone(),
+                },
+            ),
+            anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType::FreezeAccount,
+            None,
+        )?;
+
         Ok(())
     }
 }
