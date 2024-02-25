@@ -56,7 +56,7 @@ impl TokenGameReset<'_> {
         // Bypass if None
         if self.game_config.vote_type.ne(&VoteType::None) {
             // make sure that a game finished before resetting it
-            self.game_config.assert_game_finished()?;
+            self.game_config.assert_game_status(GameStatus::Finished)?;
         }
 
         Ok(())

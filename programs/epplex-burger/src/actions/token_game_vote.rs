@@ -59,7 +59,6 @@ impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
         self.game_config.validate_input(&params.message)?;
 
-
         let game_state = fetch_metadata_field(
             GAME_STATE,
             &ctx.accounts.mint.to_account_info()
@@ -68,7 +67,7 @@ impl TokenGameVote<'_> {
 
 
         // Check that the game is in progress
-        self.game_config.assert_game_in_progress()?;
+        self.game_config.assert_game_status(GameStatus::InProgress)?;
 
 
         Ok(())
