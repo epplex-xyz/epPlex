@@ -45,7 +45,7 @@ pub struct GameConfig {
     /// Phase start
     pub phase_start_timestamp: i64,
     /// Phase end
-    pub phase_end: i64,
+    pub phase_end_timestamp: i64,
     /// Game master
     pub game_master: Pubkey,
     /// Game vote type
@@ -86,7 +86,7 @@ impl GameConfig {
             game_round: 0,
             game_status: GameStatus::None,
             phase_start_timestamp: 0,
-            phase_end: 0,
+            phase_end_timestamp: 0,
             vote_type: VoteType::None,
             input_type: InputType::Choice,
             game_prompt: "".to_string(),
@@ -105,7 +105,7 @@ impl GameConfig {
             .ok_or(BurgerError::InvalidCalculation)?;
         self.game_status = GameStatus::InProgress;
         self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
-        self.phase_end = params.end_timestamp;
+        self.phase_end_timestamp = params.end_timestamp;
         self.vote_type = params.vote_type;
         self.input_type = params.input_type;
         self.game_prompt = params.game_prompt;
@@ -127,7 +127,7 @@ impl GameConfig {
 
         self.game_status = game_status;
         self.phase_start_timestamp = 0;
-        self.phase_end = 0;
+        self.phase_end_timestamp = 0;
         self.vote_type = VoteType::None;
         self.input_type = InputType::None;
         self.game_prompt = "".to_string();
@@ -146,17 +146,17 @@ impl GameConfig {
 
     /// Fail if phase end timestamp is greater than current time
     pub fn assert_endtimestamp_passed(&self) -> Result<()> {
-        if self.phase_end > Clock::get().unwrap().unix_timestamp {
+        if self.phase_end_timestamp > Clock::get().unwrap().unix_timestamp {
             return err!(BurgerError::EndtimeNotPassed);
         }
 
         Ok(())
     }
 
-    /// Can only start game if NOT in progress
+    /// Can only start game if current state is Finished or None
     pub fn can_start_game(&self) -> Result<()> {
-        if self.game_status.eq(&GameStatus::InProgress) {
-            return err!(BurgerError::GameInProgress)
+        if ![GameStatus::None, GameStatus::Finished].contains(&self.game_status) {
+            return err!(BurgerError::GameCannotStart)
         }
 
         Ok(())
