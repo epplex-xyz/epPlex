@@ -30,12 +30,20 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
 pub struct BurgerMetadata {
     /// The bump, used for PDA validation.
     pub bump: u8,
+    // During game evaluation phase, we need to make sure that all of these are flipped
+    // Although, what if they burn themselves?
+    // pub is_processed: u8,
 }
 
 impl BurgerMetadata {
-    pub const LEN: usize = DISCRIMINATOR_LENGTH + BITS_8;
+    pub const LEN: usize = DISCRIMINATOR_LENGTH
+        // + BITS_8
+        + BITS_8;
 
     pub fn new(bump: u8) -> Self {
-        Self {bump}
+        Self {
+            bump,
+            // is_processed: 0
+        }
     }
 }

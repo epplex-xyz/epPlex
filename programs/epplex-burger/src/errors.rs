@@ -38,32 +38,52 @@ pub enum BurgerError {
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
-    #[msg("Phase start greater than phase end")]
-    InvalidGameDuration,
-    #[msg("Phase end must be greater than current timestamp")]
-    InvalidPhaseEndTS,
+    #[msg("Endtime must be in the future")]
+    IncorrectEndtime,
+
+    #[msg("Game phase end timestamp not surpassed")]
+    EndtimeNotPassed,
+
     #[msg("Only VoteOnce is allowed")]
     InvalidVoteMany,
+
     #[msg("Empty expiry timestamp on metadata account")]
     InvalidExpiryTS,
+
     #[msg("Empty game state field on metadata account")]
     InvalidGameState,
+
     #[msg("Expected additional metadata field to be empty")]
     ExpectedEmptyField,
+
     #[msg("Message was not encrypted")]
     RequiresEncryption,
+
     #[msg("Game must be finished")]
     GameNotFinished,
+
     #[msg("Game must be in progress")]
     GameNotInProgress,
-    #[msg("Game is in progress")]
-    GameInProgress,
+
+    #[msg("Game must be evaluating")]
+    GameNotEvaluate,
+
+    #[msg("Invalid game status assertion")]
+    IncorrectGameStatus,
+
+    #[msg("Game is not Finished nor None")]
+    GameCannotStart,
+
     #[msg("Mint already submitted an answer")]
     AlreadySubmitted,
+
     #[msg("Invalid parameters supplied to game start instruction")]
     InvalidStartParams,
+
+    // Input
     #[msg("Incorrect input type")]
     IncorrectInputType,
+
     #[msg("Input cannot be empty")]
     InputIsEmpty
 }

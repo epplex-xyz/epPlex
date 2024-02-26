@@ -12,6 +12,7 @@ pub enum GameStatus {
     #[default]
     None,
     InProgress, // active
+    Evaluate,   // evaluating game results
     Finished,   // inactive
 }
 
@@ -44,7 +45,7 @@ pub struct GameConfig {
     /// Phase start
     pub phase_start_timestamp: i64,
     /// Phase end
-    pub phase_end: i64,
+    pub phase_end_timestamp: i64,
     /// Game master
     pub game_master: Pubkey,
     /// Game vote type
@@ -57,9 +58,9 @@ pub struct GameConfig {
     pub is_encrypted: bool,
     /// Public encrypt key
     pub public_encrypt_key: String,
-    /// Amount of burgers who perished
+    /// Total amount of burgers who perished
     pub burn_amount: u16,
-    /// Amount of burgers who submitted an answer
+    /// Amount of burgers who submitted an answer within a round
     pub submission_amount: u16,
 }
 
@@ -85,7 +86,7 @@ impl GameConfig {
             game_round: 0,
             game_status: GameStatus::None,
             phase_start_timestamp: 0,
-            phase_end: 0,
+            phase_end_timestamp: 0,
             vote_type: VoteType::None,
             input_type: InputType::Choice,
             game_prompt: "".to_string(),
@@ -102,10 +103,9 @@ impl GameConfig {
             .game_round
             .checked_add(1)
             .ok_or(BurgerError::InvalidCalculation)?;
-
-        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
         self.game_status = GameStatus::InProgress;
-        self.phase_end = params.end_timestamp;
+        self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
+        self.phase_end_timestamp = params.end_timestamp;
         self.vote_type = params.vote_type;
         self.input_type = params.input_type;
         self.game_prompt = params.game_prompt;
@@ -115,59 +115,77 @@ impl GameConfig {
         Ok(())
     }
 
-    pub fn end(&mut self) -> Result<()> {
+    pub fn end(&mut self, game_status: GameStatus) -> Result<()> {
+        // if [GameS]game_status.ne(&GameStatus::Finished)
+        //     || game_status.ne(&GameStatus::Evaluate) {
+        //         return err!(BurgerError::IncorrectGameStatus);
+        // }
+
+        if ![GameStatus::Finished, GameStatus::Evaluate].contains(&game_status) {
+            return err!(BurgerError::IncorrectGameStatus);
+        }
+
+        self.game_status = game_status;
         self.phase_start_timestamp = 0;
-        self.game_status = GameStatus::Finished;
-        self.phase_start_timestamp = 0;
-        self.phase_end = 0;
+        self.phase_end_timestamp = 0;
         self.vote_type = VoteType::None;
         self.input_type = InputType::None;
         self.game_prompt = "".to_string();
         self.is_encrypted = false;
         self.public_encrypt_key = "".to_string();
-        self.burn_amount = 0;
         self.submission_amount = 0;
 
+        Ok(())
+    }
+
+    pub fn update(&mut self, params: GameUpdateParams) -> Result<()> {
+        self.phase_start_timestamp = params.new_start_timestamp;
 
         Ok(())
     }
 
-
-    /// Check for game end
-    pub fn check_game_ended(&self) -> Result<()> {
-        if self.phase_end < Clock::get().unwrap().unix_timestamp {
-            return err!(BurgerError::InvalidGameDuration);
+    /// Fail if phase end timestamp is greater than current time
+    pub fn assert_endtimestamp_passed(&self) -> Result<()> {
+        if self.phase_end_timestamp > Clock::get().unwrap().unix_timestamp {
+            return err!(BurgerError::EndtimeNotPassed);
         }
 
-        // Game must be in progress before we can end game
-        self.assert_game_in_progress()?;
-
         Ok(())
     }
 
-
-    /// Can only start game if NOT in progress
+    /// Can only start game if current state is Finished or None
     pub fn can_start_game(&self) -> Result<()> {
-        if self.game_status.eq(&GameStatus::InProgress) {
-            return err!(BurgerError::GameInProgress)
+        if ![GameStatus::None, GameStatus::Finished].contains(&self.game_status) {
+            return err!(BurgerError::GameCannotStart)
         }
 
         Ok(())
     }
 
-    /// If is finished then continue
-    pub fn assert_game_finished(&self) -> Result<()> {
-        if self.game_status.ne(&GameStatus::Finished) {
-            return err!(BurgerError::GameNotFinished);
-        }
-
-        Ok(())
-    }
-
-    /// If in progress then continue
-    pub fn assert_game_in_progress(&self) -> Result<()> {
-        if self.game_status.ne(&GameStatus::InProgress) {
-            return err!(BurgerError::GameNotInProgress);
+    /// Fail if current game status does not match the specified state
+    pub fn assert_game_status(&self, status: GameStatus) -> Result<()> {
+        match status {
+            // If is finished then continue
+            GameStatus::Finished => {
+                if self.game_status.ne(&GameStatus::Finished) {
+                    return err!(BurgerError::GameNotFinished);
+                }
+            },
+            // If in progress then continue
+            GameStatus::InProgress => {
+                if self.game_status.ne(&GameStatus::InProgress) {
+                    return err!(BurgerError::GameNotInProgress);
+                }
+            },
+            // If evaluating then continue
+            GameStatus::Evaluate => {
+                if self.game_status.ne(&GameStatus::Evaluate) {
+                    return err!(BurgerError::GameNotEvaluate);
+                }
+            }
+            _ => {
+                return err!(BurgerError::IncorrectGameStatus);
+            }
         }
 
         Ok(())
@@ -183,7 +201,7 @@ impl GameConfig {
         Ok(())
     }
 
-        /// Bump burn amount
+    /// Bump burn amount
     pub fn bump_submission_amount(&mut self, game_state: String) -> Result<()> {
         if game_state.is_empty() {
             self.submission_amount = self
@@ -216,12 +234,14 @@ impl GameConfig {
 
         match self.input_type {
             InputType::Choice => {
-                let choice = message.parse::<u8>().unwrap();
+                // No checks for now
 
-                // Max choice is 10
-                if choice > 10 {
-                    return err!(BurgerError::IncorrectInputType)
-                }
+
+                // let choice = message.parse::<u8>().unwrap();
+                // // Max choice is 10
+                // if choice > 10 {
+                //     return err!(BurgerError::IncorrectInputType)
+                // }
             },
             InputType::Number => {
                 // Panic if fails to convert

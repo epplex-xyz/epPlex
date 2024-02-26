@@ -10,6 +10,9 @@ pub use token_renew::*;
 pub mod token_burn;
 pub use token_burn::*;
 
+pub mod token_thaw;
+pub use token_thaw::*;
+
 // pub mod token_buy;
 // pub use token_buy::*;
 
@@ -25,6 +28,9 @@ pub use token_game_vote::*;
 pub mod token_game_reset;
 pub use token_game_reset::*;
 
+pub mod token_game_immunity;
+pub use token_game_immunity::*;
+
 pub mod program_delegate_create;
 pub use program_delegate_create::*;
 
@@ -34,11 +40,14 @@ pub use program_delegate_close::*;
 pub mod game_create;
 pub use game_create::*;
 
-pub mod game_end;
-pub use game_end::*;
-
 pub mod game_start;
 pub use game_start::*;
+
+pub mod game_evaluate;
+pub use game_evaluate::*;
+
+pub mod game_end;
+pub use game_end::*;
 
 pub mod game_close;
 pub use game_close::*;

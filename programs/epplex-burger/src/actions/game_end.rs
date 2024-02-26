@@ -1,6 +1,7 @@
 use crate::*;
 
 #[derive(Accounts)]
+#[instruction(params: GameEndParams)]
 pub struct GameEnd<'info> {
     #[account(
         constraint = ADMINS.contains(
@@ -17,14 +18,19 @@ pub struct GameEnd<'info> {
     pub game_config: Account<'info, GameConfig>,
 }
 
-impl GameEnd<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
-        self.game_config.check_game_ended()?;
 
-        Ok(())
+#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct GameEndParams {}
+
+impl GameEnd<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &GameEndParams) -> Result<()> {
+        self.game_config.assert_endtimestamp_passed()?;
+
+        // GameState must be EVALUATE before we can end game
+        self.game_config.assert_game_status(GameStatus::Evaluate)
     }
 
-    pub fn actuate(ctx: Context<Self>) -> Result<()> {
-        ctx.accounts.game_config.end()
+    pub fn actuate(ctx: Context<Self>, _params: GameEndParams) -> Result<()> {
+        ctx.accounts.game_config.end(GameStatus::Finished)
     }
 }

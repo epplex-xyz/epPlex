@@ -66,9 +66,14 @@ impl TokenBurn<'_> {
         ctx: &Context<Self>,
         _params: &TokenBurnParams,
     ) -> Result<()> {
+        // TODO: need to check for immunity
+        // this burn function has too much responsibility
+
         match &self.game_config {
-            Some(game_config) => game_config.assert_game_finished()?,
-            None => check_has_expired(&ctx.accounts.mint.to_account_info())?,
+            Some(game_config) =>
+                game_config.assert_game_status(GameStatus::Finished)?,
+            None =>
+                check_has_expired(&ctx.accounts.mint.to_account_info())?,
         }
 
         // if self.game_config.game_status.ne(&GameStatus::Finished) {

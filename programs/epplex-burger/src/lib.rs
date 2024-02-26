@@ -16,7 +16,7 @@ pub use utils::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token::{Mint, Token, TokenAccount},
-    
+
     // ID as TOKEN_2022_PROGRAM_ID alternatively
     token_2022::{self},
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
@@ -55,6 +55,10 @@ pub mod epplex_burger {
         TokenBurn::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_thaw(ctx: Context<TokenThaw>, params: TokenThawParams) -> Result<()> {
+        TokenThaw::actuate(ctx, params)
+    }
 
 
     /*
@@ -63,6 +67,11 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_game_vote(ctx: Context<TokenGameVote>, params: TokenGameVoteParams) -> Result<()> {
         TokenGameVote::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_immunity(ctx: Context<TokenGameImmunity>, params: TokenGameImmunityParams) -> Result<()> {
+        TokenGameImmunity::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -103,9 +112,14 @@ pub mod epplex_burger {
         GameStart::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn game_end(ctx: Context<GameEnd>) -> Result<()> {
-        GameEnd::actuate(ctx)
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn game_evaluate(ctx: Context<GameEvaluate>, params: GameEvaluateParams) -> Result<()> {
+        GameEvaluate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn game_end(ctx: Context<GameEnd>, params: GameEndParams) -> Result<()> {
+        GameEnd::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx))]
