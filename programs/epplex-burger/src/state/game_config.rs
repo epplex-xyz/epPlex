@@ -4,6 +4,7 @@ use crate::*;
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
 pub const GAME_QUESTION_LENGTH: usize = 150;
+pub const GAME_NAME_LENGTH: usize = 50;
 pub const PUBLIC_ENCRYPT_KEY_LENGTH: usize = 250;
 
 /// Represents game activity.
@@ -40,6 +41,8 @@ pub struct GameConfig {
     pub bump: u8,
     /// The game number
     pub game_round: u8,
+    /// The game number
+    pub game_name: String,
     /// The game status
     pub game_status: GameStatus,
     /// Phase start
@@ -68,6 +71,7 @@ impl GameConfig {
     pub const LEN: usize = epplex_shared::DISCRIMINATOR_LENGTH
         + epplex_shared::BITS_8
         + epplex_shared::BITS_8
+        + (epplex_shared::VEC_PREFIX + GAME_NAME_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_8
         + epplex_shared::BITS_64
         + epplex_shared::BITS_64
@@ -85,6 +89,7 @@ impl GameConfig {
             bump,
             game_round: 0,
             game_status: GameStatus::None,
+            game_name: "".to_string(),
             phase_start_timestamp: 0,
             phase_end_timestamp: 0,
             vote_type: VoteType::None,
@@ -103,6 +108,7 @@ impl GameConfig {
             .game_round
             .checked_add(1)
             .ok_or(BurgerError::InvalidCalculation)?;
+        self.game_name = params.game_name;
         self.game_status = GameStatus::InProgress;
         self.phase_start_timestamp = Clock::get().unwrap().unix_timestamp;
         self.phase_end_timestamp = params.end_timestamp;
@@ -126,6 +132,7 @@ impl GameConfig {
         }
 
         self.game_status = game_status;
+        self.game_name = "".to_string();
         self.phase_start_timestamp = 0;
         self.phase_end_timestamp = 0;
         self.vote_type = VoteType::None;

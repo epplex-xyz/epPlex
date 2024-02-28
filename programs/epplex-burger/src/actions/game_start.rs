@@ -25,6 +25,7 @@ pub struct GameStartParams {
     pub vote_type: VoteType,
     pub input_type: InputType,
     pub game_prompt: String,
+    pub game_name: String,
     pub is_encrypted: bool,
     pub public_encrypt_key: String
 }
