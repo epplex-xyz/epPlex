@@ -52,14 +52,7 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
-
-        // Bypass if None
-        if self.game_config.vote_type.ne(&VoteType::None) {
-            // make sure that a game finished before resetting it
-            self.game_config.assert_game_status(GameStatus::Finished)?;
-        }
-
-        Ok(())
+        self.game_config.can_evaluate()
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameResetParams) -> Result<()> {

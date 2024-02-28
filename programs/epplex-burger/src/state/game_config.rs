@@ -169,6 +169,15 @@ impl GameConfig {
         Ok(())
     }
 
+    /// Can only submit burn ix and reset ix if game_state is none or evaluate
+    pub fn can_evaluate(&self) -> Result<()> {
+        if ![GameStatus::None, GameStatus::Evaluate].contains(&self.game_status) {
+            return err!(BurgerError::EvaluationImpossible)
+        }
+
+        Ok(())
+    }
+
     /// Fail if current game status does not match the specified state
     pub fn assert_game_status(&self, status: GameStatus) -> Result<()> {
         match status {

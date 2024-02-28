@@ -85,5 +85,8 @@ pub enum BurgerError {
     IncorrectInputType,
 
     #[msg("Input cannot be empty")]
-    InputIsEmpty
+    InputIsEmpty,
+
+    #[msg("Unable to evaluate game")]
+    EvaluationImpossible
 }

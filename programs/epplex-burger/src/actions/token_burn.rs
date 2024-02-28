@@ -71,14 +71,10 @@ impl TokenBurn<'_> {
 
         match &self.game_config {
             Some(game_config) =>
-                game_config.assert_game_status(GameStatus::Finished)?,
+                game_config.can_evaluate()?,
             None =>
                 check_has_expired(&ctx.accounts.mint.to_account_info())?,
         }
-
-        // if self.game_config.game_status.ne(&GameStatus::Finished) {
-        //     check_has_expired(&ctx.accounts.mint.to_account_info())?;
-        // }
 
         Ok(())
     }

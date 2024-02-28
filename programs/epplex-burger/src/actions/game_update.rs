@@ -26,10 +26,7 @@ pub struct GameUpdateParams {
 
 impl GameUpdate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameUpdateParams) -> Result<()> {
-        // Can only call this during gameFinished and gameInProgress
-        // How to pass in what to update?
-
-        Ok(())
+        self.game_config.assert_game_status(GameStatus::Finished)
     }
 
     pub fn actuate(ctx: Context<Self>, params: GameUpdateParams) -> Result<()> {
