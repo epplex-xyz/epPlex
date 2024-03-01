@@ -148,7 +148,17 @@ impl GameConfig {
     }
 
     pub fn update(&mut self, params: GameUpdateParams) -> Result<()> {
-        self.phase_start_timestamp = params.new_start_timestamp;
+        if let Some(phase_start_timestamp) = params.phase_start_timestamp {
+            self.phase_start_timestamp = phase_start_timestamp;
+        }
+
+        if let Some(vote_type) = params.vote_type {
+            self.vote_type = vote_type;
+        }
+
+        if let Some(phase_end_timestamp) = params.phase_end_timestamp {
+            self.phase_end_timestamp = phase_end_timestamp;
+        }
 
         Ok(())
     }
@@ -175,6 +185,14 @@ impl GameConfig {
     pub fn can_evaluate(&self) -> Result<()> {
         if ![GameStatus::None, GameStatus::Evaluate].contains(&self.game_status) {
             return err!(BurgerError::EvaluationImpossible)
+        }
+
+        Ok(())
+    }
+
+    pub fn can_update(&self) -> Result<()> {
+        if ![GameStatus::InProgress, GameStatus::Finished].contains(&self.game_status) {
+            return err!(BurgerError::IncorrectGameStatus)
         }
 
         Ok(())

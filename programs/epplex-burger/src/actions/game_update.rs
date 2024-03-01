@@ -21,12 +21,15 @@ pub struct GameUpdate<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameUpdateParams {
-    pub new_start_timestamp: i64,
+    pub phase_start_timestamp: Option<i64>,
+    pub phase_end_timestamp: Option<i64>,
+    pub vote_type: Option<VoteType>,
+
 }
 
 impl GameUpdate<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &GameUpdateParams) -> Result<()> {
-        self.game_config.assert_game_status(GameStatus::Finished)
+        self.game_config.can_update()
     }
 
     pub fn actuate(ctx: Context<Self>, params: GameUpdateParams) -> Result<()> {
