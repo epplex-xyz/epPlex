@@ -3,9 +3,9 @@ use crate::*;
 #[constant]
 pub const SEED_GAME_CONFIG: &[u8] = b"GAME_CONFIG";
 
-pub const GAME_QUESTION_LENGTH: usize = 150;
-pub const GAME_NAME_LENGTH: usize = 50;
-pub const PUBLIC_ENCRYPT_KEY_LENGTH: usize = 250;
+pub const GAME_PROMPT_LENGTH: usize = 130; // 4 + 120 * 4 = 480
+pub const GAME_NAME_LENGTH: usize = 40; // 4 + 30 * 4 = 120
+pub const PUBLIC_ENCRYPT_KEY_LENGTH: usize = 190; // 4 + 190 * 4 = 760
 
 /// Represents game activity.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -68,21 +68,23 @@ pub struct GameConfig {
 }
 
 impl GameConfig {
-    pub const LEN: usize = epplex_shared::DISCRIMINATOR_LENGTH
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_8
+    pub const LEN: usize = epplex_shared::DISCRIMINATOR_LENGTH // 8
+        + epplex_shared::BITS_8 // 1
+        + epplex_shared::BITS_8 // 1
         + (epplex_shared::VEC_PREFIX + GAME_NAME_LENGTH * epplex_shared::UTF_SIZE)
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_64
-        + epplex_shared::BITS_64
-        + epplex_shared::PUBLIC_KEY_LENGTH
-        + epplex_shared::BITS_8
-        + epplex_shared::BITS_8
-        + (epplex_shared::VEC_PREFIX + GAME_QUESTION_LENGTH * epplex_shared::UTF_SIZE)
-        + epplex_shared::BITS_8
+        + epplex_shared::BITS_8 // 1
+        + epplex_shared::BITS_64 // 8
+        + epplex_shared::BITS_64 // 8
+        + epplex_shared::PUBLIC_KEY_LENGTH // 32
+        + epplex_shared::BITS_8 // 1
+        + epplex_shared::BITS_8 // 1
+        + (epplex_shared::VEC_PREFIX + GAME_PROMPT_LENGTH * epplex_shared::UTF_SIZE)
+        + epplex_shared::BITS_8 // 1
         + (epplex_shared::VEC_PREFIX + PUBLIC_ENCRYPT_KEY_LENGTH * epplex_shared::UTF_SIZE)
-        + epplex_shared::BITS_16
-        + epplex_shared::BITS_16;
+        + epplex_shared::BITS_16 // 2
+        + epplex_shared::BITS_16; // 2
+        // approx 1500
+
 
     pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
