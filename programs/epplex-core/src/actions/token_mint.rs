@@ -1,8 +1,8 @@
+use crate::mint::TokenCreateParams;
 use crate::*;
 use anchor_spl::token_interface::MintTo;
+use epplex_shared::{update_token_metadata, Token2022};
 use spl_token_metadata_interface::state::TokenMetadata;
-use epplex_shared::{Token2022, update_token_metadata};
-use crate::mint::TokenCreateParams;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
@@ -13,12 +13,11 @@ pub struct TokenMint<'info> {
         seeds = [
             SEED_MINT,
             global_collection_config.collection_counter.to_le_bytes().as_ref(),
-            (0 as u64).to_le_bytes().as_ref()
+            0_u64.to_le_bytes().as_ref()
         ],
         bump
     )]
     pub mint: UncheckedAccount<'info>,
-
 
     /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
@@ -51,26 +50,32 @@ pub struct TokenMint<'info> {
     pub associated_token: Program<'info, AssociatedToken>,
 }
 
-
 impl TokenMint<'_> {
-
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenCreateParams) -> Result<()> {
         Ok(())
     }
 
     // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
-        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
-            Some(ctx.accounts.update_authority.key())
-        ).expect("Bad update auth");
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+            ctx.accounts.update_authority.key(),
+        ))
+        .expect("Bad update auth");
 
         // Convert from Vec<[String;2]> to Vec<(String, String)>
-        let mut converted_metadata: Vec<(String, String)> = params.additional_metadata
+        let mut converted_metadata: Vec<(String, String)> = params
+            .additional_metadata
             .iter()
             .map(|array| (array[0].clone(), array[1].clone()))
             .collect();
 
-        converted_metadata.push((COLLECTION_ID_FIELD.to_string(), ctx.accounts.global_collection_config.collection_counter.to_string()));
+        converted_metadata.push((
+            COLLECTION_ID_FIELD.to_string(),
+            ctx.accounts
+                .global_collection_config
+                .collection_counter
+                .to_string(),
+        ));
 
         let tm = TokenMetadata {
             update_authority,
@@ -78,7 +83,7 @@ impl TokenMint<'_> {
             name: params.name.clone(),
             symbol: params.symbol.clone(),
             uri: params.uri.clone(),
-            additional_metadata: converted_metadata.clone()
+            additional_metadata: converted_metadata.clone(),
         };
 
         // Create the ephemeral token
@@ -145,7 +150,6 @@ impl TokenMint<'_> {
             params.uri.clone(),
         )?;
 
-
         // Might need ot put into separate instruction
         // Add all the metadata
         for (field, value) in converted_metadata.into_iter() {
@@ -159,19 +163,17 @@ impl TokenMint<'_> {
         }
 
         // Create ATA
-        anchor_spl::associated_token::create(
-            CpiContext::new(
-                ctx.accounts.token22_program.to_account_info(),
-                anchor_spl::associated_token::Create {
-                    payer: ctx.accounts.payer.to_account_info(), // payer
-                    associated_token: ctx.accounts.token_account.to_account_info(),
-                    authority: ctx.accounts.payer.to_account_info(), // owner
-                    mint: ctx.accounts.mint.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                }
-            ),
-        )?;
+        anchor_spl::associated_token::create(CpiContext::new(
+            ctx.accounts.token22_program.to_account_info(),
+            anchor_spl::associated_token::Create {
+                payer: ctx.accounts.payer.to_account_info(), // payer
+                associated_token: ctx.accounts.token_account.to_account_info(),
+                authority: ctx.accounts.payer.to_account_info(), // owner
+                mint: ctx.accounts.mint.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                token_program: ctx.accounts.token22_program.to_account_info(),
+            },
+        ))?;
 
         // Mint to ATA
         anchor_spl::token_interface::mint_to(
@@ -181,9 +183,9 @@ impl TokenMint<'_> {
                     mint: ctx.accounts.mint.to_account_info().clone(),
                     to: ctx.accounts.token_account.to_account_info().clone(),
                     authority: ctx.accounts.payer.to_account_info(),
-                }
+                },
             ),
-            1
+            1,
         )?;
 
         // TODO in LibrePlex case the authority is a PDA
@@ -194,7 +196,7 @@ impl TokenMint<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority:  ctx.accounts.payer.to_account_info().clone(),
+                    current_authority: ctx.accounts.payer.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
                 // &[deployment_seeds]
@@ -219,5 +221,4 @@ impl TokenMint<'_> {
 
         Ok(())
     }
-
 }
