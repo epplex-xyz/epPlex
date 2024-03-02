@@ -1,6 +1,5 @@
 use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
-use epplex_shared::Token2022;
 
 #[derive(Accounts)]
 #[instruction(params: TokenThawParams)]
