@@ -1,9 +1,7 @@
-pub use anchor_lang::prelude::*;
-
-pub use crate::{state::*, errors::*};
+use crate::*;
 
 #[derive(Accounts)]
-#[instruction(seed: u64)]
+#[instruction(params: RuleManageParams)]
 pub struct RuleManage<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
@@ -14,7 +12,7 @@ pub struct RuleManage<'info> {
         space = EphemeralRule::INIT_SPACE,
         seeds = [
             SEED_EPHEMERAL_RULE,
-            seed.to_le_bytes().as_ref()
+            params.seed.to_le_bytes().as_ref()
         ],
         bump,
     )]
@@ -23,45 +21,40 @@ pub struct RuleManage<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct RuleManageParams {
-    
+    pub seed: u64,
+    pub rule_creator: Pubkey,
+    pub renewal_price: u64,
+    pub treasury: Pubkey,
 }
 
-impl<'info> RuleManage<'info> {
-    pub fn create_rule(
-        &mut self,
-        seed: u64,
-        rule_creator: Pubkey,
-        renewal_price: u64,
-        treasury: Pubkey,
-    ) -> Result<()> {
-
-        self.rule.set_inner(
+impl RuleManage<'_> {
+    pub fn rule_create(ctx: Context<Self>, params: RuleManageParams) -> Result<()> {
+        let rule = &mut ctx.accounts.rule;
+        rule.set_inner(
             EphemeralRule {
-
-                seed,
-                rule_creator,
-                renewal_price,
-                treasury,
+                bump: ctx.bumps.rule,
+                seed: params.seed,
+                rule_creator: params.rule_creator,
+                renewal_price: params.renewal_price,
+                treasury: params.treasury,
             }
         );
 
         Ok(())
     }
 
-    pub fn modify_rule(
-        &mut self,
-        seed: u64,
-        rule_creator: Pubkey,
-        renewal_price: u64,
-        treasury: Pubkey,
-    ) -> Result<()> {
+    pub fn rule_modify(ctx: Context<Self>, params: RuleManageParams) -> Result<()> {
+        require!(
+            ctx.accounts.rule.rule_creator == ctx.accounts.signer.key(),
+            EphemeralityError::EscalatedAuthority
+        );
 
-        require!(self.rule.rule_creator == self.signer.key(), EphemeralityError::EscalatedAuthority);
-
-        self.rule.rule_creator = rule_creator;
-        self.rule.renewal_price = renewal_price;
-        self.rule.treasury = treasury;
+        let rule = &mut ctx.accounts.rule;
+        rule.rule_creator = params.rule_creator;
+        rule.renewal_price = params.renewal_price;
+        rule.treasury = params.treasury;
 
         Ok(())
     }

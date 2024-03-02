@@ -1,9 +1,5 @@
-pub use anchor_lang::{
-    system_program::{transfer, Transfer},
-    prelude::*
-};
-
-pub use crate::{state::*, errors::*};
+pub use anchor_lang::system_program::{transfer, Transfer};
+use crate::*;
 
 #[derive(Accounts)]
 pub struct TimeManage<'info> {
@@ -18,16 +14,22 @@ pub struct TimeManage<'info> {
     pub membership: UncheckedAccount<'info>,
 
     #[account(
-        seeds = [b"ephemeral_rule", rule.seed.to_le_bytes().as_ref()],
-        bump,
+        seeds = [
+            SEED_EPHEMERAL_RULE,
+            rule.seed.to_le_bytes().as_ref()
+        ],
+        bump = rule.bump,
         has_one = treasury
     )]
     pub rule: Account<'info, EphemeralRule>,
 
     #[account(
         mut,
-        seeds = [b"ephemeral_data", membership.key().as_ref()],
-        bump,
+        seeds = [
+            SEED_EPHEMERAL_DATA,
+            membership.key().as_ref()
+        ],
+        bump = data.bump,
         has_one = rule
     )]
     pub data: Account<'info, EphemeralData>,
@@ -35,23 +37,39 @@ pub struct TimeManage<'info> {
     pub system_program: Program<'info, System>,
 }
 
+pub struct TimeManageParams {
+    pub seed: u64,
+    pub rule_creator: Pubkey,
+    pub renewal_price: u64,
+    pub treasury: Pubkey,
+}
+
 impl<'info> TimeManage<'info> {
     pub fn add(
         &mut self,
         time: u64, // Time in hours
     ) -> Result<()> {
-
         let mut cost = time * self.rule.renewal_price;
-        let time: u64 = time.checked_mul(3600).ok_or(EphemeralityError::Overflow)?;
+        let time: u64 = time
+            .checked_mul(3600)
+            .ok_or(EphemeralityError::Overflow)?;
 
         if self.data.expiry_time < Clock::get()?.unix_timestamp {
             let flat_fee: u64 = 20;
-            cost = cost.checked_add(flat_fee.checked_mul(self.rule.renewal_price).ok_or(EphemeralityError::Overflow)?).ok_or(EphemeralityError::Overflow)?;
+            cost = cost
+                .checked_add(
+                    flat_fee
+                    .checked_mul(self.rule.renewal_price)
+                    .ok_or(EphemeralityError::Overflow)?
+                ).ok_or(EphemeralityError::Overflow)?;
+
         } else if self.payer.key() == self.rule.rule_creator {
             cost = 0;
         }
 
-        self.data.expiry_time = self.data.expiry_time.checked_add(time as i64).ok_or(EphemeralityError::Overflow)?;
+        self.data.expiry_time = self.data.expiry_time
+            .checked_add(time as i64)
+            .ok_or(EphemeralityError::Overflow)?;
 
         transfer(
             CpiContext::new(
@@ -70,13 +88,22 @@ impl<'info> TimeManage<'info> {
         &mut self,
         time: u64, // Time in hours
     ) -> Result<()> {
+        require!(
+            self.data.expiry_time > Clock::get()?.unix_timestamp,
+            EphemeralityError::AlreadyExpired
+        );
+        require!(
+            self.payer.key() == self.rule.rule_creator,
+            EphemeralityError::EscalatedAuthority
+        );
 
-        require!(self.data.expiry_time > Clock::get()?.unix_timestamp, EphemeralityError::AlreadyExpired);
-        require!(self.payer.key() == self.rule.rule_creator, EphemeralityError::EscalatedAuthority);
+        let time: u64 = time
+            .checked_mul(3600)
+            .ok_or(EphemeralityError::Overflow)?;
 
-        let time: u64 = time.checked_mul(3600).ok_or(EphemeralityError::Overflow)?;
-
-        self.data.expiry_time = self.data.expiry_time.checked_sub(time as i64).ok_or(EphemeralityError::Overflow)?;
+        self.data.expiry_time = self.data.expiry_time
+            .checked_sub(time as i64)
+            .ok_or(EphemeralityError::Overflow)?;
 
         Ok(())
     }

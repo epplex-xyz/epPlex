@@ -1,3 +1,5 @@
+use crate::*;
+
 pub use anchor_lang::{
     solana_program::{
         sysvar::rent::ID as RENT_ID,
@@ -8,7 +10,7 @@ pub use anchor_lang::{
 
 pub use anchor_spl::{
     token_2022::{Token2022, spl_token_2022::instruction::AuthorityType},
-    associated_token::{Create, create, ID as ASSOCIATED_TOKEN_PROGRAM_ID},
+    associated_token::{Create, create},
     token_interface::{MintTo, mint_to, SetAuthority, set_authority},
 };
 
@@ -26,13 +28,12 @@ pub use spl_token_metadata_interface::{
     instruction::{initialize as initialize_metadata_account, update_field as update_metadata_account},
 };
 
-pub use crate::{state::*, errors::*};
-
 #[derive(Accounts)]
 pub struct MembershipCreate<'info> {
     #[account(
         mut,
-        constraint = rule_creator.key() == rule.rule_creator,
+        constraint = rule_creator.key() == rule.rule_creator
+            @EphemeralityError::EscalatedAuthority,
     )]
     pub rule_creator: Signer<'info>,
 
@@ -49,7 +50,7 @@ pub struct MembershipCreate<'info> {
             token_2022_program.key().as_ref(),
             membership.key().as_ref()
         ],
-        seeds::program = ASSOCIATED_TOKEN_PROGRAM_ID,
+        seeds::program = associated_token_program.key(),
         bump
     )]
     /// CHECK
@@ -89,6 +90,8 @@ pub struct MembershipCreate<'info> {
     /// CHECK: this is fine since we are hard coding the rent sysvar.
     pub rent: UncheckedAccount<'info>,
 
+    pub associated_token_program: Program<'info, AssociatedToken>,
+
     pub token_2022_program: Program<'info, Token2022>,
 
     pub system_program: Program<'info, System>,
@@ -107,6 +110,7 @@ impl<'info> MembershipCreate<'info> {
         // Step 0: Populate the EphemeralData account so we can reference it to use it.
         self.data.set_inner(
             EphemeralData {
+                bump: bumps.data,
                 mint: self.membership.key(),
                 rule: self.rule.key(),
                 expiry_time: Clock::get()?.unix_timestamp + time,
