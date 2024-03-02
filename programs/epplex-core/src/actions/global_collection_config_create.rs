@@ -4,7 +4,9 @@ use crate::*;
 pub struct GlobalCollectionConfigCreate<'info> {
     #[account(
         init,
-        seeds =  [SEED_GLOBAL_COLLECTION_CONFIG],
+        seeds = [
+            SEED_GLOBAL_COLLECTION_CONFIG
+        ],
         bump,
         payer = payer,
         space = GlobalCollectionConfig::LEN

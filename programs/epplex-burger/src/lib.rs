@@ -18,11 +18,10 @@ use anchor_spl::{
     token::{Mint, Token, TokenAccount},
 
     // ID as TOKEN_2022_PROGRAM_ID alternatively
-    token_2022::{self},
+    token_2022::{self, Token2022},
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
 use epplex_shared;
-use epplex_shared::Token2022;
 use spl_token_metadata_interface::state::TokenMetadata;
 
 #[program]

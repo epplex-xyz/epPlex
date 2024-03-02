@@ -1,5 +1,4 @@
 use crate::*;
-use anchor_spl::token_interface::MintTo;
 use spl_token_metadata_interface::state::TokenMetadata;
 use epplex_shared::{Token2022, update_token_metadata};
 use crate::mint::{COLLECTION_ID_FIELD, TokenCollectionCreateParams};
@@ -183,7 +182,7 @@ impl CollectionMint<'_> {
         )?;
 
         // Mint to ATA
-        anchor_spl::token_interface::mint_to(
+        mint_to(
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 MintTo {

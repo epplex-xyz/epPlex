@@ -21,7 +21,7 @@ pub struct GlobalCollectionConfigClose<'info> {
 }
 
 impl GlobalCollectionConfigClose<'_> {
-    pub fn validate(&self,_ctx: &Context<Self>,) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
         Ok(())
     }
 
