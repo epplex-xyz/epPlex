@@ -58,13 +58,56 @@ pub mod epplex_core {
         GlobalCollectionConfigClose::actuate(ctx)
     }
 
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn program_delegate_create(ctx: Context<ProgramDelegateCreate>, params: ProgramDelegateCreateParams) -> Result<()> {
-    //     ProgramDelegateCreate::actuate(ctx, &params)
-    // }
-    //
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn program_delegate_close(ctx: Context<ProgramDelegateClose>, params: ProgramDelegateCloseParams) -> Result<()> {
-    //     ProgramDelegateClose::actuate(ctx, &params)
-    // }
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn rule_create(
+        ctx: Context<RuleManage>,
+        seed: u64,
+        rule_creator: Pubkey,
+        renewal_price: u64,
+        treasury: Pubkey,
+    ) -> Result<()> {
+        ctx.accounts.create_rule(seed, rule_creator, renewal_price, treasury)
+    }
+
+    pub fn rule_modify(
+        ctx: Context<RuleManage>,
+        seed: u64,
+        rule_creator: Pubkey,
+        renewal_price: u64,
+        treasury: Pubkey,
+    ) -> Result<()> {
+        ctx.accounts.modify_rule(seed, rule_creator, renewal_price, treasury)
+    }
+
+    pub fn membership_create(
+        ctx: Context<MembershipCreate>,
+        time: i64,
+        name: String,
+        symbol: String,
+        uri: String,
+    ) -> Result<()> {
+        ctx.accounts.create(time, name, symbol, uri, ctx.bumps)
+    }
+
+    pub fn membership_burn(
+        ctx: Context<MembershipBurn>,
+    ) -> Result<()> {
+        ctx.accounts.burn(ctx.bumps)
+    }
+
+    pub fn time_add(
+        ctx: Context<TimeManage>,
+        time: u64,
+    ) -> Result<()> {
+        ctx.accounts.add(time)
+    }
+
+    pub fn time_remove(
+        ctx: Context<TimeManage>,
+        time: u64,
+    ) -> Result<()> {
+        ctx.accounts.remove(time)
+    }
+
+
 }
