@@ -7,13 +7,9 @@ pub fn transfer_sol<'info>(
     program_id: &AccountInfo<'info>,
     from: &AccountInfo<'info>,
     to: &AccountInfo<'info>,
-    amount: u64
+    amount: u64,
 ) -> Result<()> {
-    let ix = system_instruction::transfer(
-        &from.key(),
-        &to.key(),
-        amount,
-    );
+    let ix = system_instruction::transfer(&from.key(), &to.key(), amount);
 
     let account_infos: Vec<AccountInfo> = vec![
         from.to_account_info(),
@@ -21,10 +17,7 @@ pub fn transfer_sol<'info>(
         program_id.to_account_info(),
     ];
 
-    solana_program::program::invoke(
-        &ix,
-        &account_infos[..],
-    )?;
+    solana_program::program::invoke(&ix, &account_infos[..])?;
 
     Ok(())
 }
