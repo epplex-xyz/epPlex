@@ -61,19 +61,13 @@ pub struct TokenBurn<'info> {
 pub struct TokenBurnParams {}
 
 impl TokenBurn<'_> {
-    pub fn validate(
-        &self,
-        ctx: &Context<Self>,
-        _params: &TokenBurnParams,
-    ) -> Result<()> {
+    pub fn validate(&self, ctx: &Context<Self>, _params: &TokenBurnParams) -> Result<()> {
         // TODO: need to check for immunity
         // this burn function has too much responsibility
 
         match &self.game_config {
-            Some(game_config) =>
-                game_config.can_evaluate()?,
-            None =>
-                check_has_expired(&ctx.accounts.mint.to_account_info())?,
+            Some(game_config) => game_config.can_evaluate()?,
+            None => check_has_expired(&ctx.accounts.mint.to_account_info())?,
         }
 
         Ok(())
@@ -99,20 +93,17 @@ impl TokenBurn<'_> {
 
         // Can only close the ATA if we are the owners
         let token_account = ctx.accounts.token_account.to_account_info();
-        let state = spl_token_2022::state::Account::unpack_from_slice(
-            &token_account.try_borrow_data()?
-        )?;
+        let state =
+            spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
         if state.owner == ctx.accounts.payer.key() {
-            anchor_spl::token_interface::close_account(
-                CpiContext::new(
-                    ctx.accounts.token22_program.to_account_info(),
-                    anchor_spl::token_interface::CloseAccount {
-                        account: ctx.accounts.token_account.to_account_info().clone(),
-                        destination: ctx.accounts.payer.to_account_info().clone(),
-                        authority: ctx.accounts.payer.to_account_info().clone(),
-                    },
-                ),
-            )?;
+            anchor_spl::token_interface::close_account(CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::CloseAccount {
+                    account: ctx.accounts.token_account.to_account_info().clone(),
+                    destination: ctx.accounts.payer.to_account_info().clone(),
+                    authority: ctx.accounts.payer.to_account_info().clone(),
+                },
+            ))?;
         }
 
         // Another one bites the dust

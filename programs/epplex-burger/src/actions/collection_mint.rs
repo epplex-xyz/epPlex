@@ -1,8 +1,8 @@
+use crate::*;
 use anchor_spl::associated_token::AssociatedToken;
-use epplex_core::CollectionConfig;
 use epplex_core::program::EpplexCore;
 use epplex_core::state::SEED_COLLECTION_CONFIG;
-use crate::*;
+use epplex_core::CollectionConfig;
 
 #[derive(Accounts)]
 #[instruction(params: CollectionMintParams)]
@@ -56,7 +56,7 @@ pub struct CollectionMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    pub epplex_core: Program<'info, EpplexCore>
+    pub epplex_core: Program<'info, EpplexCore>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -70,9 +70,9 @@ pub struct CollectionMintParams {
 
 impl CollectionMint<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, params: &CollectionMintParams) -> Result<()> {
-        let expiry_date =  params.expiry_date.parse::<i64>().unwrap();
+        let expiry_date = params.expiry_date.parse::<i64>().unwrap();
         let now = Clock::get().unwrap().unix_timestamp;
-        if !(now < expiry_date) {
+        if now >= expiry_date {
             return err!(BurgerError::DateMustBeInTheFuture);
         }
 
@@ -82,13 +82,14 @@ impl CollectionMint<'_> {
     pub fn actuate(ctx: Context<Self>, params: CollectionMintParams) -> Result<()> {
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
-        **token_metadata = BurgerMetadata::new(
-            ctx.bumps.token_metadata,
-        );
+        **token_metadata = BurgerMetadata::new(ctx.bumps.token_metadata);
 
         let additional_metadata = generate_metadata(params.expiry_date);
 
-        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
         // CPI into token_mint
         epplex_core::cpi::collection_mint(
             CpiContext::new_with_signer(
@@ -104,16 +105,16 @@ impl CollectionMint<'_> {
                     collection_config: ctx.accounts.collection_config.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token22_program: ctx.accounts.token22_program.to_account_info(),
-                    associated_token: ctx.accounts.associated_token.to_account_info()
+                    associated_token: ctx.accounts.associated_token.to_account_info(),
                 },
-                &[&seeds[..]]
+                &[&seeds[..]],
             ),
             epplex_core::mint::TokenCollectionCreateParams {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
                 collection_id: params.collection_counter,
-                additional_metadata: additional_metadata
+                additional_metadata,
             },
         )
     }

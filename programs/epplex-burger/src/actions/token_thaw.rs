@@ -51,27 +51,24 @@ pub struct TokenThaw<'info> {
 pub struct TokenThawParams {}
 
 impl TokenThaw<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &TokenThawParams,
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenThawParams) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenThawParams) -> Result<()> {
-        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
-        anchor_spl::token_interface::thaw_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.token22_program.to_account_info(),
-                anchor_spl::token_interface::ThawAccount {
-                    mint: ctx.accounts.mint.to_account_info().clone(),
-                    account: ctx.accounts.token_account.to_account_info().clone(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info().clone(),
-                },
-                &[&seeds[..]]
-            ),
-        )?;
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
+        anchor_spl::token_interface::thaw_account(CpiContext::new_with_signer(
+            ctx.accounts.token22_program.to_account_info(),
+            anchor_spl::token_interface::ThawAccount {
+                mint: ctx.accounts.mint.to_account_info().clone(),
+                account: ctx.accounts.token_account.to_account_info().clone(),
+                authority: ctx.accounts.permanent_delegate.to_account_info().clone(),
+            },
+            &[&seeds[..]],
+        ))?;
 
         anchor_spl::token_interface::set_authority(
             CpiContext::new(

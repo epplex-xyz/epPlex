@@ -54,31 +54,25 @@ pub struct TokenGameVoteParams {
     pub message: String,
 }
 
-
 impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
         self.game_config.validate_input(&params.message)?;
 
-        let game_state = fetch_metadata_field(
-            GAME_STATE,
-            &ctx.accounts.mint.to_account_info()
-        )?;
+        let game_state = fetch_metadata_field(GAME_STATE, &ctx.accounts.mint.to_account_info())?;
         self.game_config.check_vote_eligibility(game_state)?;
 
-
         // Check that the game is in progress
-        self.game_config.assert_game_status(GameStatus::InProgress)?;
-
+        self.game_config
+            .assert_game_status(GameStatus::InProgress)?;
 
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, params: TokenGameVoteParams) -> Result<()> {
-        let game_state = fetch_metadata_field(
-            GAME_STATE,
-            &ctx.accounts.mint.to_account_info()
-        )?;
-        ctx.accounts.game_config.bump_submission_amount(game_state)?;
+        let game_state = fetch_metadata_field(GAME_STATE, &ctx.accounts.mint.to_account_info())?;
+        ctx.accounts
+            .game_config
+            .bump_submission_amount(game_state)?;
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
         // Update game state

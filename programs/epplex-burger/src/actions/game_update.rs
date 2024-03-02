@@ -24,7 +24,6 @@ pub struct GameUpdateParams {
     pub phase_start_timestamp: Option<i64>,
     pub phase_end_timestamp: Option<i64>,
     pub vote_type: Option<VoteType>,
-
 }
 
 impl GameUpdate<'_> {
