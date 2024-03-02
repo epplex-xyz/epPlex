@@ -1,5 +1,8 @@
 use crate::*;
-use epplex_shared::{DISCRIMINATOR_LENGTH, PUBLIC_KEY_LENGTH, BITS_64, BITS_8, BITS_32, VEC_PREFIX, COLLECTION_NAME_LENGTH, COLLECTION_SYMBOL_LENGTH};
+use epplex_shared::{
+    BITS_32, BITS_64, BITS_8, COLLECTION_NAME_LENGTH, COLLECTION_SYMBOL_LENGTH,
+    DISCRIMINATOR_LENGTH, PUBLIC_KEY_LENGTH, VEC_PREFIX,
+};
 // should be derived from authority and collection name
 
 // CONFIG, collection_counter
@@ -45,8 +48,7 @@ impl CollectionConfig {
             grace_period: params.grace_period,
             treasury: params.treasury,
             collection_size: params.collection_size,
-            mint_count: 0
+            mint_count: 0,
         }
     }
-
 }

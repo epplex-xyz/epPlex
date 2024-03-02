@@ -16,7 +16,6 @@ pub use global_collection_config_close::*;
 pub mod collection_mint;
 pub use collection_mint::*;
 
-
 pub mod membership_burn;
 pub use membership_burn::*;
 

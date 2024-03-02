@@ -2,8 +2,8 @@ use crate::*;
 pub use anchor_lang::prelude::*;
 
 use anchor_spl::{
-    token_2022::{burn, Burn, close_account, CloseAccount, Token2022},
-    token_interface::{TokenAccount as TokenAccountInterface},
+    token_2022::{burn, close_account, Burn, CloseAccount, Token2022},
+    token_interface::TokenAccount as TokenAccountInterface,
 };
 use solana_program::program_pack::Pack;
 
@@ -65,8 +65,8 @@ impl MembershipBurn<'_> {
     pub fn burn(ctx: Context<Self>) -> Result<()> {
         require!(
             ctx.accounts.data.expiry_time + 14 * 3600 < Clock::get()?.unix_timestamp
-            || ctx.accounts.burner.key() == ctx.accounts.rule.rule_creator
-            , EphemeralityError::NotExpired
+                || ctx.accounts.burner.key() == ctx.accounts.rule.rule_creator,
+            EphemeralityError::NotExpired
         );
 
         let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[ctx.bumps.authority]];
@@ -80,38 +80,32 @@ impl MembershipBurn<'_> {
                 },
                 &[&seeds[..]],
             ),
-            1
+            1,
         )?;
 
-        close_account(
-            CpiContext::new(
-                ctx.accounts.token22_program.to_account_info(),
-                CloseAccount {
-                    account: ctx.accounts.membership.to_account_info(),
-                    destination: ctx.accounts.epplex.to_account_info(),
-                    authority: ctx.accounts.authority.to_account_info(),
-                }
-            )
-        )?;
+        close_account(CpiContext::new(
+            ctx.accounts.token22_program.to_account_info(),
+            CloseAccount {
+                account: ctx.accounts.membership.to_account_info(),
+                destination: ctx.accounts.epplex.to_account_info(),
+                authority: ctx.accounts.authority.to_account_info(),
+            },
+        ))?;
 
         // Close ATA if owner of ATA is burner
         let token_account = ctx.accounts.membership_ata.to_account_info();
-        let state = spl_token_2022::state::Account::unpack_from_slice(
-            &token_account.try_borrow_data()?
-        )?;
+        let state =
+            spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
         if state.owner == ctx.accounts.burner.key() {
-            anchor_spl::token_interface::close_account(
-                CpiContext::new(
-                    ctx.accounts.token22_program.to_account_info(),
-                    anchor_spl::token_interface::CloseAccount {
-                        account: ctx.accounts.membership_ata.to_account_info().clone(),
-                        destination: ctx.accounts.burner.to_account_info().clone(),
-                        authority: ctx.accounts.burner.to_account_info().clone(),
-                    },
-                ),
-            )?;
+            anchor_spl::token_interface::close_account(CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::CloseAccount {
+                    account: ctx.accounts.membership_ata.to_account_info().clone(),
+                    destination: ctx.accounts.burner.to_account_info().clone(),
+                    authority: ctx.accounts.burner.to_account_info().clone(),
+                },
+            ))?;
         }
-
 
         Ok(())
     }

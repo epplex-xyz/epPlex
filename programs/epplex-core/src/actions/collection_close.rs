@@ -2,7 +2,6 @@ use crate::*;
 // use anchor_spl::token_interface::{Mint as MintInterface};
 use anchor_lang::solana_program::pubkey;
 
-
 #[derive(Accounts)]
 #[instruction(params: CollectionCloseParams)]
 pub struct CollectionClose<'info> {
@@ -26,7 +25,6 @@ pub struct CollectionClose<'info> {
     //     bump,
     // )]
     // pub mint: Box<InterfaceAccount<'info, MintInterface>>,
-
     #[account(
         mut,
         constraint = [pubkey!("epADzKVW5kb3hjUhKuxdmyASNKYt4Cb1ccLGvr5cuzh")].contains(
@@ -36,18 +34,13 @@ pub struct CollectionClose<'info> {
     pub payer: Signer<'info>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct CollectionCloseParams {
-    collection_id: u64
+    collection_id: u64,
 }
 
 impl CollectionClose<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &CollectionCloseParams
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &CollectionCloseParams) -> Result<()> {
         Ok(())
     }
 
@@ -55,5 +48,3 @@ impl CollectionClose<'_> {
         Ok(())
     }
 }
-
-

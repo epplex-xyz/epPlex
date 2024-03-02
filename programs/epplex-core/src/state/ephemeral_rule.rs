@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 
-
 #[constant]
 pub const SEED_EPHEMERAL_AUTH: &[u8] = b"EPHEMERAL_AUTH";
 

@@ -1,4 +1,4 @@
-use epplex_shared::{DISCRIMINATOR_LENGTH, BITS_64, BITS_8};
+use epplex_shared::{BITS_64, BITS_8, DISCRIMINATOR_LENGTH};
 
 use crate::*;
 
@@ -9,7 +9,7 @@ pub const SEED_GLOBAL_COLLECTION_CONFIG: &[u8] = b"GLOBAL_COLLECTION";
 pub struct GlobalCollectionConfig {
     pub collection_counter: u64,
     // pub collection_counter: u128,
-    pub bump: u8
+    pub bump: u8,
 }
 
 impl GlobalCollectionConfig {

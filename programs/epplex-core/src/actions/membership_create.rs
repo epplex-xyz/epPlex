@@ -1,31 +1,35 @@
 use crate::*;
 
 pub use anchor_lang::{
+    prelude::*,
     solana_program::{
+        program::{invoke, invoke_signed},
         sysvar::rent::ID as RENT_ID,
-        program::{invoke, invoke_signed}
     },
-    prelude::*
 };
 
 pub use anchor_spl::{
-    token_2022::{Token2022, spl_token_2022::instruction::AuthorityType},
-    associated_token::{Create, create},
-    token_interface::{MintTo, mint_to, SetAuthority, set_authority},
+    associated_token::{create, Create},
+    token_2022::{spl_token_2022::instruction::AuthorityType, Token2022},
+    token_interface::{mint_to, set_authority, MintTo, SetAuthority},
 };
 
 pub use spl_token_2022::{
     extension::ExtensionType,
-    instruction::{initialize_mint_close_authority, initialize_permanent_delegate, initialize_mint2},
     extension::{
-        transfer_hook::instruction::initialize as intialize_transfer_hook,
         metadata_pointer::instruction::initialize as initialize_metadata_pointer,
+        transfer_hook::instruction::initialize as intialize_transfer_hook,
+    },
+    instruction::{
+        initialize_mint2, initialize_mint_close_authority, initialize_permanent_delegate,
     },
 };
 
 pub use spl_token_metadata_interface::{
-    state::{TokenMetadata, Field},
-    instruction::{initialize as initialize_metadata_account, update_field as update_metadata_account},
+    instruction::{
+        initialize as initialize_metadata_account, update_field as update_metadata_account,
+    },
+    state::{Field, TokenMetadata},
 };
 
 #[derive(Accounts)]
@@ -106,34 +110,33 @@ impl<'info> MembershipCreate<'info> {
         uri: String,
         bumps: MembershipCreateBumps,
     ) -> Result<()> {
-
         // Step 0: Populate the EphemeralData account so we can reference it to use it.
-        self.data.set_inner(
-            EphemeralData {
-                bump: bumps.data,
-                mint: self.membership.key(),
-                rule: self.rule.key(),
-                expiry_time: Clock::get()?.unix_timestamp + time,
-            }
-        );
+        self.data.set_inner(EphemeralData {
+            bump: bumps.data,
+            mint: self.membership.key(),
+            rule: self.rule.key(),
+            expiry_time: Clock::get()?.unix_timestamp + time,
+        });
 
         // Step 1: Initialize Account
-        let size = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(
-            &[
-                ExtensionType::MintCloseAuthority,
-                ExtensionType::PermanentDelegate,
-                ExtensionType::MetadataPointer,
-                ExtensionType::TransferHook,
-            ],
-        ).unwrap();
+        let size = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&[
+            ExtensionType::MintCloseAuthority,
+            ExtensionType::PermanentDelegate,
+            ExtensionType::MetadataPointer,
+            ExtensionType::TransferHook,
+        ])
+        .unwrap();
 
         let metadata = TokenMetadata {
-            update_authority: spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(self.auth.key())).unwrap(),
+            update_authority: spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+                self.auth.key(),
+            ))
+            .unwrap(),
             mint: self.membership.key(),
             name,
             symbol,
             uri,
-            additional_metadata: vec![]
+            additional_metadata: vec![],
         };
 
         let extension_extra_space = metadata.tlv_size_of().unwrap();
@@ -148,7 +151,7 @@ impl<'info> MembershipCreate<'info> {
                 (size).try_into().unwrap(),
                 &spl_token_2022::id(),
             ),
-            &vec![
+            &[
                 self.payer.to_account_info(),
                 self.membership.to_account_info(),
             ],
@@ -163,9 +166,7 @@ impl<'info> MembershipCreate<'info> {
                 &self.membership.key(),
                 &self.auth.key(),
             )?,
-            &vec![
-                self.membership.to_account_info(),
-            ],
+            &[self.membership.to_account_info()],
         )?;
 
         // 2.2: Transfer Hook,
@@ -174,11 +175,9 @@ impl<'info> MembershipCreate<'info> {
                 &self.token_2022_program.key(),
                 &self.membership.key(),
                 Some(self.auth.key()),
-                None,  // TO-DO: Add Transfer Hook
+                None, // TO-DO: Add Transfer Hook
             )?,
-            &vec![
-                self.membership.to_account_info(),
-            ],
+            &[self.membership.to_account_info()],
         )?;
 
         // 2.3: Close Mint Authority,
@@ -188,9 +187,7 @@ impl<'info> MembershipCreate<'info> {
                 &self.membership.key(),
                 Some(&self.auth.key()),
             )?,
-            &vec![
-                self.membership.to_account_info(),
-            ],
+            &[self.membership.to_account_info()],
         )?;
 
         // 2.4: Metadata Pointer
@@ -201,9 +198,7 @@ impl<'info> MembershipCreate<'info> {
                 Some(self.auth.key()),
                 Some(self.membership.key()),
             )?,
-            &vec![
-                self.membership.to_account_info(),
-            ],
+            &[self.membership.to_account_info()],
         )?;
 
         // Step 3: Initialize Mint & Metadata Account
@@ -215,15 +210,10 @@ impl<'info> MembershipCreate<'info> {
                 None,
                 0,
             )?,
-            &vec![
-                self.membership.to_account_info(),
-            ],
+            &[self.membership.to_account_info()],
         )?;
 
-        let seeds: &[&[u8]; 2] = &[
-            b"ephemeral_auth",
-            &[bumps.auth],
-        ];
+        let seeds: &[&[u8]; 2] = &[b"ephemeral_auth", &[bumps.auth]];
         let signer_seeds = &[&seeds[..]];
 
         invoke_signed(
@@ -237,30 +227,28 @@ impl<'info> MembershipCreate<'info> {
                 metadata.symbol,
                 metadata.uri,
             ),
-            &vec![
+            &[
                 self.membership.to_account_info(),
                 self.auth.to_account_info(),
                 self.payer.to_account_info(),
             ],
-            signer_seeds
+            signer_seeds,
         )?;
 
         // Step 4: Initialize the ATA & Mint to ATA + Changing Mint Authority to None so that nobody can mint anymore tokens.:
 
         // 4.1: Initialize ATA
-        create(
-            CpiContext::new(
-                self.token_2022_program.to_account_info(),
-                Create {
-                    payer: self.payer.to_account_info(), // payer
-                    associated_token: self.membership_ata.to_account_info(),
-                    authority: self.payer.to_account_info(), // owner
-                    mint: self.membership.to_account_info(),
-                    system_program: self.system_program.to_account_info(),
-                    token_program: self.token_2022_program.to_account_info(),
-                }
-            ),
-        )?;
+        create(CpiContext::new(
+            self.token_2022_program.to_account_info(),
+            Create {
+                payer: self.payer.to_account_info(), // payer
+                associated_token: self.membership_ata.to_account_info(),
+                authority: self.payer.to_account_info(), // owner
+                mint: self.membership.to_account_info(),
+                system_program: self.system_program.to_account_info(),
+                token_program: self.token_2022_program.to_account_info(),
+            },
+        ))?;
 
         // 4.2: Mint to ATA
         mint_to(
@@ -270,9 +258,9 @@ impl<'info> MembershipCreate<'info> {
                     mint: self.membership.to_account_info(),
                     to: self.membership_ata.to_account_info(),
                     authority: self.payer.to_account_info(),
-                }
+                },
             ),
-            1
+            1,
         )?;
 
         // 4.3: Removing mint authority

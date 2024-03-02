@@ -1,20 +1,17 @@
 pub mod actions;
+pub mod errors;
 pub mod id;
 pub mod security;
 pub mod state;
 pub mod utils;
-pub mod errors;
 
 pub use actions::*;
-pub use id::ID;
-pub use utils::*;
 pub use errors::*;
+pub use id::ID;
 pub use state::*;
+pub use utils::*;
 
-use anchor_spl::{
-    token_interface::{mint_to, MintTo},
-    associated_token::{AssociatedToken}
-};
+use anchor_spl::associated_token::AssociatedToken;
 
 #[program]
 pub mod epplex_core {
@@ -32,18 +29,26 @@ pub mod epplex_core {
      * Collection stuff
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(ctx: Context<CollectionMint>, params: TokenCollectionCreateParams) -> Result<()> {
+    pub fn collection_mint(
+        ctx: Context<CollectionMint>,
+        params: TokenCollectionCreateParams,
+    ) -> Result<()> {
         CollectionMint::actuate(ctx, params)
     }
 
-
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_create(ctx: Context<CollectionCreate>, params: CollectionCreateParams) -> Result<()> {
+    pub fn collection_create(
+        ctx: Context<CollectionCreate>,
+        params: CollectionCreateParams,
+    ) -> Result<()> {
         CollectionCreate::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_close(ctx: Context<CollectionClose>, params: CollectionCloseParams) -> Result<()> {
+    pub fn collection_close(
+        ctx: Context<CollectionClose>,
+        params: CollectionCloseParams,
+    ) -> Result<()> {
         CollectionClose::actuate(ctx, params)
     }
 
@@ -51,7 +56,9 @@ pub mod epplex_core {
      * Global collection stuff
      */
     #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn global_collection_config_create(ctx: Context<GlobalCollectionConfigCreate>) -> Result<()> {
+    pub fn global_collection_config_create(
+        ctx: Context<GlobalCollectionConfigCreate>,
+    ) -> Result<()> {
         GlobalCollectionConfigCreate::actuate(ctx)
     }
 
