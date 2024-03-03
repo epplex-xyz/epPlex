@@ -88,6 +88,7 @@ pub mod epplex_core {
         ctx.accounts.create(time, name, symbol, uri, ctx.bumps)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx))]
     pub fn membership_burn(ctx: Context<MembershipBurn>) -> Result<()> {
         MembershipBurn::burn(ctx)
     }

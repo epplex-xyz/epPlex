@@ -9,12 +9,6 @@ use solana_program::program_pack::Pack;
 
 #[derive(Accounts)]
 pub struct MembershipBurn<'info> {
-    #[account(mut)]
-    pub burner: Signer<'info>,
-
-    #[account(mut)]
-    pub epplex: SystemAccount<'info>,
-
     // This is the T22 NFT
     #[account(mut)]
     /// CHECK
@@ -27,6 +21,12 @@ pub struct MembershipBurn<'info> {
     )]
     pub membership_ata: Box<InterfaceAccount<'info, TokenAccountInterface>>,
 
+    #[account()]
+    pub burner: Signer<'info>,
+
+    #[account(mut)]
+    pub epplex_treasury: SystemAccount<'info>,
+
     #[account(
         seeds = [
             SEED_EPHEMERAL_RULE,
@@ -38,7 +38,7 @@ pub struct MembershipBurn<'info> {
 
     #[account(
         mut,
-        close = epplex,
+        close = epplex_treasury,
         seeds = [
             SEED_EPHEMERAL_DATA,
             membership.key().as_ref()
@@ -47,36 +47,44 @@ pub struct MembershipBurn<'info> {
     )]
     pub data: Account<'info, EphemeralData>,
 
-    /// CHECK:
     #[account(
         seeds = [
             SEED_EPHEMERAL_AUTH
         ],
         bump
     )]
-    pub authority: UncheckedAccount<'info>,
+    /// CHECK:
+    pub epplex_authority: UncheckedAccount<'info>,
 
     pub token22_program: Program<'info, Token2022>,
-
-    pub system_program: Program<'info, System>,
 }
 
 impl MembershipBurn<'_> {
-    pub fn burn(ctx: Context<Self>) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
+        // Rule Creator maintains burn auth
+        if self.burner.key() == self.rule.rule_creator {
+            return Ok(());
+        }
+
         require!(
-            ctx.accounts.data.expiry_time + 14 * 3600 < Clock::get()?.unix_timestamp
-                || ctx.accounts.burner.key() == ctx.accounts.rule.rule_creator,
+            self.data.expiry_time + GRACE_PERIOD < Clock::get()?.unix_timestamp,
             EphemeralityError::NotExpired
         );
 
-        let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[ctx.bumps.authority]];
+        Ok(())
+    }
+
+    pub fn burn(ctx: Context<Self>) -> Result<()> {
+        // Ephemeral data is also closed
+
+        let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[ctx.bumps.epplex_authority]];
         burn(
             CpiContext::new_with_signer(
                 ctx.accounts.token22_program.to_account_info(),
                 Burn {
                     mint: ctx.accounts.membership.to_account_info(),
                     from: ctx.accounts.membership_ata.to_account_info(),
-                    authority: ctx.accounts.authority.to_account_info(),
+                    authority: ctx.accounts.epplex_authority.to_account_info(),
                 },
                 &[&seeds[..]],
             ),
@@ -87,8 +95,8 @@ impl MembershipBurn<'_> {
             ctx.accounts.token22_program.to_account_info(),
             CloseAccount {
                 account: ctx.accounts.membership.to_account_info(),
-                destination: ctx.accounts.epplex.to_account_info(),
-                authority: ctx.accounts.authority.to_account_info(),
+                destination: ctx.accounts.epplex_treasury.to_account_info(),
+                authority: ctx.accounts.epplex_authority.to_account_info(),
             },
         ))?;
 
@@ -97,9 +105,9 @@ impl MembershipBurn<'_> {
         let state =
             spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
         if state.owner == ctx.accounts.burner.key() {
-            anchor_spl::token_interface::close_account(CpiContext::new(
+            close_account(CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
-                anchor_spl::token_interface::CloseAccount {
+                CloseAccount {
                     account: ctx.accounts.membership_ata.to_account_info().clone(),
                     destination: ctx.accounts.burner.to_account_info().clone(),
                     authority: ctx.accounts.burner.to_account_info().clone(),
