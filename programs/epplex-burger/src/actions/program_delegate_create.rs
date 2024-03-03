@@ -33,9 +33,7 @@ impl ProgramDelegateCreate<'_> {
     // TODO: has to be gated by an admin
     pub fn actuate(ctx: Context<Self>, _params: &ProgramDelegateCreateParams) -> Result<()> {
         let program_delegate = &mut ctx.accounts.program_delegate;
-        **program_delegate = ProgramDelegate::new(
-            ctx.bumps.program_delegate,
-        );
+        **program_delegate = ProgramDelegate::new(ctx.bumps.program_delegate);
 
         Ok(())
     }

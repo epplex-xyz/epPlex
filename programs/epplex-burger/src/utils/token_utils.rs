@@ -1,6 +1,5 @@
-use anchor_lang::solana_program;
 use crate::*;
-
+use anchor_lang::solana_program;
 
 // pub fn update_token_metadata<'info>(
 //     program_id: &Pubkey,
@@ -39,11 +38,12 @@ pub fn update_token_metadata_signed<'info>(
     value: String,
 ) -> Result<()> {
     let ix = spl_token_metadata_interface::instruction::update_field(
-        &program_id,
+        // &program_id,
+        program_id,
         &metadata.key(),
         &update_authority.key(),
         field,
-        value
+        value,
     );
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -52,23 +52,15 @@ pub fn update_token_metadata_signed<'info>(
     ];
 
     // TODO not ideal
-    let (_, bump) = Pubkey::find_program_address(
-        &[
-            SEED_PROGRAM_DELEGATE
-        ],
-        &ID,
-    );
+    let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
 
     let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[&seeds[..]]
-    )?;
+    solana_program::program::invoke_signed(&ix, &account_infos[..], &[&seeds[..]])?;
 
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn transfer_token_with_pda<'info>(
     amount: u64,
     decimals: u8,
@@ -87,43 +79,30 @@ pub fn transfer_token_with_pda<'info>(
         authority_pubkey.key,
         signer_pubkeys,
         amount,
-        decimals
+        decimals,
     )?;
 
     let account_infos: Vec<AccountInfo> = vec![
         source_pubkey.to_account_info(),
         mint.to_account_info(),
         destination_pubkey.to_account_info(),
-        authority_pubkey.to_account_info()
+        authority_pubkey.to_account_info(),
     ];
 
     // TODO not ideal
-    let (_, bump) = Pubkey::find_program_address(
-        &[
-            SEED_PROGRAM_DELEGATE
-        ],
-        &ID,
-    );
-    let program_delegate_seeds = &[
-        SEED_PROGRAM_DELEGATE,
-        &[bump]
-    ];
+    let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
+    let program_delegate_seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
 
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[program_delegate_seeds]
-    )?;
+    solana_program::program::invoke_signed(&ix, &account_infos[..], &[program_delegate_seeds])?;
 
     Ok(())
 }
-
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,
     token_account: &AccountInfo<'info>,
     program: Pubkey,
-    authority: &AccountInfo<'info>
+    authority: &AccountInfo<'info>,
 ) -> Result<()> {
     let ix = spl_token_2022::instruction::burn(
         &program,
@@ -131,7 +110,7 @@ pub fn burn_token<'info>(
         &mint_account.key(),
         &authority.key(),
         &[],
-        1
+        1,
     )?;
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -141,19 +120,10 @@ pub fn burn_token<'info>(
     ];
 
     // TODO not ideal
-    let (_, bump) = Pubkey::find_program_address(
-        &[
-            SEED_PROGRAM_DELEGATE
-        ],
-        &ID,
-    );
+    let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
 
     let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[&seeds[..]]
-    )?;
+    solana_program::program::invoke_signed(&ix, &account_infos[..], &[&seeds[..]])?;
 
     Ok(())
 }
@@ -162,14 +132,14 @@ pub fn close_mint<'info>(
     program: Pubkey,
     token_account: &AccountInfo<'info>,
     destination_account: &AccountInfo<'info>,
-    owner: &AccountInfo<'info>
+    owner: &AccountInfo<'info>,
 ) -> Result<()> {
     let ix = spl_token_2022::instruction::close_account(
         &program,
         &token_account.key(),
         &destination_account.key(),
         &owner.key(),
-        &[]
+        &[],
     )?;
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -179,23 +149,13 @@ pub fn close_mint<'info>(
     ];
 
     // TODO not ideal
-    let (_, bump) = Pubkey::find_program_address(
-        &[
-            SEED_PROGRAM_DELEGATE
-        ],
-        &ID,
-    );
+    let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
 
     let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        &[&seeds[..]]
-    )?;
+    solana_program::program::invoke_signed(&ix, &account_infos[..], &[&seeds[..]])?;
 
     Ok(())
 }
-
 
 // Anchor transfer method
 // pub fn transfer_token<'info>(

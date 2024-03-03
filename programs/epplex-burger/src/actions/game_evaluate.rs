@@ -18,7 +18,6 @@ pub struct GameEvaluate<'info> {
     pub game_config: Account<'info, GameConfig>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameEvaluateParams {}
 

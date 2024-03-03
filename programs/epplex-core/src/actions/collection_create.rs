@@ -1,9 +1,9 @@
-use anchor_lang::prelude::borsh::BorshDeserialize;
-use anchor_spl::token_2022::MintTo;
-use epplex_shared::{Token2022, update_token_metadata};
-use spl_token_metadata_interface::state::TokenMetadata;
 use crate::*;
+use anchor_lang::prelude::borsh::BorshDeserialize;
 use anchor_spl::associated_token::AssociatedToken;
+use anchor_spl::token_2022::MintTo;
+use epplex_shared::{update_token_metadata, Token2022};
+use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]
 #[instruction(params: CollectionCreateParams)]
@@ -80,27 +80,24 @@ pub struct CollectionCreateParams {
 }
 
 impl CollectionCreate<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &CollectionCreateParams,
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &CollectionCreateParams) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, params: CollectionCreateParams) -> Result<()> {
         let config = &mut ctx.accounts.collection_config;
-        **config = CollectionConfig::new(
-            ctx.bumps.collection_config,
-            params.clone(),
-        );
+        **config = CollectionConfig::new(ctx.bumps.collection_config, params.clone());
 
         let global_config = &mut ctx.accounts.global_collection_config;
-        let additional_metadata: Vec<(String, String)> = vec![(COLLECTION_ID_FIELD.to_string(), global_config.collection_counter.to_string())];
+        let additional_metadata: Vec<(String, String)> = vec![(
+            COLLECTION_ID_FIELD.to_string(),
+            global_config.collection_counter.to_string(),
+        )];
 
-        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
-            Some(ctx.accounts.update_authority.key())
-        ).expect("Bad update auth");
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+            ctx.accounts.update_authority.key(),
+        ))
+        .expect("Bad update auth");
 
         let tm = TokenMetadata {
             update_authority,
@@ -114,11 +111,10 @@ impl CollectionCreate<'_> {
             ctx.accounts.payer.to_account_info(),
             ctx.accounts.mint.to_account_info(),
             ctx.accounts.rent.to_account_info(),
-            &[
-                ExtensionType::MetadataPointer,
-            ],
+            &[ExtensionType::MetadataPointer],
             tm,
-            global_config.collection_counter)?;
+            global_config.collection_counter,
+        )?;
 
         add_metadata_pointer(
             ctx.accounts.token22_program.key(),
@@ -162,19 +158,17 @@ impl CollectionCreate<'_> {
         }
 
         // Create ATA
-        anchor_spl::associated_token::create(
-            CpiContext::new(
-                ctx.accounts.token22_program.to_account_info(),
-                anchor_spl::associated_token::Create {
-                    payer: ctx.accounts.payer.to_account_info(), // payer
-                    associated_token: ctx.accounts.token_account.to_account_info(),
-                    authority: ctx.accounts.update_authority.to_account_info(), // owner
-                    mint: ctx.accounts.mint.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                }
-            ),
-        )?;
+        anchor_spl::associated_token::create(CpiContext::new(
+            ctx.accounts.token22_program.to_account_info(),
+            anchor_spl::associated_token::Create {
+                payer: ctx.accounts.payer.to_account_info(), // payer
+                associated_token: ctx.accounts.token_account.to_account_info(),
+                authority: ctx.accounts.update_authority.to_account_info(), // owner
+                mint: ctx.accounts.mint.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                token_program: ctx.accounts.token22_program.to_account_info(),
+            },
+        ))?;
 
         // Mint to ATA
         anchor_spl::token_interface::mint_to(
@@ -184,9 +178,9 @@ impl CollectionCreate<'_> {
                     mint: ctx.accounts.mint.to_account_info().clone(),
                     to: ctx.accounts.token_account.to_account_info().clone(),
                     authority: ctx.accounts.update_authority.to_account_info(),
-                }
+                },
             ),
-            1
+            1,
         )?;
 
         // Remove freeze auth
@@ -194,7 +188,7 @@ impl CollectionCreate<'_> {
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
-                    current_authority:  ctx.accounts.update_authority.to_account_info().clone(),
+                    current_authority: ctx.accounts.update_authority.to_account_info().clone(),
                     account_or_mint: ctx.accounts.mint.to_account_info().clone(),
                 },
             ),
@@ -219,5 +213,3 @@ impl CollectionCreate<'_> {
         Ok(())
     }
 }
-
-

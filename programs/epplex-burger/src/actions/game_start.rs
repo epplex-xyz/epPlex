@@ -27,21 +27,19 @@ pub struct GameStartParams {
     pub game_prompt: String,
     pub game_name: String,
     pub is_encrypted: bool,
-    pub public_encrypt_key: String
+    pub public_encrypt_key: String,
 }
 
 impl GameStartParams {
     pub fn validate_params(&self) -> Result<()> {
         // Fail if timestamp is not in the future
-        if !(Clock::get().unwrap().unix_timestamp < self.end_timestamp) {
+        if Clock::get().unwrap().unix_timestamp >= self.end_timestamp {
             return err!(BurgerError::IncorrectEndtime);
         };
 
         // Public encrypt key cannot be empty
-        if self.is_encrypted {
-            if self.public_encrypt_key.is_empty() {
-                return err!(BurgerError::RequiresEncryption)
-            }
+        if self.is_encrypted && self.public_encrypt_key.is_empty() {
+            return err!(BurgerError::RequiresEncryption);
         }
 
         if self.vote_type.eq(&VoteType::None)

@@ -1,5 +1,5 @@
-use std::ops::{Add, Sub};
 use crate::*;
+use std::ops::{Add, Sub};
 
 #[derive(Accounts)]
 #[instruction(params: TokenRenewParams)]
@@ -64,13 +64,8 @@ pub struct TokenRenew<'info> {
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenRenewParams {}
 
-
 impl TokenRenew<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &TokenRenewParams,
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenRenewParams) -> Result<()> {
         Ok(())
     }
 
@@ -89,11 +84,12 @@ impl TokenRenew<'_> {
                 },
             ),
             amount,
-            ctx.accounts.mint_payment.decimals
+            ctx.accounts.mint_payment.decimals,
         )?;
 
-        let expiry_date_string = fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
-        let expiry_date =  expiry_date_string.parse::<i64>().unwrap();
+        let expiry_date_string =
+            fetch_metadata_field(EXPIRY_FIELD, &ctx.accounts.mint.to_account_info())?;
+        let expiry_date = expiry_date_string.parse::<i64>().unwrap();
         msg!("Destroy timestamp: {}", expiry_date);
 
         // Cannot exceed expiry
@@ -105,7 +101,8 @@ impl TokenRenew<'_> {
 
         // Needs to be within 1 day of expiry date
         let threshold = expiry_date.sub(ONE_DAY);
-        if !(threshold < now) {
+        if threshold >= now {
+            // if !(threshold < now) { -- same
             return err!(BurgerError::RenewThreshold);
         }
 
@@ -119,7 +116,7 @@ impl TokenRenew<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
-            new_expiry_date
+            new_expiry_date,
         )?;
 
         Ok(())

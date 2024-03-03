@@ -1,5 +1,5 @@
-pub use anchor_lang::system_program::{transfer, Transfer};
 use crate::*;
+pub use anchor_lang::system_program::{transfer, Transfer};
 
 #[derive(Accounts)]
 pub struct TimeManage<'info> {
@@ -50,24 +50,24 @@ impl<'info> TimeManage<'info> {
         time: u64, // Time in hours
     ) -> Result<()> {
         let mut cost = time * self.rule.renewal_price;
-        let time: u64 = time
-            .checked_mul(3600)
-            .ok_or(EphemeralityError::Overflow)?;
+        let time: u64 = time.checked_mul(3600).ok_or(EphemeralityError::Overflow)?;
 
         if self.data.expiry_time < Clock::get()?.unix_timestamp {
             let flat_fee: u64 = 20;
             cost = cost
                 .checked_add(
                     flat_fee
-                    .checked_mul(self.rule.renewal_price)
-                    .ok_or(EphemeralityError::Overflow)?
-                ).ok_or(EphemeralityError::Overflow)?;
-
+                        .checked_mul(self.rule.renewal_price)
+                        .ok_or(EphemeralityError::Overflow)?,
+                )
+                .ok_or(EphemeralityError::Overflow)?;
         } else if self.payer.key() == self.rule.rule_creator {
             cost = 0;
         }
 
-        self.data.expiry_time = self.data.expiry_time
+        self.data.expiry_time = self
+            .data
+            .expiry_time
             .checked_add(time as i64)
             .ok_or(EphemeralityError::Overflow)?;
 
@@ -77,8 +77,9 @@ impl<'info> TimeManage<'info> {
                 Transfer {
                     from: self.payer.to_account_info(),
                     to: self.treasury.to_account_info(),
-                }),
-            cost
+                },
+            ),
+            cost,
         )?;
 
         Ok(())
@@ -97,11 +98,11 @@ impl<'info> TimeManage<'info> {
             EphemeralityError::EscalatedAuthority
         );
 
-        let time: u64 = time
-            .checked_mul(3600)
-            .ok_or(EphemeralityError::Overflow)?;
+        let time: u64 = time.checked_mul(3600).ok_or(EphemeralityError::Overflow)?;
 
-        self.data.expiry_time = self.data.expiry_time
+        self.data.expiry_time = self
+            .data
+            .expiry_time
             .checked_sub(time as i64)
             .ok_or(EphemeralityError::Overflow)?;
 

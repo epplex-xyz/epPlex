@@ -1,4 +1,4 @@
-use epplex_shared::{DISCRIMINATOR_LENGTH, BITS_8};
+use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
 
 use crate::*;
 
@@ -16,6 +16,6 @@ impl ProgramDelegate {
     pub const LEN: usize = DISCRIMINATOR_LENGTH + BITS_8;
 
     pub fn new(bump: u8) -> Self {
-        Self {bump}
+        Self { bump }
     }
 }

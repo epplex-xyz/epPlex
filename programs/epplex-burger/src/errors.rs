@@ -88,5 +88,5 @@ pub enum BurgerError {
     InputIsEmpty,
 
     #[msg("Unable to evaluate game")]
-    EvaluationImpossible
+    EvaluationImpossible,
 }

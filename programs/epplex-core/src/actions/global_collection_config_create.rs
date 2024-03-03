@@ -16,11 +16,10 @@ pub struct GlobalCollectionConfigCreate<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
-
 }
 
 impl GlobalCollectionConfigCreate<'_> {
-    pub fn validate(&self,_ctx: &Context<Self>,) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>) -> Result<()> {
         Ok(())
     }
 

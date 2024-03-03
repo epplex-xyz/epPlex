@@ -1,9 +1,8 @@
-use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
 use crate::*;
+use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
 
 #[constant]
 pub const SEED_BURGER_METADATA: &[u8] = b"burgermetadata";
-
 
 /// Reserve 200 bytes
 pub const GAME_STATE_PLACEHOLDER: &str =
@@ -12,16 +11,17 @@ pub const GAME_STATE_PLACEHOLDER: &str =
 /// Length of 20 characters unixtimestamp
 pub const VOTING_TIMESTAMP_PLACEHOLDER: &str = "99999999999999999999";
 
-
 pub const ENCRYPTED_LENTH: usize = 172;
-
 
 pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
     vec![
         [EXPIRY_FIELD.to_string(), expiry_data],
         [GAME_STATE.to_string(), GAME_STATE_PLACEHOLDER.to_string()],
-        [VOTING_TIMESTAMP.to_string(), VOTING_TIMESTAMP_PLACEHOLDER.to_string()],
-        [IMMUNITY.to_string(), "false".to_string()]
+        [
+            VOTING_TIMESTAMP.to_string(),
+            VOTING_TIMESTAMP_PLACEHOLDER.to_string(),
+        ],
+        [IMMUNITY.to_string(), "false".to_string()],
     ]
 }
 

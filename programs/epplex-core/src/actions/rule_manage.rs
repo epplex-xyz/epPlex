@@ -32,15 +32,13 @@ pub struct RuleManageParams {
 impl RuleManage<'_> {
     pub fn rule_create(ctx: Context<Self>, params: RuleManageParams) -> Result<()> {
         let rule = &mut ctx.accounts.rule;
-        rule.set_inner(
-            EphemeralRule {
-                bump: ctx.bumps.rule,
-                seed: params.seed,
-                rule_creator: params.rule_creator,
-                renewal_price: params.renewal_price,
-                treasury: params.treasury,
-            }
-        );
+        rule.set_inner(EphemeralRule {
+            bump: ctx.bumps.rule,
+            seed: params.seed,
+            rule_creator: params.rule_creator,
+            renewal_price: params.renewal_price,
+            treasury: params.treasury,
+        });
 
         Ok(())
     }

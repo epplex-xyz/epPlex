@@ -8,11 +8,11 @@ pub fn update_token_metadata<'info>(
     value: String,
 ) -> Result<()> {
     let ix = spl_token_metadata_interface::instruction::update_field(
-        &program_id,
+        program_id,
         &metadata.key(),
         &update_authority.key(),
         field,
-        value
+        value,
     );
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -20,14 +20,10 @@ pub fn update_token_metadata<'info>(
         update_authority.to_account_info(),
     ];
 
-    solana_program::program::invoke(
-        &ix,
-        &account_infos[..],
-    )?;
+    solana_program::program::invoke(&ix, &account_infos[..])?;
 
     Ok(())
 }
-
 
 pub fn update_token_metadata_signed<'info>(
     program_id: &Pubkey,
@@ -38,11 +34,11 @@ pub fn update_token_metadata_signed<'info>(
     value: String,
 ) -> Result<()> {
     let ix = spl_token_metadata_interface::instruction::update_field(
-        &program_id,
+        program_id,
         &metadata.key(),
         &update_authority.key(),
         field,
-        value
+        value,
     );
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -50,11 +46,7 @@ pub fn update_token_metadata_signed<'info>(
         update_authority.to_account_info(),
     ];
 
-    solana_program::program::invoke_signed(
-        &ix,
-        &account_infos[..],
-        signer_seeds
-    )?;
+    solana_program::program::invoke_signed(&ix, &account_infos[..], signer_seeds)?;
 
     Ok(())
 }

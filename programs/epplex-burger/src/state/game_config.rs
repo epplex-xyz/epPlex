@@ -83,8 +83,7 @@ impl GameConfig {
         + (epplex_shared::VEC_PREFIX + PUBLIC_ENCRYPT_KEY_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_16 // 2
         + epplex_shared::BITS_16; // 2
-        // approx 1500
-
+                                  // approx 1500
 
     pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
@@ -175,7 +174,7 @@ impl GameConfig {
     /// Can only start game if current state is Finished or None
     pub fn can_start_game(&self) -> Result<()> {
         if ![GameStatus::None, GameStatus::Finished].contains(&self.game_status) {
-            return err!(BurgerError::GameCannotStart)
+            return err!(BurgerError::GameCannotStart);
         }
 
         Ok(())
@@ -184,7 +183,7 @@ impl GameConfig {
     /// Can only submit burn ix and reset ix if game_state is none or evaluate
     pub fn can_evaluate(&self) -> Result<()> {
         if ![GameStatus::None, GameStatus::Evaluate].contains(&self.game_status) {
-            return err!(BurgerError::EvaluationImpossible)
+            return err!(BurgerError::EvaluationImpossible);
         }
 
         Ok(())
@@ -192,7 +191,7 @@ impl GameConfig {
 
     pub fn can_update(&self) -> Result<()> {
         if ![GameStatus::InProgress, GameStatus::Finished].contains(&self.game_status) {
-            return err!(BurgerError::IncorrectGameStatus)
+            return err!(BurgerError::IncorrectGameStatus);
         }
 
         Ok(())
@@ -206,13 +205,13 @@ impl GameConfig {
                 if self.game_status.ne(&GameStatus::Finished) {
                     return err!(BurgerError::GameNotFinished);
                 }
-            },
+            }
             // If in progress then continue
             GameStatus::InProgress => {
                 if self.game_status.ne(&GameStatus::InProgress) {
                     return err!(BurgerError::GameNotInProgress);
                 }
-            },
+            }
             // If evaluating then continue
             GameStatus::Evaluate => {
                 if self.game_status.ne(&GameStatus::Evaluate) {
@@ -251,11 +250,9 @@ impl GameConfig {
 
     /// Check if vote type is encryption
     pub fn check_encrypted(&self, message: &String) -> Result<()> {
-        if self.is_encrypted {
-            if message.len() != ENCRYPTED_LENTH {
-                return err!(BurgerError::RequiresEncryption);
-            }
-        }
+        if self.is_encrypted && message.len() != ENCRYPTED_LENTH {
+            return err!(BurgerError::RequiresEncryption);
+        };
 
         Ok(())
     }
@@ -272,30 +269,27 @@ impl GameConfig {
             InputType::Choice => {
                 // No checks for now
 
-
                 // let choice = message.parse::<u8>().unwrap();
                 // // Max choice is 10
                 // if choice > 10 {
                 //     return err!(BurgerError::IncorrectInputType)
                 // }
-            },
+            }
             InputType::Number => {
                 // Panic if fails to convert
                 message.parse::<u64>().unwrap();
-
-            },
+            }
             InputType::Text => {
                 // No checks for now
-            },
-            InputType::None => return err!(BurgerError::RequiresEncryption)
+            }
+            InputType::None => return err!(BurgerError::RequiresEncryption),
         };
-
 
         Ok(())
     }
 
     /// Check for vote eligibility
-    pub fn check_vote_eligibility(&self, game_state: String ) -> Result<()> {
+    pub fn check_vote_eligibility(&self, game_state: String) -> Result<()> {
         if self.vote_type.eq(&VoteType::VoteOnce) && !game_state.is_empty() {
             return err!(BurgerError::AlreadySubmitted);
         }

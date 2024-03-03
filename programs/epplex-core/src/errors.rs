@@ -23,7 +23,5 @@ pub enum MintError {
     UnauthorizedMintAuthority,
 
     #[msg("the given treasury account does not match with the configured treasury")]
-    InvalidTreasuryAccount
+    InvalidTreasuryAccount,
 }
-
-

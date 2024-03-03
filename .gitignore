@@ -41,3 +41,6 @@ test-ledger
 !.env.example
 !app/.env.example
 !app/.env.production
+
+programs/wen-new-standard
+programs/wen-royalty-distribution

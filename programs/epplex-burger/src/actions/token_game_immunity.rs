@@ -80,7 +80,6 @@ pub struct TokenGameImmunity<'info> {
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameImmunityParams {}
 
-
 impl TokenGameImmunity<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameImmunityParams) -> Result<()> {
         // TODO, Immunity can only be enabled once game has finished
@@ -107,25 +106,30 @@ impl TokenGameImmunity<'_> {
         )?;
 
         // Close ATA of immunity
-        anchor_spl::token_interface::close_account(
-            CpiContext::new(
-                ctx.accounts.token22_program.to_account_info(),
-                anchor_spl::token_interface::CloseAccount {
-                    account: ctx.accounts.token_account_immunity.to_account_info().clone(),
-                    destination: ctx.accounts.payer.to_account_info().clone(),
-                    authority: ctx.accounts.payer.to_account_info().clone(),
-                },
-            ),
-        )?;
+        anchor_spl::token_interface::close_account(CpiContext::new(
+            ctx.accounts.token22_program.to_account_info(),
+            anchor_spl::token_interface::CloseAccount {
+                account: ctx
+                    .accounts
+                    .token_account_immunity
+                    .to_account_info()
+                    .clone(),
+                destination: ctx.accounts.payer.to_account_info().clone(),
+                authority: ctx.accounts.payer.to_account_info().clone(),
+            },
+        ))?;
 
-        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.permanent_delegate.bump]];
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.permanent_delegate.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
-            "YES".to_string()
+            "YES".to_string(),
         )?;
 
         Ok(())
