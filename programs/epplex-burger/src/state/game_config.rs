@@ -65,6 +65,8 @@ pub struct GameConfig {
     pub burn_amount: u16,
     /// Amount of burgers who submitted an answer within a round
     pub submission_amount: u16,
+    // /// Seed for ephemeral rule
+    // pub rule_seed: u64,
 }
 
 impl GameConfig {
