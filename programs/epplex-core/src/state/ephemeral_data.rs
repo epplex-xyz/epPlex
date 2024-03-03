@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
 
+// 14 hours
+pub const GRACE_PERIOD: i64 = 14 * 3600;
+
 #[constant]
 pub const SEED_EPHEMERAL_DATA: &[u8] = b"EPHEMERAL_DATA";
 
