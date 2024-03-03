@@ -74,9 +74,10 @@ impl MembershipBurn<'_> {
         Ok(())
     }
 
+    /**
+     * Closes: ephemeral data, burns token, closes mint, optionally closes ATA
+     */
     pub fn burn(ctx: Context<Self>) -> Result<()> {
-        // Ephemeral data is also closed
-
         let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[ctx.bumps.epplex_authority]];
         burn(
             CpiContext::new_with_signer(
@@ -91,13 +92,14 @@ impl MembershipBurn<'_> {
             1,
         )?;
 
-        close_account(CpiContext::new(
+        close_account(CpiContext::new_with_signer(
             ctx.accounts.token22_program.to_account_info(),
             CloseAccount {
                 account: ctx.accounts.membership.to_account_info(),
                 destination: ctx.accounts.epplex_treasury.to_account_info(),
                 authority: ctx.accounts.epplex_authority.to_account_info(),
             },
+            &[&seeds[..]],
         ))?;
 
         // Close ATA if owner of ATA is burner

@@ -215,7 +215,7 @@ impl<'info> MembershipCreate<'info> {
             &[self.membership.to_account_info()],
         )?;
 
-        let seeds: &[&[u8]; 2] = &[b"ephemeral_auth", &[bumps.epplex_authority]];
+        let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[bumps.epplex_authority]];
         let signer_seeds = &[&seeds[..]];
 
         invoke_signed(
@@ -241,7 +241,7 @@ impl<'info> MembershipCreate<'info> {
 
         // 4.1: Initialize ATA
         create(CpiContext::new(
-            self.token22_program.to_account_info(),
+            self.associated_token_program.to_account_info(),
             Create {
                 payer: self.payer.to_account_info(), // payer
                 associated_token: self.membership_ata.to_account_info(),
@@ -273,7 +273,6 @@ impl<'info> MembershipCreate<'info> {
                     current_authority: self.payer.to_account_info().clone(),
                     account_or_mint: self.membership.to_account_info().clone(),
                 },
-                // &[deployment_seeds]
             ),
             AuthorityType::MintTokens,
             None, // Set mint authority to be None
