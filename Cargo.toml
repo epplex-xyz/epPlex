@@ -4,3 +4,8 @@ members = [
 ]
 
 resolver = "2"
+
+
+# WNS stuff
+[profile.release]
+overflow-checks = true

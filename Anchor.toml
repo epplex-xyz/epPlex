@@ -23,6 +23,6 @@ epplex_shared = "LepS8gH3rVDRdAy5X9xGE8VcnGnFKmkpfm21Paiqq3i"
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "http://127.0.0.1:8899"
-cluster = "devnet"
+cluster = "http://127.0.0.1:8899"
+#cluster = "devnet"
 wallet = "target/deploy/epplex_deploy_auth.json"

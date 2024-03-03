@@ -22,17 +22,22 @@
 
         "deploy-burger": "anchor deploy -p epplex_burger --provider.cluster localnet --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-core": "anchor deploy -p epplex_core --provider.cluster localnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
-        "deploy-all": "anchor build && yarn deploy-burger && yarn deploy-core",
+        "deploy-wns": "anchor deploy -p wen_new_standard --provider.cluster localnet --program-keypair target/deploy/wen_new_standard-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-wrd": "anchor deploy -p wen_royalty_distribution --provider.cluster localnet --program-keypair target/deploy/wen_royalty_distribution-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-all": "./anchor build && yarn deploy-burger && yarn deploy-core && yarn deploy-wrd && yarn deploy-wns",
+        "deploy-all-old": "anchor build && yarn deploy-burger && yarn deploy-core",
 
         "deploy-burger-devnet": "anchor deploy -p epplex_burger --provider.cluster devnet --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-core-devnet": "anchor deploy -p epplex_core --provider.cluster devnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-all-devnet": "anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet",
         "solana-balance-devnet": "solana balance -u devnet -k target/deploy/epplex_deploy_auth.json",
 
-        "copy-burger-sdk": "cp target/idl/epplex_burger.json    ../sdk/src/idl/epplex_burger.json       && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
-        "copy-core-sdk":   "cp target/idl/epplex_core.json      ../sdk/src/idl/epplex_core.json         && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts",
+        "copy-burger-sdk": "cp target/idl/epplex_burger.json              ../sdk/src/idl/epplex_burger.json            && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
+        "copy-core-sdk":   "cp target/idl/epplex_core.json                ../sdk/src/idl/epplex_core.json              && cp target/types/epplex_core.ts      ../sdk/src/types/epplexCoreTypes.ts",
+        "copy-wns-sdk":    "cp target/idl/wen_new_standard.json           ../sdk/src/idl/wen_new_standard.json         && cp target/types/wen_new_standard.ts      ../sdk/src/types/wenNewStandardTypes.ts",
+        "copy-wrd-sdk":    "cp target/idl/wen_royalty_distribution.json   ../sdk/src/idl/wen_royalty_distribution.json         && cp target/types/wen_royalty_distribution.ts      ../sdk/src/types/wenRoyaltyDistributionTypes.ts",
         "copy-admin-sdk":  "cp target/deploy/epplex_PAYER_ADMIN.json      ../sdk/.local_keys/epplex_PAYER_ADMIN.json",
-        "copy-to-sdk": "yarn copy-burger-sdk && yarn copy-core-sdk",
+        "copy-to-sdk": "yarn copy-burger-sdk && yarn copy-core-sdk && yarn copy-wrd-sdk && yarn copy-wns-sdk",
 
         "close-buffers-mainnet": "solana program close --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
         "show-buffers-mainnet": "solana program show --buffers -u mainnet-beta -k target/deploy/epplex_deploy_auth.json",
