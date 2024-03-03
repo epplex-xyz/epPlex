@@ -4,14 +4,14 @@ pub use anchor_lang::system_program::{transfer, Transfer};
 #[derive(Accounts)]
 pub struct TimeManage<'info> {
     #[account(mut)]
+    /// CHECK
+    pub membership: UncheckedAccount<'info>,
+
+    #[account(mut)]
     pub payer: Signer<'info>,
 
     #[account(mut)]
     pub treasury: SystemAccount<'info>,
-
-    #[account(mut)]
-    /// CHECK
-    pub membership: UncheckedAccount<'info>,
 
     #[account(
         seeds = [

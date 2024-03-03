@@ -34,16 +34,6 @@ pub use spl_token_metadata_interface::{
 
 #[derive(Accounts)]
 pub struct MembershipCreate<'info> {
-    #[account(
-        mut,
-        constraint = rule_creator.key() == rule.rule_creator
-            @EphemeralityError::EscalatedAuthority,
-    )]
-    pub rule_creator: Signer<'info>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-
     #[account(mut)]
     pub membership: Signer<'info>,
 
@@ -51,7 +41,7 @@ pub struct MembershipCreate<'info> {
         mut,
         seeds = [
             payer.key().as_ref(),
-            token_2022_program.key().as_ref(),
+            token22_program.key().as_ref(),
             membership.key().as_ref()
         ],
         seeds::program = associated_token_program.key(),
@@ -61,13 +51,25 @@ pub struct MembershipCreate<'info> {
     pub membership_ata: UncheckedAccount<'info>,
 
     #[account(
+        mut,
+        constraint = rule_creator.key() == rule.rule_creator
+            @EphemeralityError::EscalatedAuthority,
+    )]
+    pub rule_creator: Signer<'info>,
+
+    #[account(
         seeds = [
             SEED_EPHEMERAL_RULE,
             rule.seed.to_le_bytes().as_ref()
         ],
-        bump,
+        bump = rule.bump,
     )]
     pub rule: Account<'info, EphemeralRule>,
+
+    // Payer also becomes the owner
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
     #[account(
         init,
         payer = payer,
@@ -82,13 +84,13 @@ pub struct MembershipCreate<'info> {
 
     /// CHECK:
     #[account(
-        mut,
+        // mut,
         seeds = [
             SEED_EPHEMERAL_AUTH
         ],
         bump
     )]
-    pub auth: UncheckedAccount<'info>,
+    pub epplex_authority: UncheckedAccount<'info>,
 
     #[account(address = RENT_ID)]
     /// CHECK: this is fine since we are hard coding the rent sysvar.
@@ -96,7 +98,7 @@ pub struct MembershipCreate<'info> {
 
     pub associated_token_program: Program<'info, AssociatedToken>,
 
-    pub token_2022_program: Program<'info, Token2022>,
+    pub token22_program: Program<'info, Token2022>,
 
     pub system_program: Program<'info, System>,
 }
@@ -129,7 +131,7 @@ impl<'info> MembershipCreate<'info> {
 
         let metadata = TokenMetadata {
             update_authority: spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
-                self.auth.key(),
+                self.epplex_authority.key(),
             ))
             .unwrap(),
             mint: self.membership.key(),
@@ -162,9 +164,9 @@ impl<'info> MembershipCreate<'info> {
         // 2.1: Permanent Delegate,
         invoke(
             &initialize_permanent_delegate(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
-                &self.auth.key(),
+                &self.epplex_authority.key(),
             )?,
             &[self.membership.to_account_info()],
         )?;
@@ -172,9 +174,9 @@ impl<'info> MembershipCreate<'info> {
         // 2.2: Transfer Hook,
         invoke(
             &intialize_transfer_hook(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
-                Some(self.auth.key()),
+                Some(self.epplex_authority.key()),
                 None, // TO-DO: Add Transfer Hook
             )?,
             &[self.membership.to_account_info()],
@@ -183,9 +185,9 @@ impl<'info> MembershipCreate<'info> {
         // 2.3: Close Mint Authority,
         invoke(
             &initialize_mint_close_authority(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
-                Some(&self.auth.key()),
+                Some(&self.epplex_authority.key()),
             )?,
             &[self.membership.to_account_info()],
         )?;
@@ -193,9 +195,9 @@ impl<'info> MembershipCreate<'info> {
         // 2.4: Metadata Pointer
         invoke(
             &initialize_metadata_pointer(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
-                Some(self.auth.key()),
+                Some(self.epplex_authority.key()),
                 Some(self.membership.key()),
             )?,
             &[self.membership.to_account_info()],
@@ -204,7 +206,7 @@ impl<'info> MembershipCreate<'info> {
         // Step 3: Initialize Mint & Metadata Account
         invoke(
             &initialize_mint2(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
                 &self.payer.key(),
                 None,
@@ -213,14 +215,14 @@ impl<'info> MembershipCreate<'info> {
             &[self.membership.to_account_info()],
         )?;
 
-        let seeds: &[&[u8]; 2] = &[b"ephemeral_auth", &[bumps.auth]];
+        let seeds: &[&[u8]; 2] = &[b"ephemeral_auth", &[bumps.epplex_authority]];
         let signer_seeds = &[&seeds[..]];
 
         invoke_signed(
             &initialize_metadata_account(
-                &self.token_2022_program.key(),
+                &self.token22_program.key(),
                 &self.membership.key(),
-                &self.auth.key(),
+                &self.epplex_authority.key(),
                 &self.membership.key(),
                 &self.payer.key(),
                 metadata.name,
@@ -229,7 +231,7 @@ impl<'info> MembershipCreate<'info> {
             ),
             &[
                 self.membership.to_account_info(),
-                self.auth.to_account_info(),
+                self.epplex_authority.to_account_info(),
                 self.payer.to_account_info(),
             ],
             signer_seeds,
@@ -239,21 +241,21 @@ impl<'info> MembershipCreate<'info> {
 
         // 4.1: Initialize ATA
         create(CpiContext::new(
-            self.token_2022_program.to_account_info(),
+            self.token22_program.to_account_info(),
             Create {
                 payer: self.payer.to_account_info(), // payer
                 associated_token: self.membership_ata.to_account_info(),
                 authority: self.payer.to_account_info(), // owner
                 mint: self.membership.to_account_info(),
                 system_program: self.system_program.to_account_info(),
-                token_program: self.token_2022_program.to_account_info(),
+                token_program: self.token22_program.to_account_info(),
             },
         ))?;
 
         // 4.2: Mint to ATA
         mint_to(
             CpiContext::new(
-                self.token_2022_program.to_account_info(),
+                self.token22_program.to_account_info(),
                 MintTo {
                     mint: self.membership.to_account_info(),
                     to: self.membership_ata.to_account_info(),
@@ -266,7 +268,7 @@ impl<'info> MembershipCreate<'info> {
         // 4.3: Removing mint authority
         set_authority(
             CpiContext::new(
-                self.token_2022_program.to_account_info(),
+                self.token22_program.to_account_info(),
                 anchor_spl::token_interface::SetAuthority {
                     current_authority: self.payer.to_account_info().clone(),
                     account_or_mint: self.membership.to_account_info().clone(),
