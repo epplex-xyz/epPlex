@@ -66,6 +66,7 @@ impl MembershipBurn<'_> {
             return Ok(());
         }
 
+        // Anyone can execute if time has expired
         require!(
             self.data.expiry_time + GRACE_PERIOD < Clock::get()?.unix_timestamp,
             EphemeralityError::NotExpired

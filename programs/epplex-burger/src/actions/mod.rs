@@ -22,6 +22,9 @@ pub use token_thaw::*;
 // pub mod token_sell;
 // pub use token_sell::*;
 
+pub mod token_game_burn;
+pub use token_game_burn::*;
+
 pub mod token_game_vote;
 pub use token_game_vote::*;
 
