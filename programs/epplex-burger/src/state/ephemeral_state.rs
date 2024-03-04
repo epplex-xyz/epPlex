@@ -12,8 +12,9 @@ pub const SUPPORTED_TOKENS: [Pubkey; 4] = [SOL, USDC, BONK, DEVNET_USDC];
 pub const EXPIRY_FIELD: &str = "expirationDate"; // should just add onto this
 pub const GAME_STATE: &str = "gameState";
 pub const VOTING_TIMESTAMP: &str = "votingTimestamp";
-// none, yes, no
+// false, true
 pub const IMMUNITY: &str = "immunity";
+pub const COMMUNITY: &str = "DAO";
 
 // Prolly these need to be stored in some kind of config
 // TIME
