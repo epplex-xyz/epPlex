@@ -6,7 +6,7 @@ pub const GRACE_PERIOD: i64 = 14 * 3600;
 #[constant]
 pub const SEED_EPHEMERAL_DATA: &[u8] = b"EPHEMERAL_DATA";
 
-#[account]
+#[account()]
 pub struct EphemeralData {
     pub bump: u8,
     pub mint: Pubkey,
