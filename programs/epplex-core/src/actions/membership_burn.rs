@@ -2,7 +2,7 @@ use crate::*;
 pub use anchor_lang::prelude::*;
 
 use anchor_spl::{
-    token_2022::{burn, close_account, Burn, CloseAccount, Token2022},
+    token_2022::{burn, close_account, Burn, CloseAccount},
     token_interface::TokenAccount as TokenAccountInterface,
 };
 use solana_program::program_pack::Pack;

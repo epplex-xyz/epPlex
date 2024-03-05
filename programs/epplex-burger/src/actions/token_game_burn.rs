@@ -1,6 +1,5 @@
 use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
-use epplex_shared::Token2022;
 
 use epplex_core::program::EpplexCore;
 use epplex_core::{

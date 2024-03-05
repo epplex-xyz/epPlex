@@ -10,7 +10,7 @@ pub use anchor_lang::{
 
 pub use anchor_spl::{
     associated_token::{create, Create},
-    token_2022::{spl_token_2022::instruction::AuthorityType, Token2022},
+    token_2022::spl_token_2022::instruction::AuthorityType,
     token_interface::{mint_to, set_authority, MintTo, SetAuthority},
 };
 
