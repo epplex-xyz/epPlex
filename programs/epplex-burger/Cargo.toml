@@ -20,12 +20,13 @@ default = []
 # anchor-spl = {version = "0.29.0" }
 anchor-lang = { git = "https://github.com/bridgesplit/anchor.git", features = ["interface-instructions", "init-if-needed"] }
 anchor-spl = { git = "https://github.com/bridgesplit/anchor.git", features = ["token_2022_extensions", "token_2022"] }
+
 spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 epplex-core = { path = "../epplex-core", features = ["cpi"] }
-epplex-shared = { path = "../epplex-shared", features=["no-entrypoint"] }
+epplex-shared = { path = "../epplex-shared", features = ["no-entrypoint"] }
 ahash = "=0.8.6"
 spl-token-metadata-interface = "0.2.0"
 solana-program = "=1.17"
 
-wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git" }
+wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
 # wen-new-standard = { path = "../wen-new-standard" }
