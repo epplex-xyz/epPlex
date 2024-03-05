@@ -46,6 +46,14 @@ pub struct TokenGameImmunity<'info> {
     )]
     pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>, // Used to verify owner
 
+    // #[account(
+    //     init,
+    //     seeds = [MEMBER_ACCOUNT_SEED, mint.key().as_ref()],
+    //     bump,
+    //     payer = payer,
+    //     space = TokenGroupMember::LEN
+    // )]
+    // pub member: Account<'info, TokenGroupMember>,
     #[account(
         seeds = [
             SEED_BURGER_METADATA,
@@ -129,7 +137,7 @@ impl TokenGameImmunity<'_> {
             &ctx.accounts.permanent_delegate.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
-            "YES".to_string(),
+            "true".to_string(),
         )?;
 
         Ok(())
