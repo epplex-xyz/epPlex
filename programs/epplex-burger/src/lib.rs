@@ -24,6 +24,15 @@ use anchor_spl::{
 use epplex_shared::{ADMINS, ADMIN_PUBKEY};
 use spl_token_metadata_interface::state::TokenMetadata;
 
+#[derive(Clone)]
+pub struct WenNewStandard;
+
+impl Id for WenNewStandard {
+    fn id() -> Pubkey {
+        wen_new_standard::ID
+    }
+}
+
 #[program]
 pub mod epplex_burger {
     use super::*;
