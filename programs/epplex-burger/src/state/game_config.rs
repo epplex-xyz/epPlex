@@ -67,6 +67,8 @@ pub struct GameConfig {
     pub submission_amount: u16,
     // /// Seed for ephemeral rule
     // pub rule_seed: u64,
+    /// Seed for ephemeral rule
+    pub group_pda: Pubkey,
 }
 
 impl GameConfig {
@@ -103,6 +105,7 @@ impl GameConfig {
             public_encrypt_key: "".to_string(),
             burn_amount: 0,
             submission_amount: 0,
+            group_pda: Pubkey::default(),
         }
     }
 

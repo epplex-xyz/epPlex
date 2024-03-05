@@ -1,5 +1,4 @@
 use crate::*;
-use anchor_lang::prelude::borsh::BorshDeserialize;
 
 use epplex_core::program::EpplexCore;
 use epplex_core::{
@@ -38,18 +37,30 @@ pub struct TokenGameBurn<'info> {
     #[account(
         seeds = [
             SEED_GAME_CONFIG
-            ],
+        ],
         bump = game_config.bump,
+        constraint = group_member.group == game_config.group_pda,
     )]
     pub game_config: Account<'info, GameConfig>,
 
-    // #[account(
-    //     seeds = [
-    //         SEED_PROGRAM_DELEGATE
-    //     ],
-    //     bump = permanent_delegate.bump
-    // )]
-    // pub permanent_delegate: Account<'info, ProgramDelegate>,
+    #[account(
+        seeds = [
+            SEED_PROGRAM_DELEGATE
+        ],
+        bump = permanent_delegate.bump
+    )]
+    pub permanent_delegate: Account<'info, ProgramDelegate>,
+
+    #[account(
+        seeds = [
+            wen_new_standard::MEMBER_ACCOUNT_SEED,
+            mint.key().as_ref()
+        ],
+        seeds::program = wen_new_standard::ID.key(),
+        bump,
+    )]
+    pub group_member: Account<'info, MyTokenGroupMember>,
+
     #[account(
         mut,
         constraint = ADMINS.contains(
