@@ -46,14 +46,6 @@ pub struct TokenGameImmunity<'info> {
     )]
     pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>, // Used to verify owner
 
-    // #[account(
-    //     init,
-    //     seeds = [MEMBER_ACCOUNT_SEED, mint.key().as_ref()],
-    //     bump,
-    //     payer = payer,
-    //     space = TokenGroupMember::LEN
-    // )]
-    // pub member: Account<'info, TokenGroupMember>,
     #[account(
         seeds = [
             SEED_BURGER_METADATA,
