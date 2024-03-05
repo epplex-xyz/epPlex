@@ -129,7 +129,7 @@ impl TokenGameImmunity<'_> {
             &ctx.accounts.permanent_delegate.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
-            "YES".to_string(),
+            "true".to_string(),
         )?;
 
         Ok(())

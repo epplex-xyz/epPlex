@@ -2,7 +2,7 @@ use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_2022::MintTo;
-use epplex_shared::{update_token_metadata, Token2022};
+use epplex_shared::update_token_metadata;
 use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]

@@ -57,3 +57,6 @@ pub use game_close::*;
 
 pub mod game_update;
 pub use game_update::*;
+
+pub mod wns_mint;
+pub use wns_mint::*;

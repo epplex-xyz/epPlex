@@ -1,6 +1,6 @@
 use crate::mint::{TokenCollectionCreateParams, COLLECTION_ID_FIELD};
 use crate::*;
-use epplex_shared::{update_token_metadata, Token2022};
+use epplex_shared::update_token_metadata;
 use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]

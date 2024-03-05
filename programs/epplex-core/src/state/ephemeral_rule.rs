@@ -6,7 +6,7 @@ pub const SEED_EPHEMERAL_AUTH: &[u8] = b"EPHEMERAL_AUTH";
 #[constant]
 pub const SEED_EPHEMERAL_RULE: &[u8] = b"EPHEMERAL_RULE";
 
-#[account]
+#[account()]
 pub struct EphemeralRule {
     pub bump: u8,
     pub seed: u64,

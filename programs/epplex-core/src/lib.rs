@@ -12,6 +12,7 @@ pub use state::*;
 pub use utils::*;
 
 use anchor_spl::associated_token::AssociatedToken;
+use anchor_spl::token_interface::Token2022;
 
 #[program]
 pub mod epplex_core {

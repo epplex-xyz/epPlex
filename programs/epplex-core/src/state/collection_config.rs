@@ -10,7 +10,6 @@ use epplex_shared::{
 pub const SEED_COLLECTION_CONFIG: &[u8] = b"CONFIG";
 
 #[account]
-#[derive(Default, Debug)]
 pub struct CollectionConfig {
     /// The bump, used for PDA validation.
     pub bump: u8,
