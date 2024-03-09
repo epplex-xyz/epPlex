@@ -13,6 +13,9 @@ pub use id::ID;
 pub mod utils;
 pub use utils::*;
 
+pub mod events;
+pub use events::*;
+
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token::{Mint, Token, TokenAccount},

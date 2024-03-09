@@ -82,7 +82,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
-            params.message,
+            params.message.clone(),
         )?;
 
         // Record voting timestamp
@@ -95,6 +95,11 @@ impl TokenGameVote<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string(),
         )?;
+
+        emit!(EvTokenGameVote {
+            participant: ctx.accounts.payer.key(),
+            answer: params.message,
+        });
 
         Ok(())
     }
