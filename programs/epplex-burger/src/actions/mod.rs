@@ -13,6 +13,9 @@ pub use token_burn::*;
 pub mod token_thaw;
 pub use token_thaw::*;
 
+pub mod token_freeze;
+pub use token_freeze::*;
+
 // pub mod token_buy;
 // pub use token_buy::*;
 

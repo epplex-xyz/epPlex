@@ -71,6 +71,11 @@ pub mod epplex_burger {
         TokenThaw::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_freeze(ctx: Context<TokenFreeze>, params: TokenFreezeParams) -> Result<()> {
+        TokenFreeze::actuate(ctx, params)
+    }
+
     /*
      * Token Game Actions
      */
