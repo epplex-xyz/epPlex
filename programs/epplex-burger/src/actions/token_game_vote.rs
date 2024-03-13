@@ -99,6 +99,8 @@ impl TokenGameVote<'_> {
         emit!(EvTokenGameVote {
             participant: ctx.accounts.payer.key(),
             answer: params.message,
+            game_round_id: ctx.accounts.game_config.game_round,
+            nft: ctx.accounts.mint.key()
         });
 
         Ok(())
