@@ -24,17 +24,16 @@ pub struct TokenGameBurn<'info> {
     )]
     pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
 
-    #[account(
-        mut,
-        close = payer,
-        seeds = [
-            SEED_BURGER_METADATA,
-            mint.key().as_ref()
-        ],
-        bump = token_metadata.bump
-    )]
-    pub token_metadata: Account<'info, BurgerMetadata>,
-
+    // #[account(
+    //     mut,
+    //     close = payer,
+    //     seeds = [
+    //         SEED_BURGER_METADATA,
+    //         mint.key().as_ref()
+    //     ],
+    //     bump = token_metadata.bump
+    // )]
+    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
             SEED_GAME_CONFIG
@@ -60,7 +59,7 @@ pub struct TokenGameBurn<'info> {
         seeds::program = wen_new_standard::ID.key(),
         bump,
     )]
-    pub group_member: Account<'info, MyTokenGroupMember>,
+    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
     #[account(
         mut,
