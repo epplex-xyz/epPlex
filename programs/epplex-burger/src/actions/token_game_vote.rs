@@ -100,7 +100,8 @@ impl TokenGameVote<'_> {
             participant: ctx.accounts.payer.key(),
             answer: params.message,
             game_round_id: ctx.accounts.game_config.game_round,
-            nft: ctx.accounts.mint.key()
+            nft: ctx.accounts.mint.key(),
+            vote_timestamp: Clock::get().unwrap().unix_timestamp,
         });
 
         Ok(())

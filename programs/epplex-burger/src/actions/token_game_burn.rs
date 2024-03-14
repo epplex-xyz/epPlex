@@ -4,7 +4,6 @@ use epplex_core::program::EpplexCore;
 use epplex_core::{
     EphemeralData, EphemeralRule, SEED_EPHEMERAL_AUTH, SEED_EPHEMERAL_DATA, SEED_EPHEMERAL_RULE,
 };
-use solana_program::program_pack::Pack;
 
 #[derive(Accounts)]
 #[instruction(params: TokenGameBurnParams)]
@@ -138,13 +137,10 @@ impl TokenGameBurn<'_> {
 
         ctx.accounts.game_config.bump_burn_amount()?;
 
-        let token_account = ctx.accounts.token_account.to_account_info();
-        let state =
-            spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
         emit!(EvTokenGameBurn {
-            nft: ctx.accounts.mint.key(),
             game_round_id: ctx.accounts.game_config.game_round,
-            participant: state.owner,
+            nft: ctx.accounts.mint.key(),
+            participant: get_token_account_owner(&ctx.accounts.token_account.to_account_info())?,
             burn_timestamp: Clock::get().unwrap().unix_timestamp,
         });
 

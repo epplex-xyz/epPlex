@@ -76,6 +76,12 @@ impl TokenGameReset<'_> {
             "".to_string(),
         )?;
 
+        emit!(EvTokenGameReset {
+            nft: ctx.accounts.mint.key(),
+            game_round_id: ctx.accounts.game_config.game_round,
+            reset_timestamp: Clock::get().unwrap().unix_timestamp,
+        });
+
         Ok(())
     }
 }

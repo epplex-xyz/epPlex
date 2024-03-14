@@ -87,12 +87,16 @@ impl TokenGameImmunity<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameImmunityParams) -> Result<()> {
-        // Immunity token is also a T22
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
         burn_token(
             &ctx.accounts.mint_immunity.to_account_info(),
             &ctx.accounts.token_account_immunity.to_account_info(),
             ctx.accounts.token22_program.key(),
             &ctx.accounts.permanent_delegate.to_account_info(),
+            Some(seeds),
         )?;
 
         // Close immuntiy token mint
@@ -103,6 +107,7 @@ impl TokenGameImmunity<'_> {
             &ctx.accounts.payer.to_account_info(),
             // Authority to close the mint
             &ctx.accounts.permanent_delegate.to_account_info(),
+            Some(seeds),
         )?;
 
         // Close ATA of immunity
@@ -119,10 +124,6 @@ impl TokenGameImmunity<'_> {
             },
         ))?;
 
-        let seeds = &[
-            SEED_PROGRAM_DELEGATE,
-            &[ctx.accounts.permanent_delegate.bump],
-        ];
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
@@ -131,6 +132,13 @@ impl TokenGameImmunity<'_> {
             spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
             "true".to_string(),
         )?;
+
+        emit!(EvTokenGameImmunity {
+            game_round_id: ctx.accounts.game_config.game_round,
+            nft: ctx.accounts.mint.key(),
+            participant: get_token_account_owner(&ctx.accounts.token_account.to_account_info())?,
+            immunity_timestamp: Clock::get().unwrap().unix_timestamp,
+        });
 
         Ok(())
     }
