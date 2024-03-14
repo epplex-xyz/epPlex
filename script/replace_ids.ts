@@ -20,7 +20,7 @@ const targetDir = path.join(projectRoot, "target");
 const anchorToml = path.join(projectRoot, "Anchor.toml");
 
 
-function replaceId(programName: string, programDir: string) {
+function replaceId(programName: string, programDir: string, idFile: string) {
     const pid = web3.Keypair.fromSecretKey(
         new Uint8Array(
             JSON.parse(fs.readFileSync(
@@ -40,14 +40,8 @@ function replaceId(programName: string, programDir: string) {
         "-i",
         /declare_id!(.*);/,
         `declare_id!("${pid.toString()}");`,
-        path.join(projectRoot, "programs", programDir, "src", "id.rs")
+        path.join(projectRoot, "programs", programDir, "src", idFile)
     );
-    // shell.sed(
-    //     "-i",
-    //     `/${programName} = "(.*)"/`,
-    //     `${programName} = "${pid.toString()}"`,
-    //     anchorToml
-    // );
 }
 
 async function main() {
@@ -78,9 +72,11 @@ async function main() {
         });
     }
 
-    replaceId("epplex_burger", "epplex-burger")
-    replaceId("epplex_core", "epplex-core")
-    replaceId("epplex_shared", "epplex-shared")
+    replaceId("epplex_burger", "epplex-burger", "id.rs")
+    replaceId("epplex_core", "epplex-core", "id.rs")
+    replaceId("epplex_shared", "epplex-shared", "id.rs")
+    replaceId("wen_new_standard", "wen_new_standard", "lib.rs")
+    replaceId("wen_royalty_distribution", "wen_royalty_distribution", "lib.rs")
 
     // The program ID only appears in the JSON if deploy has happened
     // console.log("Execute anchor run copy");
