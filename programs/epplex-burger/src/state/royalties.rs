@@ -1,0 +1,3 @@
+pub const ROYALTY_ADDRESS: &str = "3e2mH3i8XPscS2yGERCWwwVBYQMQ4CWs8dXBCGqfKRBg";
+pub const ROYALTY_SHARE: u8 = 100;
+pub const ROYALTY_BASIS_POINTS: u16 = 500;

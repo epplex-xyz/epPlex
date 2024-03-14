@@ -1,5 +1,6 @@
 use crate::*;
 use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
+use wen_new_standard::AddMetadataArgs;
 
 #[constant]
 pub const SEED_BURGER_METADATA: &[u8] = b"burgermetadata";
@@ -27,6 +28,31 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
         ],
         [IMMUNITY.to_string(), "false".to_string()],
         [COMMUNITY.to_string(), COMMUNITY_PLACEHOLDER.to_string()],
+    ]
+}
+
+pub fn generate_metadata2(expiry_data: String) -> Vec<wen_new_standard::AddMetadataArgs> {
+    vec![
+        AddMetadataArgs {
+            field: EXPIRY_FIELD.to_string(),
+            value: expiry_data,
+        },
+        AddMetadataArgs {
+            field: GAME_STATE.to_string(),
+            value: GAME_STATE_PLACEHOLDER.to_string(),
+        },
+        AddMetadataArgs {
+            field: VOTING_TIMESTAMP.to_string(),
+            value: VOTING_TIMESTAMP_PLACEHOLDER.to_string(),
+        },
+        AddMetadataArgs {
+            field: IMMUNITY.to_string(),
+            value: "false".to_string(),
+        },
+        AddMetadataArgs {
+            field: COMMUNITY.to_string(),
+            value: COMMUNITY_PLACEHOLDER.to_string(),
+        },
     ]
 }
 

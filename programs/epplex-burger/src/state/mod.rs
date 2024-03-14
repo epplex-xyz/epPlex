@@ -12,3 +12,6 @@ pub use game_config::*;
 
 pub mod member;
 pub use member::*;
+
+pub mod royalties;
+pub use royalties::*;
