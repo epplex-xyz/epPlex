@@ -10,8 +10,5 @@ pub use burger_metadata::*;
 pub mod game_config;
 pub use game_config::*;
 
-pub mod member;
-pub use member::*;
-
 pub mod royalties;
 pub use royalties::*;
