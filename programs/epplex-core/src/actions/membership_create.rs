@@ -82,7 +82,6 @@ pub struct MembershipCreate<'info> {
     )]
     pub data: Account<'info, EphemeralData>,
 
-    /// CHECK:
     #[account(
         // mut,
         seeds = [
@@ -90,6 +89,7 @@ pub struct MembershipCreate<'info> {
         ],
         bump
     )]
+    /// CHECK:
     pub epplex_authority: UncheckedAccount<'info>,
 
     #[account(address = RENT_ID)]
@@ -97,9 +97,7 @@ pub struct MembershipCreate<'info> {
     pub rent: UncheckedAccount<'info>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
-
     pub token22_program: Program<'info, Token2022>,
-
     pub system_program: Program<'info, System>,
 }
 

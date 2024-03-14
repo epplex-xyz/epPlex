@@ -22,6 +22,9 @@ pub use membership_burn::*;
 pub mod membership_create;
 pub use membership_create::*;
 
+pub mod membership_append;
+pub use membership_append::*;
+
 pub mod rule_manage;
 pub use rule_manage::*;
 
