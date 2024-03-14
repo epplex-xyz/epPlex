@@ -73,11 +73,16 @@ impl TokenBurn<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenBurnParams) -> Result<()> {
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
         burn_token(
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.token_account.to_account_info(),
             ctx.accounts.token22_program.key(),
             &ctx.accounts.permanent_delegate.to_account_info(),
+            Some(seeds),
         )?;
 
         // Close mint account
@@ -88,6 +93,7 @@ impl TokenBurn<'_> {
             &ctx.accounts.payer.to_account_info(),
             // Authority to close the mint
             &ctx.accounts.permanent_delegate.to_account_info(),
+            Some(seeds),
         )?;
 
         // Can only close the ATA if we are the owners
