@@ -36,6 +36,15 @@ impl Id for WenNewStandard {
     }
 }
 
+#[derive(Clone)]
+pub struct WenRoyaltyDistribution;
+
+impl Id for WenRoyaltyDistribution {
+    fn id() -> Pubkey {
+        wen_royalty_distribution::ID
+    }
+}
+
 #[program]
 pub mod epplex_burger {
     use super::*;
@@ -54,13 +63,21 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn wns_group_mint(ctx: Context<WnsGroupMint>, params: WnsGroupMintParams) -> Result<()> {
+        WnsGroupMint::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn wns_member_mint(ctx: Context<WnsMemberMint>, params: WnsMemberMintParams) -> Result<()> {
         WnsMemberMint::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn wns_group_mint(ctx: Context<WnsGroupMint>, params: WnsGroupMintParams) -> Result<()> {
-        WnsGroupMint::actuate(ctx, params)
+    pub fn wns_member_process(
+        ctx: Context<WnsMemberProcess>,
+        params: WnsMemberProcessParams,
+    ) -> Result<()> {
+        WnsMemberProcess::actuate(ctx, params)
     }
 
     /*
