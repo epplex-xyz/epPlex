@@ -38,7 +38,8 @@ pub struct TokenGameBurn<'info> {
             SEED_GAME_CONFIG
         ],
         bump = game_config.bump,
-        constraint = group_member.group == game_config.group_pda,
+        constraint =
+            group_member.group == game_config.token_group @ BurgerError::CollectionInvalid,
     )]
     pub game_config: Account<'info, GameConfig>,
 

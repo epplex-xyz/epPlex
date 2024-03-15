@@ -80,6 +80,9 @@ pub enum BurgerError {
     #[msg("Invalid parameters supplied to game start instruction")]
     InvalidStartParams,
 
+    #[msg("Collection group is not valid for the game")]
+    CollectionInvalid,
+
     // Input
     #[msg("Incorrect input type")]
     IncorrectInputType,

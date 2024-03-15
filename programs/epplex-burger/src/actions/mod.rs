@@ -13,15 +13,6 @@ pub use token_burn::*;
 pub mod token_thaw;
 pub use token_thaw::*;
 
-// pub mod token_buy;
-// pub use token_buy::*;
-
-// pub mod token_delist;
-// pub use token_delist::*;
-
-// pub mod token_sell;
-// pub use token_sell::*;
-
 pub mod token_game_burn;
 pub use token_game_burn::*;
 
@@ -58,5 +49,8 @@ pub use game_close::*;
 pub mod game_update;
 pub use game_update::*;
 
-pub mod wns_mint;
-pub use wns_mint::*;
+pub mod wns_member_mint;
+pub use wns_member_mint::*;
+
+pub mod wns_group_mint;
+pub use wns_group_mint::*;
