@@ -7,7 +7,7 @@ use epplex_core::program::EpplexCore;
 #[derive(Accounts)]
 #[instruction(params: WnsMintParams)]
 pub struct WnsMint<'info> {
-    #[account(mut)]
+    #[account(mut, signer)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
 
@@ -29,6 +29,7 @@ pub struct WnsMint<'info> {
     pub token_metadata: Account<'info, BurgerMetadata>,
 
     #[account(
+        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -53,12 +54,12 @@ pub struct WnsMint<'info> {
     )]
     pub group: Account<'info, wen_new_standard::TokenGroup>,
 
-    #[account()]
+    #[account(mut)]
     /// CHECK:
     pub member: UncheckedAccount<'info>,
 
-    #[account()]
-    /// CHECK: This account's data is a buffer of TLV data
+    #[account(mut)]
+    /// CHECK: This account's data is a buffer of TLV data, will be initialised
     pub extra_metas_account: UncheckedAccount<'info>,
 
     #[account(
@@ -171,7 +172,7 @@ impl WnsMint<'_> {
             },
         )?;
 
-        // 4. Add other metadata
+        // // 4. Add other metadata
         wen_new_standard::cpi::add_metadata(
             CpiContext::new_with_signer(
                 ctx.accounts.wns.to_account_info(),
