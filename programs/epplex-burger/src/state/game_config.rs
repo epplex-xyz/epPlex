@@ -65,10 +65,10 @@ pub struct GameConfig {
     pub burn_amount: u16,
     /// Amount of burgers who submitted an answer within a round
     pub submission_amount: u16,
-    // /// Seed for ephemeral rule
-    // pub rule_seed: u64,
     /// Seed for ephemeral rule
-    pub group_pda: Pubkey,
+    pub rule_seed: u64,
+    /// The pubkey of the token group pda for collection verification
+    pub token_group: Pubkey,
 }
 
 impl GameConfig {
@@ -86,8 +86,10 @@ impl GameConfig {
         + epplex_shared::BITS_8 // 1
         + (epplex_shared::VEC_PREFIX + PUBLIC_ENCRYPT_KEY_LENGTH * epplex_shared::UTF_SIZE)
         + epplex_shared::BITS_16 // 2
-        + epplex_shared::BITS_16; // 2
-                                  // approx 1500
+        + epplex_shared::BITS_16 // 2
+        + epplex_shared::BITS_64 // 8
+        + epplex_shared::PUBLIC_KEY_LENGTH; // 32
+                                            // approx 1500
 
     pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
@@ -105,7 +107,8 @@ impl GameConfig {
             public_encrypt_key: "".to_string(),
             burn_amount: 0,
             submission_amount: 0,
-            group_pda: Pubkey::default(),
+            rule_seed: 0,
+            token_group: Pubkey::default(),
         }
     }
 
@@ -123,6 +126,8 @@ impl GameConfig {
         self.game_prompt = params.game_prompt;
         self.is_encrypted = params.is_encrypted;
         self.public_encrypt_key = params.public_encrypt_key;
+        self.token_group = params.token_group;
+        self.rule_seed = params.rule_seed;
 
         Ok(())
     }
