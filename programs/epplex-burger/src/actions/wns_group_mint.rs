@@ -1,35 +1,18 @@
-use std::str::FromStr;
-
 use crate::*;
 use anchor_spl::associated_token::AssociatedToken;
-use epplex_core::program::EpplexCore;
 
 #[derive(Accounts)]
 #[instruction(params: WnsGroupMintParams)]
 pub struct WnsGroupMint<'info> {
     #[account(mut, signer)]
     /// CHECK
-    pub mint: UncheckedAccount<'info>,
+    pub group_mint: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK
     pub token_account: UncheckedAccount<'info>,
 
-    // TODO need to remove this
     #[account(
-        init,
-        seeds = [
-            SEED_BURGER_METADATA,
-            mint.key().as_ref()
-        ],
-        payer = payer,
-        space = BurgerMetadata::LEN,
-        bump,
-    )]
-    pub token_metadata: Account<'info, BurgerMetadata>,
-
-    #[account(
-        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -48,15 +31,9 @@ pub struct WnsGroupMint<'info> {
     /*
      * WNS Accounts
      */
-    #[account(
-        mut,
-        constraint = group.update_authority == payer.key(),
-    )]
-    pub group: Account<'info, wen_new_standard::TokenGroup>,
-
     #[account(mut)]
     /// CHECK:
-    pub member: UncheckedAccount<'info>,
+    pub group: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK: This account's data is a buffer of TLV data, will be initialised
@@ -71,6 +48,10 @@ pub struct WnsGroupMint<'info> {
     )]
     pub manager: Account<'info, wen_new_standard::Manager>,
 
+    #[account(mut)]
+    /// CHECK:
+    pub distribution_account: UncheckedAccount<'info>,
+
     /*
      * Programs
      */
@@ -78,16 +59,17 @@ pub struct WnsGroupMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    pub epplex_core: Program<'info, EpplexCore>,
     pub wns: Program<'info, WenNewStandard>,
+    pub royalty_program: Program<'info, WenRoyaltyDistribution>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WnsGroupMintParams {
-    pub expiry_date: String,
     pub name: String,
     pub symbol: String,
     pub uri: String,
+    pub max_size: u32,
+    pub payment_mint: Pubkey,
 }
 
 impl WnsGroupMint<'_> {
@@ -96,26 +78,21 @@ impl WnsGroupMint<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: WnsGroupMintParams) -> Result<()> {
-        // Create the burger metadata
-        let token_metadata = &mut ctx.accounts.token_metadata;
-        **token_metadata = BurgerMetadata::new(ctx.bumps.token_metadata);
-
         let seeds = &[
             SEED_PROGRAM_DELEGATE,
             &[ctx.accounts.permanent_delegate.bump],
         ];
-        let epplex_auth =
-            Pubkey::find_program_address(&[epplex_core::SEED_EPHEMERAL_AUTH], &epplex_core::ID).0;
 
-        // 1. Create mint account
-        wen_new_standard::cpi::create_mint_account(
+        // 1. Create group account
+        wen_new_standard::cpi::create_group_account(
             CpiContext::new_with_signer(
                 ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::CreateMintAccount {
+                wen_new_standard::cpi::accounts::CreateGroupAccount {
                     payer: ctx.accounts.payer.to_account_info(),
                     authority: ctx.accounts.permanent_delegate.to_account_info(),
                     receiver: ctx.accounts.payer.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
+                    group: ctx.accounts.group.to_account_info(),
+                    mint: ctx.accounts.group_mint.to_account_info(),
                     mint_token_account: ctx.accounts.token_account.to_account_info(),
                     manager: ctx.accounts.manager.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
@@ -125,67 +102,26 @@ impl WnsGroupMint<'_> {
                 },
                 &[&seeds[..]],
             ),
-            wen_new_standard::mint::CreateMintAccountArgs {
+            wen_new_standard::CreateGroupAccountArgs {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
-                permanent_delegate: Some(epplex_auth),
+                max_size: params.max_size,
             },
         )?;
 
-        // 2. Add mint to group
-        wen_new_standard::cpi::add_mint_to_group(CpiContext::new_with_signer(
-            ctx.accounts.wns.to_account_info(),
-            wen_new_standard::cpi::accounts::AddGroup {
-                payer: ctx.accounts.payer.to_account_info(),
-                authority: ctx.accounts.permanent_delegate.to_account_info(),
-                group: ctx.accounts.group.to_account_info(),
-                member: ctx.accounts.member.to_account_info(),
-                mint: ctx.accounts.mint.to_account_info(),
-                manager: ctx.accounts.manager.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                token_program: ctx.accounts.token22_program.to_account_info(),
-            },
-            &[&seeds[..]],
-        ))?;
-
-        // 3. Add royalties
-        wen_new_standard::cpi::add_royalties(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::AddRoyalties {
+        // 2. Create distribution account from royalties program
+        wen_royalty_distribution::cpi::initialize_distribution(
+            CpiContext::new(
+                ctx.accounts.royalty_program.to_account_info(),
+                wen_royalty_distribution::cpi::accounts::InitializeDistribution {
                     payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    extra_metas_account: ctx.accounts.extra_metas_account.to_account_info(),
+                    group_mint: ctx.accounts.group_mint.to_account_info(),
+                    distribution_account: ctx.accounts.distribution_account.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
                 },
-                &[&seeds[..]],
             ),
-            wen_new_standard::mint::UpdateRoyaltiesArgs {
-                royalty_basis_points: ROYALTY_BASIS_POINTS,
-                creators: vec![wen_new_standard::CreatorWithShare {
-                    address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
-                    share: ROYALTY_SHARE,
-                }],
-            },
-        )?;
-
-        // // 4. Add other metadata
-        wen_new_standard::cpi::add_metadata(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::AddMetadata {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            generate_metadata2(params.expiry_date),
+            params.payment_mint,
         )?;
 
         Ok(())
