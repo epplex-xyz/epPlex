@@ -44,3 +44,17 @@ pub struct EvGameEnd {
     pub burn_amount: u16,
     pub submission_amount: u16,
 }
+
+#[event]
+pub struct EvGameStart {
+    pub game_round_id: u8,
+    pub game_start_timestamp: i64,
+    pub game_end_timestamp: i64,
+    pub game_prompt: String,
+    pub game_name: String,
+    pub vote_type: VoteType,
+    pub input_type: InputType,
+    pub public_encrypt_key: String,
+    pub burn_amount: u16,
+    pub submission_amount: u16,
+}
