@@ -46,16 +46,21 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn wns_mint(ctx: Context<WnsMint>, params: WnsMintParams) -> Result<()> {
-        WnsMint::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn collection_mint(
         ctx: Context<CollectionMint>,
         params: CollectionMintParams,
     ) -> Result<()> {
         CollectionMint::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn wns_member_mint(ctx: Context<WnsMemberMint>, params: WnsMemberMintParams) -> Result<()> {
+        WnsMemberMint::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn wns_group_mint(ctx: Context<WnsGroupMint>, params: WnsGroupMintParams) -> Result<()> {
+        WnsGroupMint::actuate(ctx, params)
     }
 
     /*
