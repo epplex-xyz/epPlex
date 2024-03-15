@@ -895,7 +895,7 @@ dependencies = [
  "solana-program",
  "spl-token-2022",
  "spl-token-metadata-interface",
- "wen_new_standard 0.3.0-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
+ "wen_new_standard",
 ]
 
 [[package]]
@@ -2523,38 +2523,12 @@ dependencies = [
  "spl-tlv-account-resolution 0.4.0",
  "spl-token-metadata-interface",
  "spl-transfer-hook-interface 0.5.0",
- "wen_royalty_distribution 0.2.0-alpha",
-]
-
-[[package]]
-name = "wen_new_standard"
-version = "0.3.0-alpha"
-source = "git+https://github.com/wen-community/wen-new-standard.git#5b867c1d71d89213656a29f66e4cffcd6edda051"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "spl-pod",
- "spl-tlv-account-resolution 0.4.0",
- "spl-token-metadata-interface",
- "spl-transfer-hook-interface 0.5.0",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
+ "wen_royalty_distribution",
 ]
 
 [[package]]
 name = "wen_royalty_distribution"
 version = "0.2.0-alpha"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "spl-pod",
- "spl-tlv-account-resolution 0.4.0",
- "spl-transfer-hook-interface 0.5.0",
-]
-
-[[package]]
-name = "wen_royalty_distribution"
-version = "0.2.0-alpha"
-source = "git+https://github.com/wen-community/wen-new-standard.git#5b867c1d71d89213656a29f66e4cffcd6edda051"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
