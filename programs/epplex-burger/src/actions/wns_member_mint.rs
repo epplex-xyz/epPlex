@@ -1,8 +1,6 @@
-use std::str::FromStr;
-
 use crate::*;
 use anchor_spl::associated_token::AssociatedToken;
-use epplex_core::program::EpplexCore;
+use std::str::FromStr;
 
 #[derive(Accounts)]
 #[instruction(params: WnsMemberMintParams)]
@@ -48,19 +46,13 @@ pub struct WnsMemberMint<'info> {
     /*
      * WNS Accounts
      */
-    #[account(
-        mut,
-        constraint = group.update_authority == payer.key(),
-    )]
-    pub group: Account<'info, wen_new_standard::TokenGroup>,
+    #[account(mut)]
+    /// CHECK:
+    pub group: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK:
     pub member: UncheckedAccount<'info>,
-
-    #[account(mut)]
-    /// CHECK: This account's data is a buffer of TLV data, will be initialised
-    pub extra_metas_account: UncheckedAccount<'info>,
 
     #[account(
         seeds = [
@@ -71,6 +63,10 @@ pub struct WnsMemberMint<'info> {
     )]
     pub manager: Account<'info, wen_new_standard::Manager>,
 
+    #[account(mut)]
+    /// CHECK: This account's data is a buffer of TLV data, will be initialised
+    pub extra_metas_account: UncheckedAccount<'info>,
+
     /*
      * Programs
      */
@@ -78,7 +74,6 @@ pub struct WnsMemberMint<'info> {
     pub system_program: Program<'info, System>,
     pub token22_program: Program<'info, Token2022>,
     pub associated_token: Program<'info, AssociatedToken>,
-    pub epplex_core: Program<'info, EpplexCore>,
     pub wns: Program<'info, WenNewStandard>,
 }
 
@@ -172,7 +167,7 @@ impl WnsMemberMint<'_> {
             },
         )?;
 
-        // // 4. Add other metadata
+        // 4. Add other metadata
         wen_new_standard::cpi::add_metadata(
             CpiContext::new_with_signer(
                 ctx.accounts.wns.to_account_info(),
