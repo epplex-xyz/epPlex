@@ -5,8 +5,8 @@ use anchor_spl::associated_token::AssociatedToken;
 use epplex_core::program::EpplexCore;
 
 #[derive(Accounts)]
-#[instruction(params: WnsMintParams)]
-pub struct WnsMint<'info> {
+#[instruction(params: WnsMemberMintParams)]
+pub struct WnsMemberMint<'info> {
     #[account(mut, signer)]
     /// CHECK
     pub mint: UncheckedAccount<'info>,
@@ -83,19 +83,19 @@ pub struct WnsMint<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct WnsMintParams {
+pub struct WnsMemberMintParams {
     pub expiry_date: String,
     pub name: String,
     pub symbol: String,
     pub uri: String,
 }
 
-impl WnsMint<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &WnsMintParams) -> Result<()> {
+impl WnsMemberMint<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &WnsMemberMintParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: WnsMintParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: WnsMemberMintParams) -> Result<()> {
         // Create the burger metadata
         let token_metadata = &mut ctx.accounts.token_metadata;
         **token_metadata = BurgerMetadata::new(ctx.bumps.token_metadata);
