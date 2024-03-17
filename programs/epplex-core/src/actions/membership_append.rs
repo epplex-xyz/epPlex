@@ -8,9 +8,6 @@ pub struct MembershipAppend<'info> {
     /// CHECK
     pub membership: UncheckedAccount<'info>,
 
-    #[account()]
-    pub burner: Signer<'info>,
-
     #[account(
         seeds = [
             SEED_EPHEMERAL_RULE,
@@ -20,6 +17,7 @@ pub struct MembershipAppend<'info> {
     )]
     pub rule: Account<'info, EphemeralRule>,
 
+    // Needs to be here since rule_creator needs to sign
     #[account(
         mut,
         constraint = rule_creator.key() == rule.rule_creator
