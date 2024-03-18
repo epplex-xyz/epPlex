@@ -11,8 +11,7 @@ pub use id::ID;
 pub use state::*;
 pub use utils::*;
 
-use anchor_spl::associated_token::AssociatedToken;
-use anchor_spl::token_interface::Token2022;
+use anchor_spl::{associated_token::AssociatedToken, token_interface::Token2022};
 
 #[program]
 pub mod epplex_core {
@@ -94,10 +93,13 @@ pub mod epplex_core {
     }
 
     #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn membership_burn<'info>(
-        ctx: Context<'_, '_, '_, 'info, MembershipBurn<'info>>,
-    ) -> Result<()> {
+    pub fn membership_burn(ctx: Context<MembershipBurn>) -> Result<()> {
         MembershipBurn::burn(ctx)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn membership_wns_burn(ctx: Context<MembershipWnsBurn>) -> Result<()> {
+        MembershipWnsBurn::burn(ctx)
     }
 
     pub fn time_add(ctx: Context<TimeManage>, time: u64) -> Result<()> {

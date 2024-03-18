@@ -19,6 +19,9 @@ pub use collection_mint::*;
 pub mod membership_burn;
 pub use membership_burn::*;
 
+pub mod membership_wns_burn;
+pub use membership_wns_burn::*;
+
 pub mod membership_create;
 pub use membership_create::*;
 
