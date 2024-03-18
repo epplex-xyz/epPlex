@@ -94,7 +94,9 @@ pub mod epplex_core {
     }
 
     #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn membership_burn(ctx: Context<MembershipBurn>) -> Result<()> {
+    pub fn membership_burn<'info>(
+        ctx: Context<'_, '_, '_, 'info, MembershipBurn<'info>>,
+    ) -> Result<()> {
         MembershipBurn::burn(ctx)
     }
 

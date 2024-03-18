@@ -912,6 +912,7 @@ dependencies = [
  "spl-pod",
  "spl-token-2022",
  "spl-token-metadata-interface",
+ "wen_new_standard",
 ]
 
 [[package]]

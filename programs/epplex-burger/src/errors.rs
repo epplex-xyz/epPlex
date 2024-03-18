@@ -38,6 +38,9 @@ pub enum BurgerError {
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
+    #[msg("Incorrect mint for group")]
+    IncorrectMint,
+
     #[msg("Endtime must be in the future")]
     IncorrectEndtime,
 

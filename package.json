@@ -29,7 +29,9 @@
 
         "deploy-burger-devnet": "anchor deploy -p epplex_burger --provider.cluster devnet --program-keypair target/deploy/epplex_burger-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-core-devnet": "anchor deploy -p epplex_core --provider.cluster devnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
-        "deploy-all-devnet": "anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet",
+        "deploy-wns-devnet": "anchor deploy -p wen_new_standard --provider.cluster devnet --program-keypair target/deploy/wen_new_standard-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-wrd-devnet": "anchor deploy -p wen_royalty_distribution --provider.cluster devnet --program-keypair target/deploy/wen_royalty_distribution-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
+        "deploy-all-devnet": "./anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet && yarn deploy-wns-devnet && yarn deploy-wrd-devnet",
         "solana-balance-devnet": "solana balance -u devnet -k target/deploy/epplex_deploy_auth.json",
 
         "copy-burger-sdk": "cp target/idl/epplex_burger.json              ../sdk/src/idl/epplex_burger.json            && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",
@@ -52,7 +54,7 @@
     "dependencies": {
         "@coral-xyz/anchor": "^0.27.0",
         "@project-serum/borsh": "^0.2.5",
-        "@solana/spl-token": "^0.3.7",
+        "@solana/spl-token": "^0.4.1",
         "@solana/web3.js": "^1.75.0",
         "@switchboard-xyz/solana.js": "^3.2.4",
         "dotenv": "^16.0.3"

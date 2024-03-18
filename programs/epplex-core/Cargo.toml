@@ -35,3 +35,5 @@ solana-security-txt = "1.0.1"
 spl-token-metadata-interface = "0.2.0"
 ahash = "=0.8.6"
 spl-pod = "0.1.0"
+
+wen_new_standard = { path = "../wen_new_standard", features = ["no-entrypoint", "cpi"]}
