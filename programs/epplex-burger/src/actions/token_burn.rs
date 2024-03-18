@@ -1,6 +1,5 @@
 use crate::*;
 use anchor_lang::prelude::borsh::BorshDeserialize;
-use solana_program::program_pack::Pack;
 
 #[derive(Accounts)]
 #[instruction(params: TokenBurnParams)]
@@ -89,18 +88,15 @@ impl TokenBurn<'_> {
         close_mint(
             ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            // Currently rent collector is hardcoded to be the Program Delegaate
             &ctx.accounts.payer.to_account_info(),
-            // Authority to close the mint
             &ctx.accounts.permanent_delegate.to_account_info(),
             Some(seeds),
         )?;
 
         // Can only close the ATA if we are the owners
-        let token_account = ctx.accounts.token_account.to_account_info();
-        let state =
-            spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
-        if state.owner == ctx.accounts.payer.key() {
+        let owner =
+            epplex_shared::get_token_account_owner(&ctx.accounts.token_account.to_account_info())?;
+        if owner == ctx.accounts.payer.key() {
             anchor_spl::token_interface::close_account(CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
                 anchor_spl::token_interface::CloseAccount {
