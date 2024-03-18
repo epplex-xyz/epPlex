@@ -128,21 +128,6 @@ pub mod epplex_burger {
         TokenGameReset::actuate(ctx, params)
     }
 
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_buy(ctx: Context<TokenBuy>, params: TokenBuyParams) -> Result<()> {
-    //     TokenBuy::actuate(ctx, params)
-    // }
-
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_delist(ctx: Context<TokenDelist>, params: TokenDelistParams) -> Result<()> {
-    //     TokenDelist::actuate(ctx, params)
-    // }
-
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_sell(ctx: Context<TokenSell>, params: TokenSellParams) -> Result<()> {
-    //     TokenSell::actuate(ctx, params)
-    // }
-
     /*
      * Game create
      */
