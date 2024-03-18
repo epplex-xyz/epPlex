@@ -61,3 +61,25 @@ pub fn check_mint_expiry_ts(mint: &AccountInfo) -> Result<()> {
 
     Ok(())
 }
+
+// pub fn check_valid_group(
+//     collection_group: Account<'_, TokenGroupMember>,
+//     game_group: Account<'_, GameConfig>
+// ) -> Result<()> {
+//     if collection_group.group == game_group.token_group {
+//         return Ok(());
+//     } else {
+//         return err!(BurgerError::CollectionInvalid);
+//     }
+// }
+
+// pub fn check_valid_mint(
+//     mint: Pubkey,
+//     group_member_mint: Pubkey,
+// ) -> Result<()> {
+//     if group_member_mint == mint {
+//         return Ok(());
+//     } else {
+//         return err!(BurgerError::IncorrectMint);
+//     }
+// }
