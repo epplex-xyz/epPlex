@@ -136,7 +136,9 @@ impl TokenGameImmunity<'_> {
         emit!(EvTokenGameImmunity {
             game_round_id: ctx.accounts.game_config.game_round,
             nft: ctx.accounts.mint.key(),
-            participant: get_token_account_owner(&ctx.accounts.token_account.to_account_info())?,
+            participant: epplex_shared::get_token_account_owner(
+                &ctx.accounts.token_account.to_account_info()
+            )?,
             immunity_timestamp: Clock::get().unwrap().unix_timestamp,
         });
 

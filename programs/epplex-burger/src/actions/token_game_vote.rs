@@ -20,18 +20,29 @@ pub struct TokenGameVote<'info> {
 
     #[account(
         seeds = [
-            SEED_BURGER_METADATA,
+            wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        bump = token_metadata.bump
+        seeds::program = wen_new_standard::ID.key(),
+        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
+        bump,
     )]
-    pub token_metadata: Account<'info, BurgerMetadata>,
+    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
+    // #[account(
+    //     seeds = [
+    //         SEED_BURGER_METADATA,
+    //         mint.key().as_ref()
+    //     ],
+    //     bump = token_metadata.bump
+    // )]
+    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
             SEED_GAME_CONFIG
         ],
-        bump = game_config.bump
+        constraint = game_config.token_group == group_member.group @ BurgerError::CollectionInvalid,
+        bump = game_config.bump,
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -95,6 +106,18 @@ impl TokenGameVote<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string(),
         )?;
+
+        epplex_shared::compute_fn! { "Test emit" =>
+            emit!(EvTokenGameVote {
+                participant: ctx.accounts.payer.key(),
+                answer: params.message.clone(),
+                game_round_id: ctx.accounts.game_config.game_round,
+                nft: ctx.accounts.mint.key(),
+                vote_timestamp: Clock::get().unwrap().unix_timestamp,
+            })
+        }
+
+        // compute_fn! { "Log a string " => msg!("Compute units"); }
 
         emit!(EvTokenGameVote {
             participant: ctx.accounts.payer.key(),

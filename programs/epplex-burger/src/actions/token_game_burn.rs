@@ -23,23 +23,12 @@ pub struct TokenGameBurn<'info> {
     )]
     pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>,
 
-    // #[account(
-    //     mut,
-    //     close = payer,
-    //     seeds = [
-    //         SEED_BURGER_METADATA,
-    //         mint.key().as_ref()
-    //     ],
-    //     bump = token_metadata.bump
-    // )]
-    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
             SEED_GAME_CONFIG
         ],
         bump = game_config.bump,
-        constraint =
-            group_member.group == game_config.token_group @ BurgerError::CollectionInvalid,
+        constraint = game_config.token_group == group_member.group @ BurgerError::CollectionInvalid,
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -57,6 +46,7 @@ pub struct TokenGameBurn<'info> {
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID.key(),
+        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
@@ -86,7 +76,6 @@ pub struct TokenGameBurn<'info> {
 
     #[account(
         mut,
-        close = epplex_treasury,
         seeds = [
             SEED_EPHEMERAL_DATA,
             mint.key().as_ref()
@@ -110,6 +99,15 @@ pub struct TokenGameBurn<'info> {
     pub epplex_treasury: SystemAccount<'info>,
 
     pub epplex_core: Program<'info, EpplexCore>,
+
+    //  WNS stuff
+    #[account(
+        seeds = [wen_new_standard::MANAGER_SEED],
+        seeds::program = wns.key(),
+        bump
+    )]
+    pub manager: Account<'info, wen_new_standard::Manager>,
+    pub wns: Program<'info, WenNewStandard>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -122,6 +120,7 @@ impl TokenGameBurn<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameBurnParams) -> Result<()> {
+        // Closes the data pda as well
         epplex_core::cpi::membership_burn(CpiContext::new(
             ctx.accounts.epplex_core.to_account_info(),
             epplex_core::cpi::accounts::MembershipBurn {
@@ -130,9 +129,11 @@ impl TokenGameBurn<'_> {
                 burner: ctx.accounts.payer.to_account_info(),
                 epplex_treasury: ctx.accounts.epplex_treasury.to_account_info(), // update_auth = perm_delegate
                 rule: ctx.accounts.rule.to_account_info(),
-                data: ctx.accounts.token22_program.to_account_info(),
+                data: ctx.accounts.data.to_account_info(),
                 epplex_authority: ctx.accounts.epplex_authority.to_account_info(),
                 token22_program: ctx.accounts.token22_program.to_account_info(),
+                manager: Some(ctx.accounts.manager.to_account_info()),
+                wns: Some(ctx.accounts.wns.to_account_info()),
             },
         ))?;
 
@@ -141,7 +142,9 @@ impl TokenGameBurn<'_> {
         emit!(EvTokenGameBurn {
             game_round_id: ctx.accounts.game_config.game_round,
             nft: ctx.accounts.mint.key(),
-            participant: get_token_account_owner(&ctx.accounts.token_account.to_account_info())?,
+            participant: epplex_shared::get_token_account_owner(
+                &ctx.accounts.token_account.to_account_info()
+            )?,
             burn_timestamp: Clock::get().unwrap().unix_timestamp,
         });
 

@@ -11,16 +11,25 @@ pub struct TokenGameReset<'info> {
     )]
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
+    // #[account(
+    //     seeds = [
+    //         SEED_BURGER_METADATA,
+    //         mint.key().as_ref()
+    //     ],
+    //     bump = token_metadata.bump
+    // )]
+    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
-            SEED_BURGER_METADATA,
+            wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        bump = token_metadata.bump
+        seeds::program = wen_new_standard::ID.key(),
+        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
+        bump,
     )]
-    pub token_metadata: Account<'info, BurgerMetadata>,
+    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
-    // prolly need a game state = that contains game-master as well
     // Only game master can handle this
     #[account(
         constraint = ADMINS.contains(
@@ -33,6 +42,7 @@ pub struct TokenGameReset<'info> {
         mut,
         seeds = [SEED_GAME_CONFIG],
         bump = game_config.bump,
+        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -75,6 +85,7 @@ impl TokenGameReset<'_> {
             spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             "".to_string(),
         )?;
+        // might also need to reset immunity
 
         emit!(EvTokenGameReset {
             nft: ctx.accounts.mint.key(),
