@@ -78,21 +78,6 @@ async function main() {
     replaceId("wen_new_standard", "wen_new_standard", "lib.rs")
     replaceId("wen_royalty_distribution", "wen_royalty_distribution", "lib.rs")
 
-    // The program ID only appears in the JSON if deploy has happened
-    // console.log("Execute anchor run copy");
-    // const anchorBuildSpawn = spawn("anchor", ["run", "copy"]);
-    // anchorBuildSpawn.stdout.on("data", function (msg) {
-    //     console.log(msg.toString());
-    // });
-    // await new Promise((resolve) => {
-    //     anchorBuildSpawn.on("close", resolve);
-    // });
-
-    // Build Anchor APIs
-    // shell.cd(path.join(projectRoot, "app"))
-    // execSync(`yarn generate`);
-    // shell.cd(projectRoot)
-    // console.log(`Generated anchor client`);
 }
 
 main()

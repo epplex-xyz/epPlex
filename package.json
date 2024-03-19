@@ -4,6 +4,7 @@
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "start": "sh start.sh",
         "replace": "npx ts-node script/replace_ids.ts",
+        "wns-devnet": "npx ts-node script/wns_devnet.ts",
 
         "validator": "solana-test-validator -u localhost",
         "reset-validator": "rm -rf test-ledger",
@@ -52,7 +53,6 @@
         "test": "anchor test --provider.cluster localnet --skip-deploy --skip-build --skip-local-validator --provider.wallet target/deploy/epplex_deploy_auth.json"
     },
     "dependencies": {
-        "@coral-xyz/anchor": "^0.27.0",
         "@project-serum/borsh": "^0.2.5",
         "@solana/spl-token": "^0.4.1",
         "@solana/web3.js": "^1.75.0",
