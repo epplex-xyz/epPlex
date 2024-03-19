@@ -189,7 +189,7 @@ impl TokenGameBurn<'_> {
             game_round_id: ctx.accounts.game_config.game_round,
             nft: ctx.accounts.mint.key(),
             participant: epplex_shared::get_token_account_owner(
-                &ctx.accounts.token_account.to_account_info()
+                &ctx.accounts.source_token_account.to_account_info()
             )?,
             burn_timestamp: Clock::get().unwrap().unix_timestamp,
         });
