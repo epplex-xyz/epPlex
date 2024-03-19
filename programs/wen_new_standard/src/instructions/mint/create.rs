@@ -3,8 +3,7 @@ use anchor_lang::{prelude::*, solana_program::entrypoint::ProgramResult};
 use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{
-        mint_to, set_authority,
-        spl_token_2022::{extension::ExtensionType, instruction::AuthorityType},
+        mint_to, set_authority, spl_token_2022::instruction::AuthorityType,
         token_metadata_initialize, Mint, MintTo, SetAuthority, Token2022, TokenAccount,
         TokenMetadataInitialize,
     },
@@ -19,13 +18,6 @@ pub struct CreateMintAccountArgs {
     pub uri: String,
     pub permanent_delegate: Option<Pubkey>,
 }
-
-pub const MINT_EXTENSIONS: [ExtensionType; 4] = [
-    ExtensionType::MetadataPointer,
-    ExtensionType::GroupMemberPointer,
-    ExtensionType::TransferHook,
-    ExtensionType::MintCloseAuthority,
-];
 
 #[derive(Accounts)]
 #[instruction(args: CreateMintAccountArgs)]

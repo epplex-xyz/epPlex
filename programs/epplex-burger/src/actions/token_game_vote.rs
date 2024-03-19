@@ -29,14 +29,6 @@ pub struct TokenGameVote<'info> {
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
-    // #[account(
-    //     seeds = [
-    //         SEED_BURGER_METADATA,
-    //         mint.key().as_ref()
-    //     ],
-    //     bump = token_metadata.bump
-    // )]
-    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
             SEED_GAME_CONFIG
