@@ -1,3 +1,4 @@
+// Closing a pda that has changed its structure
 // https://solana.stackexchange.com/questions/11606/how-to-close-a-pda-account-when-the-structure-has-been-changed
 pub fn close<'info>(info: AccountInfo<'info>, sol_destination: AccountInfo<'info>) -> Result<()> {
     // Transfer tokens from the account to the sol_destination.
@@ -9,5 +10,4 @@ pub fn close<'info>(info: AccountInfo<'info>, sol_destination: AccountInfo<'info
     info.assign(&system_program::ID);
     info.realloc(0, false).map_err(Into::into)
     // info.realloc(0, false).map_err(Into::<anchor_lang::prelude::ProgramError>::into);
-
 }

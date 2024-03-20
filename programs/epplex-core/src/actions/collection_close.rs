@@ -16,15 +16,6 @@ pub struct CollectionClose<'info> {
     )]
     pub collection_config: Account<'info, CollectionConfig>,
 
-    // #[account(
-    //     mut,
-    //     seeds = [
-    //         SEED_COLLECTION_MINT,
-    //         params.collection_id.to_le_bytes().as_ref()
-    //     ],
-    //     bump,
-    // )]
-    // pub mint: Box<InterfaceAccount<'info, MintInterface>>,
     #[account(
         mut,
         constraint = [pubkey!("epADzKVW5kb3hjUhKuxdmyASNKYt4Cb1ccLGvr5cuzh")].contains(
