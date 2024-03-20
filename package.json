@@ -5,6 +5,7 @@
         "start": "sh start.sh",
         "replace": "npx ts-node script/replace_ids.ts",
         "wns-devnet": "npx ts-node script/wns_devnet.ts",
+        "wns-local": "npx ts-node script/wns_local.ts",
 
         "validator": "solana-test-validator -u localhost",
         "reset-validator": "rm -rf test-ledger",

@@ -19,10 +19,10 @@ function replaceId(programName: string, programDir: string) {
     console.log(`Replace Program ID:    ${programName} ${programDir}`);
     shell.sed(
         "-i",
-        // Replace localpath
+        // Replace devnet
+        `${programName} = { git = \\"https://github.com/wen-community/wen-new-standard.git\\"`,
+        // With local path
         `${programName} = { path = "../${programName}"`,
-        // With devnet path
-        `${programName} = { git = "https://github.com/wen-community/wen-new-standard.git"`,
         path.join(projectRoot, "programs", programDir, "Cargo.toml")
     );
 }
@@ -32,6 +32,7 @@ async function main() {
 
     replaceId("wen_new_standard", "epplex-burger")
     replaceId("wen_royalty_distribution", "epplex-burger")
+
     replaceId("wen_new_standard", "epplex-core")
     replaceId("wen_royalty_distribution", "epplex-core")
 }
