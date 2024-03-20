@@ -51,6 +51,3 @@ pub use wns_group_mint::*;
 
 pub mod wns_member_mint;
 pub use wns_member_mint::*;
-
-pub mod wns_member_process;
-pub use wns_member_process::*;

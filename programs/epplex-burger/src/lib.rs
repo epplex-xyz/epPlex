@@ -79,14 +79,6 @@ pub mod epplex_burger {
         WnsMemberMint::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn wns_member_process(
-        ctx: Context<WnsMemberProcess>,
-        params: WnsMemberProcessParams,
-    ) -> Result<()> {
-        WnsMemberProcess::actuate(ctx, params)
-    }
-
     /*
      * DEPRECATED
      * Token actions
