@@ -26,6 +26,7 @@ use anchor_spl::{
 };
 use epplex_shared::{burn_token, close_mint, ADMINS, ADMIN_PUBKEY};
 use spl_token_metadata_interface::state::TokenMetadata;
+use wen_new_standard::TokenGroupMember;
 
 #[derive(Clone)]
 pub struct WenNewStandard;
@@ -50,23 +51,6 @@ pub mod epplex_burger {
     use super::*;
 
     /*
-     * DEPRECATED
-     * Old collection stuff
-     */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn whitelist_mint(ctx: Context<WhitelistMint>, params: WhitelistMintParams) -> Result<()> {
-        WhitelistMint::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(
-        ctx: Context<CollectionMint>,
-        params: CollectionMintParams,
-    ) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
-    }
-
-    /*
      * WNS mints
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -80,23 +64,8 @@ pub mod epplex_burger {
     }
 
     /*
-     * DEPRECATED
-     * Token actions
-     */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_renew(ctx: Context<TokenRenew>, params: TokenRenewParams) -> Result<()> {
-        TokenRenew::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
-        TokenBurn::actuate(ctx, params)
-    }
-
-    /*
      * Token Game Actions
      */
-
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_game_burn(ctx: Context<TokenGameBurn>, params: TokenGameBurnParams) -> Result<()> {
         TokenGameBurn::actuate(ctx, params)
@@ -108,14 +77,6 @@ pub mod epplex_burger {
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_game_immunity(
-        ctx: Context<TokenGameImmunity>,
-        params: TokenGameImmunityParams,
-    ) -> Result<()> {
-        TokenGameImmunity::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_game_reset(
         ctx: Context<TokenGameReset>,
         params: TokenGameResetParams,
@@ -124,7 +85,7 @@ pub mod epplex_burger {
     }
 
     /*
-     * Game create
+     * Game actions
      */
     #[access_control(ctx.accounts.validate(&ctx,))]
     pub fn game_create(ctx: Context<GameCreate>) -> Result<()> {
@@ -146,14 +107,14 @@ pub mod epplex_burger {
         GameEnd::actuate(ctx, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn game_close(ctx: Context<GameClose>) -> Result<()> {
-        GameClose::actuate(ctx)
-    }
-
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn game_update(ctx: Context<GameUpdate>, params: GameUpdateParams) -> Result<()> {
         GameUpdate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn game_close(ctx: Context<GameClose>) -> Result<()> {
+        GameClose::actuate(ctx)
     }
 
     /*
@@ -173,5 +134,78 @@ pub mod epplex_burger {
         params: ProgramDelegateCloseParams,
     ) -> Result<()> {
         ProgramDelegateClose::actuate(ctx, &params)
+    }
+
+    /*
+     * DEPRECATED
+     * Token actions
+     */
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_renew(
+    //     ctx: Context<TokenRenew>,
+    //     params: TokenRenewParams
+    // ) -> Result<()> {
+    //     TokenRenew::actuate(ctx, params)
+    // }
+    pub fn token_renew(_ctx: Context<TokenRenew>, _params: TokenRenewParams) -> Result<()> {
+        Ok(())
+    }
+
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_burn(
+    //     ctx: Context<TokenBurn>,
+    //     params: TokenBurnParams
+    // ) -> Result<()> {
+    //     TokenBurn::actuate(ctx, params)
+    // }
+    pub fn token_burn(_ctx: Context<TokenBurn>, _params: TokenBurnParams) -> Result<()> {
+        Ok(())
+    }
+
+    /*
+     * DEPRECATED
+     * Old collection stuff
+     */
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn whitelist_mint(
+    //     ctx: Context<WhitelistMint>,
+    //     params: WhitelistMintParams
+    // ) -> Result<()> {
+    //     WhitelistMint::actuate(ctx, params)
+    // }
+    pub fn whitelist_mint(
+        _ctx: Context<WhitelistMint>,
+        _params: WhitelistMintParams,
+    ) -> Result<()> {
+        Ok(())
+    }
+
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn collection_mint(
+    //     ctx: Context<CollectionMint>,
+    //     params: CollectionMintParams,
+    // ) -> Result<()> {
+    //     CollectionMint::actuate(ctx, params)
+    // }
+    pub fn collection_mint(
+        _ctx: Context<CollectionMint>,
+        _params: CollectionMintParams,
+    ) -> Result<()> {
+        Ok(())
+    }
+
+    // Inactive
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_game_immunity(
+    //     ctx: Context<TokenGameImmunity>,
+    //     params: TokenGameImmunityParams,
+    // ) -> Result<()> {
+    //     TokenGameImmunity::actuate(ctx, params)
+    // }
+    pub fn token_game_immunity(
+        _ctx: Context<TokenGameImmunity>,
+        _params: TokenGameImmunityParams,
+    ) -> Result<()> {
+        Ok(())
     }
 }
