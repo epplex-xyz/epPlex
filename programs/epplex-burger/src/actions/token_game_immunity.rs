@@ -84,6 +84,7 @@ impl TokenGameImmunity<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameImmunityParams) -> Result<()> {
         // TODO, Immunity can only be enabled once game has finished
         self.game_config.assert_game_status(GameStatus::Finished)
+        // self.game_config.check_valid_collection(&self.group_member, self.mint.key())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameImmunityParams) -> Result<()> {

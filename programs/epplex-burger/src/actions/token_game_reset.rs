@@ -11,24 +11,15 @@ pub struct TokenGameReset<'info> {
     )]
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // #[account(
-    //     seeds = [
-    //         SEED_BURGER_METADATA,
-    //         mint.key().as_ref()
-    //     ],
-    //     bump = token_metadata.bump
-    // )]
-    // pub token_metadata: Account<'info, BurgerMetadata>,
     #[account(
         seeds = [
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID.key(),
-        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
         bump,
     )]
-    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
+    pub group_member: Account<'info, TokenGroupMember>,
 
     // Only game master can handle this
     #[account(
@@ -42,7 +33,6 @@ pub struct TokenGameReset<'info> {
         mut,
         seeds = [SEED_GAME_CONFIG],
         bump = game_config.bump,
-        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -62,7 +52,9 @@ pub struct TokenGameResetParams {}
 
 impl TokenGameReset<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
-        self.game_config.can_evaluate()
+        self.game_config.can_evaluate()?;
+        self.game_config
+            .check_valid_collection(&self.group_member, self.mint.key())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameResetParams) -> Result<()> {

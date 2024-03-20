@@ -306,4 +306,20 @@ impl GameConfig {
 
         Ok(())
     }
+
+    pub fn check_valid_collection(
+        &self,
+        group_member: &Account<'_, TokenGroupMember>,
+        mint: Pubkey,
+    ) -> Result<()> {
+        if mint != group_member.mint {
+            return err!(BurgerError::IncorrectMint);
+        }
+
+        if self.token_group != group_member.group {
+            return err!(BurgerError::CollectionInvalid);
+        }
+
+        Ok(())
+    }
 }

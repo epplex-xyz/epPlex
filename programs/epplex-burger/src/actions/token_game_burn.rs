@@ -34,7 +34,6 @@ pub struct TokenGameBurn<'info> {
             SEED_GAME_CONFIG
         ],
         bump = game_config.bump,
-        constraint = game_config.token_group == group_member.group @ BurgerError::CollectionInvalid,
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -52,7 +51,6 @@ pub struct TokenGameBurn<'info> {
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID.key(),
-        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
@@ -149,7 +147,9 @@ pub struct TokenGameBurnParams {}
 impl TokenGameBurn<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameBurnParams) -> Result<()> {
         // TODO: need to check for immunity
-        self.game_config.can_evaluate()
+        self.game_config.can_evaluate()?;
+        self.game_config
+            .check_valid_collection(&self.group_member, self.mint.key())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameBurnParams) -> Result<()> {

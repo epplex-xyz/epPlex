@@ -24,7 +24,6 @@ pub struct TokenGameVote<'info> {
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID.key(),
-        constraint = mint.key() == group_member.mint @ BurgerError::IncorrectMint,
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
@@ -33,7 +32,6 @@ pub struct TokenGameVote<'info> {
         seeds = [
             SEED_GAME_CONFIG
         ],
-        constraint = game_config.token_group == group_member.group @ BurgerError::CollectionInvalid,
         bump = game_config.bump,
     )]
     pub game_config: Account<'info, GameConfig>,
@@ -59,6 +57,8 @@ pub struct TokenGameVoteParams {
 
 impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
+        self.game_config
+            .check_valid_collection(&self.group_member, self.mint.key())?;
         self.game_config.validate_input(&params.message)?;
 
         let game_state = fetch_metadata_field(GAME_STATE, &ctx.accounts.mint.to_account_info())?;
