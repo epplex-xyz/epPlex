@@ -18,56 +18,6 @@ pub mod epplex_core {
     use super::*;
 
     /*
-     * Create mint account and mints to owner
-     */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_mint(ctx: Context<TokenMint>, params: TokenCreateParams) -> Result<()> {
-        TokenMint::actuate(ctx, params)
-    }
-
-    /*
-     * Collection stuff
-     */
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_mint(
-        ctx: Context<CollectionMint>,
-        params: TokenCollectionCreateParams,
-    ) -> Result<()> {
-        CollectionMint::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_create(
-        ctx: Context<CollectionCreate>,
-        params: CollectionCreateParams,
-    ) -> Result<()> {
-        CollectionCreate::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn collection_close(
-        ctx: Context<CollectionClose>,
-        params: CollectionCloseParams,
-    ) -> Result<()> {
-        CollectionClose::actuate(ctx, params)
-    }
-
-    /*
-     * Global collection stuff
-     */
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn global_collection_config_create(
-        ctx: Context<GlobalCollectionConfigCreate>,
-    ) -> Result<()> {
-        GlobalCollectionConfigCreate::actuate(ctx)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx))]
-    pub fn global_collection_config_close(ctx: Context<GlobalCollectionConfigClose>) -> Result<()> {
-        GlobalCollectionConfigClose::actuate(ctx)
-    }
-
-    /*
      * Ephemeral membership
      */
     pub fn rule_create(ctx: Context<RuleManage>, params: RuleManageParams) -> Result<()> {
@@ -108,5 +58,58 @@ pub mod epplex_core {
 
     pub fn time_remove(ctx: Context<TimeManage>, time: u64) -> Result<()> {
         ctx.accounts.remove(time)
+    }
+
+    /*
+     * DEPRECATED
+     * Create mint account and mints to owner
+     */
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_mint(ctx: Context<TokenMint>, params: TokenCreateParams) -> Result<()> {
+        TokenMint::actuate(ctx, params)
+    }
+
+    /*
+     * DEPRECATED
+     * Collection stuff
+     */
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_mint(
+        ctx: Context<CollectionMint>,
+        params: TokenCollectionCreateParams,
+    ) -> Result<()> {
+        CollectionMint::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_create(
+        ctx: Context<CollectionCreate>,
+        params: CollectionCreateParams,
+    ) -> Result<()> {
+        CollectionCreate::actuate(ctx, params)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn collection_close(
+        ctx: Context<CollectionClose>,
+        params: CollectionCloseParams,
+    ) -> Result<()> {
+        CollectionClose::actuate(ctx, params)
+    }
+
+    /*
+     * DEPRECATED
+     * Global collection stuff
+     */
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn global_collection_config_create(
+        ctx: Context<GlobalCollectionConfigCreate>,
+    ) -> Result<()> {
+        GlobalCollectionConfigCreate::actuate(ctx)
+    }
+
+    #[access_control(ctx.accounts.validate(&ctx))]
+    pub fn global_collection_config_close(ctx: Context<GlobalCollectionConfigClose>) -> Result<()> {
+        GlobalCollectionConfigClose::actuate(ctx)
     }
 }
