@@ -21,7 +21,7 @@ pub struct TokenGameReset<'info> {
     )]
     pub group_member: Account<'info, TokenGroupMember>,
 
-    // Only game master can handle this
+    // TODO maybe change to game_master
     #[account(
         constraint = ADMINS.contains(
             &payer.key()

@@ -55,6 +55,7 @@ pub struct TokenGameBurn<'info> {
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
+    // TODO maybe change to game_master
     #[account(
         mut,
         constraint = ADMINS.contains(
