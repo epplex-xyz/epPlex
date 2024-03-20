@@ -49,6 +49,10 @@ impl Id for WenRoyaltyDistribution {
 pub mod epplex_burger {
     use super::*;
 
+    /*
+     * DEPRECATED
+     * Old collection stuff
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn whitelist_mint(ctx: Context<WhitelistMint>, params: WhitelistMintParams) -> Result<()> {
         WhitelistMint::actuate(ctx, params)
@@ -62,6 +66,9 @@ pub mod epplex_burger {
         CollectionMint::actuate(ctx, params)
     }
 
+    /*
+     * WNS mints
+     */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn wns_group_mint(ctx: Context<WnsGroupMint>, params: WnsGroupMintParams) -> Result<()> {
         WnsGroupMint::actuate(ctx, params)
@@ -81,6 +88,7 @@ pub mod epplex_burger {
     }
 
     /*
+     * DEPRECATED
      * Token actions
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
@@ -91,11 +99,6 @@ pub mod epplex_burger {
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
         TokenBurn::actuate(ctx, params)
-    }
-
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn token_thaw(ctx: Context<TokenThaw>, params: TokenThawParams) -> Result<()> {
-        TokenThaw::actuate(ctx, params)
     }
 
     /*
