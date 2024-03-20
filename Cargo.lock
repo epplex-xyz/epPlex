@@ -2518,7 +2518,7 @@ dependencies = [
 
 [[package]]
 name = "wen_new_standard"
-version = "0.3.0-alpha"
+version = "0.3.2-alpha"
 dependencies = [
  "anchor-lang",
  "anchor-spl",

@@ -28,6 +28,5 @@ ahash = "=0.8.6"
 spl-token-metadata-interface = "0.2.0"
 solana-program = "=1.17"
 
-# wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
-wen_new_standard = { path = "../wen_new_standard", features = ["no-entrypoint", "cpi"]}
-wen_royalty_distribution = { path = "../wen_royalty_distribution", features = ["no-entrypoint", "cpi"]}
+wen_new_standard = { path = "../wen_new_standard", features = ["no-entrypoint", "cpi"] }
+wen_royalty_distribution = { path = "../wen_royalty_distribution", features = ["no-entrypoint", "cpi"] }
