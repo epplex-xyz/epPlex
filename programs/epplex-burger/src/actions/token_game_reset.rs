@@ -53,8 +53,14 @@ pub struct TokenGameResetParams {}
 impl TokenGameReset<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameResetParams) -> Result<()> {
         self.game_config.can_evaluate()?;
-        self.game_config
-            .check_valid_collection(&self.group_member, self.mint.key())
+
+        // Only check valid collection when game state is not None
+        if self.game_config.game_status != GameStatus::None {
+            self.game_config
+                .check_valid_collection(&self.group_member, self.mint.key())?;
+        }
+
+        Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameResetParams) -> Result<()> {
