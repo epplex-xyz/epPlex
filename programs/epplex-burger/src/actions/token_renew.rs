@@ -35,7 +35,7 @@ pub struct TokenRenew<'info> {
     #[account(
         mut,
         associated_token::mint = mint_payment,
-        associated_token::authority = ADMIN_PUBKEY,
+        associated_token::authority = epplex_shared::ADMIN_PUBKEY,
     )]
     pub proceeds_token_account: Account<'info, TokenAccount>, // Deposit in here
 
