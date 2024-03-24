@@ -42,5 +42,4 @@ test-ledger
 !app/.env.example
 !app/.env.production
 
-# programs/wen-new-standard
-# programs/wen-royalty-distribution
+mainnet-deploy.sh
