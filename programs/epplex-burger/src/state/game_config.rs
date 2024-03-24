@@ -281,6 +281,8 @@ impl GameConfig {
 
         match self.input_type {
             InputType::Choice => {
+                // TODO maybe should check is string
+
                 // No checks for now
 
                 // let choice = message.parse::<u8>().unwrap();
@@ -294,9 +296,10 @@ impl GameConfig {
                 message.parse::<u64>().unwrap();
             }
             InputType::Text => {
+                // TODO maybe should check is string
                 // No checks for now
             }
-            InputType::None => return err!(BurgerError::RequiresEncryption),
+            InputType::None => return err!(BurgerError::IncorrectInputType),
         };
 
         Ok(())
