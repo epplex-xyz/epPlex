@@ -148,6 +148,7 @@ pub mod epplex_burger {
     //     TokenRenew::actuate(ctx, params)
     // }
     pub fn token_renew(_ctx: Context<TokenRenew>, _params: TokenRenewParams) -> Result<()> {
+        // THIS SHOULD CPI INTO CORE
         Ok(())
     }
 
