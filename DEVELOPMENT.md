@@ -1,7 +1,5 @@
 # Local development setup
 
-## Getting started
-
 ## Environment
 
 For reproducibility, these are the current versions of the developer tooling used
@@ -10,14 +8,14 @@ For reproducibility, these are the current versions of the developer tooling use
 
 `solana-cli suite v1.16.27`
 
-`node v20.8.1` 
+`node v20.8.1`
 
 `yarn 1.22.19`
 
 - clone the protocol and the SDK repo into the same directory
 
 ```bash
-git clone https://github.com/epplex-xyz/epPlex
+git clone https://github.com/epplex-xyz/epPlex.git
 
 git clone https://github.com/epplex-xyz/sdk.git
 ```
@@ -37,15 +35,15 @@ anchor build
 ```
 
 - Update program keypairs in the `target/deploy` directory.
-    
+
     **NOTE:** make sure the files end in `-keypair.json` ****
-    
+
 
 ```bash
 cp epplex_burger-keypair.json epplex_core-keypair.json epplex_shared-keypair.json /home/jimii/Documents/rustcode/epPlex/target/deploy
 ```
 
-Running `anchor build` and `anchor keys list` should result in something like this 
+Running `anchor build` and `anchor keys list` should result in something like this
 
 ```bash
 epplex_core: LepCn3tW66Fh7CGsJ7qjQaontU7SvEoURnxkEY78j1j
@@ -72,7 +70,7 @@ epplex_shared = "LepS8gH3rVDRdAy5X9xGE8VcnGnFKmkpfm21Paiqq3i"
 solana config set --url localhost
 ```
 
-- We will the `epplex_deploy_auth.json` -*LAutdv6yTevtPKCpfH21BwkCZhZSfov561GKYyRp5pC*  as the program authority. 
+- We will the `epplex_deploy_auth.json` -*LAutdv6yTevtPKCpfH21BwkCZhZSfov561GKYyRp5pC*  as the program authority.
 Copy this keypair file into the `target/deploy` directory a
 
 ```bash

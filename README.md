@@ -1,4 +1,4 @@
-<h1 align="center">epPlex | Hyperdrive Hackathon</h1>
+<h1 align="center">epPlex | 1st Prize Hyperdrive Hackathon</h1>
 
 epPlex is a protocol for ephemeral epNFTs.
 I.e. NFTs that can self-destruct permissionlessly.
@@ -109,17 +109,28 @@ It would be cool to have Open-Clockwork power this on-chain.
 
 ## Deployment
 
-| Name            | Networks      | Responsibility               | Address | Link                                                                                                           |
-|-----------------|---------------|------------------------------|---------|----------------------------------------------------------------------------------------------------------------|
-| epplex-core     | Devnet        | Main epplex NFT              | `epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg`     | [solexplorer](https://explorer.solana.com/address/BcKkiAcNredLZdQySoHt7okfhDNA32r9mJayjy8cMDdY?cluster=devnet) |
-| epplex-mint     | Devnet        | Minting guard for collection | `epMiwQsJzS4mgWgCMZpJRB5RfgiR1zCSSEXophJKxn4`     | TBA                                                                                                            |
-| epplex-metadata | Devnet        | For handling the metadata    | `epMeeyPHRzAssNKgQ7dsqnhz9DUUutKszspUiUDJdTb`     | TBA                                                                                                            | 
-| epplex-burger   | Devnet        | For custom NFT logic         | `epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n`     | TBA                                                                                                            |
-| epplex-shared   | Devnet        | For shared stuff             | `epShtSs6bXafJMhjKCJM8CLyZJSDvzVGwfmEUiXTgqJ`     | TBA                                                                                                            |
+| Name            | Networks       | Responsibility               | Address | Link                                                                                                                                                                                                                  |
+|-----------------|----------------|------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| epplex-core     | DEVNET/MAINNET | Main epplex NFT              | `epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg`     | [DEVNET](https://explorer.solana.com/address/epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg?cluster=devnet)/[MAINNET](https://explorer.solana.com/address/epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg?cluster=mainnet) |
+| epplex-burger   | DEVNET/MAINNET | For custom NFT logic         | `epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n`     | [DEVNET](https://explorer.solana.com/address/epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n?cluster=devnet)/[MAINNET](https://explorer.solana.com/address/epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n?cluster=mainnet)                                                                                                                                                                                                                   |
 
 
 
 ## Development
+
+### Setup
+1. Clone epplex repo
+2. Clone sdk repo
+3. Ask Bob for local keypairs
+    4. Put program keypairs into `target/deploy`
+    5. Put local admin keypair into `.local_keys/epplex_PAYER_ADMIN.json`
+        6. pubkey address: `LAdmTEtom7qm3ZmchsrqSkZhPdmZaex7oXCamuMHs9F`
+5. Run: `sh start.sh` in a terminal
+    4. This starts a local validator
+6. Run: `sh start.sh` again in another terminal
+    6. This deploys the programs into the local validator
+7. Set `.env` in SDK repo to localhost `RPC=http://127.0.0.1:8899`
+8. Now your local environment is all set up
 
 ### Tech stack
 - NextJS Frontend/Backend (hosted on vercel) for demoing purposes
@@ -131,35 +142,7 @@ It would be cool to have Open-Clockwork power this on-chain.
     ├── programs                            # epPlex Solana program, probably should have moved this into its own repo
     └── scripts                             # Scripts for testing purposes, although I probably should have kept a test-suite
 
-### Development
-
-- clone this repo and the [SDK repo](https://github.com/epplex-xyz/sdk) into a co-located directory.
-- copy all keypairs into the `target/deploy` directory.
-- install the dependencies here and in the SDK using `yarn install`
-- To get the dev environment set up.
-```bash
-yarn validator # in a new terminal window start the local validator
-
-yarn airdrop # airdrop to both admin and deploy auth
-
-yarn deploy-all # build and deploy the program
-
-yarn copy-to-sdk # to copy the idl and types to the sdk
-``` 
-- change directory into the SDK repo.
-- create the `.local_keys` directory and copy the `epplex_PAYER_ADMIN.json` keypair here.
-- confirm that everything is running correctly by running the `test-individual` test case.
-```bash
-yarn test-individual
-```
-
-Still not set up? Check out [DEVELOPMENT.md](./DEVELOPMENT.md)
-
-## Code quality
-Please do not expect high code-quality since majority of the code is hacked together. For the sake of achieving a working MVP, code quality has been neglected.
 
 ## Disclaimer
-The code has not been audited. Furthermore, as of October 6th 2023, Token2022 is not officially production-ready.
-
-Use at your own risk.
+The code has not been audited.
 
