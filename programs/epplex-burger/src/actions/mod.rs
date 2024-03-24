@@ -7,9 +7,6 @@ pub use collection_mint::*;
 pub mod token_renew;
 pub use token_renew::*;
 
-pub mod token_burn;
-pub use token_burn::*;
-
 pub mod token_game_burn;
 pub use token_game_burn::*;
 
