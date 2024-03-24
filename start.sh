@@ -1,6 +1,7 @@
 if ! pgrep -x "solana-test-validator" >/dev/null; then
     yarn validator
 fi
+yarn replace
 yarn airdrop
 yarn wns-local
 yarn deploy-all
