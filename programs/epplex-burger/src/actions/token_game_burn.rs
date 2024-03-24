@@ -147,7 +147,11 @@ pub struct TokenGameBurnParams {}
 
 impl TokenGameBurn<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameBurnParams) -> Result<()> {
-        // TODO: need to check for immunity
+        let is_immune = fetch_metadata_field(IMMUNITY, &self.mint.to_account_info())?;
+        if is_immune == "true" {
+            return err!(BurgerError::CannotBurnImmune);
+        }
+
         self.game_config.can_evaluate()?;
         self.game_config
             .check_valid_collection(&self.group_member, self.mint.key())
