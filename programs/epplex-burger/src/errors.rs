@@ -38,6 +38,9 @@ pub enum BurgerError {
     NonOperator,
 
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
+    #[msg("Cannot burn NFT that is immune")]
+    CannotBurnImmune,
+
     #[msg("Incorrect mint for group")]
     IncorrectMint,
 

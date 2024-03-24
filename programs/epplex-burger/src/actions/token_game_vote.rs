@@ -59,8 +59,10 @@ impl TokenGameVote<'_> {
     pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameVoteParams) -> Result<()> {
         self.game_config
             .check_valid_collection(&self.group_member, self.mint.key())?;
+
         self.game_config.validate_input(&params.message)?;
 
+        // Check vote_many and vote_once
         let game_state = fetch_metadata_field(GAME_STATE, &ctx.accounts.mint.to_account_info())?;
         self.game_config.check_vote_eligibility(game_state)?;
 
@@ -99,15 +101,15 @@ impl TokenGameVote<'_> {
             now.to_string(),
         )?;
 
-        epplex_shared::compute_fn! { "Test emit" =>
-            emit!(EvTokenGameVote {
-                participant: ctx.accounts.payer.key(),
-                answer: params.message.clone(),
-                game_round_id: ctx.accounts.game_config.game_round,
-                nft: ctx.accounts.mint.key(),
-                vote_timestamp: Clock::get().unwrap().unix_timestamp,
-            })
-        }
+        // epplex_shared::compute_fn! { "Test emit" =>
+        //     emit!(EvTokenGameVote {
+        //         participant: ctx.accounts.payer.key(),
+        //         answer: params.message.clone(),
+        //         game_round_id: ctx.accounts.game_config.game_round,
+        //         nft: ctx.accounts.mint.key(),
+        //         vote_timestamp: Clock::get().unwrap().unix_timestamp,
+        //     })
+        // }
 
         // compute_fn! { "Log a string " => msg!("Compute units"); }
 
