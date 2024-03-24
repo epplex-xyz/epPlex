@@ -33,7 +33,7 @@
         "deploy-core-devnet": "anchor deploy -p epplex_core --provider.cluster devnet --program-keypair target/deploy/epplex_core-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-wns-devnet": "anchor deploy -p wen_new_standard --provider.cluster devnet --program-keypair target/deploy/wen_new_standard-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
         "deploy-wrd-devnet": "anchor deploy -p wen_royalty_distribution --provider.cluster devnet --program-keypair target/deploy/wen_royalty_distribution-keypair.json --provider.wallet target/deploy/epplex_deploy_auth.json",
-        "deploy-all-devnet": "./anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet && yarn deploy-wns-devnet && yarn deploy-wrd-devnet",
+        "deploy-all-devnet": "yarn wns-devnet && ./anchor build && yarn deploy-burger-devnet && yarn deploy-core-devnet && yarn deploy-wns-devnet && yarn deploy-wrd-devnet && yarn wns-local && ./anchor build",
         "solana-balance-devnet": "solana balance -u devnet -k target/deploy/epplex_deploy_auth.json",
 
         "copy-burger-sdk": "cp target/idl/epplex_burger.json              ../sdk/src/idl/epplex_burger.json            && cp target/types/epplex_burger.ts    ../sdk/src/types/epplexBurgerTypes.ts",

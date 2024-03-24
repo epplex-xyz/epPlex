@@ -169,6 +169,10 @@ impl GameConfig {
             self.phase_end_timestamp = phase_end_timestamp;
         }
 
+        if let Some(token_group) = params.token_group {
+            self.token_group = token_group;
+        }
+
         Ok(())
     }
 

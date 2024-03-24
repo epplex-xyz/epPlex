@@ -19,11 +19,13 @@ pub struct GameUpdate<'info> {
     pub payer: SystemAccount<'info>,
 }
 
+// Alternatively  Option<GameConfig>
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct GameUpdateParams {
     pub phase_start_timestamp: Option<i64>,
     pub phase_end_timestamp: Option<i64>,
     pub vote_type: Option<VoteType>,
+    pub token_group: Option<Pubkey>,
 }
 
 impl GameUpdate<'_> {
