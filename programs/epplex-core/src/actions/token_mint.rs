@@ -7,7 +7,6 @@ use spl_token_metadata_interface::state::TokenMetadata;
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
 pub struct TokenMint<'info> {
-    /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
         mut,
         seeds = [
@@ -17,9 +16,9 @@ pub struct TokenMint<'info> {
         ],
         bump
     )]
+    /// CHECK this account is created in the instruction body, so no need to check data layout
     pub mint: UncheckedAccount<'info>,
 
-    /// CHECK this account is created in the instruction body, so no need to check data layout
     #[account(
         mut,
         seeds = [
@@ -30,19 +29,24 @@ pub struct TokenMint<'info> {
         seeds::program = associated_token.key(),
         bump
     )]
+    /// CHECK this account is created in the instruction body, so no need to check data layout
     pub token_account: UncheckedAccount<'info>,
 
     /// CHECK gives the option to set the permanent delegate to any keypair or PDA
-    pub permanent_delegate: UncheckedAccount<'info>, // No need to sign, simply assigning
+    pub permanent_delegate: UncheckedAccount<'info>,
 
     pub update_authority: Signer<'info>,
 
     #[account(mut)]
     pub global_collection_config: Account<'info, GlobalCollectionConfig>,
 
-    //
-    #[account(mut)]
-    pub payer: Signer<'info>, // Payer for all the stuff
+    #[account(
+        mut,
+        constraint = epplex_shared::ADMINS.contains(
+            &payer.key()
+        )
+    )]
+    pub payer: Signer<'info>,
 
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,

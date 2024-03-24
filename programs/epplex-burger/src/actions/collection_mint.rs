@@ -27,7 +27,6 @@ pub struct CollectionMint<'info> {
     )]
     pub token_metadata: Account<'info, BurgerMetadata>,
 
-    /// TODO: set the seeds constraint
     #[account(
         mut,
         seeds = [SEED_COLLECTION_CONFIG, &params.collection_counter.to_le_bytes()],

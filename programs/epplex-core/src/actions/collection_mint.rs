@@ -37,7 +37,12 @@ pub struct CollectionMint<'info> {
 
     pub update_authority: Signer<'info>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = epplex_shared::ADMINS.contains(
+            &payer.key()
+        )
+    )]
     pub payer: Signer<'info>, // Payer for all the stuff
 
     #[account(

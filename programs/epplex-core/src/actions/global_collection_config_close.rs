@@ -1,5 +1,4 @@
 use crate::*;
-use anchor_lang::solana_program::pubkey;
 
 #[derive(Accounts)]
 pub struct GlobalCollectionConfigClose<'info> {
@@ -13,7 +12,7 @@ pub struct GlobalCollectionConfigClose<'info> {
 
     #[account(
         mut,
-        constraint = [pubkey!("epADzKVW5kb3hjUhKuxdmyASNKYt4Cb1ccLGvr5cuzh")].contains(
+        constraint = epplex_shared::ADMINS.contains(
             &payer.key()
         )
     )]

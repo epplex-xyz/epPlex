@@ -160,6 +160,7 @@ pub mod epplex_burger {
     //     TokenBurn::actuate(ctx, params)
     // }
     pub fn token_burn(_ctx: Context<TokenBurn>, _params: TokenBurnParams) -> Result<()> {
+        // This is gated by payer and does not work on a WNS NFT anyway
         Ok(())
     }
 
