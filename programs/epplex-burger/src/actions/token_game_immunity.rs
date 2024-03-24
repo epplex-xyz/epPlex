@@ -4,30 +4,30 @@ use crate::*;
 #[instruction(params: TokenGameImmunityParams)]
 pub struct TokenGameImmunity<'info> {
     // Mint to be burned in exchange for immmunity
-    #[account(
-        mut,
-        mint::token_program = token22_program.key(),
-        constraint = mint_immunity.decimals == 0,
-        constraint = mint_immunity.supply == 1,
-    )]
-    pub mint_immunity: Box<InterfaceAccount<'info, MintInterface>>,
+    // #[account(
+    //     mut,
+    //     mint::token_program = token22_program.key(),
+    //     constraint = mint_immunity.decimals == 0,
+    //     constraint = mint_immunity.supply == 1,
+    // )]
+    // pub mint_immunity: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // ATA to be burned in exchange for immmunity
-    #[account(
-        token::mint = mint_immunity,
-        token::authority = payer,
-        token::token_program = token22_program.key(),
-    )]
-    pub token_account_immunity: Box<InterfaceAccount<'info, TokenAccountInterface>>, // Used to verify owner
+    // // ATA to be burned in exchange for immmunity
+    // #[account(
+    //     token::mint = mint_immunity,
+    //     token::authority = payer,
+    //     token::token_program = token22_program.key(),
+    // )]
+    // pub token_account_immunity: Box<InterfaceAccount<'info, TokenAccountInterface>>, // Used to verify owner
 
-    #[account(
-        seeds = [
-            SEED_BURGER_METADATA,
-            mint_immunity.key().as_ref()
-        ],
-        bump = token_metadata_immunity.bump
-    )]
-    pub token_metadata_immunity: Account<'info, BurgerMetadata>,
+    // #[account(
+    //     seeds = [
+    //         SEED_BURGER_METADATA,
+    //         mint_immunity.key().as_ref()
+    //     ],
+    //     bump = token_metadata_immunity.bump
+    // )]
+    // pub token_metadata_immunity: Account<'info, BurgerMetadata>,
 
     // Actual burger nft
     #[account(
@@ -38,7 +38,6 @@ pub struct TokenGameImmunity<'info> {
     )]
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // ATA to be burned in exchange for immmunity
     #[account(
         token::mint = mint,
         token::authority = payer,
@@ -48,12 +47,13 @@ pub struct TokenGameImmunity<'info> {
 
     #[account(
         seeds = [
-            SEED_BURGER_METADATA,
+            wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        bump = token_metadata.bump
+        seeds::program = wen_new_standard::ID.key(),
+        bump,
     )]
-    pub token_metadata: Account<'info, BurgerMetadata>,
+    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
 
     #[account(
         seeds = [
@@ -63,7 +63,12 @@ pub struct TokenGameImmunity<'info> {
     )]
     pub game_config: Account<'info, GameConfig>,
 
-    #[account()]
+    // TODO maybe change to game_master
+    #[account(
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
+    )]
     pub payer: Signer<'info>,
 
     #[account(
@@ -82,9 +87,9 @@ pub struct TokenGameImmunityParams {}
 
 impl TokenGameImmunity<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameImmunityParams) -> Result<()> {
-        // TODO, Immunity can only be enabled once game has finished
-        self.game_config.assert_game_status(GameStatus::Finished)
-        // self.game_config.check_valid_collection(&self.group_member, self.mint.key())
+        self.game_config.assert_game_status(GameStatus::Evaluate)?;
+        self.game_config
+            .check_valid_collection(&self.group_member, self.mint.key())
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameImmunityParams) -> Result<()> {
@@ -92,38 +97,38 @@ impl TokenGameImmunity<'_> {
             SEED_PROGRAM_DELEGATE,
             &[ctx.accounts.permanent_delegate.bump],
         ];
-        burn_token(
-            &ctx.accounts.mint_immunity.to_account_info(),
-            &ctx.accounts.token_account_immunity.to_account_info(),
-            ctx.accounts.token22_program.key(),
-            &ctx.accounts.permanent_delegate.to_account_info(),
-            Some(seeds),
-        )?;
+        // burn_token(
+        //     &ctx.accounts.mint_immunity.to_account_info(),
+        //     &ctx.accounts.token_account_immunity.to_account_info(),
+        //     ctx.accounts.token22_program.key(),
+        //     &ctx.accounts.permanent_delegate.to_account_info(),
+        //     Some(seeds),
+        // )?;
 
-        // Close immuntiy token mint
-        close_mint(
-            ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint_immunity.to_account_info(),
-            // Currently rent collector is hardcoded to be the Program Delegaate
-            &ctx.accounts.payer.to_account_info(),
-            // Authority to close the mint
-            &ctx.accounts.permanent_delegate.to_account_info(),
-            Some(seeds),
-        )?;
+        // // Close immuntiy token mint
+        // close_mint(
+        //     ctx.accounts.token22_program.key(),
+        //     &ctx.accounts.mint_immunity.to_account_info(),
+        //     // Currently rent collector is hardcoded to be the Program Delegaate
+        //     &ctx.accounts.payer.to_account_info(),
+        //     // Authority to close the mint
+        //     &ctx.accounts.permanent_delegate.to_account_info(),
+        //     Some(seeds),
+        // )?;
 
         // Close ATA of immunity
-        anchor_spl::token_interface::close_account(CpiContext::new(
-            ctx.accounts.token22_program.to_account_info(),
-            anchor_spl::token_interface::CloseAccount {
-                account: ctx
-                    .accounts
-                    .token_account_immunity
-                    .to_account_info()
-                    .clone(),
-                destination: ctx.accounts.payer.to_account_info().clone(),
-                authority: ctx.accounts.payer.to_account_info().clone(),
-            },
-        ))?;
+        // anchor_spl::token_interface::close_account(CpiContext::new(
+        //     ctx.accounts.token22_program.to_account_info(),
+        //     anchor_spl::token_interface::CloseAccount {
+        //         account: ctx
+        //             .accounts
+        //             .token_account_immunity
+        //             .to_account_info()
+        //             .clone(),
+        //         destination: ctx.accounts.payer.to_account_info().clone(),
+        //         authority: ctx.accounts.payer.to_account_info().clone(),
+        //     },
+        // ))?;
 
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
