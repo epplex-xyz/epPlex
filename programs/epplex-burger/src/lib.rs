@@ -24,7 +24,7 @@ use anchor_spl::{
     token_2022::{self, Token2022},
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
-use epplex_shared::{burn_token, close_mint, ADMINS, ADMIN_PUBKEY};
+use epplex_shared::{burn_token, close_mint, ADMINS};
 use spl_token_metadata_interface::state::TokenMetadata;
 use wen_new_standard::TokenGroupMember;
 
@@ -148,6 +148,7 @@ pub mod epplex_burger {
     //     TokenRenew::actuate(ctx, params)
     // }
     pub fn token_renew(_ctx: Context<TokenRenew>, _params: TokenRenewParams) -> Result<()> {
+        // THIS SHOULD CPI INTO CORE
         Ok(())
     }
 
@@ -159,6 +160,7 @@ pub mod epplex_burger {
     //     TokenBurn::actuate(ctx, params)
     // }
     pub fn token_burn(_ctx: Context<TokenBurn>, _params: TokenBurnParams) -> Result<()> {
+        // This is gated by payer and does not work on a WNS NFT anyway
         Ok(())
     }
 

@@ -35,7 +35,7 @@ pub struct TokenRenew<'info> {
     #[account(
         mut,
         associated_token::mint = mint_payment,
-        associated_token::authority = ADMIN_PUBKEY,
+        associated_token::authority = epplex_shared::ADMIN_PUBKEY,
     )]
     pub proceeds_token_account: Account<'info, TokenAccount>, // Deposit in here
 
@@ -46,7 +46,12 @@ pub struct TokenRenew<'info> {
     )]
     pub payer_token_account: Account<'info, TokenAccount>, // Deduct from here
 
-    #[account()]
+    #[account(
+        mut,
+        constraint = ADMINS.contains(
+            &payer.key()
+        ) @ BurgerError::NonOperator
+    )]
     pub payer: Signer<'info>,
 
     #[account(
@@ -92,8 +97,7 @@ impl TokenRenew<'_> {
         let expiry_date = expiry_date_string.parse::<i64>().unwrap();
         msg!("Destroy timestamp: {}", expiry_date);
 
-        // Cannot exceed expiry
-        // Disallow renewal if time has surpassed
+        // Cannot exceed expiry - disallow renewal if time has surpassed
         let now = Clock::get().unwrap().unix_timestamp;
         if now > expiry_date {
             return err!(BurgerError::ExpiryDateHasBeenExceeded);

@@ -9,6 +9,7 @@ crate-type = ["cdylib", "lib"]
 name = "epplex_shared"
 
 [features]
+mainnet = []
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []

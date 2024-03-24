@@ -1,6 +1,4 @@
 use crate::*;
-// use anchor_spl::token_interface::{Mint as MintInterface};
-use anchor_lang::solana_program::pubkey;
 
 #[derive(Accounts)]
 #[instruction(params: CollectionCloseParams)]
@@ -18,7 +16,7 @@ pub struct CollectionClose<'info> {
 
     #[account(
         mut,
-        constraint = [pubkey!("epADzKVW5kb3hjUhKuxdmyASNKYt4Cb1ccLGvr5cuzh")].contains(
+        constraint = epplex_shared::ADMINS.contains(
             &payer.key()
         )
     )]

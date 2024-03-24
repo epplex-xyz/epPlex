@@ -30,7 +30,12 @@ pub struct CollectionCreate<'info> {
     )]
     pub global_collection_config: Account<'info, GlobalCollectionConfig>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = epplex_shared::ADMINS.contains(
+            &payer.key()
+        )
+    )]
     pub payer: Signer<'info>,
 
     /// CHECK this account is created in the instruction body, so no need to check data layout

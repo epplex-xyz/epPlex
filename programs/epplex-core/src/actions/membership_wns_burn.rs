@@ -29,12 +29,6 @@ pub struct MembershipWnsBurn<'info> {
     /// CHECK
     pub membership: UncheckedAccount<'info>,
 
-    // #[account(
-    // mut,
-    // token::mint = membership.key(),
-    // token::token_program = token22_program.key(),
-    // )]
-    // pub membership_ata: Box<InterfaceAccount<'info, TokenAccountInterface>>,
     #[account(mut)]
     /// CHECK: to be initialised
     pub membership_ata: UncheckedAccount<'info>,
@@ -83,8 +77,6 @@ pub struct MembershipWnsBurn<'info> {
     /// CHECK:
     pub epplex_authority: UncheckedAccount<'info>,
 
-    pub token22_program: Program<'info, Token2022>,
-
     /*
        WNS stuff
     */
@@ -119,6 +111,7 @@ pub struct MembershipWnsBurn<'info> {
     pub wns: Program<'info, WenNewStandard>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
+    pub token22_program: Program<'info, Token2022>,
 }
 
 impl MembershipWnsBurn<'_> {
