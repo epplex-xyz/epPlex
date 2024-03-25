@@ -50,6 +50,7 @@
         "set-program-auth": "solana program set-upgrade-authority  <PROGRAM_ID> --upgrade-authority <CURRENT_AUTH_KEYPAIR> --new-upgrade-authority target/deploy/epplex_deploy_auth.json -u devnet",
 
         "transfer-sol": "solana transfer --from /users/mac/.config/solana/test.json epAuYW4ybHrx7Rx7K3tYg8U3U426jCasVu41wFs6YVT 40 --fee-payer /users/mac/.config/solana/test.json --allow-unfunded-recipient -u devnet",
+        "transfer-sol-from-auth": "solana transfer --from target/deploy/epplex_deploy_auth.json <recipient>  --fee-payer target/deploy/epplex_deploy_auth.json --allow-unfunded-recipient -u mainnet-beta",
 
         "test": "anchor test --provider.cluster localnet --skip-deploy --skip-build --skip-local-validator --provider.wallet target/deploy/epplex_deploy_auth.json"
     },
