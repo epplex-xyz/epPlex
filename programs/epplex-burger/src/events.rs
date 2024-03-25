@@ -28,7 +28,6 @@ pub struct EvTokenGameReset {
 pub struct EvTokenGameImmunity {
     pub game_round_id: u8,
     pub nft: Pubkey,
-    pub participant: Pubkey,
     pub immunity_timestamp: i64,
 }
 

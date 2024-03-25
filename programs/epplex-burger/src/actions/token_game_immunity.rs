@@ -13,13 +13,6 @@ pub struct TokenGameImmunity<'info> {
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
     #[account(
-        token::mint = mint,
-        token::authority = payer,
-        token::token_program = token22_program.key(),
-    )]
-    pub token_account: Box<InterfaceAccount<'info, TokenAccountInterface>>, // Used to verify owner
-
-    #[account(
         seeds = [
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
@@ -49,9 +42,9 @@ pub struct TokenGameImmunity<'info> {
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
-        bump = permanent_delegate.bump
+        bump = update_authority.bump
     )]
-    pub permanent_delegate: Account<'info, ProgramDelegate>,
+    pub update_authority: Account<'info, ProgramDelegate>,
 
     pub token22_program: Program<'info, Token2022>,
 }
@@ -67,15 +60,12 @@ impl TokenGameImmunity<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameImmunityParams) -> Result<()> {
-        let seeds = &[
-            SEED_PROGRAM_DELEGATE,
-            &[ctx.accounts.permanent_delegate.bump],
-        ];
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
 
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.permanent_delegate.to_account_info(), // the program permanent delegate
+            &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
             "true".to_string(),
@@ -84,9 +74,6 @@ impl TokenGameImmunity<'_> {
         emit!(EvTokenGameImmunity {
             game_round_id: ctx.accounts.game_config.game_round,
             nft: ctx.accounts.mint.key(),
-            participant: epplex_shared::get_token_account_owner(
-                &ctx.accounts.token_account.to_account_info()
-            )?,
             immunity_timestamp: Clock::get().unwrap().unix_timestamp,
         });
 
