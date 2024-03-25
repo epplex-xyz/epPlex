@@ -37,6 +37,9 @@ pub enum BurgerError {
     #[msg("Non-operator attempts to use program")]
     NonOperator,
 
+    #[msg("Wrong rule_creator passed as params")]
+    WrongRuleCreator,
+
     // ----------------------------------------------- GAME ERRORS ---------------------------------------------------
     #[msg("Cannot burn NFT that is immune")]
     CannotBurnImmune,
