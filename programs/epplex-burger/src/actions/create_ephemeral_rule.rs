@@ -29,13 +29,21 @@ pub struct CreateEphemeralRuleParams {
 }
 
 impl CreateEphemeralRule<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &CreateEphemeralRuleParams) -> Result<()> {
+    pub fn validate(
+        &self,
+        _ctx: &Context<Self>,
+        _params: &CreateEphemeralRuleParams,
+    ) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate(ctx: Context<Self>, params: CreateEphemeralRuleParams) -> Result<()> {
-        require_eq!(params.rule_creator, Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID).0, BurgerError::WrongRuleCreator);
-        
+        require_eq!(
+            params.rule_creator,
+            Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID).0,
+            BurgerError::WrongRuleCreator
+        );
+
         epplex_core::cpi::rule_create(
             CpiContext::new(
                 ctx.accounts.epplex_core.to_account_info(),
@@ -45,11 +53,11 @@ impl CreateEphemeralRule<'_> {
                     system_program: ctx.accounts.system_program.to_account_info(),
                 },
             ),
-            epplex_core::RuleManageParams { 
-                seed: params.seed, 
-                rule_creator: params.rule_creator, 
-                renewal_price: params.renewal_price, 
-                treasury: params.treasury 
+            epplex_core::RuleManageParams {
+                seed: params.seed,
+                rule_creator: params.rule_creator,
+                renewal_price: params.renewal_price,
+                treasury: params.treasury,
             },
         )?;
 

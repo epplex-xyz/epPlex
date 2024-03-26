@@ -44,11 +44,8 @@ impl AddEphemeralData<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: AddEphemeralDataParams) -> Result<()> {     
-        let seeds = &[
-            SEED_PROGRAM_DELEGATE,
-            &[ctx.accounts.rule_creator.bump],
-        ];
+    pub fn actuate(ctx: Context<Self>, params: AddEphemeralDataParams) -> Result<()> {
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.rule_creator.bump]];
 
         epplex_core::cpi::membership_append(
             CpiContext::new_with_signer(
