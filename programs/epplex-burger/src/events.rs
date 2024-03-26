@@ -57,3 +57,12 @@ pub struct EvGameStart {
     pub burn_amount: u16,
     pub submission_amount: u16,
 }
+
+#[event]
+pub struct EvGameUpdate {
+    pub game_round_id: u8,
+    pub game_start_timestamp: Option<i64>,
+    pub game_end_timestamp: Option<i64>,
+    pub vote_type: Option<VoteType>,
+    pub token_group: Option<Pubkey>,
+}
