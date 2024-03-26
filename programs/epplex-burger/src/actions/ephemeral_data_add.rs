@@ -15,9 +15,11 @@ pub struct EphemeralDataAdd<'info> {
     #[account()]
     /// CHECK: this will be checked by the CORE program
     pub nft: UncheckedAccount<'info>,
+
     #[account()]
     /// CHECK: this will be checked by the CORE program
     pub rule: UncheckedAccount<'info>,
+
     #[account(
         mut,
         seeds = [
@@ -26,6 +28,7 @@ pub struct EphemeralDataAdd<'info> {
         bump = rule_creator.bump
     )]
     pub rule_creator: Account<'info, ProgramDelegate>,
+
     #[account(mut)]
     /// CHECK: this will be checked by the CORE program
     pub data: UncheckedAccount<'info>,

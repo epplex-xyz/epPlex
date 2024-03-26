@@ -7,10 +7,10 @@ pub struct EphemeralRuleCreate<'info> {
     #[account(
         mut,
         constraint = ADMINS.contains(
-            &payer.key()
+            &signer.key()
         ) @ BurgerError::NonOperator
     )]
-    pub payer: Signer<'info>,
+    pub signer: Signer<'info>,
 
     #[account(mut)]
     /// CHECK: this will be checked by the CORE program
@@ -48,7 +48,7 @@ impl EphemeralRuleCreate<'_> {
             CpiContext::new(
                 ctx.accounts.epplex_core.to_account_info(),
                 epplex_core::cpi::accounts::RuleManage {
-                    signer: ctx.accounts.payer.to_account_info(),
+                    signer: ctx.accounts.signer.to_account_info(),
                     rule: ctx.accounts.rule.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
                 },
