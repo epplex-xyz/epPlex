@@ -2,8 +2,8 @@ use crate::*;
 use epplex_core::program::EpplexCore;
 
 #[derive(Accounts)]
-#[instruction(params: CreateEphemeralRuleParams)]
-pub struct CreateEphemeralRule<'info> {
+#[instruction(params: EphemeralRuleCreateParams)]
+pub struct EphemeralRuleCreate<'info> {
     #[account(
         mut,
         constraint = ADMINS.contains(
@@ -21,23 +21,23 @@ pub struct CreateEphemeralRule<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct CreateEphemeralRuleParams {
+pub struct EphemeralRuleCreateParams {
     pub seed: u64,
     pub rule_creator: Pubkey,
     pub renewal_price: u64,
     pub treasury: Pubkey,
 }
 
-impl CreateEphemeralRule<'_> {
+impl EphemeralRuleCreate<'_> {
     pub fn validate(
         &self,
         _ctx: &Context<Self>,
-        _params: &CreateEphemeralRuleParams,
+        _params: &EphemeralRuleCreateParams,
     ) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: CreateEphemeralRuleParams) -> Result<()> {
+    pub fn actuate(ctx: Context<Self>, params: EphemeralRuleCreateParams) -> Result<()> {
         require_eq!(
             params.rule_creator,
             Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID).0,

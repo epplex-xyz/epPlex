@@ -67,19 +67,19 @@ pub mod epplex_burger {
      * Ephemeral CPI
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn create_ephemeral_rule(
-        ctx: Context<CreateEphemeralRule>,
-        params: CreateEphemeralRuleParams,
+    pub fn ephemeral_rule_create(
+        ctx: Context<EphemeralRuleCreate>,
+        params: EphemeralRuleCreateParams,
     ) -> Result<()> {
-        CreateEphemeralRule::actuate(ctx, params)
+        EphemeralRuleCreate::actuate(ctx, params)
     }
 
     #[access_control(ctx.accounts.validate(&ctx, &params))]
-    pub fn add_ephemeral_data(
-        ctx: Context<AddEphemeralData>,
-        params: AddEphemeralDataParams,
+    pub fn ephemeral_data_add(
+        ctx: Context<EphemeralDataAdd>,
+        params: EphemeralDataAddParams,
     ) -> Result<()> {
-        AddEphemeralData::actuate(ctx, params)
+        EphemeralDataAdd::actuate(ctx, params)
     }
 
     /*
