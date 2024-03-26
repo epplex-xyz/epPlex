@@ -52,8 +52,8 @@ pub use wns_group_mint::*;
 pub mod wns_member_mint;
 pub use wns_member_mint::*;
 
-pub mod create_ephemeral_rule;
-pub use create_ephemeral_rule::*;
+pub mod ephemeral_rule_create;
+pub use ephemeral_rule_create::*;
 
-pub mod add_ephemeral_data;
-pub use add_ephemeral_data::*;
+pub mod ephemeral_data_add;
+pub use ephemeral_data_add::*;

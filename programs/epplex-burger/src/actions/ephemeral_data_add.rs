@@ -2,8 +2,8 @@ use crate::*;
 use epplex_core::program::EpplexCore;
 
 #[derive(Accounts)]
-#[instruction(params: AddEphemeralDataParams)]
-pub struct AddEphemeralData<'info> {
+#[instruction(params: EphemeralDataAddParams)]
+pub struct EphemeralDataAdd<'info> {
     #[account(
         mut,
         constraint = ADMINS.contains(
@@ -15,17 +15,19 @@ pub struct AddEphemeralData<'info> {
     #[account()]
     /// CHECK: this will be checked by the CORE program
     pub nft: UncheckedAccount<'info>,
+
     #[account()]
     /// CHECK: this will be checked by the CORE program
     pub rule: UncheckedAccount<'info>,
+
     #[account(
-        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE,
         ],
         bump = rule_creator.bump
     )]
     pub rule_creator: Account<'info, ProgramDelegate>,
+
     #[account(mut)]
     /// CHECK: this will be checked by the CORE program
     pub data: UncheckedAccount<'info>,
@@ -35,20 +37,17 @@ pub struct AddEphemeralData<'info> {
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct AddEphemeralDataParams {
+pub struct EphemeralDataAddParams {
     pub time: i64,
 }
 
-impl AddEphemeralData<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &AddEphemeralDataParams) -> Result<()> {
+impl EphemeralDataAdd<'_> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &EphemeralDataAddParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: AddEphemeralDataParams) -> Result<()> {     
-        let seeds = &[
-            SEED_PROGRAM_DELEGATE,
-            &[ctx.accounts.rule_creator.bump],
-        ];
+    pub fn actuate(ctx: Context<Self>, params: EphemeralDataAddParams) -> Result<()> {
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.rule_creator.bump]];
 
         epplex_core::cpi::membership_append(
             CpiContext::new_with_signer(

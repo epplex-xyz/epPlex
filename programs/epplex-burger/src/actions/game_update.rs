@@ -34,6 +34,17 @@ impl GameUpdate<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, params: GameUpdateParams) -> Result<()> {
-        ctx.accounts.game_config.update(params)
+        let cloned_params = params.clone();
+        ctx.accounts.game_config.update(params)?;
+
+        emit!(EvGameUpdate {
+            game_round_id: ctx.accounts.game_config.game_round,
+            game_start_timestamp: cloned_params.phase_start_timestamp,
+            game_end_timestamp: cloned_params.phase_end_timestamp,
+            vote_type: cloned_params.vote_type,
+            token_group: cloned_params.token_group,
+        });
+
+        Ok(())
     }
 }
