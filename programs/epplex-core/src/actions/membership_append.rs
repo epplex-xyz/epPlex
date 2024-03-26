@@ -19,7 +19,6 @@ pub struct MembershipAppend<'info> {
 
     // Needs to be here since rule_creator needs to sign
     #[account(
-        mut,
         constraint = rule_creator.key() == rule.rule_creator
             @EphemeralityError::EscalatedAuthority,
     )]

@@ -21,7 +21,6 @@ pub struct EphemeralDataAdd<'info> {
     pub rule: UncheckedAccount<'info>,
 
     #[account(
-        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE,
         ],
