@@ -64,7 +64,7 @@ pub mod epplex_burger {
     }
 
     /*
-     * Ephemeral CPI
+     * Ephemeral context: Would have been better to simply CPI into Core during mint
      */
     #[access_control(ctx.accounts.validate(&ctx, &params))]
     pub fn ephemeral_rule_create(

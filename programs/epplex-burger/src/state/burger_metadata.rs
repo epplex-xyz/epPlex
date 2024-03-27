@@ -10,13 +10,23 @@ pub const ENCRYPTED_LENTH: usize = 172;
 /// Reserve 200 bytes
 pub const GAME_STATE_PLACEHOLDER: &str =
     "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+pub const GAME_STATE: &str = "gameState";
 
 /// Length of 20 characters unixtimestamp
 pub const VOTING_TIMESTAMP_PLACEHOLDER: &str = "99999999999999999999";
+pub const VOTING_TIMESTAMP: &str = "votingTimestamp";
+
+// false, true
+pub const IMMUNITY: &str = "immunity";
+pub const IMMUNITY_PLACEHOLDER: &str = "false";
+
+// Fields
+pub const EXPIRY_FIELD: &str = "expirationDate"; // should just add onto this
 
 /// Length of 60 characters for community name
-pub const COMMUNITY_PLACEHOLDER: &str =
-    "999999999999999999999999999999999999999999999999999999999999";
+// pub const COMMUNITY_PLACEHOLDER: &str =
+//     "999999999999999999999999999999999999999999999999999999999999";
+// pub const COMMUNITY: &str = "DAO";
 
 pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
     vec![
@@ -26,8 +36,7 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
             VOTING_TIMESTAMP.to_string(),
             VOTING_TIMESTAMP_PLACEHOLDER.to_string(),
         ],
-        [IMMUNITY.to_string(), "false".to_string()],
-        [COMMUNITY.to_string(), COMMUNITY_PLACEHOLDER.to_string()],
+        [IMMUNITY.to_string(), IMMUNITY_PLACEHOLDER.to_string()],
     ]
 }
 
@@ -47,11 +56,7 @@ pub fn generate_metadata2(expiry_data: String) -> Vec<wen_new_standard::AddMetad
         },
         AddMetadataArgs {
             field: IMMUNITY.to_string(),
-            value: "false".to_string(),
-        },
-        AddMetadataArgs {
-            field: COMMUNITY.to_string(),
-            value: COMMUNITY_PLACEHOLDER.to_string(),
+            value: IMMUNITY_PLACEHOLDER.to_string(),
         },
     ]
 }
