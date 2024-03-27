@@ -43,3 +43,4 @@ test-ledger
 !app/.env.production
 
 mainnet-deploy.sh
+start-devnet.sh
