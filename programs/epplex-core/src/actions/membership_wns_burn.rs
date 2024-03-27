@@ -40,8 +40,11 @@ pub struct MembershipWnsBurn<'info> {
     )]
     pub source_ata: Box<InterfaceAccount<'info, TokenAccountInterface>>,
 
-    // This PDA receives the burn funds
+    // Receives the burn funds
     #[account(mut)]
+    pub payer: Signer<'info>,
+
+    #[account()]
     pub burner: Signer<'info>,
 
     #[account(mut)]
@@ -137,7 +140,7 @@ impl MembershipWnsBurn<'_> {
         create(CpiContext::new_with_signer(
             ctx.accounts.associated_token_program.to_account_info(),
             Create {
-                payer: ctx.accounts.burner.to_account_info(), // payer
+                payer: ctx.accounts.payer.to_account_info(), // payer
                 associated_token: ctx.accounts.membership_ata.to_account_info(),
                 mint: ctx.accounts.membership.to_account_info(),
                 authority: ctx.accounts.epplex_authority.to_account_info(), // owner
@@ -152,7 +155,7 @@ impl MembershipWnsBurn<'_> {
             CpiContext::new_with_signer(
                 ctx.accounts.wns.to_account_info(),
                 wen_new_standard::cpi::accounts::ApproveTransfer {
-                    payer: ctx.accounts.burner.to_account_info(),
+                    payer: ctx.accounts.payer.to_account_info(),
                     authority: ctx.accounts.epplex_authority.to_account_info(),
                     mint: ctx.accounts.membership.to_account_info(),
                     approve_account: ctx.accounts.approve_account.to_account_info(),
@@ -197,7 +200,7 @@ impl MembershipWnsBurn<'_> {
         wen_new_standard::cpi::burn_mint_account(CpiContext::new_with_signer(
             ctx.accounts.wns.to_account_info(),
             wen_new_standard::cpi::accounts::BurnMintAccount {
-                payer: ctx.accounts.burner.to_account_info(),
+                payer: ctx.accounts.payer.to_account_info(),
                 user: ctx.accounts.epplex_authority.to_account_info(),
                 mint: ctx.accounts.membership.to_account_info(),
                 mint_token_account: ctx.accounts.membership_ata.to_account_info(),

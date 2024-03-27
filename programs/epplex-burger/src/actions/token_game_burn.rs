@@ -17,9 +17,8 @@ pub struct TokenGameBurn<'info> {
     )]
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
-    // this will be created
     #[account(mut)]
-    /// CHECK: cpi checks
+    /// CHECK: cpi checks, this will be created
     pub token_account: UncheckedAccount<'info>,
 
     #[account(
@@ -109,12 +108,10 @@ pub struct TokenGameBurn<'info> {
     /*
        WNS stuff
     */
-    // Transfer Hook Accounts
     #[account()]
     /// CHECK: no need to check it out, the invoke_transfer will check for us
     pub metas_account_list: AccountInfo<'info>,
 
-    // For burning
     #[account(
         seeds = [wen_new_standard::MANAGER_SEED],
         seeds::program = wen_new_standard::ID,
@@ -158,14 +155,19 @@ impl TokenGameBurn<'_> {
     }
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameBurnParams) -> Result<()> {
+        let seeds = &[
+            SEED_PROGRAM_DELEGATE,
+            &[ctx.accounts.permanent_delegate.bump],
+        ];
         // Closes the data pda as well
-        epplex_core::cpi::membership_wns_burn(CpiContext::new(
+        epplex_core::cpi::membership_wns_burn(CpiContext::new_with_signer(
             ctx.accounts.epplex_core.to_account_info(),
             epplex_core::cpi::accounts::MembershipWnsBurn {
                 membership: ctx.accounts.mint.to_account_info(),
                 source_ata: ctx.accounts.source_token_account.to_account_info(),
                 membership_ata: ctx.accounts.token_account.to_account_info(),
-                burner: ctx.accounts.payer.to_account_info(),
+                payer: ctx.accounts.payer.to_account_info(),
+                burner: ctx.accounts.permanent_delegate.to_account_info(),
                 epplex_treasury: ctx.accounts.epplex_treasury.to_account_info(), // update_auth = perm_delegate
                 rule: ctx.accounts.rule.to_account_info(),
                 data: ctx.accounts.data.to_account_info(),
@@ -186,6 +188,7 @@ impl TokenGameBurn<'_> {
                 associated_token_program: ctx.accounts.associated_token_program.to_account_info(),
                 system_program: ctx.accounts.system_program.to_account_info(),
             },
+            &[&seeds[..]],
         ))?;
 
         ctx.accounts.game_config.bump_burn_amount()?;
