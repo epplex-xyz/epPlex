@@ -117,7 +117,7 @@ impl TokenRenew<'_> {
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
             &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
+            &ctx.accounts.update_authority.to_account_info(),
             &[&seeds[..]],
             spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
             new_expiry_date,
