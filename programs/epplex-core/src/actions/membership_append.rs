@@ -13,7 +13,7 @@ pub struct MembershipAppend<'info> {
             SEED_EPHEMERAL_RULE,
             rule.seed.to_le_bytes().as_ref()
         ],
-        bump,
+        bump = rule.bump,
     )]
     pub rule: Account<'info, EphemeralRule>,
 
