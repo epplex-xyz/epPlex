@@ -10,6 +10,9 @@ pub use token_renew::*;
 pub mod token_burn;
 pub use token_burn::*;
 
+pub mod token_update;
+pub use token_update::*;
+
 pub mod token_game_burn;
 pub use token_game_burn::*;
 
