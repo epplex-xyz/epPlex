@@ -13,7 +13,6 @@ pub struct WnsMemberMint<'info> {
     /// CHECK
     pub token_account: UncheckedAccount<'info>,
 
-    // TODO need to remove this
     #[account(
         init,
         seeds = [
