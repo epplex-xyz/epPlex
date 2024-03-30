@@ -159,3 +159,29 @@ pub fn transfer_token_with_pda<'info>(
 
     Ok(())
 }
+
+pub fn update_account_lamports_to_minimum_balance<'info>(
+    account: AccountInfo<'info>,
+    payer: AccountInfo<'info>,
+    system_program: AccountInfo<'info>,
+) -> Result<()> {
+    let extra_lamports = Rent::get()?
+        .minimum_balance(account.data_len())
+        .checked_sub(account.get_lamports());
+
+    match extra_lamports {
+        Some(extra) if extra > 0 => {
+            anchor_lang::solana_program::program::invoke(
+                &anchor_lang::solana_program::system_instruction::transfer(
+                    payer.key,
+                    account.key,
+                    extra,
+                ),
+                &[payer, account, system_program],
+            )?;
+        }
+        _ => {}
+    }
+
+    Ok(())
+}

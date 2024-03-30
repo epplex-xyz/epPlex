@@ -183,6 +183,18 @@ pub mod epplex_burger {
         TokenBurn::actuate(ctx, params)
     }
 
+    // #[access_control(ctx.accounts.validate(&ctx, &params))]
+    // pub fn token_update(
+    //     ctx: Context<TokenUpdate>,
+    //     params: TokenBurnParams
+    // ) -> Result<()> {
+    //     TokenUpdate::actuate(ctx, params)
+    // }
+    pub fn token_update(ctx: Context<TokenUpdate>, params: TokenUpdateParams) -> Result<()> {
+        // This is gated by payer and does not work on a WNS NFT anyway
+        TokenUpdate::actuate(ctx, params)
+    }
+
     /*
      * DEPRECATED
      * Old collection stuff
