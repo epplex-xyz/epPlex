@@ -103,6 +103,14 @@ pub mod epplex_burger {
         TokenGameReset::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_immunity(
+        ctx: Context<TokenGameImmunity>,
+        params: TokenGameImmunityParams,
+    ) -> Result<()> {
+        TokenGameImmunity::actuate(ctx, params)
+    }
+
     /*
      * Game actions
      */
@@ -223,21 +231,6 @@ pub mod epplex_burger {
     pub fn collection_mint(
         _ctx: Context<CollectionMint>,
         _params: CollectionMintParams,
-    ) -> Result<()> {
-        Ok(())
-    }
-
-    // Inactive
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_game_immunity(
-    //     ctx: Context<TokenGameImmunity>,
-    //     params: TokenGameImmunityParams,
-    // ) -> Result<()> {
-    //     TokenGameImmunity::actuate(ctx, params)
-    // }
-    pub fn token_game_immunity(
-        _ctx: Context<TokenGameImmunity>,
-        _params: TokenGameImmunityParams,
     ) -> Result<()> {
         Ok(())
     }

@@ -54,8 +54,12 @@ pub struct TokenGameImmunityParams {}
 
 impl TokenGameImmunity<'_> {
     pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameImmunityParams) -> Result<()> {
-        // Can set immunity to true when NONE or EVALUATE
-        self.game_config.can_evaluate()?;
+        // Skip checks if game status is none
+        if self.game_config.game_status == GameStatus::None {
+            return Ok(());
+        }
+
+        self.game_config.assert_game_status(GameStatus::Evaluate)?;
 
         self.game_config
             .check_valid_collection(&self.group_member, self.mint.key())
