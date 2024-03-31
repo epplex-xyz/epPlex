@@ -50,6 +50,7 @@ impl<'info> TimeManage<'info> {
         time: u64, // Time in hours
     ) -> Result<()> {
 
+        // Gate ix by rule creator for now
         require!(
             self.payer.key() == self.rule.rule_creator,
             EphemeralityError::EscalatedAuthority
