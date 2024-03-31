@@ -49,6 +49,12 @@ impl<'info> TimeManage<'info> {
         &mut self,
         time: u64, // Time in hours
     ) -> Result<()> {
+
+        require!(
+            self.payer.key() == self.rule.rule_creator,
+            EphemeralityError::EscalatedAuthority
+        );
+
         let mut cost = time * self.rule.renewal_price;
         let time: u64 = time.checked_mul(3600).ok_or(EphemeralityError::Overflow)?;
 
