@@ -35,7 +35,7 @@ pub enum InputType {
 }
 
 #[account]
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct GameConfig {
     /// The bump, used for PDA validation.
     pub bump: u8,
@@ -69,6 +69,10 @@ pub struct GameConfig {
     pub rule_seed: u64,
     /// The pubkey of the token group pda for collection verification
     pub token_group: Pubkey,
+    /// Taken from xNFT repo Unused reserved byte space for additive future changes
+    pub _reserved0: [u8;64],
+    pub _reserved1: [u8;24],
+    pub _reserved2: [u8;9],
 }
 
 impl GameConfig {
@@ -88,8 +92,11 @@ impl GameConfig {
         + epplex_shared::BITS_16 // 2
         + epplex_shared::BITS_16 // 2
         + epplex_shared::BITS_64 // 8
-        + epplex_shared::PUBLIC_KEY_LENGTH; // 32
-                                            // approx 1500
+        + epplex_shared::PUBLIC_KEY_LENGTH // 32
+        + 64
+        + 24
+        + 9;
+        // approx 1500
 
     pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
@@ -109,6 +116,9 @@ impl GameConfig {
             submission_amount: 0,
             rule_seed: 0,
             token_group: Pubkey::default(),
+            _reserved0: [0;64],
+            _reserved1: [0;24],
+            _reserved2: [0;9],
         }
     }
 
