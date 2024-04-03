@@ -3,6 +3,7 @@
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "start": "sh start.sh",
+        "start-devnet": "sh start-devnet.sh",
         "replace": "npx ts-node script/replace_ids.ts",
         "wns-devnet": "npx ts-node script/wns_devnet.ts",
         "wns-local": "npx ts-node script/wns_local.ts",
