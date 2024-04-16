@@ -31,11 +31,18 @@ pub struct TokenUpdate<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Clone, AnchorDeserialize, AnchorSerialize)]
+pub struct AddMetadataArgs {
+    pub field: String,
+    pub value: String,
+}
+
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenUpdateParams {
-    pub name: String,
-    pub symbol: String,
-    pub uri: String,
+    pub name: Option<String>,
+    pub symbol: Option<String>,
+    pub uri: Option<String>,
+    pub additional_metadata: Option<AddMetadataArgs>
 }
 
 impl TokenUpdate<'_> {
@@ -50,32 +57,52 @@ impl TokenUpdate<'_> {
 
     pub fn actuate(ctx: Context<Self>, params: TokenUpdateParams) -> Result<()> {
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
-        epplex_shared::update_token_metadata_signed(
-            &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.update_authority.to_account_info(),
-            &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Name,
-            params.name,
-        )?;
 
-        epplex_shared::update_token_metadata_signed(
-            &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.update_authority.to_account_info(),
-            &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Symbol,
-            params.symbol,
-        )?;
+        if params.name.is_some() {
+            epplex_shared::update_token_metadata_signed(
+                &ctx.accounts.token22_program.key(),
+                &ctx.accounts.mint.to_account_info(),
+                &ctx.accounts.update_authority.to_account_info(),
+                &[&seeds[..]],
+                spl_token_metadata_interface::state::Field::Name,
+                params.name.unwrap(),
+            )?;
+        }
 
-        epplex_shared::update_token_metadata_signed(
-            &ctx.accounts.token22_program.key(),
-            &ctx.accounts.mint.to_account_info(),
-            &ctx.accounts.update_authority.to_account_info(),
-            &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Uri,
-            params.uri,
-        )?;
+        if params.symbol.is_some() {
+            epplex_shared::update_token_metadata_signed(
+                &ctx.accounts.token22_program.key(),
+                &ctx.accounts.mint.to_account_info(),
+                &ctx.accounts.update_authority.to_account_info(),
+                &[&seeds[..]],
+                spl_token_metadata_interface::state::Field::Symbol,
+                params.symbol.unwrap(),
+            )?;
+        }
+
+        if params.uri.is_some() {
+            epplex_shared::update_token_metadata_signed(
+                &ctx.accounts.token22_program.key(),
+                &ctx.accounts.mint.to_account_info(),
+                &ctx.accounts.update_authority.to_account_info(),
+                &[&seeds[..]],
+                spl_token_metadata_interface::state::Field::Uri,
+                params.uri.unwrap(),
+            )?;
+        }
+
+
+        if params.additional_metadata.is_some() {
+            let meta = params.additional_metadata.unwrap()
+            epplex_shared::update_token_metadata_signed(
+                &ctx.accounts.token22_program.key(),
+                &ctx.accounts.mint.to_account_info(),
+                &ctx.accounts.update_authority.to_account_info(),
+                &[&seeds[..]],
+                spl_token_metadata_interface::state::Field::Key(meta.field),
+                meta.value,
+            )?;
+        }
 
         epplex_shared::update_account_lamports_to_minimum_balance(
             ctx.accounts.mint.to_account_info(),
