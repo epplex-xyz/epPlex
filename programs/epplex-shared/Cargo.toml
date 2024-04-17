@@ -9,7 +9,6 @@ crate-type = ["cdylib", "lib"]
 name = "epplex_shared"
 
 [features]
-idl-build = ["anchor-lang/idl-build"]
 mainnet = []
 no-entrypoint = []
 no-idl = []
@@ -19,9 +18,7 @@ default = []
 
 [dependencies]
 # anchor-lang = { version = "0.29.0" }
-# anchor-lang = { git = "https://github.com/bridgesplit/anchor.git", features = ["interface-instructions", "init-if-needed"] }
-anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"] }
-
+anchor-lang = { git = "https://github.com/bridgesplit/anchor.git", features = ["interface-instructions", "init-if-needed"] }
 
 solana-program = "=1.17"
 ahash = "=0.8.6"
