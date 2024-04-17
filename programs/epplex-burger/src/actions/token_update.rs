@@ -93,7 +93,7 @@ impl TokenUpdate<'_> {
 
 
         if params.additional_metadata.is_some() {
-            let meta = params.additional_metadata.unwrap()
+            let meta = params.additional_metadata.unwrap();
             epplex_shared::update_token_metadata_signed(
                 &ctx.accounts.token22_program.key(),
                 &ctx.accounts.mint.to_account_info(),
