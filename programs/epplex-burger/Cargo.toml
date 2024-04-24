@@ -9,7 +9,14 @@ crate-type = ["cdylib", "lib"]
 name = "epplex_burger"
 
 [features]
-idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+idl-build = [
+    "anchor-lang/idl-build",
+    "anchor-spl/idl-build",
+    "epplex-core/idl-build",
+    "epplex-shared/idl-build",
+    "wen_new_standard/idl-build",
+    "wen_royalty_distribution/idl-build"
+]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
