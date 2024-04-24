@@ -28,15 +28,22 @@ use anchor_spl::{
         },
     },
     associated_token::AssociatedToken,
-    token_interface::Token2022,
-    token_interface::spl_token_metadata_interface::state::Field,
-    token_interface::spl_token_metadata_interface::state::TokenMetadata,
-    token_interface::spl_token_metadata_interface::instruction::
-        initialize as initialize_metadata_account
-    ,
-    token_interface::{mint_to, set_authority, MintTo}
+    token_interface::{
+        Token2022,
+        spl_token_metadata_interface::state::Field,
+        spl_token_metadata_interface::state::TokenMetadata,
+        spl_token_metadata_interface::instruction::initialize as initialize_metadata_account,
+        {mint_to, set_authority, MintTo}
+    }
 };
 
+// impl From<Pubkey> for std::vec::Vec<u8> {
+//     fn from(pubkey: epplex_core::Pubkey) -> Self {
+//         // Convert the pubkey into a Vec<u8> here
+//         // For example:
+//         pubkey.to_bytes().to_vec()
+//     }
+// }
 
 #[program]
 pub mod epplex_core {

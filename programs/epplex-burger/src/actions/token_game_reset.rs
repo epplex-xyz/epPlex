@@ -47,6 +47,7 @@ pub struct TokenGameReset<'info> {
     pub token22_program: Program<'info, Token2022>,
 }
 
+
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameResetParams {}
 
