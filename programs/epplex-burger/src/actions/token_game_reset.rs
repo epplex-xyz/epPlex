@@ -71,7 +71,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
             "".to_string(),
         )?;
 
@@ -80,7 +80,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             "".to_string(),
         )?;
 
@@ -89,7 +89,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
             "false".to_string(),
         )?;
 

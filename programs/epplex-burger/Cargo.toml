@@ -9,6 +9,7 @@ crate-type = ["cdylib", "lib"]
 name = "epplex_burger"
 
 [features]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
@@ -16,17 +17,18 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-# anchor-lang = { version = "0.29.0" }
-# anchor-spl = {version = "0.29.0" }
-anchor-lang = { git = "https://github.com/bridgesplit/anchor.git", features = ["interface-instructions", "init-if-needed"] }
-anchor-spl = { git = "https://github.com/bridgesplit/anchor.git", features = ["token_2022_extensions", "token_2022"] }
+anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"]  }
+anchor-spl = { version = "0.30.0", features = ["token_2022_extensions", "token_2022"] }
+# anchor-lang = { git = "https://github.com/bridgesplit/anchor.git", features = ["interface-instructions", "init-if-needed"] }
+# anchor-spl = { git = "https://github.com/bridgesplit/anchor.git", features = ["token_2022_extensions", "token_2022"] }
 
-spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
+# spl-token-2022 = {version = "1.0.0", features = ["no-entrypoint"] }
 epplex-core = { path = "../epplex-core", features = ["cpi"] }
 epplex-shared = { path = "../epplex-shared", features = ["no-entrypoint"] }
 ahash = "=0.8.6"
-spl-token-metadata-interface = "0.2.0"
-solana-program = "=1.17"
+# spl-token-metadata-interface = "0.3.3"
+# solana-program = "=1.18.2"
 
-wen_new_standard = { path = "../wen_new_standard", features = ["no-entrypoint", "cpi"] }
-wen_royalty_distribution = { path = "../wen_royalty_distribution", features = ["no-entrypoint", "cpi"] }
+
+wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
+wen_royalty_distribution = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }

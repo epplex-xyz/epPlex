@@ -25,7 +25,7 @@ use anchor_spl::{
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
 use epplex_shared::{burn_token, close_mint, ADMINS};
-use spl_token_metadata_interface::state::TokenMetadata;
+// use spl_token_metadata_interface::state::TokenMetadata;
 use wen_new_standard::TokenGroupMember;
 
 #[derive(Clone)]
