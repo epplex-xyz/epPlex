@@ -16,7 +16,7 @@ pub struct TokenGameReset<'info> {
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        seeds::program = wen_new_standard::ID.key(),
+        seeds::program = wen_new_standard::ID,
         bump,
     )]
     pub group_member: Account<'info, TokenGroupMember>,
