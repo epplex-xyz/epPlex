@@ -1,9 +1,13 @@
 use crate::*;
-use anchor_lang::solana_program::program_pack::Pack;
+use anchor_lang::solana_program::{
+    program_pack::Pack,
+    program,
+};
+use anchor_spl::token_2022::spl_token_2022;
+
 
 pub fn get_token_account_owner(token_account: &AccountInfo) -> Result<Pubkey> {
-    let state =
-        anchor_spl::token_2022::spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
+    let state = spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
     Ok(state.owner)
 }
 
@@ -27,7 +31,7 @@ pub fn update_token_metadata<'info>(
         update_authority.to_account_info(),
     ];
 
-    anchor_lang::solana_program::program::invoke(&ix, &account_infos[..])?;
+    program::invoke(&ix, &account_infos[..])?;
 
     Ok(())
 }
@@ -57,7 +61,7 @@ pub fn update_token_metadata_signed<'info>(
     // let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
 
     // let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
-    anchor_lang::solana_program::program::invoke_signed(&ix, &account_infos[..], signer_seeds)?;
+    program::invoke_signed(&ix, &account_infos[..], signer_seeds)?;
 
     Ok(())
 }
@@ -69,7 +73,7 @@ pub fn burn_token<'info>(
     authority: &AccountInfo<'info>,
     seeds: Option<&[&[u8]; 2]>,
 ) -> Result<()> {
-    let ix = anchor_spl::token_2022::spl_token_2022::instruction::burn(
+    let ix = spl_token_2022::instruction::burn(
         &program,
         &token_account.key(),
         &mint_account.key(),
@@ -85,8 +89,8 @@ pub fn burn_token<'info>(
     ];
 
     match seeds {
-        Some(s) => anchor_lang::solana_program::program::invoke_signed(&ix, &account_infos[..], &[&s[..]])?,
-        None => anchor_lang::solana_program::program::invoke(&ix, &account_infos[..])?,
+        Some(s) => program::invoke_signed(&ix, &account_infos[..], &[&s[..]])?,
+        None => program::invoke(&ix, &account_infos[..])?,
     }
 
     Ok(())
@@ -99,7 +103,7 @@ pub fn close_mint<'info>(
     owner: &AccountInfo<'info>,
     seeds: Option<&[&[u8]; 2]>,
 ) -> Result<()> {
-    let ix = anchor_spl::token_2022::spl_token_2022::instruction::close_account(
+    let ix = spl_token_2022::instruction::close_account(
         &program,
         &token_account.key(),
         &destination_account.key(),
@@ -114,8 +118,8 @@ pub fn close_mint<'info>(
     ];
 
     match seeds {
-        Some(s) => anchor_lang::solana_program::program::invoke_signed(&ix, &account_infos[..], &[&s[..]])?,
-        None => anchor_lang::solana_program::program::invoke(&ix, &account_infos[..])?,
+        Some(s) => program::invoke_signed(&ix, &account_infos[..], &[&s[..]])?,
+        None => program::invoke(&ix, &account_infos[..])?,
     }
 
     Ok(())
@@ -133,7 +137,7 @@ pub fn transfer_token_with_pda<'info>(
     signer_pubkeys: &[&Pubkey],
     seeds: &[&[u8]; 2],
 ) -> Result<()> {
-    let ix = anchor_spl::token_2022::spl_token_2022::instruction::transfer_checked(
+    let ix = spl_token_2022::instruction::transfer_checked(
         token_program.key,
         source_pubkey.key,
         mint.key,
@@ -155,7 +159,7 @@ pub fn transfer_token_with_pda<'info>(
     // let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
     // let program_delegate_seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
 
-    anchor_lang::solana_program::program::invoke_signed(&ix, &account_infos[..], &[seeds])?;
+    program::invoke_signed(&ix, &account_infos[..], &[seeds])?;
 
     Ok(())
 }
@@ -171,7 +175,7 @@ pub fn update_account_lamports_to_minimum_balance<'info>(
 
     match extra_lamports {
         Some(extra) if extra > 0 => {
-            anchor_lang::solana_program::program::invoke(
+            program::invoke(
                 &anchor_lang::solana_program::system_instruction::transfer(
                     payer.key,
                     account.key,

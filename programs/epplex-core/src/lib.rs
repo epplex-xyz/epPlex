@@ -37,13 +37,6 @@ use anchor_spl::{
     }
 };
 
-// impl From<Pubkey> for std::vec::Vec<u8> {
-//     fn from(pubkey: epplex_core::Pubkey) -> Self {
-//         // Convert the pubkey into a Vec<u8> here
-//         // For example:
-//         pubkey.to_bytes().to_vec()
-//     }
-// }
 
 #[program]
 pub mod epplex_core {
