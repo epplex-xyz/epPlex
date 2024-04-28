@@ -36,16 +36,16 @@ pub struct TokenGameFreeze<'info> {
     )]
     pub game_config: Account<'info, GameConfig>,
 
-    #[account()]
+    #[account(mut)]
     pub payer: Signer<'info>,
 
     #[account(
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
-        bump = update_authority.bump
+        bump = authority.bump
     )]
-    pub update_authority: Account<'info, ProgramDelegate>,
+    pub authority: Account<'info, ProgramDelegate>,
 
     // WNS  programs
     #[account(
@@ -58,18 +58,14 @@ pub struct TokenGameFreeze<'info> {
     pub manager: Account<'info, wen_new_standard::Manager>,
 
     pub token22_program: Program<'info, Token2022>,
-
-
-
+    pub wns: Program<'info, WenNewStandard>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct TokenGameFreezeParams {
-    pub message: String,
-}
+pub struct TokenGameFreezeParams {}
 
 impl TokenGameFreeze<'_> {
-    pub fn validate(&self, ctx: &Context<Self>, params: &TokenGameFreezeParams) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &TokenGameFreezeParams) -> Result<()> {
         self.game_config
             .check_valid_collection(&self.group_member, self.mint.key())?;
 
@@ -80,8 +76,19 @@ impl TokenGameFreeze<'_> {
         Ok(())
     }
 
-    pub fn actuate(ctx: Context<Self>, params: TokenGameFreezeParams) -> Result<()> {
-        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
+    pub fn actuate(ctx: Context<Self>, _params: TokenGameFreezeParams) -> Result<()> {
+        let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.authority.bump]];
+        anchor_spl::token_interface::approve(
+            CpiContext::new(
+                ctx.accounts.token22_program.to_account_info(),
+                anchor_spl::token_interface::Approve {
+                    to: ctx.accounts.token_account.to_account_info(),
+                    delegate: ctx.accounts.authority.to_account_info(),
+                    authority: ctx.accounts.payer.to_account_info(),
+                },
+            ),
+            1
+        )?;
 
         wen_new_standard::cpi::freeze_mint_account(
             CpiContext::new_with_signer(
@@ -89,24 +96,14 @@ impl TokenGameFreeze<'_> {
                 wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
                     payer: ctx.accounts.payer.to_account_info(),
                     user: ctx.accounts.payer.to_account_info(),
-                    delegate_authority: ctx.accounts.payer.to_account_info(),
-                    group: ctx.accounts.group.to_account_info(),
-                    mint: ctx.accounts.group_mint.to_account_info(),
+                    delegate_authority: ctx.accounts.authority.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
                     mint_token_account: ctx.accounts.token_account.to_account_info(),
                     manager: ctx.accounts.manager.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
-                    associated_token_program: ctx.accounts.associated_token.to_account_info(),
                     token_program: ctx.accounts.token22_program.to_account_info(),
                 },
                 &[&seeds[..]],
-            ),
-            wen_new_standard::CreateGroupAccountArgs {
-                name: params.name,
-                symbol: params.symbol,
-                uri: params.uri,
-                max_size: params.max_size,
-            },
+            )
         )?;
 
         Ok(())

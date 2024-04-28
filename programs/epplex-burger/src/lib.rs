@@ -169,6 +169,15 @@ pub mod epplex_burger {
         ProgramDelegateClose::actuate(ctx, &params)
     }
 
+    pub fn token_update(ctx: Context<TokenUpdate>, params: TokenUpdateParams) -> Result<()> {
+        TokenUpdate::actuate(ctx, params)
+    }
+
+    pub fn token_thaw(ctx: Context<TokenThaw>, params: TokenThawParams) -> Result<()> {
+        TokenThaw::actuate(ctx, params)
+    }
+
+
     /*
      * DEPRECATED
      * Token actions
@@ -195,18 +204,6 @@ pub mod epplex_burger {
     pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
         // This is gated by payer and does not work on a WNS NFT anyway
         TokenBurn::actuate(ctx, params)
-    }
-
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_update(
-    //     ctx: Context<TokenUpdate>,
-    //     params: TokenBurnParams
-    // ) -> Result<()> {
-    //     TokenUpdate::actuate(ctx, params)
-    // }
-    pub fn token_update(ctx: Context<TokenUpdate>, params: TokenUpdateParams) -> Result<()> {
-        // This is gated by payer and does not work on a WNS NFT anyway
-        TokenUpdate::actuate(ctx, params)
     }
 
     /*
