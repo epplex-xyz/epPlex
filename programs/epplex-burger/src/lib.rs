@@ -109,6 +109,14 @@ pub mod epplex_burger {
         TokenGameImmunity::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_freeze(
+        ctx: Context<TokenGameFreeze>,
+        params: TokenGameFreezeParams,
+    ) -> Result<()> {
+        TokenGameFreeze::actuate(ctx, params)
+    }
+
     /*
      * Game actions
      */
