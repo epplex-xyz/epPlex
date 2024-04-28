@@ -12,6 +12,7 @@ pub struct TokenGameFreeze<'info> {
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
     #[account(
+        mut,
         token::mint = mint,
         token::authority = payer,
         token::token_program = token22_program.key(),
@@ -40,6 +41,7 @@ pub struct TokenGameFreeze<'info> {
     pub payer: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -47,7 +49,7 @@ pub struct TokenGameFreeze<'info> {
     )]
     pub authority: Account<'info, ProgramDelegate>,
 
-    // WNS  programs
+    // WNS programs
     #[account(
         seeds = [
             wen_new_standard::MANAGER_SEED
