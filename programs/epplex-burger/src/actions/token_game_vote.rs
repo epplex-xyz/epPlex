@@ -12,6 +12,7 @@ pub struct TokenGameVote<'info> {
     pub mint: Box<InterfaceAccount<'info, MintInterface>>,
 
     #[account(
+        mut,
         token::mint = mint,
         token::authority = payer,
         token::token_program = token22_program.key(),
@@ -36,10 +37,11 @@ pub struct TokenGameVote<'info> {
     )]
     pub game_config: Account<'info, GameConfig>,
 
-    #[account()]
+    #[account(mut)]
     pub payer: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [
             SEED_PROGRAM_DELEGATE
         ],
@@ -48,6 +50,17 @@ pub struct TokenGameVote<'info> {
     pub update_authority: Account<'info, ProgramDelegate>,
 
     pub token22_program: Program<'info, Token2022>,
+
+    // WNS programs
+    #[account(
+        seeds = [
+            wen_new_standard::MANAGER_SEED
+        ],
+        seeds::program = wen_new_standard::ID,
+        bump
+    )]
+    pub manager: Account<'info, wen_new_standard::Manager>,
+    pub wns: Program<'info, WenNewStandard>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -100,6 +113,37 @@ impl TokenGameVote<'_> {
             anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string(),
         )?;
+
+        if ctx.accounts.game_config.vote_type.eq(&VoteType::VoteOnce) {
+            // TODO this needs to be refactored out
+            anchor_spl::token_interface::approve(
+                CpiContext::new(
+                    ctx.accounts.token22_program.to_account_info(),
+                    anchor_spl::token_interface::Approve {
+                        to: ctx.accounts.token_account.to_account_info(),
+                        delegate: ctx.accounts.update_authority.to_account_info(),
+                        authority: ctx.accounts.payer.to_account_info(),
+                    },
+                ),
+                1
+            )?;
+
+            wen_new_standard::cpi::freeze_mint_account(
+                CpiContext::new_with_signer(
+                    ctx.accounts.wns.to_account_info(),
+                    wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
+                        payer: ctx.accounts.payer.to_account_info(),
+                        user: ctx.accounts.payer.to_account_info(),
+                        delegate_authority: ctx.accounts.update_authority.to_account_info(),
+                        mint: ctx.accounts.mint.to_account_info(),
+                        mint_token_account: ctx.accounts.token_account.to_account_info(),
+                        manager: ctx.accounts.manager.to_account_info(),
+                        token_program: ctx.accounts.token22_program.to_account_info(),
+                    },
+                    &[&seeds[..]],
+                )
+            )?;
+        }
 
         emit!(EvTokenGameVote {
             participant: ctx.accounts.payer.key(),

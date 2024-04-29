@@ -71,10 +71,6 @@ impl TokenGameFreeze<'_> {
         self.game_config
             .check_valid_collection(&self.group_member, self.mint.key())?;
 
-        // Check that the game is in progress
-        // self.game_config
-        //     .assert_game_status(GameStatus::InProgress)?;
-
         Ok(())
     }
 
