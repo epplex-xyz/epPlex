@@ -64,7 +64,7 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.mint.to_account_info(),
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Name,
+                spl_token_metadata_interface::state::Field::Name,
                 params.name.unwrap(),
             )?;
         }
@@ -75,7 +75,7 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.mint.to_account_info(),
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Symbol,
+                spl_token_metadata_interface::state::Field::Symbol,
                 params.symbol.unwrap(),
             )?;
         }
@@ -86,7 +86,7 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.mint.to_account_info(),
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Uri,
+                spl_token_metadata_interface::state::Field::Uri,
                 params.uri.unwrap(),
             )?;
         }
@@ -99,7 +99,7 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.mint.to_account_info(),
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(meta.field),
+                spl_token_metadata_interface::state::Field::Key(meta.field),
                 meta.value,
             )?;
         }

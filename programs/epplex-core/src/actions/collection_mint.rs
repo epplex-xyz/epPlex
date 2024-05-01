@@ -1,7 +1,7 @@
 use crate::mint::{TokenCollectionCreateParams, COLLECTION_ID_FIELD};
 use crate::*;
 use epplex_shared::update_token_metadata;
-// use spl_token_metadata_interface::state::TokenMetadata;
+use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCollectionCreateParams)]
@@ -76,7 +76,7 @@ impl CollectionMint<'_> {
 
     // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCollectionCreateParams) -> Result<()> {
-        let update_authority = anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
             ctx.accounts.update_authority.key(),
         ))
         .expect("Bad update auth");
@@ -175,7 +175,7 @@ impl CollectionMint<'_> {
                 &ctx.accounts.token22_program.key(),
                 &ctx.accounts.mint.to_account_info(), // Metadata on mint account
                 &ctx.accounts.update_authority.to_account_info(),
-                Field::Key(field),
+                spl_token_metadata_interface::state::Field::Key(field),
                 value,
             )?;
         }

@@ -17,7 +17,7 @@ pub struct TokenGameImmunity<'info> {
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        seeds::program = wen_new_standard::ID,
+        seeds::program = wen_new_standard::ID.key(),
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
@@ -73,7 +73,7 @@ impl TokenGameImmunity<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
+            spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
             "true".to_string(),
         )?;
 

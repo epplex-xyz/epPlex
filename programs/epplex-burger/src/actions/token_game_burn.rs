@@ -49,7 +49,7 @@ pub struct TokenGameBurn<'info> {
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        seeds::program = wen_new_standard::ID,
+        seeds::program = wen_new_standard::ID.key(),
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,

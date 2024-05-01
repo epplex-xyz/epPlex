@@ -3,6 +3,7 @@ use anchor_lang::prelude::borsh::BorshDeserialize;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_2022::MintTo;
 use epplex_shared::update_token_metadata;
+use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]
 #[instruction(params: CollectionCreateParams)]
@@ -98,7 +99,7 @@ impl CollectionCreate<'_> {
             global_config.collection_counter.to_string(),
         )];
 
-        let update_authority = anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
             ctx.accounts.update_authority.key(),
         ))
         .expect("Bad update auth");
@@ -156,7 +157,7 @@ impl CollectionCreate<'_> {
                 &ctx.accounts.token22_program.key(),
                 &ctx.accounts.mint.to_account_info(), // Metadata on mint account
                 &ctx.accounts.update_authority.to_account_info(),
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(field),
+                spl_token_metadata_interface::state::Field::Key(field),
                 value,
             )?;
         }

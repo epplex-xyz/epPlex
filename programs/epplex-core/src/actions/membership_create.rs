@@ -8,6 +8,29 @@ pub use anchor_lang::{
     },
 };
 
+pub use anchor_spl::{
+    associated_token::{create, Create},
+    token_2022::spl_token_2022::instruction::AuthorityType,
+    token_interface::{mint_to, set_authority, MintTo, SetAuthority},
+};
+
+pub use spl_token_2022::{
+    extension::ExtensionType,
+    extension::{
+        metadata_pointer::instruction::initialize as initialize_metadata_pointer,
+        transfer_hook::instruction::initialize as intialize_transfer_hook,
+    },
+    instruction::{
+        initialize_mint2, initialize_mint_close_authority, initialize_permanent_delegate,
+    },
+};
+
+pub use spl_token_metadata_interface::{
+    instruction::{
+        initialize as initialize_metadata_account, update_field as update_metadata_account,
+    },
+    state::{Field, TokenMetadata},
+};
 
 #[derive(Accounts)]
 pub struct MembershipCreate<'info> {
@@ -105,7 +128,7 @@ impl<'info> MembershipCreate<'info> {
         .unwrap();
 
         let metadata = TokenMetadata {
-            update_authority: anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+            update_authority: spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
                 self.epplex_authority.key(),
             ))
             .unwrap(),

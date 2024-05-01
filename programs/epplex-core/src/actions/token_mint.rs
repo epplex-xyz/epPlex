@@ -2,7 +2,7 @@ use crate::mint::TokenCreateParams;
 use crate::*;
 use anchor_spl::token_interface::MintTo;
 use epplex_shared::update_token_metadata;
-// use spl_token_metadata_interface::state::TokenMetadata;
+use spl_token_metadata_interface::state::TokenMetadata;
 
 #[derive(Accounts)]
 #[instruction(params: TokenCreateParams)]
@@ -61,7 +61,7 @@ impl TokenMint<'_> {
 
     // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCreateParams) -> Result<()> {
-        let update_authority = anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
+        let update_authority = spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
             ctx.accounts.update_authority.key(),
         ))
         .expect("Bad update auth");
@@ -161,7 +161,7 @@ impl TokenMint<'_> {
                 &ctx.accounts.token22_program.key(),
                 &ctx.accounts.mint.to_account_info(), // Metadata on mint account
                 &ctx.accounts.update_authority.to_account_info(),
-                Field::Key(field),
+                spl_token_metadata_interface::state::Field::Key(field),
                 value,
             )?;
         }

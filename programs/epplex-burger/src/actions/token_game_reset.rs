@@ -16,7 +16,7 @@ pub struct TokenGameReset<'info> {
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        seeds::program = wen_new_standard::ID,
+        seeds::program = wen_new_standard::ID.key(),
         bump,
     )]
     pub group_member: Account<'info, TokenGroupMember>,
@@ -47,7 +47,6 @@ pub struct TokenGameReset<'info> {
     pub token22_program: Program<'info, Token2022>,
 }
 
-
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenGameResetParams {}
 
@@ -72,7 +71,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
+            spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
             "".to_string(),
         )?;
 
@@ -81,7 +80,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
+            spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             "".to_string(),
         )?;
 
@@ -90,7 +89,7 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
+            spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
             "false".to_string(),
         )?;
 
