@@ -45,6 +45,8 @@ pub struct TokenGameReset<'info> {
     pub update_authority: Account<'info, ProgramDelegate>,
 
     pub token22_program: Program<'info, Token2022>,
+
+    pub system_program: Program<'info, System>,
 }
 
 
@@ -99,6 +101,12 @@ impl TokenGameReset<'_> {
             game_round_id: ctx.accounts.game_config.game_round,
             reset_timestamp: Clock::get().unwrap().unix_timestamp,
         });
+
+        epplex_shared::update_account_lamports_to_minimum_balance(
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.payer.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        )?;
 
         Ok(())
     }
