@@ -1,5 +1,6 @@
 use crate::*;
-use spl_token_metadata_interface::state::TokenMetadata;
+// use spl_token_metadata_interface::state::TokenMetadata;
+use anchor_lang::solana_program;
 
 pub fn initialize_mint<'info>(
     mint_account: &AccountInfo<'info>,
@@ -63,7 +64,7 @@ pub fn initialize_token_metadata<'info>(
     symbol: String,
     uri: String,
 ) -> Result<()> {
-    let ix = spl_token_metadata_interface::instruction::initialize(
+    let ix = anchor_spl::token_interface::spl_token_metadata_interface::instruction::initialize(
         program_id,
         // &program_id,
         &metadata.key(),

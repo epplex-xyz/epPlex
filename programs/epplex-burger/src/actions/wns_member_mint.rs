@@ -57,7 +57,7 @@ pub struct WnsMemberMint<'info> {
         seeds = [
             wen_new_standard::MANAGER_SEED
         ],
-        seeds::program = wen_new_standard::ID.key(),
+        seeds::program = wen_new_standard::ID,
         bump
     )]
     pub manager: Account<'info, wen_new_standard::Manager>,

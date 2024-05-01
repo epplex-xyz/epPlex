@@ -19,13 +19,11 @@ pub use events::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token::{Mint, Token, TokenAccount},
-
     // ID as TOKEN_2022_PROGRAM_ID alternatively
     token_2022::{self, Token2022},
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
 use epplex_shared::{burn_token, close_mint, ADMINS};
-use spl_token_metadata_interface::state::TokenMetadata;
 use wen_new_standard::TokenGroupMember;
 
 #[derive(Clone)]
@@ -111,6 +109,14 @@ pub mod epplex_burger {
         TokenGameImmunity::actuate(ctx, params)
     }
 
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn token_game_freeze(
+        ctx: Context<TokenGameFreeze>,
+        params: TokenGameFreezeParams,
+    ) -> Result<()> {
+        TokenGameFreeze::actuate(ctx, params)
+    }
+
     /*
      * Game actions
      */
@@ -163,6 +169,15 @@ pub mod epplex_burger {
         ProgramDelegateClose::actuate(ctx, &params)
     }
 
+    pub fn token_update(ctx: Context<TokenUpdate>, params: TokenUpdateParams) -> Result<()> {
+        TokenUpdate::actuate(ctx, params)
+    }
+
+    pub fn token_thaw(ctx: Context<TokenThaw>, params: TokenThawParams) -> Result<()> {
+        TokenThaw::actuate(ctx, params)
+    }
+
+
     /*
      * DEPRECATED
      * Token actions
@@ -189,18 +204,6 @@ pub mod epplex_burger {
     pub fn token_burn(ctx: Context<TokenBurn>, params: TokenBurnParams) -> Result<()> {
         // This is gated by payer and does not work on a WNS NFT anyway
         TokenBurn::actuate(ctx, params)
-    }
-
-    // #[access_control(ctx.accounts.validate(&ctx, &params))]
-    // pub fn token_update(
-    //     ctx: Context<TokenUpdate>,
-    //     params: TokenBurnParams
-    // ) -> Result<()> {
-    //     TokenUpdate::actuate(ctx, params)
-    // }
-    pub fn token_update(ctx: Context<TokenUpdate>, params: TokenUpdateParams) -> Result<()> {
-        // This is gated by payer and does not work on a WNS NFT anyway
-        TokenUpdate::actuate(ctx, params)
     }
 
     /*
