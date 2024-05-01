@@ -42,7 +42,8 @@ pub struct TokenUpdateParams {
     pub name: Option<String>,
     pub symbol: Option<String>,
     pub uri: Option<String>,
-    pub additional_metadata: Option<AddMetadataArgs>
+    pub additional_metadata: Option<AddMetadataArgs>,
+    pub remove_key: Option<String>
 }
 
 impl TokenUpdate<'_> {
@@ -101,6 +102,19 @@ impl TokenUpdate<'_> {
                 &[&seeds[..]],
                 anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(meta.field),
                 meta.value,
+            )?;
+        }
+
+
+        if params.remove_key.is_some() {
+            let removal_key = params.remove_key.unwrap();
+            epplex_shared::remove_token_metadata_signed(
+                &ctx.accounts.token22_program.key(),
+                &ctx.accounts.mint.to_account_info(),
+                &ctx.accounts.update_authority.to_account_info(),
+                &[&seeds[..]],
+                removal_key,
+                false
             )?;
         }
 
