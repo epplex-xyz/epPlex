@@ -143,11 +143,6 @@ impl GameConfig {
     }
 
     pub fn end(&mut self, game_status: GameStatus) -> Result<()> {
-        // if [GameS]game_status.ne(&GameStatus::Finished)
-        //     || game_status.ne(&GameStatus::Evaluate) {
-        //         return err!(BurgerError::IncorrectGameStatus);
-        // }
-
         if ![GameStatus::Finished, GameStatus::Evaluate].contains(&game_status) {
             return err!(BurgerError::IncorrectGameStatus);
         }
@@ -295,7 +290,8 @@ impl GameConfig {
             }
             InputType::Number => {
                 // Panics if fails to convert
-                message.parse::<u64>().unwrap();
+                // does not work when message is encrypted
+                // message.parse::<u64>().unwrap();
             }
             InputType::Text => {
                 // No checks for now

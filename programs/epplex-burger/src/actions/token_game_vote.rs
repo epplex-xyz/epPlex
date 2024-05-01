@@ -23,7 +23,7 @@ pub struct TokenGameVote<'info> {
             wen_new_standard::MEMBER_ACCOUNT_SEED,
             mint.key().as_ref()
         ],
-        seeds::program = wen_new_standard::ID.key(),
+        seeds::program = wen_new_standard::ID,
         bump,
     )]
     pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
@@ -86,7 +86,7 @@ impl TokenGameVote<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(GAME_STATE.to_string()),
             params.message.clone(),
         )?;
 
@@ -97,21 +97,9 @@ impl TokenGameVote<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(VOTING_TIMESTAMP.to_string()),
             now.to_string(),
         )?;
-
-        // epplex_shared::compute_fn! { "Test emit" =>
-        //     emit!(EvTokenGameVote {
-        //         participant: ctx.accounts.payer.key(),
-        //         answer: params.message.clone(),
-        //         game_round_id: ctx.accounts.game_config.game_round,
-        //         nft: ctx.accounts.mint.key(),
-        //         vote_timestamp: Clock::get().unwrap().unix_timestamp,
-        //     })
-        // }
-
-        // compute_fn! { "Log a string " => msg!("Compute units"); }
 
         emit!(EvTokenGameVote {
             participant: ctx.accounts.payer.key(),
