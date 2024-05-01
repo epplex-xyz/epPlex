@@ -34,25 +34,3 @@ Although the idea probably needs to go through a few more idea iterations.
 |-----------------|----------------|------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | epplex-core     | DEVNET/MAINNET | Main epplex NFT              | `epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg`     | [DEVNET](https://explorer.solana.com/address/epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg?cluster=devnet)/[MAINNET](https://explorer.solana.com/address/epCoD6BqcNinLvKN3KkY55vk4Kxs3W1JTENs1xqWUTg?cluster=mainnet) |
 | epplex-burger   | DEVNET/MAINNET | For custom NFT logic         | `epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n`     | [DEVNET](https://explorer.solana.com/address/epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n?cluster=devnet)/[MAINNET](https://explorer.solana.com/address/epBuJysRKuFMMWTWoX6ZKPz5WTZWb98mDqn1emVj84n?cluster=mainnet)                                                                                                                                                                                                                   |
-
-
-## Team Development
-
-### Setup
-1. Clone epplex repo
-2. Clone sdk repo
-3. Ask Bob for local keypairs
-    4. Put program keypairs into `target/deploy`
-    5. Put local admin keypair into `.local_keys/epplex_PAYER_ADMIN.json`
-        6. pubkey address: `LAdmTEtom7qm3ZmchsrqSkZhPdmZaex7oXCamuMHs9F`
-5. Run: `sh start.sh` in a terminal
-    4. This starts a local validator
-6. Run: `sh start.sh` again in another terminal
-    6. This deploys the programs into the local validator
-7. Set `.env` in SDK repo to localhost `RPC=http://127.0.0.1:8899`
-8. Now your local environment is all set up
-
-
-## Disclaimer
-The code has not been audited.
-
