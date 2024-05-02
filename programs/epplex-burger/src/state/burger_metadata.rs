@@ -18,6 +18,7 @@ pub const VOTING_TIMESTAMP: &str = "votingTimestamp";
 
 // false, true
 pub const IMMUNITY: &str = "immunity";
+pub const NEW_IMMUNITY: &str = "@immunity";
 pub const IMMUNITY_PLACEHOLDER: &str = "false";
 
 // Fields

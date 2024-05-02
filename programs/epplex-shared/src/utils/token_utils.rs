@@ -57,14 +57,37 @@ pub fn update_token_metadata_signed<'info>(
         update_authority.to_account_info(),
     ];
 
-    // TODO not ideal
-    // let (_, bump) = Pubkey::find_program_address(&[SEED_PROGRAM_DELEGATE], &ID);
-
-    // let seeds = &[SEED_PROGRAM_DELEGATE, &[bump]];
     program::invoke_signed(&ix, &account_infos[..], signer_seeds)?;
 
     Ok(())
 }
+
+pub fn remove_token_metadata_signed<'info>(
+    program_id: &Pubkey,
+    metadata: &AccountInfo<'info>,
+    update_authority: &AccountInfo<'info>,
+    signer_seeds: &[&[&[u8]]],
+    removal_key: String,
+    idempotent: bool
+) -> Result<()> {
+    let ix = anchor_spl::token_interface::spl_token_metadata_interface::instruction::remove_key(
+        &program_id,
+        &metadata.key(),
+        &update_authority.key(),
+        removal_key,
+        idempotent
+    );
+
+    let account_infos: Vec<AccountInfo> = vec![
+        metadata.to_account_info(),
+        update_authority.to_account_info(),
+    ];
+
+    program::invoke_signed(&ix, &account_infos[..], signer_seeds)?;
+
+    Ok(())
+}
+
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,

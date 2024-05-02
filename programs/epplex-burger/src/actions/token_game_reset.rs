@@ -45,6 +45,8 @@ pub struct TokenGameReset<'info> {
     pub update_authority: Account<'info, ProgramDelegate>,
 
     pub token22_program: Program<'info, Token2022>,
+
+    pub system_program: Program<'info, System>,
 }
 
 
@@ -90,8 +92,17 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(NEW_IMMUNITY.to_string()),
             "false".to_string(),
+        )?;
+
+        epplex_shared::remove_token_metadata_signed(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.update_authority.to_account_info(),
+            &[&seeds[..]],
+            IMMUNITY.to_string(),
+            true
         )?;
 
         emit!(EvTokenGameReset {
@@ -99,6 +110,12 @@ impl TokenGameReset<'_> {
             game_round_id: ctx.accounts.game_config.game_round,
             reset_timestamp: Clock::get().unwrap().unix_timestamp,
         });
+
+        epplex_shared::update_account_lamports_to_minimum_balance(
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.payer.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        )?;
 
         Ok(())
     }
