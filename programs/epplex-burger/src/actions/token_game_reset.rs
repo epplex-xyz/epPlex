@@ -92,8 +92,17 @@ impl TokenGameReset<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(IMMUNITY.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(NEW_IMMUNITY.to_string()),
             "false".to_string(),
+        )?;
+
+        epplex_shared::remove_token_metadata_signed(
+            &ctx.accounts.token22_program.key(),
+            &ctx.accounts.mint.to_account_info(),
+            &ctx.accounts.update_authority.to_account_info(),
+            &[&seeds[..]],
+            IMMUNITY.to_string(),
+            true
         )?;
 
         emit!(EvTokenGameReset {
