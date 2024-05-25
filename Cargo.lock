@@ -963,8 +963,8 @@ dependencies = [
  "anchor-spl",
  "epplex-core",
  "epplex-shared",
- "wen_new_standard 0.3.2-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
+ "wen_new_standard 0.3.2-alpha (git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50)",
+ "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50)",
 ]
 
 [[package]]
@@ -976,8 +976,8 @@ dependencies = [
  "anchor-spl",
  "epplex-shared",
  "solana-security-txt",
- "wen_new_standard 0.3.2-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
+ "wen_new_standard 0.3.2-alpha (git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50)",
+ "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50)",
 ]
 
 [[package]]
@@ -2731,13 +2731,13 @@ dependencies = [
 [[package]]
 name = "wen_new_standard"
 version = "0.3.2-alpha"
-source = "git+https://github.com/wen-community/wen-new-standard.git#e93500e024cad62b93aed9da1f43ef578a278199"
+source = "git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50#07bb9c07144b2addaafc204fd75f29832592cb50"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
  "spl-tlv-account-resolution 0.4.0",
  "spl-transfer-hook-interface 0.5.1",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-new-standard.git)",
+ "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50)",
 ]
 
 [[package]]
@@ -2754,7 +2754,7 @@ dependencies = [
 [[package]]
 name = "wen_royalty_distribution"
 version = "0.2.0-alpha"
-source = "git+https://github.com/wen-community/wen-new-standard.git#e93500e024cad62b93aed9da1f43ef578a278199"
+source = "git+https://github.com/wen-community/wen-program-library.git?rev=07bb9c07144b2addaafc204fd75f29832592cb50#07bb9c07144b2addaafc204fd75f29832592cb50"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
