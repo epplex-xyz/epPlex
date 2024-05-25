@@ -61,6 +61,7 @@ pub struct TokenGameVote<'info> {
     )]
     pub manager: Account<'info, wen_new_standard::Manager>,
     pub wns: Program<'info, WenNewStandard>,
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
@@ -144,6 +145,13 @@ impl TokenGameVote<'_> {
                 )
             )?;
         }
+
+        epplex_shared::update_account_lamports_to_minimum_balance(
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.payer.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        )?;
+
 
         emit!(EvTokenGameVote {
             participant: ctx.accounts.payer.key(),
