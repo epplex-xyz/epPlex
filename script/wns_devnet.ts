@@ -22,7 +22,7 @@ function replaceId(programName: string, programDir: string) {
         // Replace localpath
         `${programName} = { path = "../${programName}"`,
         // With devnet path
-        `${programName} = { git = "https://github.com/wen-community/wen-new-standard.git"`,
+        `${programName} = { git = "https://github.com/wen-community/wen-program-library.git"`,
         path.join(projectRoot, "programs", programDir, "Cargo.toml")
     );
 }
