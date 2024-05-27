@@ -78,10 +78,11 @@ pub struct WnsMemberMint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WnsMemberMintParams {
-    pub expiry_date: String,
+    pub expiry_date: Option<String>,
     pub name: String,
     pub symbol: String,
     pub uri: String,
+    pub creators: Option<Vec<wen_new_standard::CreatorWithShare>>,
 }
 
 impl WnsMemberMint<'_> {
@@ -123,7 +124,8 @@ impl WnsMemberMint<'_> {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
-                permanent_delegate: Some(epplex_auth),
+                permanent_delegate: None
+                // permanent_delegate: Some(epplex_auth),
             },
         )?;
 
@@ -143,6 +145,13 @@ impl WnsMemberMint<'_> {
             &[&seeds[..]],
         ))?;
 
+        let mut creators = vec![wen_new_standard::CreatorWithShare {
+            address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
+            share: ROYALTY_SHARE,
+        }];
+        if params.creators.is_some() {
+            creators = params.creators.unwrap();
+        }
         // 3. Add royalties
         wen_new_standard::cpi::add_royalties(
             CpiContext::new_with_signer(
@@ -159,12 +168,14 @@ impl WnsMemberMint<'_> {
             ),
             wen_new_standard::mint::UpdateRoyaltiesArgs {
                 royalty_basis_points: ROYALTY_BASIS_POINTS,
-                creators: vec![wen_new_standard::CreatorWithShare {
-                    address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
-                    share: ROYALTY_SHARE,
-                }],
+                creators,
             },
         )?;
+
+        let mut metadata = vec![];
+        if params.expiry_date.is_some() {
+            metadata = generate_metadata2(params.expiry_date.unwrap())
+        }
 
         // 4. Add other metadata
         wen_new_standard::cpi::add_metadata(
@@ -179,7 +190,7 @@ impl WnsMemberMint<'_> {
                 },
                 &[&seeds[..]],
             ),
-            generate_metadata2(params.expiry_date),
+            metadata
         )?;
 
         Ok(())
