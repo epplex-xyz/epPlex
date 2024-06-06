@@ -18,7 +18,6 @@ idl-build = [
     "anchor-lang/idl-build",
     "anchor-spl/idl-build",
     "epplex-shared/idl-build",
-    "wen_new_standard/idl-build",
     "wen_royalty_distribution/idl-build"
 ]
 no-entrypoint = []
@@ -28,15 +27,17 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"]  }
-anchor-spl = { version = "0.30.0", features = ["token_2022_extensions", "token_2022"] }
+anchor-lang.workspace = true
+anchor-spl.workspace = true
+# anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"]  }
+# anchor-spl = { version = "0.30.0", features = ["token_2022_extensions", "token_2022"] }
 
 epplex-shared = { path = "../epplex-shared", features=["no-entrypoint"] }
 solana-security-txt = "1.0.1"
 ahash = "=0.8.6"
 
-wen_new_standard = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
-wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
+wen_new_standard = { version = "0.4.0-alpha" }
+wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", features = ["no-entrypoint", "cpi"] }
 
-# wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
-# wen_royalty_distribution = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
+# wen_new_standard = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
+# wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
