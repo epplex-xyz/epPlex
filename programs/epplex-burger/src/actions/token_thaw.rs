@@ -42,14 +42,18 @@ pub struct TokenThaw<'info> {
     pub authority: Account<'info, ProgramDelegate>,
 
     // WNS  programs
-    #[account(
-        seeds = [
-            wen_new_standard::MANAGER_SEED
-        ],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [
+    //         wen_new_standard::MANAGER_SEED
+    //     ],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
+
 
     pub token22_program: Program<'info, Token2022>,
     pub wns: Program<'info, WenNewStandard>,
@@ -65,21 +69,19 @@ impl TokenThaw<'_> {
 
     pub fn actuate(ctx: Context<Self>, _params: TokenThawParams) -> Result<()> {
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.authority.bump]];
-        wen_new_standard::cpi::thaw_mint_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::ThawDelegatedAccount {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    user: ctx.accounts.user.to_account_info(),
-                    delegate_authority: ctx.accounts.authority.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    mint_token_account: ctx.accounts.token_account.to_account_info(),
-                    manager: ctx.accounts.manager.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-        )?;
+        let signers_seeds = &[&seeds[..]];
+
+        wen_new_standard::instructions::ThawMintAccountCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::ThawMintAccountCpiAccounts{
+                user: &ctx.accounts.user.to_account_info(),
+                delegate_authority: &ctx.accounts.authority.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                mint_token_account: &ctx.accounts.token_account.to_account_info(),
+                manager: &ctx.accounts.manager.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
+            }
+        ).invoke_signed(signers_seeds)?;
 
         Ok(())
     }

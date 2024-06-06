@@ -53,14 +53,17 @@ pub struct WnsMemberMint<'info> {
     /// CHECK:
     pub member: UncheckedAccount<'info>,
 
-    #[account(
-        seeds = [
-            wen_new_standard::MANAGER_SEED
-        ],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [
+    //         wen_new_standard::MANAGER_SEED
+    //     ],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK: This account's data is a buffer of TLV data, will be initialised
@@ -82,7 +85,8 @@ pub struct WnsMemberMintParams {
     pub name: String,
     pub symbol: String,
     pub uri: String,
-    pub creators: Option<Vec<wen_new_standard::CreatorWithShare>>,
+    pub creators: Option<Vec<wen_new_standard::types::CreatorWithShare>>,
+    pub add_permanent_delegate: bool,
 }
 
 impl WnsMemberMint<'_> {
@@ -99,99 +103,94 @@ impl WnsMemberMint<'_> {
             SEED_PROGRAM_DELEGATE,
             &[ctx.accounts.permanent_delegate.bump],
         ];
+        let signers_seeds = &[&seeds[..]];
         let epplex_auth =
             Pubkey::find_program_address(&[epplex_core::SEED_EPHEMERAL_AUTH], &epplex_core::ID).0;
 
         // 1. Create mint account
-        wen_new_standard::cpi::create_mint_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::CreateMintAccount {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    receiver: ctx.accounts.payer.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    mint_token_account: ctx.accounts.token_account.to_account_info(),
-                    manager: ctx.accounts.manager.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
-                    associated_token_program: ctx.accounts.associated_token.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            wen_new_standard::mint::CreateMintAccountArgs {
-                name: params.name,
-                symbol: params.symbol,
-                uri: params.uri,
-                permanent_delegate: None
-                // permanent_delegate: Some(epplex_auth),
+        wen_new_standard::instructions::CreateMintAccountCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::CreateMintAccountCpiAccounts{
+                payer: &ctx.accounts.payer.to_account_info(),
+                authority: &ctx.accounts.permanent_delegate.to_account_info(),
+                receiver: &ctx.accounts.payer.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                mint_token_account: &ctx.accounts.token_account.to_account_info(),
+                manager: &ctx.accounts.manager.to_account_info(),
+                system_program: &ctx.accounts.system_program.to_account_info(),
+                associated_token_program: &ctx.accounts.associated_token.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
             },
-        )?;
+            wen_new_standard::instructions::CreateMintAccountInstructionArgs {
+                args: wen_new_standard::types::CreateMintAccountArgs {
+                    name: params.name,
+                    symbol: params.symbol,
+                    uri: params.uri,
+                    permanent_delegate: if params.add_permanent_delegate { Some(epplex_auth) } else { None }
+                }
+            }
+        ).invoke_signed(signers_seeds)?;
 
         // 2. Add mint to group
-        wen_new_standard::cpi::add_mint_to_group(CpiContext::new_with_signer(
-            ctx.accounts.wns.to_account_info(),
-            wen_new_standard::cpi::accounts::AddGroup {
-                payer: ctx.accounts.payer.to_account_info(),
-                authority: ctx.accounts.permanent_delegate.to_account_info(),
-                group: ctx.accounts.group.to_account_info(),
-                member: ctx.accounts.member.to_account_info(),
-                mint: ctx.accounts.mint.to_account_info(),
-                manager: ctx.accounts.manager.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                token_program: ctx.accounts.token22_program.to_account_info(),
-            },
-            &[&seeds[..]],
-        ))?;
+        wen_new_standard::instructions::AddMintToGroupCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::AddMintToGroupCpiAccounts{
+                payer: &ctx.accounts.payer.to_account_info(),
+                authority: &ctx.accounts.permanent_delegate.to_account_info(),
+                group: &ctx.accounts.group.to_account_info(),
+                member: &ctx.accounts.member.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                manager: &ctx.accounts.manager.to_account_info(),
+                system_program: &ctx.accounts.system_program.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
+            }
+        ).invoke_signed(signers_seeds)?;
 
-        let mut creators = vec![wen_new_standard::CreatorWithShare {
+        let mut creators = vec![wen_new_standard::types::CreatorWithShare {
             address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
             share: ROYALTY_SHARE,
         }];
         if params.creators.is_some() {
             creators = params.creators.unwrap();
         }
+
         // 3. Add royalties
-        wen_new_standard::cpi::add_royalties(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::AddRoyalties {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    extra_metas_account: ctx.accounts.extra_metas_account.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            wen_new_standard::mint::UpdateRoyaltiesArgs {
-                royalty_basis_points: ROYALTY_BASIS_POINTS,
-                creators,
+        wen_new_standard::instructions::AddRoyaltiesCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::AddRoyaltiesCpiAccounts {
+                payer: &ctx.accounts.payer.to_account_info(),
+                authority: &ctx.accounts.permanent_delegate.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                extra_metas_account: &ctx.accounts.extra_metas_account.to_account_info(),
+                system_program: &ctx.accounts.system_program.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
             },
-        )?;
+            wen_new_standard::instructions::AddRoyaltiesInstructionArgs {
+                args: wen_new_standard::types::UpdateRoyaltiesArgs {
+                    royalty_basis_points: ROYALTY_BASIS_POINTS,
+                    creators,
+                }
+            }
+        ).invoke_signed(signers_seeds)?;
+
 
         let mut metadata = vec![];
         if params.expiry_date.is_some() {
             metadata = generate_metadata2(params.expiry_date.unwrap())
         }
-
-        // 4. Add other metadata
-        wen_new_standard::cpi::add_metadata(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::AddMetadata {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            metadata
-        )?;
+        wen_new_standard::instructions::AddMetadataCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::AddMetadataCpiAccounts{
+                payer: &ctx.accounts.payer.to_account_info(),
+                authority: &ctx.accounts.permanent_delegate.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                system_program: &ctx.accounts.system_program.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
+             },
+             wen_new_standard::instructions::AddMetadataInstructionArgs {
+                args: metadata
+             }
+        ).invoke_signed(signers_seeds)?;
 
         Ok(())
     }

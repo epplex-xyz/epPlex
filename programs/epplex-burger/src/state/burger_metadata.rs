@@ -1,6 +1,5 @@
 use crate::*;
 use epplex_shared::{BITS_8, DISCRIMINATOR_LENGTH};
-use wen_new_standard::AddMetadataArgs;
 
 #[constant]
 pub const SEED_BURGER_METADATA: &[u8] = b"burgermetadata";
@@ -41,7 +40,7 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
     ]
 }
 
-pub fn generate_metadata2(expiry_data: String) -> Vec<wen_new_standard::AddMetadataArgs> {
+pub fn generate_metadata2(expiry_data: String) -> Vec<wen_new_standard::types::AddMetadataArgs> {
     vec![
         AddMetadataArgs {
             field: EXPIRY_FIELD.to_string(),

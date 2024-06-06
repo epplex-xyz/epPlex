@@ -14,13 +14,14 @@ pub struct TokenGameImmunity<'info> {
 
     #[account(
         seeds = [
-            wen_new_standard::MEMBER_ACCOUNT_SEED,
+            // wen_new_standard::MEMBER_ACCOUNT_SEED,
+            b"member",
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID,
         bump,
     )]
-    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
+    pub group_member: Account<'info, TokenGroupMember2>,
 
     #[account(
         seeds = [

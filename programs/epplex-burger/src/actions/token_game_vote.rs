@@ -21,13 +21,14 @@ pub struct TokenGameVote<'info> {
 
     #[account(
         seeds = [
-            wen_new_standard::MEMBER_ACCOUNT_SEED,
+            // wen_new_standard::MEMBER_ACCOUNT_SEED,
+            b"member",
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID,
         bump,
     )]
-    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
+    pub group_member: Account<'info, TokenGroupMember2>,
 
     #[account(
         seeds = [
@@ -52,14 +53,18 @@ pub struct TokenGameVote<'info> {
     pub token22_program: Program<'info, Token2022>,
 
     // WNS programs
-    #[account(
-        seeds = [
-            wen_new_standard::MANAGER_SEED
-        ],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [
+    //         wen_new_standard::MANAGER_SEED
+    //     ],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
+
     pub wns: Program<'info, WenNewStandard>,
     pub system_program: Program<'info, System>,
 }
@@ -94,6 +99,7 @@ impl TokenGameVote<'_> {
             .bump_submission_amount(game_state)?;
 
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.update_authority.bump]];
+        let signers_seeds = &[&seeds[..]];
         // Update game state
         epplex_shared::update_token_metadata_signed(
             &ctx.accounts.token22_program.key(),
@@ -129,21 +135,17 @@ impl TokenGameVote<'_> {
                 1
             )?;
 
-            wen_new_standard::cpi::freeze_mint_account(
-                CpiContext::new_with_signer(
-                    ctx.accounts.wns.to_account_info(),
-                    wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
-                        payer: ctx.accounts.payer.to_account_info(),
-                        user: ctx.accounts.payer.to_account_info(),
-                        delegate_authority: ctx.accounts.update_authority.to_account_info(),
-                        mint: ctx.accounts.mint.to_account_info(),
-                        mint_token_account: ctx.accounts.token_account.to_account_info(),
-                        manager: ctx.accounts.manager.to_account_info(),
-                        token_program: ctx.accounts.token22_program.to_account_info(),
-                    },
-                    &[&seeds[..]],
-                )
-            )?;
+            wen_new_standard::instructions::FreezeMintAccountCpi::new(
+                &ctx.accounts.wns.to_account_info(),
+                wen_new_standard::instructions::FreezeMintAccountCpiAccounts{
+                    user: &ctx.accounts.payer.to_account_info(),
+                    delegate_authority: &ctx.accounts.update_authority.to_account_info(),
+                    mint: &ctx.accounts.mint.to_account_info(),
+                    mint_token_account: &ctx.accounts.token_account.to_account_info(),
+                    manager: &ctx.accounts.manager.to_account_info(),
+                    token_program: &ctx.accounts.token22_program.to_account_info(),
+                }
+            ).invoke_signed(signers_seeds)?;
         }
 
         epplex_shared::update_account_lamports_to_minimum_balance(

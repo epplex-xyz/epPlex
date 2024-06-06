@@ -89,12 +89,15 @@ pub struct MembershipWnsBurn<'info> {
     pub metas_account_list: AccountInfo<'info>,
 
     // For burning
-    #[account(
-        seeds = [wen_new_standard::MANAGER_SEED],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [wen_new_standard::MANAGER_SEED],
+    //     seeds::program = wen_new_standard.key(),
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::accounts::Manager>,
+    #[account()]
+    /// CHECK: This account can be any mint or SOL
+    pub manager: UncheckedAccount<'info>,
 
     // Approve
     #[account(mut)]
@@ -135,6 +138,7 @@ impl MembershipWnsBurn<'_> {
 
     pub fn burn(ctx: Context<MembershipWnsBurn>) -> Result<()> {
         let seeds: &[&[u8]; 2] = &[SEED_EPHEMERAL_AUTH, &[ctx.bumps.epplex_authority]];
+        let signers_seeds = &[&seeds[..]];
 
         // 0. Create pda on ATA epplex_auth
         create(CpiContext::new_with_signer(
@@ -147,37 +151,29 @@ impl MembershipWnsBurn<'_> {
                 system_program: ctx.accounts.system_program.to_account_info(),
                 token_program: ctx.accounts.token22_program.to_account_info(),
             },
-            &[&seeds[..]],
+            signers_seeds,
         ))?;
 
+
         // 1. Approve transfer
-        wen_new_standard::cpi::approve_transfer(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::ApproveTransfer {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.epplex_authority.to_account_info(),
-                    mint: ctx.accounts.membership.to_account_info(),
-                    approve_account: ctx.accounts.approve_account.to_account_info(),
-                    payment_mint: ctx.accounts.payment_mint.to_account_info(),
-                    distribution_token_account: ctx
-                        .accounts
-                        .distribution_token_account
-                        .to_account_info(),
-                    authority_token_account: ctx.accounts.membership_ata.to_account_info(),
-                    distribution_account: ctx.accounts.distribution_account.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    distribution_program: ctx.accounts.wrd.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                    associated_token_program: ctx
-                        .accounts
-                        .associated_token_program
-                        .to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            1,
-        )?;
+        wen_new_standard::instructions::ApproveTransferCpi{
+            __program: &ctx.accounts.wns.to_account_info(),
+            __args: wen_new_standard::instructions::ApproveTransferInstructionArgs{ buy_amount: 1 },
+            payer: &ctx.accounts.payer.to_account_info(),
+            authority: &ctx.accounts.epplex_authority.to_account_info(),
+            mint: &ctx.accounts.membership.to_account_info(),
+            approve_account: &ctx.accounts.approve_account.to_account_info(),
+            payment_mint: &ctx.accounts.payment_mint.to_account_info(),
+            distribution_token_account: Some(&ctx
+                .accounts
+                .distribution_token_account
+                .to_account_info()),
+            authority_token_account: Some(&ctx.accounts.membership_ata.to_account_info()),
+            distribution_account: &ctx.accounts.distribution_account.to_account_info(),
+            system_program: &ctx.accounts.system_program.to_account_info(),
+            distribution_program: &ctx.accounts.wrd.to_account_info(),
+            token_program: &ctx.accounts.token22_program.to_account_info()
+        }.invoke_signed(signers_seeds)?;
 
         // 2. Transfer with transfer hook
         invoke_transfer_checked(
@@ -193,22 +189,19 @@ impl MembershipWnsBurn<'_> {
             ],
             1u64,
             0u8,
-            &[&seeds[..]],
+            signers_seeds,
         )?;
 
         // 3. Burn token, close mint and close token account
-        wen_new_standard::cpi::burn_mint_account(CpiContext::new_with_signer(
-            ctx.accounts.wns.to_account_info(),
-            wen_new_standard::cpi::accounts::BurnMintAccount {
-                payer: ctx.accounts.payer.to_account_info(),
-                user: ctx.accounts.epplex_authority.to_account_info(),
-                mint: ctx.accounts.membership.to_account_info(),
-                mint_token_account: ctx.accounts.membership_ata.to_account_info(),
-                manager: ctx.accounts.manager.to_account_info(),
-                token_program: ctx.accounts.token22_program.to_account_info(),
-            },
-            &[&seeds[..]],
-        ))?;
+        wen_new_standard::instructions::BurnMintAccountCpi{
+            __program: &ctx.accounts.wns.to_account_info(),
+            payer: &ctx.accounts.payer.to_account_info(),
+            user: &ctx.accounts.epplex_authority.to_account_info(),
+            mint: &ctx.accounts.membership.to_account_info(),
+            mint_token_account: &ctx.accounts.membership_ata.to_account_info(),
+            manager: &ctx.accounts.manager.to_account_info(),
+            token_program: &ctx.accounts.token22_program.to_account_info(),
+        }.invoke_signed(signers_seeds)?;
 
         Ok(())
     }

@@ -46,14 +46,15 @@ pub struct TokenGameBurn<'info> {
 
     #[account(
         seeds = [
-            wen_new_standard::MEMBER_ACCOUNT_SEED,
+            // wen_new_standard::MEMBER_ACCOUNT_SEED,
+            b"member",
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID,
         bump,
     )]
-    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
-
+    pub group_member: Account<'info, TokenGroupMember2>,
+    
     // TODO maybe change to game_master
     #[account(
         mut,
@@ -112,12 +113,15 @@ pub struct TokenGameBurn<'info> {
     /// CHECK: no need to check it out, the invoke_transfer will check for us
     pub metas_account_list: AccountInfo<'info>,
 
-    #[account(
-        seeds = [wen_new_standard::MANAGER_SEED],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [wen_new_standard::MANAGER_SEED],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
 
     // Approve
     #[account(mut)]

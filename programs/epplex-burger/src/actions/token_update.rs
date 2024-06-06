@@ -31,11 +31,11 @@ pub struct TokenUpdate<'info> {
     pub system_program: Program<'info, System>,
 }
 
-#[derive(Clone, AnchorDeserialize, AnchorSerialize)]
-pub struct AddMetadataArgs {
-    pub field: String,
-    pub value: String,
-}
+// #[derive(Clone, AnchorDeserialize, AnchorSerialize)]
+// pub struct AddMetadataArgs {
+//     pub field: String,
+//     pub value: String,
+// }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenUpdateParams {

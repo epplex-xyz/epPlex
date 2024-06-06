@@ -21,13 +21,14 @@ pub struct TokenGameFreeze<'info> {
 
     #[account(
         seeds = [
-            wen_new_standard::MEMBER_ACCOUNT_SEED,
+            // wen_new_standard::MEMBER_ACCOUNT_SEED,
+            b"member",
             mint.key().as_ref()
         ],
         seeds::program = wen_new_standard::ID,
         bump,
     )]
-    pub group_member: Account<'info, wen_new_standard::TokenGroupMember>,
+    pub group_member: Account<'info, TokenGroupMember2>,
 
     #[account(
         seeds = [
@@ -50,14 +51,17 @@ pub struct TokenGameFreeze<'info> {
     pub authority: Account<'info, ProgramDelegate>,
 
     // WNS programs
-    #[account(
-        seeds = [
-            wen_new_standard::MANAGER_SEED
-        ],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [
+    //         wen_new_standard::MANAGER_SEED
+    //     ],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
 
     pub token22_program: Program<'info, Token2022>,
     pub wns: Program<'info, WenNewStandard>,
@@ -76,6 +80,7 @@ impl TokenGameFreeze<'_> {
 
     pub fn actuate(ctx: Context<Self>, _params: TokenGameFreezeParams) -> Result<()> {
         let seeds = &[SEED_PROGRAM_DELEGATE, &[ctx.accounts.authority.bump]];
+        let signers_seeds = &[&seeds[..]];
         anchor_spl::token_interface::approve(
             CpiContext::new(
                 ctx.accounts.token22_program.to_account_info(),
@@ -88,21 +93,33 @@ impl TokenGameFreeze<'_> {
             1
         )?;
 
-        wen_new_standard::cpi::freeze_mint_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    user: ctx.accounts.payer.to_account_info(),
-                    delegate_authority: ctx.accounts.authority.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    mint_token_account: ctx.accounts.token_account.to_account_info(),
-                    manager: ctx.accounts.manager.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            )
-        )?;
+        wen_new_standard::instructions::FreezeMintAccountCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::FreezeMintAccountCpiAccounts {
+                user: &ctx.accounts.payer.to_account_info(),
+                delegate_authority: &ctx.accounts.authority.to_account_info(),
+                mint: &ctx.accounts.mint.to_account_info(),
+                mint_token_account: &ctx.accounts.token_account.to_account_info(),
+                manager: &ctx.accounts.manager.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
+            }
+        ).invoke_signed(signers_seeds)?;
+
+        // wen_new_standard::cpi::freeze_mint_account(
+        //     CpiContext::new_with_signer(
+        //         ctx.accounts.wns.to_account_info(),
+        //         wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
+        //             payer: ctx.accounts.payer.to_account_info(),
+        //             user: ctx.accounts.payer.to_account_info(),
+        //             delegate_authority: ctx.accounts.authority.to_account_info(),
+        //             mint: ctx.accounts.mint.to_account_info(),
+        //             mint_token_account: ctx.accounts.token_account.to_account_info(),
+        //             manager: ctx.accounts.manager.to_account_info(),
+        //             token_program: ctx.accounts.token22_program.to_account_info(),
+        //         },
+        //         &[&seeds[..]],
+        //     )
+        // )?;
 
         Ok(())
     }

@@ -24,7 +24,8 @@ use anchor_spl::{
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
 use epplex_shared::{burn_token, close_mint, ADMINS};
-use wen_new_standard::TokenGroupMember;
+// use wen_new_standard::accounts::TokenGroupMember;
+use wen_new_standard::types::AddMetadataArgs;
 
 #[derive(Clone)]
 pub struct WenNewStandard;
@@ -43,6 +44,36 @@ impl Id for WenRoyaltyDistribution {
         wen_royalty_distribution::ID
     }
 }
+
+#[derive(Clone)]
+pub struct TokenGroupMember2(wen_new_standard::accounts::TokenGroupMember);
+
+impl anchor_lang::AccountDeserialize for TokenGroupMember2 {
+    fn try_deserialize_unchecked(buf: &mut &[u8]) -> Result<Self> {
+        // wen_new_standard::accounts::TokenGroupMember::deserialize(buf).map_err(|e| e.into())
+        wen_new_standard::accounts::TokenGroupMember::deserialize(buf).map(TokenGroupMember2).map_err(|e| e.into())
+        // wen_new_standard::accounts::TokenGroupMember::from_bytes(buf)
+    }
+}
+
+impl anchor_lang::AccountSerialize for TokenGroupMember2 {}
+
+impl anchor_lang::Owner for TokenGroupMember2 {
+    fn owner() -> Pubkey {
+        // pub use spl_token::ID is used at the top of the file
+        ID
+    }
+}
+
+// Implement the "std::ops::Deref" trait for better user experience
+impl std::ops::Deref for TokenGroupMember2 {
+    type Target = wen_new_standard::accounts::TokenGroupMember;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 
 #[program]
 pub mod epplex_burger {

@@ -39,14 +39,17 @@ pub struct WnsGroupMint<'info> {
     /// CHECK: This account's data is a buffer of TLV data, will be initialised
     pub extra_metas_account: UncheckedAccount<'info>,
 
-    #[account(
-        seeds = [
-            wen_new_standard::MANAGER_SEED
-        ],
-        seeds::program = wen_new_standard::ID,
-        bump
-    )]
-    pub manager: Account<'info, wen_new_standard::Manager>,
+    // #[account(
+    //     seeds = [
+    //         wen_new_standard::MANAGER_SEED
+    //     ],
+    //     seeds::program = wen_new_standard::ID,
+    //     bump
+    // )]
+    // pub manager: Account<'info, wen_new_standard::Manager>,
+    #[account()]
+    /// CHECK: cpi checks
+    pub manager: UncheckedAccount<'info>,
 
     #[account(mut)]
     /// CHECK:
@@ -82,35 +85,45 @@ impl WnsGroupMint<'_> {
             SEED_PROGRAM_DELEGATE,
             &[ctx.accounts.permanent_delegate.bump],
         ];
+        let signers_seeds = &[&seeds[..]];
 
         // 1. Create group account
-        wen_new_standard::cpi::create_group_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::CreateGroupAccount {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    authority: ctx.accounts.permanent_delegate.to_account_info(),
-                    receiver: ctx.accounts.payer.to_account_info(),
-                    group: ctx.accounts.group.to_account_info(),
-                    mint: ctx.accounts.group_mint.to_account_info(),
-                    mint_token_account: ctx.accounts.token_account.to_account_info(),
-                    manager: ctx.accounts.manager.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
-                    associated_token_program: ctx.accounts.associated_token.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            ),
-            wen_new_standard::CreateGroupAccountArgs {
-                name: params.name,
-                symbol: params.symbol,
-                uri: params.uri,
-                max_size: params.max_size,
+        wen_new_standard::instructions::CreateGroupAccountCpi::new(
+            &ctx.accounts.wns.to_account_info(),
+            wen_new_standard::instructions::CreateGroupAccountCpiAccounts{
+                payer: &ctx.accounts.payer.to_account_info(),
+                authority: &ctx.accounts.permanent_delegate.to_account_info(),
+                receiver: &ctx.accounts.payer.to_account_info(),
+                group: &ctx.accounts.group.to_account_info(),
+                mint: &ctx.accounts.group_mint.to_account_info(),
+                mint_token_account: &ctx.accounts.token_account.to_account_info(),
+                manager: &ctx.accounts.manager.to_account_info(),
+                system_program: &ctx.accounts.system_program.to_account_info(),
+                associated_token_program: &ctx.accounts.associated_token.to_account_info(),
+                token_program: &ctx.accounts.token22_program.to_account_info(),
             },
-        )?;
+            wen_new_standard::instructions::CreateGroupAccountInstructionArgs {
+                args: wen_new_standard::types::CreateGroupAccountArgs {
+                    name: params.name,
+                    symbol: params.symbol,
+                    uri: params.uri,
+                    max_size: params.max_size
+                }
+            },
+        ).invoke_signed(signers_seeds)?;
+
 
         // 2. Create distribution account from royalties program
+        // wen_royalty_distribution::cpi::initialize_distribution(CpiContext::new(
+        //     ctx.accounts.royalty_program.to_account_info(),
+        //     wen_royalty_distribution::cpi::accounts::InitializeDistribution {
+        //         payer: ctx.accounts.payer.to_account_info(),
+        //         group_mint: ctx.accounts.group_mint.to_account_info(),
+        //         distribution_account: ctx.accounts.distribution_account.to_account_info(),
+        //         system_program: ctx.accounts.system_program.to_account_info(),
+        //     },
+        // ),
+        // params.payment_mint)?;
         wen_royalty_distribution::cpi::initialize_distribution(
             CpiContext::new(
                 ctx.accounts.royalty_program.to_account_info(),
