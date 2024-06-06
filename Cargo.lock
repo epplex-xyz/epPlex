@@ -374,7 +374,7 @@ dependencies = [
  "spl-token",
  "spl-token-2022",
  "spl-token-group-interface",
- "spl-token-metadata-interface 0.3.3",
+ "spl-token-metadata-interface",
 ]
 
 [[package]]
@@ -388,7 +388,7 @@ dependencies = [
  "spl-token",
  "spl-token-2022",
  "spl-token-group-interface",
- "spl-token-metadata-interface 0.3.3",
+ "spl-token-metadata-interface",
 ]
 
 [[package]]
@@ -1130,8 +1130,8 @@ dependencies = [
  "anchor-spl 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "epplex-core",
  "epplex-shared",
- "wen_new_standard 0.4.0-alpha",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-program-library.git)",
+ "wen_new_standard",
+ "wen_royalty_distribution",
 ]
 
 [[package]]
@@ -1143,8 +1143,8 @@ dependencies = [
  "anchor-spl 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "epplex-shared",
  "solana-security-txt",
- "wen_new_standard 0.4.0-alpha",
- "wen_royalty_distribution 0.2.0-alpha (git+https://github.com/wen-community/wen-program-library.git)",
+ "wen_new_standard",
+ "wen_royalty_distribution",
 ]
 
 [[package]]
@@ -2350,7 +2350,6 @@ version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85a5db7e4efb1107b0b8e52a13f035437cdcb36ef99c58f6d467f089d9b2915a"
 dependencies = [
- "borsh 0.10.3",
  "bytemuck",
  "solana-program",
  "solana-zk-token-sdk",
@@ -2495,7 +2494,7 @@ dependencies = [
  "spl-pod 0.2.2",
  "spl-token",
  "spl-token-group-interface",
- "spl-token-metadata-interface 0.3.3",
+ "spl-token-metadata-interface",
  "spl-transfer-hook-interface 0.6.3",
  "spl-type-length-value 0.4.3",
  "thiserror",
@@ -2512,20 +2511,6 @@ dependencies = [
  "spl-discriminator 0.2.2",
  "spl-pod 0.2.2",
  "spl-program-error 0.4.1",
-]
-
-[[package]]
-name = "spl-token-metadata-interface"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e16aa8f64b6e0eaab3f5034e84d867c8435d8216497b4543a4978a31f4b6e8a8"
-dependencies = [
- "borsh 0.10.3",
- "solana-program",
- "spl-discriminator 0.1.1",
- "spl-pod 0.1.1",
- "spl-program-error 0.3.1",
- "spl-type-length-value 0.3.1",
 ]
 
 [[package]]
@@ -2894,19 +2879,6 @@ dependencies = [
 
 [[package]]
 name = "wen_new_standard"
-version = "0.3.2-alpha"
-dependencies = [
- "anchor-lang 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "anchor-spl 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "spl-pod 0.2.2",
- "spl-tlv-account-resolution 0.4.0",
- "spl-token-metadata-interface 0.2.1",
- "spl-transfer-hook-interface 0.5.1",
- "wen_royalty_distribution 0.2.0-alpha",
-]
-
-[[package]]
-name = "wen_new_standard"
 version = "0.4.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f05724e9e390ab6777cc53dcebe149ebb6daf26f7ddb694424d2eaa6d427fa59"
@@ -2916,17 +2888,6 @@ dependencies = [
  "num-traits",
  "solana-program",
  "thiserror",
-]
-
-[[package]]
-name = "wen_royalty_distribution"
-version = "0.2.0-alpha"
-dependencies = [
- "anchor-lang 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "anchor-spl 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "spl-pod 0.2.2",
- "spl-tlv-account-resolution 0.4.0",
- "spl-transfer-hook-interface 0.5.1",
 ]
 
 [[package]]
