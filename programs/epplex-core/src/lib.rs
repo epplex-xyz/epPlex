@@ -14,6 +14,7 @@ pub use utils::*;
 use anchor_lang::solana_program;
 
 use anchor_spl::{
+    associated_token::AssociatedToken,
     associated_token::{create, Create},
     token_2022::spl_token_2022,
     token_2022::spl_token_2022::{
@@ -24,19 +25,16 @@ use anchor_spl::{
         },
         instruction::{
             initialize_mint2, initialize_mint_close_authority, initialize_permanent_delegate,
-            AuthorityType
+            AuthorityType,
         },
     },
-    associated_token::AssociatedToken,
     token_interface::{
-        Token2022,
+        spl_token_metadata_interface::instruction::initialize as initialize_metadata_account,
         spl_token_metadata_interface::state::Field,
         spl_token_metadata_interface::state::TokenMetadata,
-        spl_token_metadata_interface::instruction::initialize as initialize_metadata_account,
-        {mint_to, set_authority, MintTo}
-    }
+        Token2022, {mint_to, set_authority, MintTo},
+    },
 };
-
 
 #[program]
 pub mod epplex_core {

@@ -85,24 +85,22 @@ impl TokenGameFreeze<'_> {
                     authority: ctx.accounts.payer.to_account_info(),
                 },
             ),
-            1
+            1,
         )?;
 
-        wen_new_standard::cpi::freeze_mint_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.wns.to_account_info(),
-                wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
-                    payer: ctx.accounts.payer.to_account_info(),
-                    user: ctx.accounts.payer.to_account_info(),
-                    delegate_authority: ctx.accounts.authority.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    mint_token_account: ctx.accounts.token_account.to_account_info(),
-                    manager: ctx.accounts.manager.to_account_info(),
-                    token_program: ctx.accounts.token22_program.to_account_info(),
-                },
-                &[&seeds[..]],
-            )
-        )?;
+        wen_new_standard::cpi::freeze_mint_account(CpiContext::new_with_signer(
+            ctx.accounts.wns.to_account_info(),
+            wen_new_standard::cpi::accounts::FreezeDelegatedAccount {
+                payer: ctx.accounts.payer.to_account_info(),
+                user: ctx.accounts.payer.to_account_info(),
+                delegate_authority: ctx.accounts.authority.to_account_info(),
+                mint: ctx.accounts.mint.to_account_info(),
+                mint_token_account: ctx.accounts.token_account.to_account_info(),
+                manager: ctx.accounts.manager.to_account_info(),
+                token_program: ctx.accounts.token22_program.to_account_info(),
+            },
+            &[&seeds[..]],
+        ))?;
 
         Ok(())
     }

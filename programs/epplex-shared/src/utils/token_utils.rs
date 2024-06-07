@@ -1,13 +1,10 @@
 use crate::*;
-use anchor_lang::solana_program::{
-    program_pack::Pack,
-    program,
-};
+use anchor_lang::solana_program::{program, program_pack::Pack};
 use anchor_spl::token_2022::spl_token_2022;
 
-
 pub fn get_token_account_owner(token_account: &AccountInfo) -> Result<Pubkey> {
-    let state = spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
+    let state =
+        spl_token_2022::state::Account::unpack_from_slice(&token_account.try_borrow_data()?)?;
     Ok(state.owner)
 }
 
@@ -68,14 +65,14 @@ pub fn remove_token_metadata_signed<'info>(
     update_authority: &AccountInfo<'info>,
     signer_seeds: &[&[&[u8]]],
     removal_key: String,
-    idempotent: bool
+    idempotent: bool,
 ) -> Result<()> {
     let ix = anchor_spl::token_interface::spl_token_metadata_interface::instruction::remove_key(
         &program_id,
         &metadata.key(),
         &update_authority.key(),
         removal_key,
-        idempotent
+        idempotent,
     );
 
     let account_infos: Vec<AccountInfo> = vec![
@@ -87,7 +84,6 @@ pub fn remove_token_metadata_signed<'info>(
 
     Ok(())
 }
-
 
 pub fn burn_token<'info>(
     mint_account: &AccountInfo<'info>,

@@ -119,7 +119,9 @@ impl TokenRenew<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(),
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(EXPIRY_FIELD.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(
+                EXPIRY_FIELD.to_string(),
+            ),
             new_expiry_date,
         )?;
 

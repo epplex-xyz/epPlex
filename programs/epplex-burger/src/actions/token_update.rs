@@ -43,7 +43,7 @@ pub struct TokenUpdateParams {
     pub symbol: Option<String>,
     pub uri: Option<String>,
     pub additional_metadata: Option<AddMetadataArgs>,
-    pub remove_key: Option<String>
+    pub remove_key: Option<String>,
 }
 
 impl TokenUpdate<'_> {
@@ -92,7 +92,6 @@ impl TokenUpdate<'_> {
             )?;
         }
 
-
         if params.additional_metadata.is_some() {
             let meta = params.additional_metadata.unwrap();
             epplex_shared::update_token_metadata_signed(
@@ -100,11 +99,12 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.mint.to_account_info(),
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
-                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(meta.field),
+                anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(
+                    meta.field,
+                ),
                 meta.value,
             )?;
         }
-
 
         if params.remove_key.is_some() {
             let removal_key = params.remove_key.unwrap();
@@ -114,7 +114,7 @@ impl TokenUpdate<'_> {
                 &ctx.accounts.update_authority.to_account_info(),
                 &[&seeds[..]],
                 removal_key,
-                false
+                false,
             )?;
         }
 

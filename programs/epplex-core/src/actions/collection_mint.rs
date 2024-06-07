@@ -76,10 +76,11 @@ impl CollectionMint<'_> {
 
     // This function should be a general purpose minter
     pub fn actuate(ctx: Context<Self>, params: TokenCollectionCreateParams) -> Result<()> {
-        let update_authority = anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
-            ctx.accounts.update_authority.key(),
-        ))
-        .expect("Bad update auth");
+        let update_authority =
+            anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
+                Some(ctx.accounts.update_authority.key()),
+            )
+            .expect("Bad update auth");
 
         // Convert from Vec<[String;2]> to Vec<(String, String)>
         let mut converted_metadata: Vec<(String, String)> = params

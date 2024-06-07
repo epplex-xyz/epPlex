@@ -73,7 +73,9 @@ impl TokenGameImmunity<'_> {
             &ctx.accounts.mint.to_account_info(),
             &ctx.accounts.update_authority.to_account_info(), // the program permanent delegate
             &[&seeds[..]],
-            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(NEW_IMMUNITY.to_string()),
+            anchor_spl::token_interface::spl_token_metadata_interface::state::Field::Key(
+                NEW_IMMUNITY.to_string(),
+            ),
             "true".to_string(),
         )?;
 

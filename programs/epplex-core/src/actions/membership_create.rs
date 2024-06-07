@@ -8,7 +8,6 @@ pub use anchor_lang::{
     },
 };
 
-
 #[derive(Accounts)]
 pub struct MembershipCreate<'info> {
     #[account(mut)]

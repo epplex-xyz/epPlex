@@ -98,10 +98,11 @@ impl CollectionCreate<'_> {
             global_config.collection_counter.to_string(),
         )];
 
-        let update_authority = anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(Some(
-            ctx.accounts.update_authority.key(),
-        ))
-        .expect("Bad update auth");
+        let update_authority =
+            anchor_spl::token_interface::spl_pod::optional_keys::OptionalNonZeroPubkey::try_from(
+                Some(ctx.accounts.update_authority.key()),
+            )
+            .expect("Bad update auth");
 
         let tm = TokenMetadata {
             update_authority,

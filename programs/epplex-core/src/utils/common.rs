@@ -9,7 +9,8 @@ pub fn transfer_sol<'info>(
     to: &AccountInfo<'info>,
     amount: u64,
 ) -> Result<()> {
-    let ix = anchor_lang::solana_program::system_instruction::transfer(&from.key(), &to.key(), amount);
+    let ix =
+        anchor_lang::solana_program::system_instruction::transfer(&from.key(), &to.key(), amount);
 
     let account_infos: Vec<AccountInfo> = vec![
         from.to_account_info(),

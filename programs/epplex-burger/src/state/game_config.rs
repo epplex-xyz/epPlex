@@ -70,9 +70,9 @@ pub struct GameConfig {
     /// The pubkey of the token group pda for collection verification
     pub token_group: Pubkey,
     /// Taken from xNFT repo Unused reserved byte space for additive future changes
-    pub _reserved0: [u8;64],
-    pub _reserved1: [u8;24],
-    pub _reserved2: [u8;9],
+    pub _reserved0: [u8; 64],
+    pub _reserved1: [u8; 24],
+    pub _reserved2: [u8; 9],
 }
 
 impl GameConfig {
@@ -96,7 +96,7 @@ impl GameConfig {
         + 64
         + 24
         + 9;
-        // approx 1500
+    // approx 1500
 
     pub fn create(bump: u8, game_master: Pubkey) -> Self {
         Self {
@@ -116,9 +116,9 @@ impl GameConfig {
             submission_amount: 0,
             rule_seed: 0,
             token_group: Pubkey::default(),
-            _reserved0: [0;64],
-            _reserved1: [0;24],
-            _reserved2: [0;9],
+            _reserved0: [0; 64],
+            _reserved1: [0; 24],
+            _reserved2: [0; 9],
         }
     }
 
