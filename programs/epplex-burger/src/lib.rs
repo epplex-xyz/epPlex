@@ -24,7 +24,7 @@ use anchor_spl::{
     token_interface::{Mint as MintInterface, TokenAccount as TokenAccountInterface},
 };
 use epplex_shared::{burn_token, close_mint, ADMINS};
-use wen_new_standard::TokenGroupMember;
+use wen_new_standard::{CreatorWithShare, TokenGroupMember};
 
 #[derive(Clone)]
 pub struct WenNewStandard;
@@ -176,7 +176,6 @@ pub mod epplex_burger {
     pub fn token_thaw(ctx: Context<TokenThaw>, params: TokenThawParams) -> Result<()> {
         TokenThaw::actuate(ctx, params)
     }
-
 
     /*
      * DEPRECATED

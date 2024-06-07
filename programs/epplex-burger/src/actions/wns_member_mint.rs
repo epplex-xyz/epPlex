@@ -78,10 +78,13 @@ pub struct WnsMemberMint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct WnsMemberMintParams {
-    pub expiry_date: String,
+    pub expiry_date: Option<String>,
     pub name: String,
     pub symbol: String,
     pub uri: String,
+    pub creators: Option<Vec<CreatorWithShare>>,
+    pub royalty_basis_points: Option<u16>,
+    pub add_permanent_delegate: bool,
 }
 
 impl WnsMemberMint<'_> {
@@ -98,6 +101,7 @@ impl WnsMemberMint<'_> {
             SEED_PROGRAM_DELEGATE,
             &[ctx.accounts.permanent_delegate.bump],
         ];
+        let signer_seeds = &[&seeds[..]];
         let epplex_auth =
             Pubkey::find_program_address(&[epplex_core::SEED_EPHEMERAL_AUTH], &epplex_core::ID).0;
 
@@ -117,13 +121,17 @@ impl WnsMemberMint<'_> {
                     associated_token_program: ctx.accounts.associated_token.to_account_info(),
                     token_program: ctx.accounts.token22_program.to_account_info(),
                 },
-                &[&seeds[..]],
+                signer_seeds,
             ),
             wen_new_standard::mint::CreateMintAccountArgs {
                 name: params.name,
                 symbol: params.symbol,
                 uri: params.uri,
-                permanent_delegate: Some(epplex_auth),
+                permanent_delegate: if params.add_permanent_delegate {
+                    Some(epplex_auth)
+                } else {
+                    None
+                },
             },
         )?;
 
@@ -140,8 +148,16 @@ impl WnsMemberMint<'_> {
                 system_program: ctx.accounts.system_program.to_account_info(),
                 token_program: ctx.accounts.token22_program.to_account_info(),
             },
-            &[&seeds[..]],
+            signer_seeds,
         ))?;
+
+        let mut creators = vec![CreatorWithShare {
+            address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
+            share: ROYALTY_SHARE,
+        }];
+        if params.creators.is_some() {
+            creators = params.creators.unwrap();
+        } 
 
         // 3. Add royalties
         wen_new_standard::cpi::add_royalties(
@@ -155,16 +171,22 @@ impl WnsMemberMint<'_> {
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token_program: ctx.accounts.token22_program.to_account_info(),
                 },
-                &[&seeds[..]],
+                signer_seeds,
             ),
             wen_new_standard::mint::UpdateRoyaltiesArgs {
-                royalty_basis_points: ROYALTY_BASIS_POINTS,
-                creators: vec![wen_new_standard::CreatorWithShare {
-                    address: Pubkey::from_str(ROYALTY_ADDRESS).unwrap(),
-                    share: ROYALTY_SHARE,
-                }],
+                royalty_basis_points: if params.royalty_basis_points.is_some() {
+                    params.royalty_basis_points.unwrap()
+                } else {
+                    ROYALTY_BASIS_POINTS
+                },
+                creators,
             },
         )?;
+
+        let mut metadata = vec![];
+        if params.expiry_date.is_some() {
+            metadata = generate_metadata2(params.expiry_date.unwrap())
+        }
 
         // 4. Add other metadata
         wen_new_standard::cpi::add_metadata(
@@ -177,9 +199,9 @@ impl WnsMemberMint<'_> {
                     system_program: ctx.accounts.system_program.to_account_info(),
                     token_program: ctx.accounts.token22_program.to_account_info(),
                 },
-                &[&seeds[..]],
+                signer_seeds,
             ),
-            generate_metadata2(params.expiry_date),
+            metadata,
         )?;
 
         Ok(())
