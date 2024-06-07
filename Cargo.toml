@@ -5,7 +5,15 @@ members = [
 
 resolver = "2"
 
-
 # WNS stuff
 [profile.release]
 overflow-checks = true
+
+[workspace.dependencies]
+anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"]  }
+anchor-spl = { version = "0.30.0", features = ["token_2022_extensions", "token_2022"] }
+
+wen_new_standard = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
+wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
+# wen_new_standard = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
+# wen_royalty_distribution = { git = "https://github.com/wen-community/wen-new-standard.git", features = ["no-entrypoint", "cpi"] }
