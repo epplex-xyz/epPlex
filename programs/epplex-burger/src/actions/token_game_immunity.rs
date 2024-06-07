@@ -21,7 +21,7 @@ pub struct TokenGameImmunity<'info> {
         seeds::program = wen_new_standard::ID,
         bump,
     )]
-    pub group_member: Account<'info, TokenGroupMember2>,
+    pub group_member: Account<'info, TokenGroupMember3>,
 
     #[account(
         seeds = [

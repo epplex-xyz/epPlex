@@ -313,7 +313,7 @@ impl GameConfig {
 
     pub fn check_valid_collection(
         &self,
-        group_member: &Account<'_, TokenGroupMember2>,
+        group_member: &Account<'_, TokenGroupMember3>,
         mint: Pubkey,
     ) -> Result<()> {
         if mint != group_member.mint {
