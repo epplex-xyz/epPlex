@@ -40,7 +40,7 @@ pub fn generate_metadata(expiry_data: String) -> Vec<[String; 2]> {
     ]
 }
 
-pub fn generate_metadata2(expiry_data: String) -> Vec<wen_new_standard::types::AddMetadataArgs> {
+pub fn generate_metadata2(expiry_data: String) -> Vec<AddMetadataArgs> {
     vec![
         AddMetadataArgs {
             field: EXPIRY_FIELD.to_string(),

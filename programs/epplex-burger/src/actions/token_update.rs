@@ -31,18 +31,13 @@ pub struct TokenUpdate<'info> {
     pub system_program: Program<'info, System>,
 }
 
-// #[derive(Clone, AnchorDeserialize, AnchorSerialize)]
-// pub struct AddMetadataArgs {
-//     pub field: String,
-//     pub value: String,
-// }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct TokenUpdateParams {
     pub name: Option<String>,
     pub symbol: Option<String>,
     pub uri: Option<String>,
-    pub additional_metadata: Option<AddMetadataArgs>,
+    pub additional_metadata: Option<wen_new_standard::types::AddMetadataArgs>,
     pub remove_key: Option<String>
 }
 

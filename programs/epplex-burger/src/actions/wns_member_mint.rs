@@ -1,6 +1,7 @@
 use crate::*;
 use anchor_spl::associated_token::AssociatedToken;
 use std::str::FromStr;
+// use wen_new_standard::types::CreatorWithShare;
 
 #[derive(Accounts)]
 #[instruction(params: WnsMemberMintParams)]
@@ -85,7 +86,7 @@ pub struct WnsMemberMintParams {
     pub name: String,
     pub symbol: String,
     pub uri: String,
-    pub creators: Option<Vec<wen_new_standard::types::CreatorWithShare>>,
+    pub creators: Option<Vec<CreatorWithShare>>,
     pub add_permanent_delegate: bool,
 }
 
@@ -168,7 +169,7 @@ impl WnsMemberMint<'_> {
             wen_new_standard::instructions::AddRoyaltiesInstructionArgs {
                 args: wen_new_standard::types::UpdateRoyaltiesArgs {
                     royalty_basis_points: ROYALTY_BASIS_POINTS,
-                    creators,
+                    creators
                 }
             }
         ).invoke_signed(signers_seeds)?;
