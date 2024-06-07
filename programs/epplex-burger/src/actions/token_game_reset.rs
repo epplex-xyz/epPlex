@@ -101,15 +101,6 @@ impl TokenGameReset<'_> {
             "false".to_string(),
         )?;
 
-        // epplex_shared::remove_token_metadata_signed(
-        //     &ctx.accounts.token22_program.key(),
-        //     &ctx.accounts.mint.to_account_info(),
-        //     &ctx.accounts.update_authority.to_account_info(),
-        //     &[&seeds[..]],
-        //     IMMUNITY.to_string(),
-        //     true
-        // )?;
-
         emit!(EvTokenGameReset {
             nft: ctx.accounts.mint.key(),
             game_round_id: ctx.accounts.game_config.game_round,
