@@ -14,7 +14,7 @@ idl-build = [
     "anchor-spl/idl-build",
     "epplex-core/idl-build",
     "epplex-shared/idl-build",
-    "wen_royalty_distribution/idl-build"
+    # "wen_royalty_distribution/idl-build"
 ]
 no-entrypoint = []
 no-idl = []
@@ -32,8 +32,8 @@ epplex-core = { path = "../epplex-core", features = ["cpi"] }
 epplex-shared = { path = "../epplex-shared", features = ["no-entrypoint"] }
 ahash = "=0.8.6"
 
-wen_new_standard = { version = "0.4.0-alpha" }
-wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", features = ["no-entrypoint", "cpi"] }
+# wen_new_standard = { version = "0.4.0-alpha" }
+# wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", features = ["no-entrypoint", "cpi"] }
 
 # wen_new_standard = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }
 # wen_royalty_distribution = { git = "https://github.com/wen-community/wen-program-library.git", rev = "07bb9c07144b2addaafc204fd75f29832592cb50", features = ["no-entrypoint", "cpi"] }

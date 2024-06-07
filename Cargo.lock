@@ -946,8 +946,6 @@ dependencies = [
  "anchor-spl",
  "epplex-core",
  "epplex-shared",
- "wen_new_standard",
- "wen_royalty_distribution",
 ]
 
 [[package]]
