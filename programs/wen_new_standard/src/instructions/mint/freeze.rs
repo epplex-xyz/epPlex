@@ -1,7 +1,9 @@
 use anchor_lang::prelude::*;
 
-use anchor_spl::token_interface::{freeze_account, FreezeAccount, Mint, Token2022, TokenAccount};
-use spl_pod::solana_program::program_option::COption;
+use anchor_spl::token_interface::{
+    freeze_account, spl_pod::solana_program::program_option::COption, FreezeAccount, Mint,
+    Token2022, TokenAccount,
+};
 
 use crate::{Manager, MintErrors, MANAGER_SEED};
 

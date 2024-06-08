@@ -12,7 +12,7 @@ pub use instructions::*;
 pub use state::*;
 pub use utils::*;
 
-declare_id!("WNSrqdCHC7RqT6mTzaL9hFa1Cscki3mdttM6eWj27kk");
+declare_id!("wns1gDLt8fgLcGhWi5MqAqgXpwEP1JftKE9eZnXS1HM");
 
 #[program]
 pub mod wen_new_standard {

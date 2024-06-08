@@ -12,16 +12,15 @@ crate-type = ["cdylib", "lib"]
 name = "wen_royalty_distribution"
 
 [features]
-idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 no-entrypoint = []
 no-idl = []
 cpi = ["no-entrypoint"]
 default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
 
 [dependencies]
-anchor-lang = { version = "0.30.0", features = ["interface-instructions", "init-if-needed"]  }
-anchor-spl = { version = "0.30.0", features = ["token_2022_extensions", "token_2022"] }
-
+anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
+anchor-spl = "0.30.0"
 spl-transfer-hook-interface = { version = "0.5.0" }
 spl-tlv-account-resolution = "0.4.0"
-spl-pod = "=0.2.2"
